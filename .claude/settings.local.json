@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(make clean *)",
+      "Bash(make -j4)",
+      "Bash(python gen_compile_commands.py)",
+      "Bash(python -c 'import json; print\\(len\\(json.load\\(open\\(\\\\\"d:/foc/program/ota/compile_commands.json\\\\\"\\)\\)\\)\\)')",
+      "Bash(echo \"...entries: $\\(python -c 'import json; print\\(len\\(json.load\\(open\\(\\\\\"d:/foc/program/ota/compile_commands.json\\\\\"\\)\\)\\)\\)'\\)\")",
+      "Read(//d/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/bin/**)",
+      "Bash(\"arm-none-eabi-gcc\" --version)",
+      "Bash(code --list-extensions)",
+      "Bash(make)",
+      "Bash(arm-none-eabi-nm build/ota.elf)"
+    ]
+  }
+}

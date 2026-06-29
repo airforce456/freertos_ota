@@ -1,0 +1,1588 @@
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.arch armv7-m
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"port.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.file 1 "Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c"
+  18              		.section	.text.prvTaskExitError,"ax",%progbits
+  19              		.align	1
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	prvTaskExitError:
+  25              	.LFB71:
+   1:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*
+   2:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * FreeRTOS Kernel V10.4.6
+   3:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * Copyright (C) 2021 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
+   4:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  *
+   5:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * SPDX-License-Identifier: MIT
+   6:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  *
+   7:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * Permission is hereby granted, free of charge, to any person obtaining a copy of
+   8:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * this software and associated documentation files (the "Software"), to deal in
+   9:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * the Software without restriction, including without limitation the rights to
+  10:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+  11:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * the Software, and to permit persons to whom the Software is furnished to do so,
+  12:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * subject to the following conditions:
+  13:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  *
+  14:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * The above copyright notice and this permission notice shall be included in all
+  15:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * copies or substantial portions of the Software.
+  16:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  *
+  17:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  18:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+  19:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+  20:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+  21:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+  22:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  23:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  *
+  24:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * https://www.FreeRTOS.org
+  25:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * https://github.com/FreeRTOS
+  26:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  *
+  27:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  */
+  28:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+  29:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*-----------------------------------------------------------
+  30:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** * Implementation of functions defined in portable.h for the ARM CM3 port.
+  31:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** *----------------------------------------------------------*/
+  32:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+  33:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /* Scheduler includes. */
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s 			page 2
+
+
+  34:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #include "FreeRTOS.h"
+  35:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #include "task.h"
+  36:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+  37:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /* For backward compatibility, ensure configKERNEL_INTERRUPT_PRIORITY is
+  38:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * defined.  The value should also ensure backward compatibility.
+  39:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * FreeRTOS.org versions prior to V4.4.0 did not include this definition. */
+  40:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #ifndef configKERNEL_INTERRUPT_PRIORITY
+  41:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     #define configKERNEL_INTERRUPT_PRIORITY    255
+  42:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #endif
+  43:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+  44:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #ifndef configSYSTICK_CLOCK_HZ
+  45:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     #define configSYSTICK_CLOCK_HZ      configCPU_CLOCK_HZ
+  46:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     /* Ensure the SysTick is clocked at the same frequency as the core. */
+  47:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     #define portNVIC_SYSTICK_CLK_BIT    ( 1UL << 2UL )
+  48:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #else
+  49:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+  50:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /* The way the SysTick is clocked is not modified in case it is not the same
+  51:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * as the core. */
+  52:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     #define portNVIC_SYSTICK_CLK_BIT    ( 0 )
+  53:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #endif
+  54:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+  55:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /* Constants required to manipulate the core.  Registers first... */
+  56:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #define portNVIC_SYSTICK_CTRL_REG             ( *( ( volatile uint32_t * ) 0xe000e010 ) )
+  57:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #define portNVIC_SYSTICK_LOAD_REG             ( *( ( volatile uint32_t * ) 0xe000e014 ) )
+  58:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #define portNVIC_SYSTICK_CURRENT_VALUE_REG    ( *( ( volatile uint32_t * ) 0xe000e018 ) )
+  59:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #define portNVIC_SHPR3_REG                    ( *( ( volatile uint32_t * ) 0xe000ed20 ) )
+  60:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /* ...then bits in the registers. */
+  61:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #define portNVIC_SYSTICK_INT_BIT              ( 1UL << 1UL )
+  62:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #define portNVIC_SYSTICK_ENABLE_BIT           ( 1UL << 0UL )
+  63:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #define portNVIC_SYSTICK_COUNT_FLAG_BIT       ( 1UL << 16UL )
+  64:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #define portNVIC_PENDSVCLEAR_BIT              ( 1UL << 27UL )
+  65:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #define portNVIC_PEND_SYSTICK_CLEAR_BIT       ( 1UL << 25UL )
+  66:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+  67:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #define portNVIC_PENDSV_PRI                   ( ( ( uint32_t ) configKERNEL_INTERRUPT_PRIORITY ) <<
+  68:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #define portNVIC_SYSTICK_PRI                  ( ( ( uint32_t ) configKERNEL_INTERRUPT_PRIORITY ) <<
+  69:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+  70:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /* Constants required to check the validity of an interrupt priority. */
+  71:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #define portFIRST_USER_INTERRUPT_NUMBER       ( 16 )
+  72:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #define portNVIC_IP_REGISTERS_OFFSET_16       ( 0xE000E3F0 )
+  73:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #define portAIRCR_REG                         ( *( ( volatile uint32_t * ) 0xE000ED0C ) )
+  74:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #define portMAX_8_BIT_VALUE                   ( ( uint8_t ) 0xff )
+  75:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #define portTOP_BIT_OF_BYTE                   ( ( uint8_t ) 0x80 )
+  76:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #define portMAX_PRIGROUP_BITS                 ( ( uint8_t ) 7 )
+  77:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #define portPRIORITY_GROUP_MASK               ( 0x07UL << 8UL )
+  78:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #define portPRIGROUP_SHIFT                    ( 8UL )
+  79:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+  80:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /* Masks off all bits but the VECTACTIVE bits in the ICSR register. */
+  81:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #define portVECTACTIVE_MASK                   ( 0xFFUL )
+  82:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+  83:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /* Constants required to set up the initial stack. */
+  84:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #define portINITIAL_XPSR                      ( 0x01000000UL )
+  85:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+  86:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /* The systick is a 24-bit counter. */
+  87:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #define portMAX_24_BIT_NUMBER                 ( 0xffffffUL )
+  88:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+  89:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /* A fiddle factor to estimate the number of SysTick counts that would have
+  90:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * occurred while the SysTick counter is stopped during tickless idle
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s 			page 3
+
+
+  91:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * calculations. */
+  92:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #define portMISSED_COUNTS_FACTOR              ( 45UL )
+  93:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+  94:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /* For strict compliance with the Cortex-M spec the task start address should
+  95:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * have bit-0 clear, as it is loaded into the PC on exit from an ISR. */
+  96:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #define portSTART_ADDRESS_MASK                ( ( StackType_t ) 0xfffffffeUL )
+  97:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+  98:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /* Let the user override the pre-loading of the initial LR with the address of
+  99:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * prvTaskExitError() in case it messes up unwinding of the stack in the
+ 100:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * debugger. */
+ 101:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #ifdef configTASK_RETURN_ADDRESS
+ 102:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     #define portTASK_RETURN_ADDRESS    configTASK_RETURN_ADDRESS
+ 103:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #else
+ 104:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     #define portTASK_RETURN_ADDRESS    prvTaskExitError
+ 105:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #endif
+ 106:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 107:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*
+ 108:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * Setup the timer to generate the tick interrupts.  The implementation in this
+ 109:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * file is weak to allow application writers to change the timer used to
+ 110:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * generate the tick interrupt.
+ 111:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  */
+ 112:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** void vPortSetupTimerInterrupt( void );
+ 113:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 114:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*
+ 115:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * Exception handlers.
+ 116:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  */
+ 117:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** void xPortPendSVHandler( void ) __attribute__( ( naked ) );
+ 118:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** void xPortSysTickHandler( void );
+ 119:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** void vPortSVCHandler( void ) __attribute__( ( naked ) );
+ 120:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 121:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*
+ 122:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * Start first task is a separate function so it can be tested in isolation.
+ 123:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  */
+ 124:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** static void prvPortStartFirstTask( void ) __attribute__( ( naked ) );
+ 125:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 126:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*
+ 127:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * Used to catch tasks that attempt to return from their implementing function.
+ 128:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  */
+ 129:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** static void prvTaskExitError( void );
+ 130:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 131:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*-----------------------------------------------------------*/
+ 132:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 133:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /* Each task maintains its own interrupt status in the critical nesting
+ 134:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * variable. */
+ 135:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** static UBaseType_t uxCriticalNesting = 0xaaaaaaaa;
+ 136:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 137:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*
+ 138:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * The number of SysTick increments that make up one tick period.
+ 139:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  */
+ 140:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #if ( configUSE_TICKLESS_IDLE == 1 )
+ 141:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     static uint32_t ulTimerCountsForOneTick = 0;
+ 142:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #endif /* configUSE_TICKLESS_IDLE */
+ 143:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 144:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*
+ 145:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * The maximum number of tick periods that can be suppressed is limited by the
+ 146:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * 24 bit resolution of the SysTick timer.
+ 147:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  */
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s 			page 4
+
+
+ 148:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #if ( configUSE_TICKLESS_IDLE == 1 )
+ 149:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     static uint32_t xMaximumPossibleSuppressedTicks = 0;
+ 150:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #endif /* configUSE_TICKLESS_IDLE */
+ 151:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 152:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*
+ 153:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * Compensate for the CPU cycles that pass while the SysTick is stopped (low
+ 154:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * power functionality only.
+ 155:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  */
+ 156:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #if ( configUSE_TICKLESS_IDLE == 1 )
+ 157:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     static uint32_t ulStoppedTimerCompensation = 0;
+ 158:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #endif /* configUSE_TICKLESS_IDLE */
+ 159:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 160:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*
+ 161:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * Used by the portASSERT_IF_INTERRUPT_PRIORITY_INVALID() macro to ensure
+ 162:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * FreeRTOS API functions are not called from interrupts that have been assigned
+ 163:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * a priority above configMAX_SYSCALL_INTERRUPT_PRIORITY.
+ 164:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  */
+ 165:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #if ( configASSERT_DEFINED == 1 )
+ 166:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     static uint8_t ucMaxSysCallPriority = 0;
+ 167:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     static uint32_t ulMaxPRIGROUPValue = 0;
+ 168:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     static const volatile uint8_t * const pcInterruptPriorityRegisters = ( const volatile uint8_t *
+ 169:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #endif /* configASSERT_DEFINED */
+ 170:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 171:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*-----------------------------------------------------------*/
+ 172:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 173:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*
+ 174:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * See header file for description.
+ 175:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  */
+ 176:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
+ 177:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                                      TaskFunction_t pxCode,
+ 178:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                                      void * pvParameters )
+ 179:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** {
+ 180:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     /* Simulate the stack frame as it would be created by a context switch
+ 181:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****      * interrupt. */
+ 182:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     pxTopOfStack--;                                                      /* Offset added to account
+ 183:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     *pxTopOfStack = portINITIAL_XPSR;                                    /* xPSR */
+ 184:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     pxTopOfStack--;
+ 185:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     *pxTopOfStack = ( ( StackType_t ) pxCode ) & portSTART_ADDRESS_MASK; /* PC */
+ 186:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     pxTopOfStack--;
+ 187:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     *pxTopOfStack = ( StackType_t ) portTASK_RETURN_ADDRESS;             /* LR */
+ 188:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     pxTopOfStack -= 5;                                                   /* R12, R3, R2 and R1. */
+ 189:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     *pxTopOfStack = ( StackType_t ) pvParameters;                        /* R0 */
+ 190:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     pxTopOfStack -= 8;                                                   /* R11, R10, R9, R8, R7, R
+ 191:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 192:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     return pxTopOfStack;
+ 193:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** }
+ 194:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*-----------------------------------------------------------*/
+ 195:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 196:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** static void prvTaskExitError( void )
+ 197:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** {
+  26              		.loc 1 197 1 view -0
+  27              		.cfi_startproc
+  28              		@ args = 0, pretend = 0, frame = 8
+  29              		@ frame_needed = 0, uses_anonymous_args = 0
+  30              		@ link register save eliminated.
+  31 0000 82B0     		sub	sp, sp, #8
+  32              	.LCFI0:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s 			page 5
+
+
+  33              		.cfi_def_cfa_offset 8
+ 198:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     volatile uint32_t ulDummy = 0UL;
+  34              		.loc 1 198 5 view .LVU1
+  35              		.loc 1 198 23 is_stmt 0 view .LVU2
+  36 0002 0023     		movs	r3, #0
+  37 0004 0193     		str	r3, [sp, #4]
+ 199:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 200:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     /* A function that implements a task must not exit or attempt to return to
+ 201:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****      * its caller as there is nothing to return to.  If a task wants to exit it
+ 202:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****      * should instead call vTaskDelete( NULL ).
+ 203:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****      *
+ 204:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****      * Artificially force an assert() to be triggered if configASSERT() is
+ 205:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****      * defined, then stop here so application writers can catch the error. */
+ 206:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     configASSERT( uxCriticalNesting == ~0UL );
+  38              		.loc 1 206 46 is_stmt 1 view .LVU3
+ 207:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     portDISABLE_INTERRUPTS();
+  39              		.loc 1 207 5 view .LVU4
+  40              	.LBB12:
+  41              	.LBI12:
+  42              		.file 2 "Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h"
+   1:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*
+   2:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * FreeRTOS Kernel V10.4.6
+   3:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * Copyright (C) 2021 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
+   4:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  *
+   5:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * SPDX-License-Identifier: MIT
+   6:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  *
+   7:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * Permission is hereby granted, free of charge, to any person obtaining a copy of
+   8:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * this software and associated documentation files (the "Software"), to deal in
+   9:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * the Software without restriction, including without limitation the rights to
+  10:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+  11:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * the Software, and to permit persons to whom the Software is furnished to do so,
+  12:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * subject to the following conditions:
+  13:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  *
+  14:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * The above copyright notice and this permission notice shall be included in all
+  15:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * copies or substantial portions of the Software.
+  16:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  *
+  17:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  18:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+  19:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+  20:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+  21:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+  22:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  23:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  *
+  24:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * https://www.FreeRTOS.org
+  25:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * https://github.com/FreeRTOS
+  26:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  *
+  27:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  */
+  28:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  29:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  30:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #ifndef PORTMACRO_H
+  31:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define PORTMACRO_H
+  32:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  33:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #ifdef __cplusplus
+  34:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         extern "C" {
+  35:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #endif
+  36:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  37:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s 			page 6
+
+
+  38:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * Port specific definitions.
+  39:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  *
+  40:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * The settings in this file configure FreeRTOS correctly for the
+  41:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * given hardware and compiler.
+  42:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  *
+  43:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * These settings should not be altered.
+  44:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  *-----------------------------------------------------------
+  45:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  */
+  46:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  47:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* Type definitions. */
+  48:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portCHAR          char
+  49:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portFLOAT         float
+  50:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portDOUBLE        double
+  51:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portLONG          long
+  52:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portSHORT         short
+  53:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portSTACK_TYPE    uint32_t
+  54:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portBASE_TYPE     long
+  55:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  56:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     typedef portSTACK_TYPE   StackType_t;
+  57:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     typedef long             BaseType_t;
+  58:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     typedef unsigned long    UBaseType_t;
+  59:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  60:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #if ( configUSE_16_BIT_TICKS == 1 )
+  61:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         typedef uint16_t     TickType_t;
+  62:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         #define portMAX_DELAY              ( TickType_t ) 0xffff
+  63:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #else
+  64:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         typedef uint32_t     TickType_t;
+  65:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         #define portMAX_DELAY              ( TickType_t ) 0xffffffffUL
+  66:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  67:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* 32-bit tick type on a 32-bit architecture, so reads of the tick count do
+  68:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * not need to be guarded with a critical section. */
+  69:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         #define portTICK_TYPE_IS_ATOMIC    1
+  70:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #endif
+  71:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
+  72:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  73:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* Architecture specifics. */
+  74:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portSTACK_GROWTH      ( -1 )
+  75:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portTICK_PERIOD_MS    ( ( TickType_t ) 1000 / configTICK_RATE_HZ )
+  76:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portBYTE_ALIGNMENT    8
+  77:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portDONT_DISCARD      __attribute__( ( used ) )
+  78:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
+  79:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  80:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* Scheduler utilities. */
+  81:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portYIELD()                                 \
+  82:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     {                                                   \
+  83:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         /* Set a PendSV to request a context switch. */ \
+  84:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         portNVIC_INT_CTRL_REG = portNVIC_PENDSVSET_BIT; \
+  85:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****                                                         \
+  86:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         /* Barriers are normally not required but do ensure the code is completely \
+  87:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****          * within the specified behaviour for the architecture. */ \
+  88:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         __asm volatile ( "dsb" ::: "memory" );                     \
+  89:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         __asm volatile ( "isb" );                                  \
+  90:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     }
+  91:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  92:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portNVIC_INT_CTRL_REG     ( *( ( volatile uint32_t * ) 0xe000ed04 ) )
+  93:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portNVIC_PENDSVSET_BIT    ( 1UL << 28UL )
+  94:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portEND_SWITCHING_ISR( xSwitchRequired )    do { if( xSwitchRequired != pdFALSE ) portY
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s 			page 7
+
+
+  95:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portYIELD_FROM_ISR( x )                     portEND_SWITCHING_ISR( x )
+  96:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
+  97:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  98:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* Critical section management. */
+  99:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     extern void vPortEnterCritical( void );
+ 100:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     extern void vPortExitCritical( void );
+ 101:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portSET_INTERRUPT_MASK_FROM_ISR()         ulPortRaiseBASEPRI()
+ 102:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portCLEAR_INTERRUPT_MASK_FROM_ISR( x )    vPortSetBASEPRI( x )
+ 103:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portDISABLE_INTERRUPTS()                  vPortRaiseBASEPRI()
+ 104:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portENABLE_INTERRUPTS()                   vPortSetBASEPRI( 0 )
+ 105:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portENTER_CRITICAL()                      vPortEnterCritical()
+ 106:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portEXIT_CRITICAL()                       vPortExitCritical()
+ 107:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 108:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
+ 109:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 110:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* Task function macros as described on the FreeRTOS.org WEB site.  These are
+ 111:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * not necessary for to use this port.  They are defined so the common demo files
+ 112:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * (which build with all the ports) will build. */
+ 113:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portTASK_FUNCTION_PROTO( vFunction, pvParameters )    void vFunction( void * pvParamete
+ 114:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portTASK_FUNCTION( vFunction, pvParameters )          void vFunction( void * pvParamete
+ 115:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
+ 116:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 117:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* Tickless idle/low power functionality. */
+ 118:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #ifndef portSUPPRESS_TICKS_AND_SLEEP
+ 119:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         extern void vPortSuppressTicksAndSleep( TickType_t xExpectedIdleTime );
+ 120:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         #define portSUPPRESS_TICKS_AND_SLEEP( xExpectedIdleTime )    vPortSuppressTicksAndSleep( xE
+ 121:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #endif
+ 122:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
+ 123:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 124:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* Architecture specific optimisations. */
+ 125:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #ifndef configUSE_PORT_OPTIMISED_TASK_SELECTION
+ 126:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         #define configUSE_PORT_OPTIMISED_TASK_SELECTION    1
+ 127:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #endif
+ 128:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 129:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #if configUSE_PORT_OPTIMISED_TASK_SELECTION == 1
+ 130:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 131:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* Generic helper function. */
+ 132:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         __attribute__( ( always_inline ) ) static inline uint8_t ucPortCountLeadingZeros( uint32_t 
+ 133:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         {
+ 134:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****             uint8_t ucReturn;
+ 135:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 136:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****             __asm volatile ( "clz %0, %1" : "=r" ( ucReturn ) : "r" ( ulBitmap ) : "memory" );
+ 137:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 138:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****             return ucReturn;
+ 139:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         }
+ 140:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 141:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* Check the configuration. */
+ 142:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         #if ( configMAX_PRIORITIES > 32 )
+ 143:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****             #error configUSE_PORT_OPTIMISED_TASK_SELECTION can only be set to 1 when configMAX_PRIO
+ 144:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         #endif
+ 145:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 146:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* Store/clear the ready priorities in a bit map. */
+ 147:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         #define portRECORD_READY_PRIORITY( uxPriority, uxReadyPriorities )    ( uxReadyPriorities )
+ 148:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         #define portRESET_READY_PRIORITY( uxPriority, uxReadyPriorities )     ( uxReadyPriorities )
+ 149:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 150:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
+ 151:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s 			page 8
+
+
+ 152:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         #define portGET_HIGHEST_PRIORITY( uxTopPriority, uxReadyPriorities )    uxTopPriority = ( 3
+ 153:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 154:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #endif /* configUSE_PORT_OPTIMISED_TASK_SELECTION */
+ 155:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 156:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
+ 157:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 158:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #ifdef configASSERT
+ 159:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         void vPortValidateInterruptPriority( void );
+ 160:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         #define portASSERT_IF_INTERRUPT_PRIORITY_INVALID()    vPortValidateInterruptPriority()
+ 161:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #endif
+ 162:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 163:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* portNOP() is not required by this port. */
+ 164:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portNOP()
+ 165:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 166:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portINLINE              __inline
+ 167:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 168:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #ifndef portFORCE_INLINE
+ 169:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         #define portFORCE_INLINE    inline __attribute__( ( always_inline ) )
+ 170:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #endif
+ 171:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 172:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
+ 173:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 174:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     portFORCE_INLINE static BaseType_t xPortIsInsideInterrupt( void )
+ 175:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     {
+ 176:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         uint32_t ulCurrentInterrupt;
+ 177:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         BaseType_t xReturn;
+ 178:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 179:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         /* Obtain the number of the currently executing interrupt. */
+ 180:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         __asm volatile ( "mrs %0, ipsr" : "=r" ( ulCurrentInterrupt )::"memory" );
+ 181:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 182:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         if( ulCurrentInterrupt == 0 )
+ 183:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         {
+ 184:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****             xReturn = pdFALSE;
+ 185:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         }
+ 186:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         else
+ 187:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         {
+ 188:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****             xReturn = pdTRUE;
+ 189:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         }
+ 190:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 191:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         return xReturn;
+ 192:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     }
+ 193:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 194:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
+ 195:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 196:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     portFORCE_INLINE static void vPortRaiseBASEPRI( void )
+  43              		.loc 2 196 34 view .LVU5
+  44              	.LBB13:
+ 197:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     {
+ 198:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         uint32_t ulNewBASEPRI;
+  45              		.loc 2 198 9 view .LVU6
+ 199:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 200:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         __asm volatile
+  46              		.loc 2 200 9 view .LVU7
+  47              		.syntax unified
+  48              	@ 200 "Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h" 1
+  49 0006 4FF05003 			mov r3, #80												
+  50 000a 83F31188 		msr basepri, r3											
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s 			page 9
+
+
+  51 000e BFF36F8F 		isb														
+  52 0012 BFF34F8F 		dsb														
+  53              	
+  54              	@ 0 "" 2
+  55              		.thumb
+  56              		.syntax unified
+  57              	.LBE13:
+  58              	.LBE12:
+ 208:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 209:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     while( ulDummy == 0 )
+  59              		.loc 1 209 5 view .LVU8
+  60              	.L2:
+ 210:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     {
+ 211:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         /* This file calls prvTaskExitError() after the scheduler has been
+ 212:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****          * started to remove a compiler warning about the function being defined
+ 213:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****          * but never called.  ulDummy is used purely to quieten other warnings
+ 214:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****          * about code appearing after this function is called - making ulDummy
+ 215:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****          * volatile makes the compiler think the function could return and
+ 216:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****          * therefore not output an 'unreachable code' warning for code that appears
+ 217:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****          * after it. */
+ 218:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     }
+  61              		.loc 1 218 5 view .LVU9
+ 209:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     {
+  62              		.loc 1 209 20 discriminator 1 view .LVU10
+  63 0016 019B     		ldr	r3, [sp, #4]
+  64 0018 002B     		cmp	r3, #0
+  65 001a FCD0     		beq	.L2
+ 219:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** }
+  66              		.loc 1 219 1 is_stmt 0 view .LVU11
+  67 001c 02B0     		add	sp, sp, #8
+  68              	.LCFI1:
+  69              		.cfi_def_cfa_offset 0
+  70              		@ sp needed
+  71 001e 7047     		bx	lr
+  72              		.cfi_endproc
+  73              	.LFE71:
+  75              		.section	.text.prvPortStartFirstTask,"ax",%progbits
+  76              		.align	1
+  77              		.syntax unified
+  78              		.thumb
+  79              		.thumb_func
+  81              	prvPortStartFirstTask:
+  82              	.LFB73:
+ 220:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*-----------------------------------------------------------*/
+ 221:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 222:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** void vPortSVCHandler( void )
+ 223:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** {
+ 224:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     __asm volatile (
+ 225:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	ldr	r3, pxCurrentTCBConst2		\n"/* Restore the context. */
+ 226:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	ldr r1, [r3]					\n"/* Use pxCurrentTCBConst to get the pxCurrentTCB address. */
+ 227:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	ldr r0, [r1]					\n"/* The first item in pxCurrentTCB is the task top of stack. */
+ 228:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	ldmia r0!, {r4-r11}				\n"/* Pop the registers that are not automatically saved on except
+ 229:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	msr psp, r0						\n"/* Restore the task stack pointer. */
+ 230:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	isb								\n"
+ 231:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	mov r0, #0 						\n"
+ 232:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	msr	basepri, r0					\n"
+ 233:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	orr r14, #0xd					\n"
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s 			page 10
+
+
+ 234:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	bx r14							\n"
+ 235:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "									\n"
+ 236:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	.align 4						\n"
+ 237:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "pxCurrentTCBConst2: .word pxCurrentTCB				\n"
+ 238:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         );
+ 239:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** }
+ 240:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*-----------------------------------------------------------*/
+ 241:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 242:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** static void prvPortStartFirstTask( void )
+ 243:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** {
+  83              		.loc 1 243 1 is_stmt 1 view -0
+  84              		.cfi_startproc
+  85              		@ Naked Function: prologue and epilogue provided by programmer.
+  86              		@ args = 0, pretend = 0, frame = 0
+  87              		@ frame_needed = 0, uses_anonymous_args = 0
+ 244:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     __asm volatile (
+  88              		.loc 1 244 5 view .LVU13
+  89              		.syntax unified
+  90              	@ 244 "Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c" 1
+  91 0000 0648     		 ldr r0, =0xE000ED08 	
+  92 0002 0068     	 ldr r0, [r0] 			
+  93 0004 0068     	 ldr r0, [r0] 			
+  94 0006 80F30888 	 msr msp, r0			
+  95 000a 62B6     	 cpsie i				
+  96 000c 61B6     	 cpsie f				
+  97 000e BFF34F8F 	 dsb					
+  98 0012 BFF36F8F 	 isb					
+  99 0016 00DF     	 svc 0					
+ 100 0018 00BF     	 nop					
+ 101 001a 000008ED 	 .ltorg				
+ 101      00E0
+ 102              	
+ 103              	@ 0 "" 2
+ 245:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         " ldr r0, =0xE000ED08 	\n"/* Use the NVIC offset register to locate the stack. */
+ 246:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         " ldr r0, [r0] 			\n"
+ 247:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         " ldr r0, [r0] 			\n"
+ 248:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         " msr msp, r0			\n"/* Set the msp back to the start of the stack. */
+ 249:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         " cpsie i				\n"/* Globally enable interrupts. */
+ 250:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         " cpsie f				\n"
+ 251:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         " dsb					\n"
+ 252:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         " isb					\n"
+ 253:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         " svc 0					\n"/* System call to start first task. */
+ 254:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         " nop					\n"
+ 255:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         " .ltorg				\n"
+ 256:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         );
+ 257:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** }
+ 104              		.loc 1 257 1 is_stmt 0 view .LVU14
+ 105              		.thumb
+ 106              		.syntax unified
+ 107              		.cfi_endproc
+ 108              	.LFE73:
+ 110              		.section	.text.pxPortInitialiseStack,"ax",%progbits
+ 111              		.align	1
+ 112              		.global	pxPortInitialiseStack
+ 113              		.syntax unified
+ 114              		.thumb
+ 115              		.thumb_func
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s 			page 11
+
+
+ 117              	pxPortInitialiseStack:
+ 118              	.LVL0:
+ 119              	.LFB70:
+ 179:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     /* Simulate the stack frame as it would be created by a context switch
+ 120              		.loc 1 179 1 is_stmt 1 view -0
+ 121              		.cfi_startproc
+ 122              		@ args = 0, pretend = 0, frame = 0
+ 123              		@ frame_needed = 0, uses_anonymous_args = 0
+ 124              		@ link register save eliminated.
+ 182:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     *pxTopOfStack = portINITIAL_XPSR;                                    /* xPSR */
+ 125              		.loc 1 182 5 view .LVU16
+ 183:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     pxTopOfStack--;
+ 126              		.loc 1 183 5 view .LVU17
+ 183:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     pxTopOfStack--;
+ 127              		.loc 1 183 19 is_stmt 0 view .LVU18
+ 128 0000 4FF08073 		mov	r3, #16777216
+ 129 0004 40F8043C 		str	r3, [r0, #-4]
+ 184:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     *pxTopOfStack = ( ( StackType_t ) pxCode ) & portSTART_ADDRESS_MASK; /* PC */
+ 130              		.loc 1 184 5 is_stmt 1 view .LVU19
+ 131              	.LVL1:
+ 185:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     pxTopOfStack--;
+ 132              		.loc 1 185 5 view .LVU20
+ 185:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     pxTopOfStack--;
+ 133              		.loc 1 185 48 is_stmt 0 view .LVU21
+ 134 0008 21F00101 		bic	r1, r1, #1
+ 135              	.LVL2:
+ 185:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     pxTopOfStack--;
+ 136              		.loc 1 185 19 view .LVU22
+ 137 000c 40F8081C 		str	r1, [r0, #-8]
+ 186:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     *pxTopOfStack = ( StackType_t ) portTASK_RETURN_ADDRESS;             /* LR */
+ 138              		.loc 1 186 5 is_stmt 1 view .LVU23
+ 139              	.LVL3:
+ 187:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     pxTopOfStack -= 5;                                                   /* R12, R3, R2 and R1. */
+ 140              		.loc 1 187 5 view .LVU24
+ 187:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     pxTopOfStack -= 5;                                                   /* R12, R3, R2 and R1. */
+ 141              		.loc 1 187 21 is_stmt 0 view .LVU25
+ 142 0010 034B     		ldr	r3, .L6
+ 187:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     pxTopOfStack -= 5;                                                   /* R12, R3, R2 and R1. */
+ 143              		.loc 1 187 19 view .LVU26
+ 144 0012 40F80C3C 		str	r3, [r0, #-12]
+ 188:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     *pxTopOfStack = ( StackType_t ) pvParameters;                        /* R0 */
+ 145              		.loc 1 188 5 is_stmt 1 view .LVU27
+ 146              	.LVL4:
+ 189:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     pxTopOfStack -= 8;                                                   /* R11, R10, R9, R8, R7, R
+ 147              		.loc 1 189 5 view .LVU28
+ 189:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     pxTopOfStack -= 8;                                                   /* R11, R10, R9, R8, R7, R
+ 148              		.loc 1 189 19 is_stmt 0 view .LVU29
+ 149 0016 40F8202C 		str	r2, [r0, #-32]
+ 190:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 150              		.loc 1 190 5 is_stmt 1 view .LVU30
+ 151              	.LVL5:
+ 192:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** }
+ 152              		.loc 1 192 5 view .LVU31
+ 193:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*-----------------------------------------------------------*/
+ 153              		.loc 1 193 1 is_stmt 0 view .LVU32
+ 154 001a 4038     		subs	r0, r0, #64
+ 155              	.LVL6:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s 			page 12
+
+
+ 193:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*-----------------------------------------------------------*/
+ 156              		.loc 1 193 1 view .LVU33
+ 157 001c 7047     		bx	lr
+ 158              	.L7:
+ 159 001e 00BF     		.align	2
+ 160              	.L6:
+ 161 0020 00000000 		.word	prvTaskExitError
+ 162              		.cfi_endproc
+ 163              	.LFE70:
+ 165              		.section	.text.SVC_Handler,"ax",%progbits
+ 166              		.align	1
+ 167              		.global	SVC_Handler
+ 168              		.syntax unified
+ 169              		.thumb
+ 170              		.thumb_func
+ 172              	SVC_Handler:
+ 173              	.LFB72:
+ 223:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     __asm volatile (
+ 174              		.loc 1 223 1 is_stmt 1 view -0
+ 175              		.cfi_startproc
+ 176              		@ Naked Function: prologue and epilogue provided by programmer.
+ 177              		@ args = 0, pretend = 0, frame = 0
+ 178              		@ frame_needed = 0, uses_anonymous_args = 0
+ 224:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	ldr	r3, pxCurrentTCBConst2		\n"/* Restore the context. */
+ 179              		.loc 1 224 5 view .LVU35
+ 180              		.syntax unified
+ 181              	@ 224 "Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c" 1
+ 182 0000 074B     			ldr	r3, pxCurrentTCBConst2		
+ 183 0002 1968     		ldr r1, [r3]					
+ 184 0004 0868     		ldr r0, [r1]					
+ 185 0006 B0E8F00F 		ldmia r0!, {r4-r11}				
+ 186 000a 80F30988 		msr psp, r0						
+ 187 000e BFF36F8F 		isb								
+ 188 0012 4FF00000 		mov r0, #0 						
+ 189 0016 80F31188 		msr	basepri, r0					
+ 190 001a 4EF00D0E 		orr r14, #0xd					
+ 191 001e 7047     		bx r14							
+ 192              										
+ 193              		.align 4						
+ 194 0020 00000000 	pxCurrentTCBConst2: .word pxCurrentTCB				
+ 195              	
+ 196              	@ 0 "" 2
+ 239:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*-----------------------------------------------------------*/
+ 197              		.loc 1 239 1 is_stmt 0 view .LVU36
+ 198              		.thumb
+ 199              		.syntax unified
+ 200              		.cfi_endproc
+ 201              	.LFE72:
+ 203              		.section	.text.vPortEndScheduler,"ax",%progbits
+ 204              		.align	1
+ 205              		.global	vPortEndScheduler
+ 206              		.syntax unified
+ 207              		.thumb
+ 208              		.thumb_func
+ 210              	vPortEndScheduler:
+ 211              	.LFB75:
+ 258:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*-----------------------------------------------------------*/
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s 			page 13
+
+
+ 259:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 260:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*
+ 261:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * See header file for description.
+ 262:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  */
+ 263:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** BaseType_t xPortStartScheduler( void )
+ 264:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** {
+ 265:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     /* configMAX_SYSCALL_INTERRUPT_PRIORITY must not be set to 0.
+ 266:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****      * See https://www.FreeRTOS.org/RTOS-Cortex-M3-M4.html */
+ 267:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     configASSERT( configMAX_SYSCALL_INTERRUPT_PRIORITY );
+ 268:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 269:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     #if ( configASSERT_DEFINED == 1 )
+ 270:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         {
+ 271:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             volatile uint32_t ulOriginalPriority;
+ 272:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             volatile uint8_t * const pucFirstUserPriorityRegister = ( volatile uint8_t * const ) ( 
+ 273:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             volatile uint8_t ucMaxPriorityValue;
+ 274:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 275:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             /* Determine the maximum priority from which ISR safe FreeRTOS API
+ 276:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * functions can be called.  ISR safe functions are those that end in
+ 277:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * "FromISR".  FreeRTOS maintains separate thread and ISR API functions to
+ 278:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * ensure interrupt entry is as fast and simple as possible.
+ 279:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              *
+ 280:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * Save the interrupt priority value that is about to be clobbered. */
+ 281:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             ulOriginalPriority = *pucFirstUserPriorityRegister;
+ 282:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 283:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             /* Determine the number of priority bits available.  First write to all
+ 284:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * possible bits. */
+ 285:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             *pucFirstUserPriorityRegister = portMAX_8_BIT_VALUE;
+ 286:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 287:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             /* Read the value back to see how many bits stuck. */
+ 288:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             ucMaxPriorityValue = *pucFirstUserPriorityRegister;
+ 289:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 290:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             /* Use the same mask on the maximum system call priority. */
+ 291:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             ucMaxSysCallPriority = configMAX_SYSCALL_INTERRUPT_PRIORITY & ucMaxPriorityValue;
+ 292:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 293:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             /* Calculate the maximum acceptable priority group value for the number
+ 294:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * of bits read back. */
+ 295:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             ulMaxPRIGROUPValue = portMAX_PRIGROUP_BITS;
+ 296:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 297:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             while( ( ucMaxPriorityValue & portTOP_BIT_OF_BYTE ) == portTOP_BIT_OF_BYTE )
+ 298:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             {
+ 299:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                 ulMaxPRIGROUPValue--;
+ 300:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                 ucMaxPriorityValue <<= ( uint8_t ) 0x01;
+ 301:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             }
+ 302:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 303:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             #ifdef __NVIC_PRIO_BITS
+ 304:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                 {
+ 305:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                     /* Check the CMSIS configuration that defines the number of
+ 306:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                      * priority bits matches the number of priority bits actually queried
+ 307:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                      * from the hardware. */
+ 308:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                     configASSERT( ( portMAX_PRIGROUP_BITS - ulMaxPRIGROUPValue ) == __NVIC_PRIO_BIT
+ 309:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                 }
+ 310:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             #endif
+ 311:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 312:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             #ifdef configPRIO_BITS
+ 313:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                 {
+ 314:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                     /* Check the FreeRTOS configuration that defines the number of
+ 315:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                      * priority bits matches the number of priority bits actually queried
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s 			page 14
+
+
+ 316:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                      * from the hardware. */
+ 317:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                     configASSERT( ( portMAX_PRIGROUP_BITS - ulMaxPRIGROUPValue ) == configPRIO_BITS
+ 318:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                 }
+ 319:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             #endif
+ 320:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 321:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             /* Shift the priority group value back to its position within the AIRCR
+ 322:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * register. */
+ 323:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             ulMaxPRIGROUPValue <<= portPRIGROUP_SHIFT;
+ 324:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             ulMaxPRIGROUPValue &= portPRIORITY_GROUP_MASK;
+ 325:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 326:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             /* Restore the clobbered interrupt priority register to its original
+ 327:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * value. */
+ 328:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             *pucFirstUserPriorityRegister = ulOriginalPriority;
+ 329:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         }
+ 330:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     #endif /* configASSERT_DEFINED */
+ 331:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 332:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     /* Make PendSV and SysTick the lowest priority interrupts. */
+ 333:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     portNVIC_SHPR3_REG |= portNVIC_PENDSV_PRI;
+ 334:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     portNVIC_SHPR3_REG |= portNVIC_SYSTICK_PRI;
+ 335:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 336:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     /* Start the timer that generates the tick ISR.  Interrupts are disabled
+ 337:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****      * here already. */
+ 338:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     vPortSetupTimerInterrupt();
+ 339:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 340:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     /* Initialise the critical nesting count ready for the first task. */
+ 341:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     uxCriticalNesting = 0;
+ 342:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 343:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     /* Start the first task. */
+ 344:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     prvPortStartFirstTask();
+ 345:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 346:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     /* Should never get here as the tasks will now be executing!  Call the task
+ 347:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****      * exit error function to prevent compiler warnings about a static function
+ 348:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****      * not being called in the case that the application writer overrides this
+ 349:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****      * functionality by defining configTASK_RETURN_ADDRESS.  Call
+ 350:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****      * vTaskSwitchContext() so link time optimisation does not remove the
+ 351:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****      * symbol. */
+ 352:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     vTaskSwitchContext();
+ 353:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     prvTaskExitError();
+ 354:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 355:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     /* Should not get here! */
+ 356:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     return 0;
+ 357:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** }
+ 358:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*-----------------------------------------------------------*/
+ 359:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 360:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** void vPortEndScheduler( void )
+ 361:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** {
+ 212              		.loc 1 361 1 is_stmt 1 view -0
+ 213              		.cfi_startproc
+ 214              		@ args = 0, pretend = 0, frame = 0
+ 215              		@ frame_needed = 0, uses_anonymous_args = 0
+ 216              		@ link register save eliminated.
+ 362:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     /* Not implemented in ports where there is nothing to return to.
+ 363:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****      * Artificially force an assert. */
+ 364:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     configASSERT( uxCriticalNesting == 1000UL );
+ 217              		.loc 1 364 48 view .LVU38
+ 365:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** }
+ 218              		.loc 1 365 1 is_stmt 0 view .LVU39
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s 			page 15
+
+
+ 219 0000 7047     		bx	lr
+ 220              		.cfi_endproc
+ 221              	.LFE75:
+ 223              		.section	.text.vPortEnterCritical,"ax",%progbits
+ 224              		.align	1
+ 225              		.global	vPortEnterCritical
+ 226              		.syntax unified
+ 227              		.thumb
+ 228              		.thumb_func
+ 230              	vPortEnterCritical:
+ 231              	.LFB76:
+ 366:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*-----------------------------------------------------------*/
+ 367:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 368:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** void vPortEnterCritical( void )
+ 369:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** {
+ 232              		.loc 1 369 1 is_stmt 1 view -0
+ 233              		.cfi_startproc
+ 234              		@ args = 0, pretend = 0, frame = 0
+ 235              		@ frame_needed = 0, uses_anonymous_args = 0
+ 236              		@ link register save eliminated.
+ 370:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     portDISABLE_INTERRUPTS();
+ 237              		.loc 1 370 5 view .LVU41
+ 238              	.LBB14:
+ 239              	.LBI14:
+ 196:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     {
+ 240              		.loc 2 196 34 view .LVU42
+ 241              	.LBB15:
+ 198:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 242              		.loc 2 198 9 view .LVU43
+ 243              		.loc 2 200 9 view .LVU44
+ 244              		.syntax unified
+ 245              	@ 200 "Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h" 1
+ 246 0000 4FF05003 			mov r3, #80												
+ 247 0004 83F31188 		msr basepri, r3											
+ 248 0008 BFF36F8F 		isb														
+ 249 000c BFF34F8F 		dsb														
+ 250              	
+ 251              	@ 0 "" 2
+ 252              		.thumb
+ 253              		.syntax unified
+ 254              	.LBE15:
+ 255              	.LBE14:
+ 371:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     uxCriticalNesting++;
+ 256              		.loc 1 371 5 view .LVU45
+ 257              		.loc 1 371 22 is_stmt 0 view .LVU46
+ 258 0010 024A     		ldr	r2, .L11
+ 259 0012 1368     		ldr	r3, [r2]
+ 260 0014 0133     		adds	r3, r3, #1
+ 261 0016 1360     		str	r3, [r2]
+ 372:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 373:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     /* This is not the interrupt safe version of the enter critical function so
+ 374:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****      * assert() if it is being called from an interrupt context.  Only API
+ 375:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****      * functions that end in "FromISR" can be used in an interrupt.  Only assert if
+ 376:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****      * the critical nesting count is 1 to protect against recursive calls if the
+ 377:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****      * assert function also uses a critical section. */
+ 378:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     if( uxCriticalNesting == 1 )
+ 262              		.loc 1 378 5 is_stmt 1 view .LVU47
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s 			page 16
+
+
+ 379:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     {
+ 380:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         configASSERT( ( portNVIC_INT_CTRL_REG & portVECTACTIVE_MASK ) == 0 );
+ 263              		.loc 1 380 77 view .LVU48
+ 381:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     }
+ 382:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** }
+ 264              		.loc 1 382 1 is_stmt 0 view .LVU49
+ 265 0018 7047     		bx	lr
+ 266              	.L12:
+ 267 001a 00BF     		.align	2
+ 268              	.L11:
+ 269 001c 00000000 		.word	uxCriticalNesting
+ 270              		.cfi_endproc
+ 271              	.LFE76:
+ 273              		.section	.text.vPortExitCritical,"ax",%progbits
+ 274              		.align	1
+ 275              		.global	vPortExitCritical
+ 276              		.syntax unified
+ 277              		.thumb
+ 278              		.thumb_func
+ 280              	vPortExitCritical:
+ 281              	.LFB77:
+ 383:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*-----------------------------------------------------------*/
+ 384:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 385:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** void vPortExitCritical( void )
+ 386:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** {
+ 282              		.loc 1 386 1 is_stmt 1 view -0
+ 283              		.cfi_startproc
+ 284              		@ args = 0, pretend = 0, frame = 0
+ 285              		@ frame_needed = 0, uses_anonymous_args = 0
+ 286              		@ link register save eliminated.
+ 387:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     configASSERT( uxCriticalNesting );
+ 287              		.loc 1 387 38 view .LVU51
+ 388:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     uxCriticalNesting--;
+ 288              		.loc 1 388 5 view .LVU52
+ 289              		.loc 1 388 22 is_stmt 0 view .LVU53
+ 290 0000 034A     		ldr	r2, .L15
+ 291 0002 1368     		ldr	r3, [r2]
+ 292 0004 013B     		subs	r3, r3, #1
+ 293 0006 1360     		str	r3, [r2]
+ 389:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 390:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     if( uxCriticalNesting == 0 )
+ 294              		.loc 1 390 5 is_stmt 1 view .LVU54
+ 295              		.loc 1 390 7 is_stmt 0 view .LVU55
+ 296 0008 0BB9     		cbnz	r3, .L13
+ 391:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     {
+ 392:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         portENABLE_INTERRUPTS();
+ 297              		.loc 1 392 9 is_stmt 1 view .LVU56
+ 298              	.LVL7:
+ 299              	.LBB16:
+ 300              	.LBI16:
+ 201:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         (
+ 202:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****             "	mov %0, %1												\n"\
+ 203:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****             "	msr basepri, %0											\n"\
+ 204:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****             "	isb														\n"\
+ 205:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****             "	dsb														\n"\
+ 206:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****             : "=r" ( ulNewBASEPRI ) : "i" ( configMAX_SYSCALL_INTERRUPT_PRIORITY ) : "memory"
+ 207:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         );
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s 			page 17
+
+
+ 208:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     }
+ 209:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 210:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
+ 211:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 212:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     portFORCE_INLINE static uint32_t ulPortRaiseBASEPRI( void )
+ 213:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     {
+ 214:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         uint32_t ulOriginalBASEPRI, ulNewBASEPRI;
+ 215:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 216:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         __asm volatile
+ 217:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         (
+ 218:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****             "	mrs %0, basepri											\n"\
+ 219:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****             "	mov %1, %2												\n"\
+ 220:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****             "	msr basepri, %1											\n"\
+ 221:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****             "	isb														\n"\
+ 222:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****             "	dsb														\n"\
+ 223:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****             : "=r" ( ulOriginalBASEPRI ), "=r" ( ulNewBASEPRI ) : "i" ( configMAX_SYSCALL_INTERRUPT
+ 224:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         );
+ 225:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 226:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         /* This return will not be reached but is necessary to prevent compiler
+ 227:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****          * warnings. */
+ 228:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         return ulOriginalBASEPRI;
+ 229:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     }
+ 230:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
+ 231:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 232:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     portFORCE_INLINE static void vPortSetBASEPRI( uint32_t ulNewMaskValue )
+ 301              		.loc 2 232 34 view .LVU57
+ 302              	.LBB17:
+ 233:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     {
+ 234:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         __asm volatile
+ 303              		.loc 2 234 9 view .LVU58
+ 304              		.syntax unified
+ 305              	@ 234 "Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h" 1
+ 306 000a 83F31188 			msr basepri, r3	
+ 307              	@ 0 "" 2
+ 308              	.LVL8:
+ 309              		.thumb
+ 310              		.syntax unified
+ 311              	.L13:
+ 312              		.loc 2 234 9 is_stmt 0 view .LVU59
+ 313              	.LBE17:
+ 314              	.LBE16:
+ 393:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     }
+ 394:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** }
+ 315              		.loc 1 394 1 view .LVU60
+ 316 000e 7047     		bx	lr
+ 317              	.L16:
+ 318              		.align	2
+ 319              	.L15:
+ 320 0010 00000000 		.word	uxCriticalNesting
+ 321              		.cfi_endproc
+ 322              	.LFE77:
+ 324              		.section	.text.PendSV_Handler,"ax",%progbits
+ 325              		.align	1
+ 326              		.global	PendSV_Handler
+ 327              		.syntax unified
+ 328              		.thumb
+ 329              		.thumb_func
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s 			page 18
+
+
+ 331              	PendSV_Handler:
+ 332              	.LFB78:
+ 395:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*-----------------------------------------------------------*/
+ 396:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 397:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** void xPortPendSVHandler( void )
+ 398:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** {
+ 333              		.loc 1 398 1 is_stmt 1 view -0
+ 334              		.cfi_startproc
+ 335              		@ Naked Function: prologue and epilogue provided by programmer.
+ 336              		@ args = 0, pretend = 0, frame = 0
+ 337              		@ frame_needed = 0, uses_anonymous_args = 0
+ 399:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     /* This is a naked function. */
+ 400:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 401:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     __asm volatile
+ 338              		.loc 1 401 5 view .LVU62
+ 339              		.syntax unified
+ 340              	@ 401 "Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c" 1
+ 341 0000 EFF30980 			mrs r0, psp							
+ 342 0004 BFF36F8F 		isb									
+ 343              											
+ 344 0008 0D4B     		ldr	r3, pxCurrentTCBConst			
+ 345 000a 1A68     		ldr	r2, [r3]						
+ 346              											
+ 347 000c 20E9F00F 		stmdb r0!, {r4-r11}					
+ 348 0010 1060     		str r0, [r2]						
+ 349              											
+ 350 0012 2DE90840 		stmdb sp!, {r3, r14}				
+ 351 0016 4FF05000 		mov r0, #80							
+ 352 001a 80F31188 		msr basepri, r0						
+ 353 001e FFF7FEFF 		bl vTaskSwitchContext				
+ 354 0022 4FF00000 		mov r0, #0							
+ 355 0026 80F31188 		msr basepri, r0						
+ 356 002a BDE80840 		ldmia sp!, {r3, r14}				
+ 357              											
+ 358 002e 1968     		ldr r1, [r3]						
+ 359 0030 0868     		ldr r0, [r1]						
+ 360 0032 B0E8F00F 		ldmia r0!, {r4-r11}					
+ 361 0036 80F30988 		msr psp, r0							
+ 362 003a BFF36F8F 		isb									
+ 363 003e 7047     		bx r14								
+ 364              											
+ 365              		.align 4							
+ 366 0040 00000000 	pxCurrentTCBConst: .word pxCurrentTCB	
+ 367              	
+ 368              	@ 0 "" 2
+ 402:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     (
+ 403:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	mrs r0, psp							\n"
+ 404:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	isb									\n"
+ 405:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "										\n"
+ 406:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	ldr	r3, pxCurrentTCBConst			\n"/* Get the location of the current TCB. */
+ 407:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	ldr	r2, [r3]						\n"
+ 408:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "										\n"
+ 409:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	stmdb r0!, {r4-r11}					\n"/* Save the remaining registers. */
+ 410:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	str r0, [r2]						\n"/* Save the new top of stack into the first member of the TCB. */
+ 411:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "										\n"
+ 412:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	stmdb sp!, {r3, r14}				\n"
+ 413:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	mov r0, %0							\n"
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s 			page 19
+
+
+ 414:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	msr basepri, r0						\n"
+ 415:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	bl vTaskSwitchContext				\n"
+ 416:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	mov r0, #0							\n"
+ 417:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	msr basepri, r0						\n"
+ 418:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	ldmia sp!, {r3, r14}				\n"
+ 419:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "										\n"/* Restore the context, including the critical nesting count. */
+ 420:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	ldr r1, [r3]						\n"
+ 421:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	ldr r0, [r1]						\n"/* The first item in pxCurrentTCB is the task top of stack. */
+ 422:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	ldmia r0!, {r4-r11}					\n"/* Pop the registers. */
+ 423:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	msr psp, r0							\n"
+ 424:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	isb									\n"
+ 425:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	bx r14								\n"
+ 426:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "										\n"
+ 427:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	.align 4							\n"
+ 428:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "pxCurrentTCBConst: .word pxCurrentTCB	\n"
+ 429:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         ::"i" ( configMAX_SYSCALL_INTERRUPT_PRIORITY )
+ 430:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     );
+ 431:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** }
+ 369              		.loc 1 431 1 is_stmt 0 view .LVU63
+ 370              		.thumb
+ 371              		.syntax unified
+ 372              		.cfi_endproc
+ 373              	.LFE78:
+ 375              		.section	.text.SysTick_Handler,"ax",%progbits
+ 376              		.align	1
+ 377              		.global	SysTick_Handler
+ 378              		.syntax unified
+ 379              		.thumb
+ 380              		.thumb_func
+ 382              	SysTick_Handler:
+ 383              	.LFB79:
+ 432:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*-----------------------------------------------------------*/
+ 433:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 434:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** void xPortSysTickHandler( void )
+ 435:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** {
+ 384              		.loc 1 435 1 is_stmt 1 view -0
+ 385              		.cfi_startproc
+ 386              		@ args = 0, pretend = 0, frame = 0
+ 387              		@ frame_needed = 0, uses_anonymous_args = 0
+ 388 0000 08B5     		push	{r3, lr}
+ 389              	.LCFI2:
+ 390              		.cfi_def_cfa_offset 8
+ 391              		.cfi_offset 3, -8
+ 392              		.cfi_offset 14, -4
+ 436:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     /* The SysTick runs at the lowest interrupt priority, so when this interrupt
+ 437:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****      * executes all interrupts must be unmasked.  There is therefore no need to
+ 438:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****      * save and then restore the interrupt mask value as its value is already
+ 439:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****      * known. */
+ 440:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     portDISABLE_INTERRUPTS();
+ 393              		.loc 1 440 5 view .LVU65
+ 394              	.LBB18:
+ 395              	.LBI18:
+ 196:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     {
+ 396              		.loc 2 196 34 view .LVU66
+ 397              	.LBB19:
+ 198:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 398              		.loc 2 198 9 view .LVU67
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s 			page 20
+
+
+ 200:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         (
+ 399              		.loc 2 200 9 view .LVU68
+ 400              		.syntax unified
+ 401              	@ 200 "Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h" 1
+ 402 0002 4FF05003 			mov r3, #80												
+ 403 0006 83F31188 		msr basepri, r3											
+ 404 000a BFF36F8F 		isb														
+ 405 000e BFF34F8F 		dsb														
+ 406              	
+ 407              	@ 0 "" 2
+ 408              		.thumb
+ 409              		.syntax unified
+ 410              	.LBE19:
+ 411              	.LBE18:
+ 441:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     {
+ 442:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         /* Increment the RTOS tick. */
+ 443:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         if( xTaskIncrementTick() != pdFALSE )
+ 412              		.loc 1 443 9 view .LVU69
+ 413              		.loc 1 443 13 is_stmt 0 view .LVU70
+ 414 0012 FFF7FEFF 		bl	xTaskIncrementTick
+ 415              	.LVL9:
+ 416              		.loc 1 443 11 discriminator 1 view .LVU71
+ 417 0016 28B1     		cbz	r0, .L19
+ 444:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         {
+ 445:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             /* A context switch is required.  Context switching is performed in
+ 446:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * the PendSV interrupt.  Pend the PendSV interrupt. */
+ 447:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             portNVIC_INT_CTRL_REG = portNVIC_PENDSVSET_BIT;
+ 418              		.loc 1 447 13 is_stmt 1 view .LVU72
+ 419              		.loc 1 447 35 is_stmt 0 view .LVU73
+ 420 0018 4FF0E023 		mov	r3, #-536813568
+ 421 001c 4FF08052 		mov	r2, #268435456
+ 422 0020 C3F8042D 		str	r2, [r3, #3332]
+ 423              	.L19:
+ 448:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         }
+ 449:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     }
+ 450:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     portENABLE_INTERRUPTS();
+ 424              		.loc 1 450 5 is_stmt 1 view .LVU74
+ 425              	.LVL10:
+ 426              	.LBB20:
+ 427              	.LBI20:
+ 232:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     {
+ 428              		.loc 2 232 34 view .LVU75
+ 429              	.LBB21:
+ 430              		.loc 2 234 9 view .LVU76
+ 431 0024 0023     		movs	r3, #0
+ 432              		.syntax unified
+ 433              	@ 234 "Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h" 1
+ 434 0026 83F31188 			msr basepri, r3	
+ 435              	@ 0 "" 2
+ 436              	.LVL11:
+ 437              		.loc 2 234 9 is_stmt 0 view .LVU77
+ 438              		.thumb
+ 439              		.syntax unified
+ 440              	.LBE21:
+ 441              	.LBE20:
+ 451:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** }
+ 442              		.loc 1 451 1 view .LVU78
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s 			page 21
+
+
+ 443 002a 08BD     		pop	{r3, pc}
+ 444              		.cfi_endproc
+ 445              	.LFE79:
+ 447              		.section	.text.vPortSetupTimerInterrupt,"ax",%progbits
+ 448              		.align	1
+ 449              		.weak	vPortSetupTimerInterrupt
+ 450              		.syntax unified
+ 451              		.thumb
+ 452              		.thumb_func
+ 454              	vPortSetupTimerInterrupt:
+ 455              	.LFB80:
+ 452:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*-----------------------------------------------------------*/
+ 453:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 454:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #if ( configUSE_TICKLESS_IDLE == 1 )
+ 455:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 456:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     __attribute__( ( weak ) ) void vPortSuppressTicksAndSleep( TickType_t xExpectedIdleTime )
+ 457:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     {
+ 458:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         uint32_t ulReloadValue, ulCompleteTickPeriods, ulCompletedSysTickDecrements;
+ 459:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         TickType_t xModifiableIdleTime;
+ 460:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 461:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         /* Make sure the SysTick reload value does not overflow the counter. */
+ 462:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         if( xExpectedIdleTime > xMaximumPossibleSuppressedTicks )
+ 463:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         {
+ 464:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             xExpectedIdleTime = xMaximumPossibleSuppressedTicks;
+ 465:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         }
+ 466:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 467:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         /* Stop the SysTick momentarily.  The time the SysTick is stopped for
+ 468:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****          * is accounted for as best it can be, but using the tickless mode will
+ 469:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****          * inevitably result in some tiny drift of the time maintained by the
+ 470:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****          * kernel with respect to calendar time. */
+ 471:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         portNVIC_SYSTICK_CTRL_REG &= ~portNVIC_SYSTICK_ENABLE_BIT;
+ 472:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 473:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         /* Calculate the reload value required to wait xExpectedIdleTime
+ 474:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****          * tick periods.  -1 is used because this code will execute part way
+ 475:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****          * through one of the tick periods. */
+ 476:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         ulReloadValue = portNVIC_SYSTICK_CURRENT_VALUE_REG + ( ulTimerCountsForOneTick * ( xExpecte
+ 477:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 478:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         if( ulReloadValue > ulStoppedTimerCompensation )
+ 479:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         {
+ 480:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             ulReloadValue -= ulStoppedTimerCompensation;
+ 481:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         }
+ 482:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 483:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         /* Enter a critical section but don't use the taskENTER_CRITICAL()
+ 484:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****          * method as that will mask interrupts that should exit sleep mode. */
+ 485:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         __asm volatile ( "cpsid i" ::: "memory" );
+ 486:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         __asm volatile ( "dsb" );
+ 487:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         __asm volatile ( "isb" );
+ 488:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 489:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         /* If a context switch is pending or a task is waiting for the scheduler
+ 490:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****          * to be unsuspended then abandon the low power entry. */
+ 491:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         if( eTaskConfirmSleepModeStatus() == eAbortSleep )
+ 492:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         {
+ 493:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             /* Restart from whatever is left in the count register to complete
+ 494:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * this tick period. */
+ 495:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             portNVIC_SYSTICK_LOAD_REG = portNVIC_SYSTICK_CURRENT_VALUE_REG;
+ 496:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 497:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             /* Restart SysTick. */
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s 			page 22
+
+
+ 498:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             portNVIC_SYSTICK_CTRL_REG |= portNVIC_SYSTICK_ENABLE_BIT;
+ 499:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 500:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             /* Reset the reload register to the value required for normal tick
+ 501:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * periods. */
+ 502:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             portNVIC_SYSTICK_LOAD_REG = ulTimerCountsForOneTick - 1UL;
+ 503:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 504:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             /* Re-enable interrupts - see comments above the cpsid instruction()
+ 505:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * above. */
+ 506:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             __asm volatile ( "cpsie i" ::: "memory" );
+ 507:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         }
+ 508:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         else
+ 509:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         {
+ 510:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             /* Set the new reload value. */
+ 511:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             portNVIC_SYSTICK_LOAD_REG = ulReloadValue;
+ 512:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 513:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             /* Clear the SysTick count flag and set the count value back to
+ 514:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * zero. */
+ 515:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             portNVIC_SYSTICK_CURRENT_VALUE_REG = 0UL;
+ 516:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 517:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             /* Restart SysTick. */
+ 518:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             portNVIC_SYSTICK_CTRL_REG |= portNVIC_SYSTICK_ENABLE_BIT;
+ 519:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 520:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             /* Sleep until something happens.  configPRE_SLEEP_PROCESSING() can
+ 521:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * set its parameter to 0 to indicate that its implementation contains
+ 522:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * its own wait for interrupt or wait for event instruction, and so wfi
+ 523:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * should not be executed again.  However, the original expected idle
+ 524:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * time variable must remain unmodified, so a copy is taken. */
+ 525:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             xModifiableIdleTime = xExpectedIdleTime;
+ 526:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             configPRE_SLEEP_PROCESSING( xModifiableIdleTime );
+ 527:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 528:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             if( xModifiableIdleTime > 0 )
+ 529:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             {
+ 530:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                 __asm volatile ( "dsb" ::: "memory" );
+ 531:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                 __asm volatile ( "wfi" );
+ 532:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                 __asm volatile ( "isb" );
+ 533:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             }
+ 534:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 535:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             configPOST_SLEEP_PROCESSING( xExpectedIdleTime );
+ 536:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 537:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             /* Re-enable interrupts to allow the interrupt that brought the MCU
+ 538:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * out of sleep mode to execute immediately.  see comments above
+ 539:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * __disable_interrupt() call above. */
+ 540:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             __asm volatile ( "cpsie i" ::: "memory" );
+ 541:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             __asm volatile ( "dsb" );
+ 542:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             __asm volatile ( "isb" );
+ 543:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 544:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             /* Disable interrupts again because the clock is about to be stopped
+ 545:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * and interrupts that execute while the clock is stopped will increase
+ 546:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * any slippage between the time maintained by the RTOS and calendar
+ 547:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * time. */
+ 548:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             __asm volatile ( "cpsid i" ::: "memory" );
+ 549:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             __asm volatile ( "dsb" );
+ 550:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             __asm volatile ( "isb" );
+ 551:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 552:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             /* Disable the SysTick clock without reading the
+ 553:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * portNVIC_SYSTICK_CTRL_REG register to ensure the
+ 554:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * portNVIC_SYSTICK_COUNT_FLAG_BIT is not cleared if it is set.  Again,
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s 			page 23
+
+
+ 555:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * the time the SysTick is stopped for is accounted for as best it can
+ 556:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * be, but using the tickless mode will inevitably result in some tiny
+ 557:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * drift of the time maintained by the kernel with respect to calendar
+ 558:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * time*/
+ 559:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             portNVIC_SYSTICK_CTRL_REG = ( portNVIC_SYSTICK_CLK_BIT | portNVIC_SYSTICK_INT_BIT );
+ 560:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 561:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             /* Determine if the SysTick clock has already counted to zero and
+ 562:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * been set back to the current reload value (the reload back being
+ 563:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * correct for the entire expected idle time) or if the SysTick is yet
+ 564:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * to count to zero (in which case an interrupt other than the SysTick
+ 565:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * must have brought the system out of sleep mode). */
+ 566:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             if( ( portNVIC_SYSTICK_CTRL_REG & portNVIC_SYSTICK_COUNT_FLAG_BIT ) != 0 )
+ 567:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             {
+ 568:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                 uint32_t ulCalculatedLoadValue;
+ 569:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 570:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                 /* The tick interrupt is already pending, and the SysTick count
+ 571:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                  * reloaded with ulReloadValue.  Reset the
+ 572:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                  * portNVIC_SYSTICK_LOAD_REG with whatever remains of this tick
+ 573:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                  * period. */
+ 574:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                 ulCalculatedLoadValue = ( ulTimerCountsForOneTick - 1UL ) - ( ulReloadValue - portN
+ 575:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 576:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                 /* Don't allow a tiny value, or values that have somehow
+ 577:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                  * underflowed because the post sleep hook did something
+ 578:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                  * that took too long. */
+ 579:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                 if( ( ulCalculatedLoadValue < ulStoppedTimerCompensation ) || ( ulCalculatedLoadVal
+ 580:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                 {
+ 581:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                     ulCalculatedLoadValue = ( ulTimerCountsForOneTick - 1UL );
+ 582:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                 }
+ 583:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 584:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                 portNVIC_SYSTICK_LOAD_REG = ulCalculatedLoadValue;
+ 585:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 586:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                 /* As the pending tick will be processed as soon as this
+ 587:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                  * function exits, the tick value maintained by the tick is stepped
+ 588:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                  * forward by one less than the time spent waiting. */
+ 589:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                 ulCompleteTickPeriods = xExpectedIdleTime - 1UL;
+ 590:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             }
+ 591:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             else
+ 592:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             {
+ 593:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                 /* Something other than the tick interrupt ended the sleep.
+ 594:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                  * Work out how long the sleep lasted rounded to complete tick
+ 595:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                  * periods (not the ulReload value which accounted for part
+ 596:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                  * ticks). */
+ 597:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                 ulCompletedSysTickDecrements = ( xExpectedIdleTime * ulTimerCountsForOneTick ) - po
+ 598:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 599:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                 /* How many complete tick periods passed while the processor
+ 600:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                  * was waiting? */
+ 601:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                 ulCompleteTickPeriods = ulCompletedSysTickDecrements / ulTimerCountsForOneTick;
+ 602:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 603:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                 /* The reload value is set to whatever fraction of a single tick
+ 604:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                  * period remains. */
+ 605:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                 portNVIC_SYSTICK_LOAD_REG = ( ( ulCompleteTickPeriods + 1UL ) * ulTimerCountsForOne
+ 606:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             }
+ 607:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 608:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             /* Restart SysTick so it runs from portNVIC_SYSTICK_LOAD_REG
+ 609:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * again, then set portNVIC_SYSTICK_LOAD_REG back to its standard
+ 610:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * value. */
+ 611:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             portNVIC_SYSTICK_CURRENT_VALUE_REG = 0UL;
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s 			page 24
+
+
+ 612:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             portNVIC_SYSTICK_CTRL_REG |= portNVIC_SYSTICK_ENABLE_BIT;
+ 613:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             vTaskStepTick( ulCompleteTickPeriods );
+ 614:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             portNVIC_SYSTICK_LOAD_REG = ulTimerCountsForOneTick - 1UL;
+ 615:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 616:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             /* Exit with interrupts enabled. */
+ 617:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             __asm volatile ( "cpsie i" ::: "memory" );
+ 618:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         }
+ 619:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     }
+ 620:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 621:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #endif /* configUSE_TICKLESS_IDLE */
+ 622:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*-----------------------------------------------------------*/
+ 623:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 624:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*
+ 625:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * Setup the systick timer to generate the tick interrupts at the required
+ 626:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * frequency.
+ 627:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  */
+ 628:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** __attribute__( ( weak ) ) void vPortSetupTimerInterrupt( void )
+ 629:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** {
+ 456              		.loc 1 629 1 is_stmt 1 view -0
+ 457              		.cfi_startproc
+ 458              		@ args = 0, pretend = 0, frame = 0
+ 459              		@ frame_needed = 0, uses_anonymous_args = 0
+ 460              		@ link register save eliminated.
+ 630:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     /* Calculate the constants required to configure the tick interrupt. */
+ 631:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     #if ( configUSE_TICKLESS_IDLE == 1 )
+ 632:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         {
+ 633:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             ulTimerCountsForOneTick = ( configSYSTICK_CLOCK_HZ / configTICK_RATE_HZ );
+ 634:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             xMaximumPossibleSuppressedTicks = portMAX_24_BIT_NUMBER / ulTimerCountsForOneTick;
+ 635:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             ulStoppedTimerCompensation = portMISSED_COUNTS_FACTOR / ( configCPU_CLOCK_HZ / configSY
+ 636:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         }
+ 637:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     #endif /* configUSE_TICKLESS_IDLE */
+ 638:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 639:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     /* Stop and clear the SysTick. */
+ 640:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     portNVIC_SYSTICK_CTRL_REG = 0UL;
+ 461              		.loc 1 640 5 view .LVU80
+ 462              		.loc 1 640 31 is_stmt 0 view .LVU81
+ 463 0000 4FF0E022 		mov	r2, #-536813568
+ 464 0004 0023     		movs	r3, #0
+ 465 0006 1361     		str	r3, [r2, #16]
+ 641:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     portNVIC_SYSTICK_CURRENT_VALUE_REG = 0UL;
+ 466              		.loc 1 641 5 is_stmt 1 view .LVU82
+ 467              		.loc 1 641 40 is_stmt 0 view .LVU83
+ 468 0008 9361     		str	r3, [r2, #24]
+ 642:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 643:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     /* Configure SysTick to interrupt at the requested rate. */
+ 644:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     portNVIC_SYSTICK_LOAD_REG = ( configSYSTICK_CLOCK_HZ / configTICK_RATE_HZ ) - 1UL;
+ 469              		.loc 1 644 5 is_stmt 1 view .LVU84
+ 470              		.loc 1 644 58 is_stmt 0 view .LVU85
+ 471 000a 054B     		ldr	r3, .L22
+ 472 000c 1B68     		ldr	r3, [r3]
+ 473 000e 0549     		ldr	r1, .L22+4
+ 474 0010 A1FB0313 		umull	r1, r3, r1, r3
+ 475 0014 9B09     		lsrs	r3, r3, #6
+ 476              		.loc 1 644 81 view .LVU86
+ 477 0016 013B     		subs	r3, r3, #1
+ 478              		.loc 1 644 31 view .LVU87
+ 479 0018 5361     		str	r3, [r2, #20]
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s 			page 25
+
+
+ 645:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     portNVIC_SYSTICK_CTRL_REG = ( portNVIC_SYSTICK_CLK_BIT | portNVIC_SYSTICK_INT_BIT | portNVIC_SY
+ 480              		.loc 1 645 5 is_stmt 1 view .LVU88
+ 481              		.loc 1 645 31 is_stmt 0 view .LVU89
+ 482 001a 0723     		movs	r3, #7
+ 483 001c 1361     		str	r3, [r2, #16]
+ 646:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** }
+ 484              		.loc 1 646 1 view .LVU90
+ 485 001e 7047     		bx	lr
+ 486              	.L23:
+ 487              		.align	2
+ 488              	.L22:
+ 489 0020 00000000 		.word	SystemCoreClock
+ 490 0024 D34D6210 		.word	274877907
+ 491              		.cfi_endproc
+ 492              	.LFE80:
+ 494              		.section	.text.xPortStartScheduler,"ax",%progbits
+ 495              		.align	1
+ 496              		.global	xPortStartScheduler
+ 497              		.syntax unified
+ 498              		.thumb
+ 499              		.thumb_func
+ 501              	xPortStartScheduler:
+ 502              	.LFB74:
+ 264:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     /* configMAX_SYSCALL_INTERRUPT_PRIORITY must not be set to 0.
+ 503              		.loc 1 264 1 is_stmt 1 view -0
+ 504              		.cfi_startproc
+ 505              		@ args = 0, pretend = 0, frame = 0
+ 506              		@ frame_needed = 0, uses_anonymous_args = 0
+ 507 0000 10B5     		push	{r4, lr}
+ 508              	.LCFI3:
+ 509              		.cfi_def_cfa_offset 8
+ 510              		.cfi_offset 4, -8
+ 511              		.cfi_offset 14, -4
+ 267:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 512              		.loc 1 267 57 view .LVU92
+ 333:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     portNVIC_SHPR3_REG |= portNVIC_SYSTICK_PRI;
+ 513              		.loc 1 333 5 view .LVU93
+ 514 0002 4FF0E023 		mov	r3, #-536813568
+ 515 0006 D3F8202D 		ldr	r2, [r3, #3360]
+ 333:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     portNVIC_SHPR3_REG |= portNVIC_SYSTICK_PRI;
+ 516              		.loc 1 333 24 is_stmt 0 view .LVU94
+ 517 000a 42F47002 		orr	r2, r2, #15728640
+ 518 000e C3F8202D 		str	r2, [r3, #3360]
+ 334:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 519              		.loc 1 334 5 is_stmt 1 view .LVU95
+ 520 0012 D3F8202D 		ldr	r2, [r3, #3360]
+ 334:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 521              		.loc 1 334 24 is_stmt 0 view .LVU96
+ 522 0016 42F07042 		orr	r2, r2, #-268435456
+ 523 001a C3F8202D 		str	r2, [r3, #3360]
+ 338:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 524              		.loc 1 338 5 is_stmt 1 view .LVU97
+ 525 001e FFF7FEFF 		bl	vPortSetupTimerInterrupt
+ 526              	.LVL12:
+ 341:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 527              		.loc 1 341 5 view .LVU98
+ 341:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s 			page 26
+
+
+ 528              		.loc 1 341 23 is_stmt 0 view .LVU99
+ 529 0022 0024     		movs	r4, #0
+ 530 0024 044B     		ldr	r3, .L26
+ 531 0026 1C60     		str	r4, [r3]
+ 344:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 532              		.loc 1 344 5 is_stmt 1 view .LVU100
+ 533 0028 FFF7FEFF 		bl	prvPortStartFirstTask
+ 534              	.LVL13:
+ 352:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     prvTaskExitError();
+ 535              		.loc 1 352 5 view .LVU101
+ 536 002c FFF7FEFF 		bl	vTaskSwitchContext
+ 537              	.LVL14:
+ 353:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
+ 538              		.loc 1 353 5 view .LVU102
+ 539 0030 FFF7FEFF 		bl	prvTaskExitError
+ 540              	.LVL15:
+ 356:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** }
+ 541              		.loc 1 356 5 view .LVU103
+ 357:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*-----------------------------------------------------------*/
+ 542              		.loc 1 357 1 is_stmt 0 view .LVU104
+ 543 0034 2046     		mov	r0, r4
+ 544 0036 10BD     		pop	{r4, pc}
+ 545              	.L27:
+ 546              		.align	2
+ 547              	.L26:
+ 548 0038 00000000 		.word	uxCriticalNesting
+ 549              		.cfi_endproc
+ 550              	.LFE74:
+ 552              		.section	.data.uxCriticalNesting,"aw"
+ 553              		.align	2
+ 556              	uxCriticalNesting:
+ 557 0000 AAAAAAAA 		.word	-1431655766
+ 558              		.text
+ 559              	.Letext0:
+ 560              		.file 3 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_defa
+ 561              		.file 4 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h
+ 562              		.file 5 "Middlewares/FreeRTOS/Source/include/projdefs.h"
+ 563              		.file 6 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/system_stm32f1xx.h"
+ 564              		.file 7 "Middlewares/FreeRTOS/Source/include/task.h"
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s 			page 27
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 port.c
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:19     .text.prvTaskExitError:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:24     .text.prvTaskExitError:00000000 prvTaskExitError
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:76     .text.prvPortStartFirstTask:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:81     .text.prvPortStartFirstTask:00000000 prvPortStartFirstTask
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:101    .text.prvPortStartFirstTask:0000001a $d
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:101    .text.prvPortStartFirstTask:0000001c $d
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:111    .text.pxPortInitialiseStack:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:117    .text.pxPortInitialiseStack:00000000 pxPortInitialiseStack
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:161    .text.pxPortInitialiseStack:00000020 $d
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:166    .text.SVC_Handler:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:172    .text.SVC_Handler:00000000 SVC_Handler
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:194    .text.SVC_Handler:00000020 pxCurrentTCBConst2
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:194    .text.SVC_Handler:00000020 $d
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:204    .text.vPortEndScheduler:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:210    .text.vPortEndScheduler:00000000 vPortEndScheduler
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:224    .text.vPortEnterCritical:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:230    .text.vPortEnterCritical:00000000 vPortEnterCritical
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:269    .text.vPortEnterCritical:0000001c $d
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:556    .data.uxCriticalNesting:00000000 uxCriticalNesting
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:274    .text.vPortExitCritical:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:280    .text.vPortExitCritical:00000000 vPortExitCritical
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:320    .text.vPortExitCritical:00000010 $d
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:325    .text.PendSV_Handler:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:331    .text.PendSV_Handler:00000000 PendSV_Handler
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:366    .text.PendSV_Handler:00000040 pxCurrentTCBConst
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:366    .text.PendSV_Handler:00000040 $d
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:376    .text.SysTick_Handler:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:382    .text.SysTick_Handler:00000000 SysTick_Handler
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:448    .text.vPortSetupTimerInterrupt:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:454    .text.vPortSetupTimerInterrupt:00000000 vPortSetupTimerInterrupt
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:489    .text.vPortSetupTimerInterrupt:00000020 $d
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:495    .text.xPortStartScheduler:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:501    .text.xPortStartScheduler:00000000 xPortStartScheduler
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:548    .text.xPortStartScheduler:00000038 $d
+C:\Users\airforce\AppData\Local\Temp\ccFyKQpd.s:553    .data.uxCriticalNesting:00000000 $d
+
+UNDEFINED SYMBOLS
+pxCurrentTCB
+vTaskSwitchContext
+xTaskIncrementTick
+SystemCoreClock

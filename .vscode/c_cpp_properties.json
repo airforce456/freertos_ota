@@ -1,0 +1,12 @@
+{
+    "configurations": [
+        {
+            "name": "STM32F103",
+            "compileCommands": "D:/foc/program/ota/compile_commands.json",
+            "compilerPath": "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/bin/arm-none-eabi-gcc.exe",
+            "cStandard": "c11",
+            "intelliSenseMode": "gcc-arm"
+        }
+    ],
+    "version": 4
+}
