@@ -43,7 +43,7 @@ int _write(int file, char *ptr, int len)
 
     /* Before scheduler starts, fallback to blocking polling transmit */
     if (xUartTxQueue == NULL) {
-        HAL_UART_Transmit_DMA(&huart1, (uint8_t *)ptr, len);
+        HAL_UART_Transmit(&huart1, (uint8_t *)ptr, len, HAL_MAX_DELAY);
         return len;
     }
 
@@ -85,7 +85,7 @@ void vUartTxTask(void *pvParameters)
 /* ===== HAL callback: DMA TX complete → signal semaphore from ISR ===== */
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
-    if (huart->Instance == USART1) {
+    if (huart->Instance == USART1 && xTxDmaSemaphore != NULL) {
         BaseType_t xHigherPriorityTaskWoken = pdFALSE;
         xSemaphoreGiveFromISR(xTxDmaSemaphore, &xHigherPriorityTaskWoken);
         portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
@@ -111,7 +111,7 @@ void DebugUART_StartRx(void)
 /* HAL callback: DMA RX complete (full buffer or IDLE detected) */
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 {
-    if (huart->Instance == USART1 && Size > 0) {
+    if (huart->Instance == USART1 && Size > 0 && xUartTxQueue != NULL) {
         BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 
         /* Echo received data back as-is (proof of RX functionality) */

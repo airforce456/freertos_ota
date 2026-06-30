@@ -89,7 +89,7 @@ int main(void)
 
   /* ---- Init debug UART (queue + TX task + DMA RX) ---- */
   DebugUART_Init();
-  DebugUART_StartRx();
+  // DebugUART_StartRx();
 
   printf("========================================\r\n");
   printf("  FreeRTOS Scheduler Experiments\r\n");
@@ -100,16 +100,20 @@ int main(void)
   unsigned int heapBefore = xPortGetFreeHeapSize();
 
   /* ---- Experiment 1: 3 LED tasks, different priorities ---- */
-  //创建任务的单位是字（word，4 字节）
-  xTaskCreate(Task_LED_High, "LED_H", 256, (void *)"PC13[H]", 3, NULL);
-  xTaskCreate(Task_LED_Mid,  "LED_M", 256, (void *)"PC14[M]", 2, NULL);
-  xTaskCreate(Task_LED_Low,  "LED_L", 256, (void *)"PC15[L]", 1, NULL);
+  if (xTaskCreate(Task_LED_High, "LED_H", 256, (void *)"PC13[H]", 3, NULL) != pdPASS)
+      printf("!!! LED_H create FAILED\r\n");
+  if (xTaskCreate(Task_LED_Mid,  "LED_M", 256, (void *)"PC14[M]", 2, NULL) != pdPASS)
+      printf("!!! LED_M create FAILED\r\n");
+  if (xTaskCreate(Task_LED_Low,  "LED_L", 256, (void *)"PC15[L]", 1, NULL) != pdPASS)
+      printf("!!! LED_L create FAILED\r\n");
 
   /* ---- Experiment 2: self-deleting task ---- */
-  xTaskCreate(Task_SelfDelete, "SelfDel", 256, NULL, 1, NULL);
+  if (xTaskCreate(Task_SelfDelete, "SelfDel", 512, NULL, 1, NULL) != pdPASS)
+      printf("!!! SelfDel create FAILED )\r\n");
 
-  /* ---- Experiment 3: task list reporter (larger stack = more heap cost) ---- */
-  xTaskCreate(Task_ListReporter, "ListRpt", 256, NULL, 1, NULL);
+  /* ---- Experiment 3: task list reporter ---- */
+  if (xTaskCreate(Task_ListReporter, "ListRpt", 256, NULL, 1, NULL) != pdPASS)
+      printf("!!! ListRpt create FAILED\r\n");
 
   unsigned int heapAfter5Dynamic = xPortGetFreeHeapSize();
   unsigned int dynamicCost = heapBefore - heapAfter5Dynamic;
@@ -320,7 +324,21 @@ void Task_StaticDemo(void *argument)
         vTaskDelay(pdMS_TO_TICKS(4000));
     }
 }
+void vApplicationStackOverflowHook(TaskHandle_t xTask,
+                                   char *pcTaskName)
+{
+    __disable_irq();
 
+    printf("\r\n");
+    printf("=================================\r\n");
+    printf(" FreeRTOS Stack Overflow!\r\n");
+    printf(" Task Name: %s\r\n", pcTaskName);
+    printf("=================================\r\n");
+
+    while (1)
+    {
+    }
+}
 /* USER CODE END 4 */
 
 /**

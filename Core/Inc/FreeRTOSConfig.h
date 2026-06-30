@@ -52,7 +52,7 @@
 #define INCLUDE_vTaskSuspend           1
 #define INCLUDE_vTaskDelete            1
 #define INCLUDE_xTaskGetCurrentTaskHandle 1
-
+#define configCHECK_FOR_STACK_OVERFLOW    2
 /* 启用静态内存分配 (xTaskCreateStatic) */
 #define configSUPPORT_STATIC_ALLOCATION         1
 

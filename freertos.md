@@ -35,7 +35,15 @@ project/
 ├── startup_stm32f103xb.s
 └── STM32F103C8Tx_FLASH.ld
 ```
+CFSR:
+✅ IACCVIOL = 0（不是非法指令）
+✅ INVSTATE = 0（CPU状态正常）
+✅ UNDEFINSTR = 0（不是执行了非法指令）
+✅ UNALIGNED = 0（不是未对齐访问）
+✅ DIVBYZERO = 0（不是除零）
+✅ FORCED = 0（不是其他Fault升级）
 
+BFAR:0xA5A5A5xx  栈溢出（Stack Overflow）
 ## 2. 需要编译的 FreeRTOS 源文件
 
 共 8 个 `.c` 文件必须加入编译：
