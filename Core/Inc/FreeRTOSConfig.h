@@ -12,6 +12,8 @@
 
 //第一个配置：调度方式
 #define configUSE_PREEMPTION 1
+// 时间片轮转（仅对同优先级任务生效） 1=轮流执行  0=先到先得不轮转
+#define configUSE_TIME_SLICING 1
 //什么叫 Idle Task？ 空闲任务
 #define configUSE_IDLE_HOOK 0
 //第三个配置：Tick Hook，Tick Hook 是在每次系统时钟中断时调用的函数
@@ -49,6 +51,7 @@
 
 /* 启用 FreeRTOS API 函数 */
 #define INCLUDE_vTaskDelay             1
+#define INCLUDE_vTaskDelayUntil         1
 #define INCLUDE_vTaskSuspend           1
 #define INCLUDE_vTaskDelete            1
 #define INCLUDE_xTaskGetCurrentTaskHandle 1

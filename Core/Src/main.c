@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "dma.h"
+#include "i2c.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -30,6 +31,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "debug_uart.h"
+#include "mpu6050.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -50,24 +52,14 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-/* Experiment 4: static allocation buffers */
-static StackType_t  xStaticStack[256];
-static StaticTask_t xStaticTCB;
+QueueHandle_t xSensorQueue = NULL;   /* MPU6050_Data_t: 生产者→消费者 */
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-/* Experiment 1: LED tasks with different priorities */
-void Task_LED_High(void *argument);
-void Task_LED_Mid(void *argument);
-void Task_LED_Low(void *argument);
-/* Experiment 2: self-deleting task */
-void Task_SelfDelete(void *argument);
-/* Experiment 3: task list reporter */
-void Task_ListReporter(void *argument);
-/* Experiment 4: static allocation demo */
-void Task_StaticDemo(void *argument);
+void Task_MPU6050_Read(void *argument);
+void Task_OLED_Display(void *argument);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -83,72 +75,75 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_USART1_UART_Init();
+  MX_I2C1_Init();
   /* USER CODE END 1 */
 
   /* USER CODE BEGIN 2 */
 
-  /* ---- Init debug UART (queue + TX task + DMA RX) ---- */
   DebugUART_Init();
-  // DebugUART_StartRx();
 
   printf("========================================\r\n");
-  printf("  FreeRTOS Scheduler Experiments\r\n");
+  printf("  2.1 Queue: MPU6050 Sensor Pipeline\r\n");
   printf("  STM32F103C8Tx | %lu Hz\r\n", SystemCoreClock);
   printf("========================================\r\n\r\n");
 
-  /* Record heap before any user task */
-  unsigned int heapBefore = xPortGetFreeHeapSize();
-
-  /* ---- Experiment 1: 3 LED tasks, different priorities ---- */
-  if (xTaskCreate(Task_LED_High, "LED_H", 256, (void *)"PC13[H]", 3, NULL) != pdPASS)
-      printf("!!! LED_H create FAILED\r\n");
-  if (xTaskCreate(Task_LED_Mid,  "LED_M", 256, (void *)"PC14[M]", 2, NULL) != pdPASS)
-      printf("!!! LED_M create FAILED\r\n");
-  if (xTaskCreate(Task_LED_Low,  "LED_L", 256, (void *)"PC15[L]", 1, NULL) != pdPASS)
-      printf("!!! LED_L create FAILED\r\n");
-
-  /* ---- Experiment 2: self-deleting task ---- */
-  if (xTaskCreate(Task_SelfDelete, "SelfDel", 512, NULL, 1, NULL) != pdPASS)
-      printf("!!! SelfDel create FAILED )\r\n");
-
-  /* ---- Experiment 3: task list reporter ---- */
-  if (xTaskCreate(Task_ListReporter, "ListRpt", 256, NULL, 1, NULL) != pdPASS)
-      printf("!!! ListRpt create FAILED\r\n");
-
-  unsigned int heapAfter5Dynamic = xPortGetFreeHeapSize();
-  unsigned int dynamicCost = heapBefore - heapAfter5Dynamic;
-
-  /* ---- Experiment 4: static allocation (TCB + stack in BSS, NOT heap) ---- */
-  TaskHandle_t xStaticHandle = NULL;
-  xStaticHandle = xTaskCreateStatic(Task_StaticDemo, "StaticD", 256, NULL, 2,
-                                     xStaticStack, &xStaticTCB);
-
-  unsigned int heapAfterStatic = xPortGetFreeHeapSize();
-  unsigned int staticCost = heapAfter5Dynamic - heapAfterStatic;
-
-  printf("=== Heap: Dynamic vs Static ===\r\n");
-  printf("  Heap total:       %5u bytes (%u KiB)\r\n",
-         configTOTAL_HEAP_SIZE, configTOTAL_HEAP_SIZE / 1024);
-  printf("  Before tasks:     %5u bytes free\r\n\r\n", heapBefore);
-
-  printf("  5 dynamic tasks:  %5u bytes cost  (%u free)\r\n",
-         dynamicCost, heapAfter5Dynamic);
-  printf("    -> avg %u bytes per dynamic task (TCB+stack on heap)\r\n\r\n",
-         dynamicCost / 5);
-
-  printf("  1 static task:    %5u bytes cost  (%u free)\r\n",
-         staticCost, heapAfterStatic);
-  if (xStaticHandle != NULL) {
-      printf("    -> CREATED OK, heap saved ~%u bytes vs dynamic\r\n\r\n",
-             dynamicCost / 5);
+  /* ---- I2C 总线扫描，确认设备在线 ---- */
+  printf("I2C Scan: ");
+  int found = 0;
+  for (uint8_t addr = 1; addr < 127; addr++) {
+      if (HAL_I2C_IsDeviceReady(&hi2c1, (uint16_t)(addr << 1), 2, 10) == HAL_OK) {
+          printf("0x%02X ", addr);
+          found++;
+      }
+  }
+  if (found == 0) {
+      printf("NO DEVICE FOUND!\r\n");
   } else {
-      printf("    -> ERROR: xTaskCreateStatic returned NULL!\r\n\r\n");
+      printf("(%d device(s))\r\n", found);
   }
 
+  /* 扫描后复位 I2C 状态机，否则后续 HAL_I2C_Mem_Read 会脏 */
+  HAL_I2C_DeInit(&hi2c1);
+  MX_I2C1_Init();
+
+  /* 手动读 WHO_AM_I：先写寄存器号，再读（F1 的 I2C 外设 Mem_Read 有重复起始问题） */
+  {
+      uint8_t reg = 0x75, who;
+      HAL_StatusTypeDef rc;
+      rc = HAL_I2C_Master_Transmit(&hi2c1, 0x68 << 1, &reg, 1, 100);
+      if (rc == HAL_OK) {
+          rc = HAL_I2C_Master_Receive(&hi2c1, 0x68 << 1, &who, 1, 100);
+      }
+      printf("[MPU] Raw WHO_AM_I: rc=%d val=0x%02X (expect rc=0 val=0x68)\r\n",
+             (int)rc, who);
+  }
+
+  /* MPU6050 硬件初始化 */
+  if (MPU6050_Init() == HAL_OK) {
+      printf("[MPU6050] Init OK!\r\n\r\n");
+  } else {
+      printf("[MPU6050] Init FAILED!\r\n\r\n");
+  }
+
+  /* 创建队列：8 个 MPU6050_Data_t 槽位 */
+  xSensorQueue = xQueueCreate(8, sizeof(MPU6050_Data_t));
+  if (xSensorQueue == NULL) {
+      printf("[Queue] Create FAILED!\r\n");
+  } else {
+      printf("[Queue] Created (8 slots x %u bytes)\r\n", (unsigned)sizeof(MPU6050_Data_t));
+  }
+
+  /* 生产者 (Prio=2) + 消费者 (Prio=1) — 都传队列句柄 */
+  BaseType_t rc;
+  rc = xTaskCreate(Task_MPU6050_Read, "MPU_Read", 512, (void*)xSensorQueue, 2, NULL);
+  printf("[Task] MPU_Read create: %s\r\n", rc == pdPASS ? "OK" : "FAIL");
+  rc = xTaskCreate(Task_OLED_Display, "OLED_Disp", 512, (void*)xSensorQueue, 1, NULL);
+  printf("[Task] OLED_Disp create: %s\r\n", rc == pdPASS ? "OK" : "FAIL");
+
+  printf("\r\n--- Starting scheduler ---\r\n\r\n");
   vTaskStartScheduler();
   /* USER CODE END 2 */
 
-  /* Infinite loop */
   while (1)
   {
     /* USER CODE BEGIN 3 */
@@ -194,7 +189,7 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 
 /* ==================================================================
- *  Static allocation support: provide memory for the FreeRTOS Idle task.
+ *  Static allocation support for Idle task
  *  Required when configSUPPORT_STATIC_ALLOCATION is enabled.
  * ================================================================== */
 void vApplicationGetIdleTaskMemory(StaticTask_t **ppxIdleTaskTCBBuffer,
@@ -210,135 +205,53 @@ void vApplicationGetIdleTaskMemory(StaticTask_t **ppxIdleTaskTCBBuffer,
 }
 
 /* ==================================================================
- *  Experiment 1: 3 LED tasks with different priorities
- *  Observe preemption: higher priority tasks always run first.
- *
- *  LED_High (prio=3): PC13, blinks every 200ms �?? tight timing
- *  LED_Mid  (prio=2): PC14, blinks every 500ms
- *  LED_Low  (prio=1): PC15, CPU-bound busy-wait �?? gets preempted
+ *  Stack overflow hook (required by configCHECK_FOR_STACK_OVERFLOW=2)
  * ================================================================== */
-
-void Task_LED_High(void *argument)
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
 {
-    const char *name = (const char *)argument;
-    uint32_t count = 0;
-    while (1) {
-        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-        count++;
-        printf("[%s] Prio=3 | LED ON=%d | #%lu\r\n",
-               name, (int)(count & 1), count);
-        vTaskDelay(pdMS_TO_TICKS(200));
-    }
+    (void)xTask;
+    printf("\r\n!!! STACK OVERFLOW: %s !!!\r\n", pcTaskName);
+    __disable_irq();
+    while (1) {}
 }
 
-void Task_LED_Mid(void *argument)
+/* ===== 2.1A: MPU6050 读取任务（生产者） ===== */
+void Task_MPU6050_Read(void *argument)
 {
-    const char *name = (const char *)argument;
+    QueueHandle_t q = (QueueHandle_t)argument;
+    MPU6050_Data_t data;
     uint32_t count = 0;
+
     while (1) {
-        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_14);
-        count++;
-        printf("[%s] Prio=2 | LED ON=%d | #%lu\r\n",
-               name, (int)(count & 1), count);
+        if (MPU6050_ReadAll(&data) == HAL_OK) {
+            count++;
+            if (xQueueSend(q, &data, pdMS_TO_TICKS(100)) != pdPASS) {
+                printf("[MPU] Queue full, dropped #%lu\r\n", count);
+            } else {
+                HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);  /* PC13 活动指示 */
+            }
+        }
         vTaskDelay(pdMS_TO_TICKS(500));
     }
 }
 
-void Task_LED_Low(void *argument)
+/* ===== 2.1B: OLED 显示任务（消费者） ===== */
+void Task_OLED_Display(void *argument)
 {
-    const char *name = (const char *)argument;
+    QueueHandle_t q = (QueueHandle_t)argument;
+    MPU6050_Data_t data;
     uint32_t count = 0;
+
+    printf("[OLED] Task started, q=%p\r\n", (void*)q);
     while (1) {
-        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_15);
-        count++;
-        printf("[%s] Prio=1 | Start busy-wait #%lu\r\n", name, count);
-        /*
-         * CPU-intensive loop �?? higher-priority tasks (LED_High, LED_Mid)
-         * will PREEMPT this task when their vTaskDelay expires.
-         * Watch the serial output: "Start" and "done" may be separated
-         * by higher-priority LED toggles!
-         */
-        for (volatile uint32_t i = 0; i < 800000; i++) { }
-        printf("[%s] Prio=1 | Busy-wait #%lu done\r\n", name, count);
-        vTaskDelay(pdMS_TO_TICKS(100));  /* brief yield */
+        if (xQueueReceive(q, &data, portMAX_DELAY) == pdPASS) {
+            count++;
+            printf("[OLED] #%lu ax=%+6d ay=%+6d az=%+6d\r\n",
+                   count, data.ax, data.ay, data.az);
+        }
     }
 }
 
-
-/* ==================================================================
- *  Experiment 2: Self-deleting task
- *  Task waits 3 seconds, prints farewell, then deletes itself.
- *  Watch vTaskList output �?? the task disappears after deletion.
- * ================================================================== */
-
-void Task_SelfDelete(void *argument)
-{
-    (void)argument;
-    printf("[SelfDel] Hello! I will delete myself in 3 seconds...\r\n");
-    vTaskDelay(pdMS_TO_TICKS(3000));
-    printf("[SelfDel] Goodbye! Calling vTaskDelete(NULL)...\r\n");
-    vTaskDelete(NULL);
-    /* Execution never reaches here */
-}
-
-
-/* ==================================================================
- *  Experiment 3: Task list reporter
- *  Prints all tasks and their states every 5 seconds via vTaskList().
- *  Shows: task name, state (R=Ready, B=Blocked, D=Deleted, S=Suspended),
- *  priority, stack high-water mark, task number.
- * ================================================================== */
-
-void Task_ListReporter(void *argument)
-{
-    (void)argument;
-    char buf[512];
-
-    /* Wait for SelfDel task to disappear first */
-    vTaskDelay(pdMS_TO_TICKS(5000));
-
-    while (1) {
-        vTaskList(buf);
-        printf("========== Task List ==========\r\n");
-        printf("%s\r\n", buf);
-        printf("===============================\r\n\r\n");
-        vTaskDelay(pdMS_TO_TICKS(5000));
-    }
-}
-
-
-/* ==================================================================
- *  Experiment 4: Static vs dynamic allocation
- *  This task is created with xTaskCreateStatic �?? its TCB and stack
- *  live in BSS (xStaticStack, xStaticTCB), NOT on the FreeRTOS heap.
- *  Compare heap usage printed at boot to see the difference.
- * ================================================================== */
-
-void Task_StaticDemo(void *argument)
-{
-    (void)argument;
-    uint32_t count = 0;
-    while (1) {
-        printf("[StaticDemo] Running from static memory! count=%lu | heap=%u\r\n",
-               count++, (unsigned int)xPortGetFreeHeapSize());
-        vTaskDelay(pdMS_TO_TICKS(4000));
-    }
-}
-void vApplicationStackOverflowHook(TaskHandle_t xTask,
-                                   char *pcTaskName)
-{
-    __disable_irq();
-
-    printf("\r\n");
-    printf("=================================\r\n");
-    printf(" FreeRTOS Stack Overflow!\r\n");
-    printf(" Task Name: %s\r\n", pcTaskName);
-    printf("=================================\r\n");
-
-    while (1)
-    {
-    }
-}
 /* USER CODE END 4 */
 
 /**
