@@ -69,6 +69,7 @@ Core/Src/debug_uart.c \
 Core/Src/dma.c \
 Core/Src/i2c.c \
 Core/Src/mpu6050.c \
+Core/Src/soft_i2c.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c
 # ASM sources
 ASM_SOURCES =  \

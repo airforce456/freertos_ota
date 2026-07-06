@@ -32,6 +32,7 @@
 #include <string.h>
 #include "debug_uart.h"
 #include "mpu6050.h"
+#include "soft_i2c.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -64,7 +65,7 @@ void Task_OLED_Display(void *argument);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+uint8_t rebyte=0;
 /* USER CODE END 0 */
 
 int main(void)
@@ -76,8 +77,9 @@ int main(void)
   MX_DMA_Init();
   MX_USART1_UART_Init();
   MX_I2C1_Init();
+  rebyte=MyI2C_ReadWhoAmI();
   /* USER CODE END 1 */
-
+  
   /* USER CODE BEGIN 2 */
 
   DebugUART_Init();
@@ -101,6 +103,7 @@ int main(void)
   } else {
       printf("(%d device(s))\r\n", found);
   }
+  printf("[SoftI2C] WHO_AM_I = 0x%02X (expect 0x68)\r\n", rebyte);
 
   /* 扫描后复位 I2C 状态机，否则后续 HAL_I2C_Mem_Read 会脏 */
   HAL_I2C_DeInit(&hi2c1);

@@ -172,136 +172,201 @@ QueueHandle_t xSensorQueue = xQueueCreate(8, sizeof(SensorData_t));
 - [ ] 用 `xQueueOverwrite()` 只保留最新数据，适合"只关心当前值"的场景
 - [ ] 用 `uxQueueMessagesWaiting()` / `uxQueueSpacesAvailable()` 监控队列水位
 
-### 2.1 附录：MPU6050 驱动编写过程与踩坑记录
+### 2.1 附录：I2C 通信原理与 MPU6050 驱动全流程
 
-#### 硬件接线
+#### 一、I2C 总线物理层
 
-| MPU6050 | STM32F103 |
-|---------|-----------|
-| VCC | 3.3V |
-| GND | GND |
-| SCL | PB6 (I2C1_SCL) |
-| SDA | PB7 (I2C1_SDA) |
-| AD0 | GND（I2C 地址 = 0x68） |
-
-> 如果 AD0 接 VCC 或悬空，I2C 地址可能变成 0x69，导致扫描到设备但寄存器读失败。
-
-#### CubeMX 配置
-
-- I2C1：PB6=SCL, PB7=SDA, Fast Mode 400kHz（生成代码为 100kHz）
-- GPIO 自动配置为开漏输出（`GPIO_MODE_AF_OD`）
-- MPU6050 模块**必须有板载上拉电阻**（大多数模块自带 10kΩ）
-
-#### 踩坑 1：`HAL_I2C_Mem_Read` 在 STM32F1 上失败（rc=1 HAL_ERROR）
-
-**现象**：
+I2C 只需要两根线：
 
 ```
-I2C Scan: 0x68 (1 device(s))       ← HAL_I2C_IsDeviceReady 成功
-[MPU] Raw WHO_AM_I: rc=1 val=0x08  ← HAL_I2C_Mem_Read 失败
+SCL (时钟) ── 主机发出，控制通信节奏
+SDA (数据) ── 双向，传地址和数据
+
+    VCC(3.3V)
+      │
+      ├── Rp(4.7kΩ) ── SCL ── 所有设备的 SCL
+      │
+      └── Rp(4.7kΩ) ── SDA ── 所有设备的 SDA
 ```
 
-**根因**：STM32F1 的 I2C 外设存在重复起始（Repeated Start）硬件 bug。`HAL_I2C_Mem_Read` 内部流程是：
+**为什么必须上拉电阻？** I2C 引脚是**开漏输出**——只能拉低不能拉高。没有上拉电阻，总线永远低电平，无法通信。大多数 I2C 模块自带 10kΩ 上拉。如果多个模块并联在同一总线，等效电阻变小，可能导致信号边沿不够陡。
+
+#### 二、一次 I2C 通信的全过程
+
+以"主机从 MPU6050 读一个寄存器"为例，示波器上看到：
 
 ```
-START → 设备地址+W → 寄存器地址 → RESTART → 设备地址+R → 读数据 → STOP
-                                        ↑
-                                   F1 这里容易挂
+┌──────┬──────────────┬──────────────┬──────────────┬──────┐
+│ START │ 设备地址+W    │  寄存器地址    │  设备地址+R    │ STOP │
+│      │ (0xD0)       │  (0x75)      │  (0xD1)      │      │
+│ 主→  │  主→从  ACK←从│  主→从  ACK←从│  主→从  ACK←从│ 主→  │
+│      │              │              │  从→主 (数据)  │      │
+│      │              │              │  NACK←主       │      │
+└──────┴──────────────┴──────────────┴──────────────┴──────┘
 ```
 
-`HAL_I2C_IsDeviceReady` 只发 `START → 地址+W → ACK → STOP`，不涉及 REPEATED START，所以能通。
+**逐步骤拆解**：
 
-**解决方案**：将 `HAL_I2C_Mem_Read/Write` 替换为两步法，用 `HAL_I2C_Master_Transmit` + `HAL_I2C_Master_Receive` 拆分操作，避免重复起始：
+| 步骤 | 谁发 | 内容 | 含义 |
+|------|------|------|------|
+| ① START | 主机 | SDA 下降沿（SCL 高时） | "总线开始工作" |
+| ② 地址+W | 主机 | 7 位地址 << 1 \| 0 | "0x68 设备，我要写" |
+| ③ ACK | MPU6050 | SDA 拉低 | "我在，收到" |
+| ④ 寄存器号 | 主机 | 0x75 | "我要读 WHO_AM_I" |
+| ⑤ ACK | MPU6050 | SDA 拉低 | "收到" |
+| ⑥ RESTART | 主机 | 同 START | "别走，还没完" |
+| ⑦ 地址+R | 主机 | 7 位地址 << 1 \| 1 | "0x68 设备，我要读" |
+| ⑧ ACK | MPU6050 | SDA 拉低 | "我在" |
+| ⑨ 数据 | MPU6050 | 0x68 | "这是我的 ID" |
+| ⑩ NACK | 主机 | SDA 不拉低 | "够了，不读了" |
+| ⑪ STOP | 主机 | SDA 上升沿（SCL 高时） | "总线释放" |
+
+**关键理解**：
+- ACK 是设备存在的最基本证据——`HAL_I2C_IsDeviceReady` 只做步骤①②③⑪，看到 ACK 就返回 OK
+- RESTART（⑥）是 F1 芯片最容易挂的地方——硬件状态机在这个时序上不稳定
+- 写寄存器（`Transmit`）只有步骤①②③④⑤⑪，没有 RESTART，所以稳定
+
+#### 三、设备地址与多设备共享
+
+**7 位地址 vs 8 位地址**：
+
+```
+I2C 设备地址本质是 7 位（0x00~0x7F）
+  例如 MPU6050: 0x68 (0110 1000)
+              OLED: 0x3C (0011 1100)
+
+STM32 HAL 库要求传入"左移 1 位"后的值（8 位）：
+  0x68 << 1 = 0xD0
+  0x3C << 1 = 0x78
+
+最低位是 R/W 位：0=写 1=读，HAL 函数内部自动处理
+```
+
+**同一条总线挂多个设备**不会冲突，因为每个设备有不同地址：
+
+```
+           I2C1 (PB6/PB7)
+               │
+    ┌──────────┼──────────┬──────────┐
+    │          │          │          │
+ MPU6050    OLED(0.96")  AT24C02    W25Q64
+ (0x68)      (0x3C)      (0x50)    (不在 I2C 上，是 SPI)
+```
+
+你只需要在访问设备时传入对应的地址即可，HAL 库不关心总线上有什么。
+
+**I2C 设备扫描的原理**：对 1~127 每个地址都做一次 `IsDeviceReady`，看谁 ACK：
 
 ```c
-// ❌ 原写法（F1 上不稳定）
-HAL_I2C_Mem_Read(&hi2c1, devAddr, regAddr, I2C_MEMADD_SIZE_8BIT, buf, len, timeout);
-
-// ✅ F1 安全写法：先发寄存器号，再读数据
-uint8_t reg = 0x75;
-HAL_I2C_Master_Transmit(&hi2c1, devAddr, &reg, 1, timeout);   // 写寄存器号
-HAL_I2C_Master_Receive(&hi2c1, devAddr, buf, len, timeout);    // 读数据
+for (uint8_t addr = 1; addr < 127; addr++) {
+    if (HAL_I2C_IsDeviceReady(&hi2c1, (uint16_t)(addr << 1), 2, 10) == HAL_OK) {
+        printf("0x%02X ", addr);  // 打印 7 位地址
+    }
+}
 ```
 
+#### 四、CubeMX I2C 配置步骤
+
+1. **Pinout & Configuration** → **Connectivity** → **I2C1**
+2. Mode 选 **I2C**（不是 SMBus）
+3. **I2C Speed Mode**：MPU6050 最大支持 400kHz，选 **Fast Mode**
+4. **Clock Speed**：填 `400000`（Hz）。CubeMX 有时会回退到 100000，生成后检查 `i2c.c` 中的 `hi2c1.Init.ClockSpeed`
+5. 引脚自动分配：PB6=SCL, PB7=SDA（GPIO 自动设为 `GPIO_MODE_AF_OD`）
+
+**CubeMX 生成的文件**：
+- `Core/Src/i2c.c`：`MX_I2C1_Init()` + `HAL_I2C_MspInit()`（配置 GPIO 和时钟）
+- `Core/Inc/i2c.h`：声明 `extern I2C_HandleTypeDef hi2c1;`
+
+**生成后在 main.c 中需要手动做的事**：
+- `USER CODE BEGIN 1` 中加 `MX_I2C1_Init();`
+- Makefile 确认 `Core/Src/i2c.c` 和 `stm32f1xx_hal_i2c.c` 在 C_SOURCES 中
+
+#### 五、STM32 HAL 的四个 I2C 读写函数
+
+| 函数 | 用途 | F1 稳定性 |
+|------|------|-----------|
+| `HAL_I2C_IsDeviceReady()` | 发地址，看 ACK | ✅ 稳定 |
+| `HAL_I2C_Master_Transmit()` | 写若干字节 | ✅ 稳定 |
+| `HAL_I2C_Master_Receive()` | 读若干字节 | ✅ 稳定 |
+| `HAL_I2C_Mem_Read()` | 写寄存器号→RESTART→读 | ❌ F1 上 RESTART 有硬件 bug |
+| `HAL_I2C_Mem_Write()` | 写寄存器号→写数据 | ❌ 同上 |
+
+**F1 上推荐的两步法封装**（在 `mpu6050.c` 中实现）：
+
 ```c
-// ❌ 原写法（F1 上不稳定）
-HAL_I2C_Mem_Write(&hi2c1, devAddr, regAddr, I2C_MEMADD_SIZE_8BIT, &val, 1, timeout);
-
-// ✅ F1 安全写法：寄存器号+数据合并为一次传输
-uint8_t buf[2] = { regAddr, val };
-HAL_I2C_Master_Transmit(&hi2c1, devAddr, buf, 2, timeout);
-```
-
-**封装后的驱动 API**（`mpu6050.c`）：
-
-```c
-// 写单个寄存器
+/* 写寄存器：2 字节连续发送（寄存器号 + 数据），无 RESTART */
 static HAL_StatusTypeDef I2C_WriteReg(uint8_t devAddr, uint8_t regAddr, uint8_t val)
 {
     uint8_t buf[2] = { regAddr, val };
     return HAL_I2C_Master_Transmit(&hi2c1, devAddr, buf, 2, I2C_TIMEOUT);
 }
 
-// 读单个寄存器
+/* 读寄存器：先 Master_Transmit 写寄存器号，再 Master_Receive 读数据 */
 static HAL_StatusTypeDef I2C_ReadReg(uint8_t devAddr, uint8_t regAddr, uint8_t *val)
 {
-    HAL_I2C_Master_Transmit(&hi2c1, devAddr, &regAddr, 1, I2C_TIMEOUT);
+    HAL_StatusTypeDef rc;
+    rc = HAL_I2C_Master_Transmit(&hi2c1, devAddr, &regAddr, 1, I2C_TIMEOUT);
+    if (rc != HAL_OK) return rc;
     return HAL_I2C_Master_Receive(&hi2c1, devAddr, val, 1, I2C_TIMEOUT);
 }
 
-// 连续读多个寄存器（如加速度计 6 字节）
+/* 连续读多个寄存器：同上，只是 len > 1 */
 static HAL_StatusTypeDef I2C_ReadRegs(uint8_t devAddr, uint8_t regAddr,
                                        uint8_t *buf, uint8_t len)
 {
-    HAL_I2C_Master_Transmit(&hi2c1, devAddr, &regAddr, 1, I2C_TIMEOUT);
+    HAL_StatusTypeDef rc;
+    rc = HAL_I2C_Master_Transmit(&hi2c1, devAddr, &regAddr, 1, I2C_TIMEOUT);
+    if (rc != HAL_OK) return rc;
     return HAL_I2C_Master_Receive(&hi2c1, devAddr, buf, len, I2C_TIMEOUT);
 }
 ```
 
-#### 踩坑 2：I2C 扫描后状态机变脏
+**与 HAL 默认函数的区别**：两步法用 STOP 结束第一次 Transmit，然后发新的 START 开始 Receive。中间没有 RESTART，F1 硬件能正确处理。代价是两次 START 之间可能有极短间隙，其他设备理论上可以抢总线——但实际上同一主机不会抢自己。
 
-**现象**：在 `MPU6050_Init` 之前调用 `HAL_I2C_IsDeviceReady` 循环扫描后，后续 `HAL_I2C_Mem_Read` 可能失败。
+#### 六、MPU6050 初始化序列和寄存器
 
-**解决**：扫描后做一次 `HAL_I2C_DeInit` + `MX_I2C1_Init` 复位 I2C 外设状态机。
-
-#### 踩坑 3：I2C 超时值的选择
-
-**现象**：使用 `HAL_MAX_DELAY` 作为超时可能导致异常行为。
-
-**解决**：在 FreeRTOS 环境下，I2C 操作（特别是调度器启动前）使用固定毫秒超时（如 `100`），避免 HAL 内部依赖 SysTick 在中断关闭时出现死等。
-
-#### 调试技巧：I2C 设备扫描
-
-用于确认设备物理连接正确、地址正确：
-
-```c
-printf("I2C Scan: ");
-for (uint8_t addr = 1; addr < 127; addr++) {
-    if (HAL_I2C_IsDeviceReady(&hi2c1, (uint16_t)(addr << 1), 2, 10) == HAL_OK) {
-        printf("0x%02X ", addr);
-    }
-}
-```
-
-#### MPU6050 寄存器速查
-
-| 寄存器 | 地址 | 说明 |
-|--------|------|------|
-| WHO_AM_I | 0x75 | 应返回 0x68 |
-| PWR_MGMT_1 | 0x6B | bit6=SLEEP，写 0x00 唤醒 |
-| SMPRT_DIV | 0x19 | 采样率 = 1kHz/(1+N) |
-| ACCEL_CONFIG | 0x1C | 量程：0=±2g, 1=±4g, 2=±8g, 3=±16g |
-| GYRO_CONFIG | 0x1B | 量程：0=±250°/s, 1=±500°/s, 2=±1000°/s, 3=±2000°/s |
-| ACCEL_XOUT_H | 0x3B | 加速度 X 高字节（大端，连续 6 字节） |
-| GYRO_XOUT_H | 0x43 | 角速度 X 高字节（连续 6 字节） |
-
-#### 文件结构
+上电后 MPU6050 在 SLEEP 状态，必须按顺序初始化：
 
 ```
-Core/Inc/mpu6050.h    — 寄存器宏、MPU6050_Data_t 结构体、函数原型
-Core/Src/mpu6050.c    — I2C 读写封装 + MPU6050_Init/ReadAll/ReadWhoAmI
-Core/Src/main.c       — 初始化调用 + 测试任务
-Core/Src/i2c.c        — CubeMX 生成的 I2C1 初始化
+① 检查 WHO_AM_I (0x75)
+     ↓ 应返回 0x68，否则不是 MPU6050 或接线错
+② 唤醒：PWR_MGMT_1 (0x6B) 写 0x00
+     ↓ 清除 SLEEP 位（bit6）
+③ 采样率：SMPRT_DIV (0x19) 写分频值
+     ↓ Fs = 1kHz / (1 + SMPRT_DIV)，如写 3 → 250Hz
+④ 加速度量程：ACCEL_CONFIG (0x1C)
+     ↓ 0x00=±2g(16384 LSB/g)
+⑤ 陀螺仪量程：GYRO_CONFIG (0x1B)
+     ↓ 0x00=±250°/s(131 LSB/°/s)
+⑥ 完成，可以读数据
+```
+
+**读传感器数据**：从 ACCEL_XOUT_H (0x3B) 开始**连续读 14 字节**：
+
+| 字节偏移 | 0-1 | 2-3 | 4-5 | 6-7 | 8-9 | 10-11 | 12-13 |
+|----------|-----|-----|-----|-----|-----|-------|-------|
+| 数据 | ax | ay | az | 温度 | gx | gy | gz |
+
+所有值都是**大端**（高字节在前），用 `(int16_t)((buf[i] << 8) | buf[i+1])` 拼接。
+
+#### 七、调试踩坑记录
+
+| 现象 | 根因 | 解决 |
+|------|------|------|
+| `IsDeviceReady` 成功，`Mem_Read` 返回 HAL_ERROR | F1 I2C 硬件 RESTART bug | 用两步法（Transmit+Receive）替代 |
+| I2C 扫描后 `Mem_Read` 失败 | 扫描循环弄脏 I2C 状态机 | 扫描后 `HAL_I2C_DeInit` + `MX_I2C1_Init` |
+| 使用 `HAL_MAX_DELAY` 导致超时异常 | HAL 内部在中断关闭时依赖 SysTick | 改为固定毫秒值（100） |
+| 悬空 AD0，I2C 地址不稳定 | AD0 必须确定电平 | AD0 接 GND（0x68）或 VCC（0x69） |
+| 堆耗尽，任务创建失败 | `UartRxMsg_t.data[256]` × 16 = 4KB | 缩小 RX 队列（64×8=512B） |
+
+#### 八、驱动文件结构
+
+```
+Core/Inc/mpu6050.h    — 寄存器宏 + MPU6050_Data_t 结构体 + 3 个函数原型
+Core/Src/mpu6050.c    — I2C_WriteReg/I2C_ReadReg/I2C_ReadRegs(私有)
+                         MPU6050_Init / MPU6050_ReadWhoAmI / MPU6050_ReadAll(公开)
+Core/Src/i2c.c        — CubeMX 生成：MX_I2C1_Init + HAL_I2C_MspInit
+Core/Src/main.c       — MX_I2C1_Init() 调用 + 创建 MPU 读取任务
 ```
 
 ### 2.2 信号量（Semaphore）— ISR 通知任务
