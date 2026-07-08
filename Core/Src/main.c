@@ -33,6 +33,7 @@
 #include "debug_uart.h"
 #include "mpu6050.h"
 #include "soft_i2c.h"
+#include "oled.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -53,7 +54,19 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-QueueHandle_t xSensorQueue = NULL;   /* MPU6050_Data_t: 生产者→消费者 */
+QueueHandle_t xSensorQueue = NULL;   /* MPU6050_Data_t: 生产者→消费�? */
+QueueHandle_t xCookedQueue = NULL;   /* Cooked_Data_t: 消费者→消费�? */
+SemaphoreHandle_t xI2CMutex = NULL;  /* 保护�? I2C 总线 (MPU6050 & OLED 共享) */
+typedef struct
+{
+    QueueHandle_t xSensorQueue;
+    QueueHandle_t xCookedQueue;
+    int16_t ax_offset;
+    int16_t ay_offset;
+    int16_t az_offset;
+} TaskParam_t;
+TaskParam_t ProcessTaskParam;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -61,6 +74,7 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 void Task_MPU6050_Read(void *argument);
 void Task_OLED_Display(void *argument);
+void Task_DataProcess(void *argument);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -68,91 +82,10 @@ void Task_OLED_Display(void *argument);
 uint8_t rebyte=0;
 /* USER CODE END 0 */
 
-int main(void)
-{
-  /* USER CODE BEGIN 1 */
-  HAL_Init();
-  SystemClock_Config();
-  MX_GPIO_Init();
-  MX_DMA_Init();
-  MX_USART1_UART_Init();
-  MX_I2C1_Init();
-  rebyte=MyI2C_ReadWhoAmI();
-  /* USER CODE END 1 */
-  
-  /* USER CODE BEGIN 2 */
-
-  DebugUART_Init();
-
-  printf("========================================\r\n");
-  printf("  2.1 Queue: MPU6050 Sensor Pipeline\r\n");
-  printf("  STM32F103C8Tx | %lu Hz\r\n", SystemCoreClock);
-  printf("========================================\r\n\r\n");
-
-  /* ---- I2C 总线扫描，确认设备在线 ---- */
-  printf("I2C Scan: ");
-  int found = 0;
-  for (uint8_t addr = 1; addr < 127; addr++) {
-      if (HAL_I2C_IsDeviceReady(&hi2c1, (uint16_t)(addr << 1), 2, 10) == HAL_OK) {
-          printf("0x%02X ", addr);
-          found++;
-      }
-  }
-  if (found == 0) {
-      printf("NO DEVICE FOUND!\r\n");
-  } else {
-      printf("(%d device(s))\r\n", found);
-  }
-  printf("[SoftI2C] WHO_AM_I = 0x%02X (expect 0x68)\r\n", rebyte);
-
-  /* 扫描后复位 I2C 状态机，否则后续 HAL_I2C_Mem_Read 会脏 */
-  HAL_I2C_DeInit(&hi2c1);
-  MX_I2C1_Init();
-
-  /* 手动读 WHO_AM_I：先写寄存器号，再读（F1 的 I2C 外设 Mem_Read 有重复起始问题） */
-  {
-      uint8_t reg = 0x75, who;
-      HAL_StatusTypeDef rc;
-      rc = HAL_I2C_Master_Transmit(&hi2c1, 0x68 << 1, &reg, 1, 100);
-      if (rc == HAL_OK) {
-          rc = HAL_I2C_Master_Receive(&hi2c1, 0x68 << 1, &who, 1, 100);
-      }
-      printf("[MPU] Raw WHO_AM_I: rc=%d val=0x%02X (expect rc=0 val=0x68)\r\n",
-             (int)rc, who);
-  }
-
-  /* MPU6050 硬件初始化 */
-  if (MPU6050_Init() == HAL_OK) {
-      printf("[MPU6050] Init OK!\r\n\r\n");
-  } else {
-      printf("[MPU6050] Init FAILED!\r\n\r\n");
-  }
-
-  /* 创建队列：8 个 MPU6050_Data_t 槽位 */
-  xSensorQueue = xQueueCreate(8, sizeof(MPU6050_Data_t));
-  if (xSensorQueue == NULL) {
-      printf("[Queue] Create FAILED!\r\n");
-  } else {
-      printf("[Queue] Created (8 slots x %u bytes)\r\n", (unsigned)sizeof(MPU6050_Data_t));
-  }
-
-  /* 生产者 (Prio=2) + 消费者 (Prio=1) — 都传队列句柄 */
-  BaseType_t rc;
-  rc = xTaskCreate(Task_MPU6050_Read, "MPU_Read", 512, (void*)xSensorQueue, 2, NULL);
-  printf("[Task] MPU_Read create: %s\r\n", rc == pdPASS ? "OK" : "FAIL");
-  rc = xTaskCreate(Task_OLED_Display, "OLED_Disp", 512, (void*)xSensorQueue, 1, NULL);
-  printf("[Task] OLED_Disp create: %s\r\n", rc == pdPASS ? "OK" : "FAIL");
-
-  printf("\r\n--- Starting scheduler ---\r\n\r\n");
-  vTaskStartScheduler();
-  /* USER CODE END 2 */
-
-  while (1)
-  {
-    /* USER CODE BEGIN 3 */
-    /* USER CODE END 3 */
-  }
-}
+/**
+  * @brief  The application entry point.
+  * @retval int
+  */
 
 /**
   * @brief System Clock Configuration
@@ -218,7 +151,7 @@ void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
     while (1) {}
 }
 
-/* ===== 2.1A: MPU6050 读取任务（生产者） ===== */
+/* ===== 2.1A: MPU6050 读取任务（生产�?�） ===== */
 void Task_MPU6050_Read(void *argument)
 {
     QueueHandle_t q = (QueueHandle_t)argument;
@@ -226,35 +159,69 @@ void Task_MPU6050_Read(void *argument)
     uint32_t count = 0;
 
     while (1) {
-        if (MPU6050_ReadAll(&data) == HAL_OK) {
-            count++;
-            if (xQueueSend(q, &data, pdMS_TO_TICKS(100)) != pdPASS) {
-                printf("[MPU] Queue full, dropped #%lu\r\n", count);
-            } else {
-                HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);  /* PC13 活动指示 */
+        /* 获取 I2C 总线�? */
+        if (xSemaphoreTake(xI2CMutex, pdMS_TO_TICKS(200)) == pdPASS) {
+            if (MPU6050_ReadAll(&data) == SOFT_I2C_OK) {
+                count++;
+                if (xQueueSend(q, &data, pdMS_TO_TICKS(100)) != pdPASS) {
+                    printf("[MPU] Queue full, dropped #%lu\r\n", count);
+                } else {
+                    HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);  /* PC13 活动指示 */
+                }
             }
+            xSemaphoreGive(xI2CMutex);
         }
         vTaskDelay(pdMS_TO_TICKS(500));
     }
 }
 
-/* ===== 2.1B: OLED 显示任务（消费者） ===== */
+/* ===== 2.1B: OLED 显示任务（消费�?�） ===== */
 void Task_OLED_Display(void *argument)
 {
     QueueHandle_t q = (QueueHandle_t)argument;
-    MPU6050_Data_t data;
+    SensorCooked_t data;
     uint32_t count = 0;
-
+    /* 清屏后显�? hello */
+    OLED_Fill(0x00);
+    OLED_ShowString(0, 0, "hello");
     printf("[OLED] Task started, q=%p\r\n", (void*)q);
     while (1) {
         if (xQueueReceive(q, &data, portMAX_DELAY) == pdPASS) {
             count++;
-            printf("[OLED] #%lu ax=%+6d ay=%+6d az=%+6d\r\n",
-                   count, data.ax, data.ay, data.az);
+            /* 获取 I2C 总线锁，保护 OLED 写操�? */
+            if (xSemaphoreTake(xI2CMutex, pdMS_TO_TICKS(100)) == pdPASS) {
+                OLED_ShowNum(2, 1, data.ax_g);
+                OLED_ShowNum(3, 1, data.ay_g);
+                OLED_ShowNum(4, 1, data.az_g);
+                OLED_ShowNum(4, 100, (float)count);
+                xSemaphoreGive(xI2CMutex);
+            }
+            printf("[OLED] #%lu ax=%+.3f ay=%+.3f az=%+.3f\r\n",
+                   count, data.ax_g, data.ay_g, data.az_g);
         }
     }
 }
 
+void Task_DataProcess(void *argument)
+{
+    TaskParam_t *param = (TaskParam_t *)argument;
+
+    QueueHandle_t xSensorQueue = param->xSensorQueue;
+    QueueHandle_t xCookedQueue = param->xCookedQueue;
+    MPU6050_Data_t data;
+    SensorCooked_t cooked;
+
+    /* 校准已在 main() 中完成，直接进入处理循环 */
+    while(1)
+    {
+        if (xQueueReceive(xSensorQueue, &data, portMAX_DELAY) == pdPASS) {
+            cooked.ax_g  = (float)(data.ax - param->ax_offset) / 16384.0f;
+            cooked.ay_g  = (float)(data.ay - param->ay_offset) / 16384.0f;
+            cooked.az_g  = (float)(data.az - param->az_offset) / 16384.0f;
+            xQueueSend(xCookedQueue, &cooked, pdMS_TO_TICKS(100));
+        }
+    }
+}
 /* USER CODE END 4 */
 
 /**

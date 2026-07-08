@@ -172,6 +172,69 @@ QueueHandle_t xSensorQueue = xQueueCreate(8, sizeof(SensorData_t));
 - [ ] 用 `xQueueOverwrite()` 只保留最新数据，适合"只关心当前值"的场景
 - [ ] 用 `uxQueueMessagesWaiting()` / `uxQueueSpacesAvailable()` 监控队列水位
 
+### 2.1 进阶：多级队列管道与数据处理
+
+#### 架构演进
+
+单级队列（原始版）把原始数据原样推给消费者，消费者既管格式转换又管显示——职责混在一起。标准做法是**插入处理任务**：
+
+```
+MPU6050_Read ──(raw)──→ [Queue_Raw] ──→ Data_Process ──(cooked)──→ [Queue_Cooked] ──→ OLED_Display
+  Prio=2                  8 slots        Prio=2                      4 slots          Prio=1
+  读寄存器                 14B/item      转换+校准                   浮点值/item       显示
+```
+
+#### 为什么拆成三级
+
+| 任务 | 职责 | 只需关心 |
+|------|------|---------|
+| MPU6050_Read | 读 I2C 寄存器，交原始数据 | 时序、I2C |
+| Data_Process | 转换单位、零偏校准、可加滤波 | 数学 |
+| OLED_Display | 格式化显示 | 屏幕布局 |
+
+每个任务只做一件事。以后换传感器（如 MPU9250→MPU6050）只改 Read 层，换显示方式（OLED→串口上位机）只改 Display 层，处理逻辑不动。
+
+#### 原始值转物理量
+
+```c
+// MPU6050 ±2g 量程：16384 LSB/g
+float accel_g = (float)raw.ax / 16384.0f;
+
+// MPU6050 ±250°/s 量程：131 LSB/°/s
+float gyro_dps = (float)raw.gx / 131.0f;
+```
+
+#### 零偏校准
+
+MPU6050 静止时 ax/ay 不恰好为 0、az 不恰好为 1g。上电后采 100 个样本取平均作为零偏：
+
+```c
+// 校准时传感器必须保持静止
+float offset_ax = 0, offset_ay = 0, offset_az = 0;
+for (int i = 0; i < 100; i++) {
+    MPU6050_ReadAll(&raw);
+    offset_ax += (float)raw.ax;
+    offset_ay += (float)raw.ay;
+    offset_az += (float)raw.az - 16384;  // 减去 1g
+    vTaskDelay(pdMS_TO_TICKS(10));
+}
+offset_ax /= 100; offset_ay /= 100; offset_az /= 100;
+```
+
+#### 处理后的数据结构体
+
+```c
+typedef struct {
+    float ax_g, ay_g, az_g;      // 加速度（g）
+    float gx_dps, gy_dps, gz_dps; // 角速度（°/s）
+    uint32_t count;
+} SensorCooked_t;
+```
+
+#### 踩坑：float 可以走队列
+
+队列按 `memcpy` 逐字节拷贝，`float` 结构体完全没问题。但 `xQueueOverwrite` 只对**队列长度为 1** 时有效——发送时覆盖唯一槽位，接收方永远取到最新值。长度 > 1 时需用 `xQueueSend`，满时要么阻塞要么丢弃。
+
 ### 2.1 附录：I2C 通信原理与 MPU6050 驱动全流程
 
 #### 一、I2C 总线物理层
@@ -369,6 +432,204 @@ Core/Src/i2c.c        — CubeMX 生成：MX_I2C1_Init + HAL_I2C_MspInit
 Core/Src/main.c       — MX_I2C1_Init() 调用 + 创建 MPU 读取任务
 ```
 
+### 2.1 附录 B：软件 I2C 驱动编写过程与踩坑记录
+
+#### 一、为什么写软件 I2C
+
+STM32F1 的硬件 I2C 外设有 RESTART 时序缺陷（见 2.1 附录 A 9.5 节）。两步法（Transmit + Receive）虽然稳定，但理解 I2C 协议的最佳方式是**手动用 GPIO 模拟**整个时序。写完之后再看 I2C 波形图一目了然。
+
+#### 二、引脚配置
+
+CubeMX 配置硬件 I2C1 时将 PB6/PB7 设为 `GPIO_MODE_AF_OD`（复用开漏）。要切换到软件 I2C，必须用 `HAL_GPIO_Init` 将引脚模式改为 `GPIO_MODE_OUTPUT_OD`（通用输出开漏），否则 `BSRR`/`BRR` 寄存器写操作在复用模式下可能被硬件忽略，导致 SCL/SDA 永远拉不低。
+
+```c
+void MyI2C_Init(void)
+{
+    I2C1->CR1 &= ~I2C_CR1_PE;    // 关硬件 I2C1，释放引脚
+
+    GPIO_InitTypeDef cfg = {0};
+    cfg.Pin   = SOFT_I2C_SCL_PIN | SOFT_I2C_SDA_PIN;
+    cfg.Mode  = GPIO_MODE_OUTPUT_OD;    // ← 关键：不是 AF_OD
+    cfg.Speed = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(GPIOB, &cfg);
+
+    SCL_HIGH();
+    SDA_HIGH();
+}
+```
+
+#### 三、延时校准
+
+软件 I2C 100kHz → 周期 10µs → 半周期 5µs。简单 `for` 循环的延时随编译器优化级别变化。用 `HAL_GetTick()` 跑 10000 次延时，反推单次微秒数：
+
+```c
+uint32_t t = HAL_GetTick();
+for (int i = 0; i < 10000; i++) I2C_Delay_US();
+t = HAL_GetTick() - t;
+// 单次延时 = (t * 1000) / 10000 微秒
+// 目标 5µs → new_count = 50000 / t（经验值）
+```
+
+踩坑：初始 `i<5` 太短→读 0xFF。改用 `i<15~18` 才稳定读到 WHO_AM_I。宁可偏慢也不能偏快。
+
+#### 四、I2C 时序的关键细节
+
+**Start 条件**：SCL 高时 SDA 从高拉低。之前必须确保总线空闲（SCL=H, SDA=H）。
+
+**Stop 条件**：SCL 高时 SDA 从低拉高。
+
+**SendByte**：8 位数据后必须释放 SDA 并读 ACK。SCL 高电平和低电平各需要保持延时，**缺低电平延时从机看不到时钟**——这是最常见的"设备不应答"原因。
+
+**RecvByte**：SCL 上升沿后加延时再读 SDA——从机需要时间驱动数据线。
+
+#### 五、软件 I2C 封装分层
+
+```
+soft_i2c.h / soft_i2c.c     ← 底层：MyI2C_Start/Stop/SendByte/RecvByte/Ack
+mpu6050.c                   ← 中层：I2C_WriteReg/I2C_ReadReg/I2C_ReadRegs
+main.c                      ← 上层：MPU6050_Init/ReadAll
+```
+
+> 关键原则：底层（soft_i2c）不依赖任何 HAL、不依赖 FreeRTOS、不依赖具体设备。中层（mpu6050）用底层接口实现 MPU6050 专用读写。上层（main.c）只调用中层 API。
+
+#### 六、自定义返回值枚举
+
+不依赖 HAL 的 `HAL_StatusTypeDef`，在 `soft_i2c.h` 中定义自己的：
+
+```c
+typedef enum {
+    SOFT_I2C_OK    = 0,
+    SOFT_I2C_ERROR = 1
+} SoftI2C_Status;
+```
+
+所有 I2C 相关函数统一返回 `SoftI2C_Status`，与 HAL 彻底解耦。
+
+### 2.1 附录 C：OLED 驱动编写过程与踩坑记录
+
+#### 一、SSD1306 I2C 通信格式
+
+OLED 也是 I2C 设备，与 MPU6050 共用 PB6/PB7。I2C 地址为 `0x3C`（7 位），发送时左移 1 位 = `0x78`。
+
+与 MPU6050 的关键区别：SSD1306 在地址字节之后要求一个**控制字节**区分命令还是数据：
+
+```
+写命令：START → 0x78 → ACK → 0x00(CMD) → ACK → cmd_byte → ACK → STOP
+写数据：START → 0x78 → ACK → 0x40(DATA) → ACK → data_byte → ACK → STOP
+```
+
+#### 二、批量发送优化
+
+SSD1306 初始化需要发 20+ 条命令。在同一次 I2C 传输中，发完 `0x00` 控制字节后可以连续发多个命令字节。写一个 `OLED_WriteCmdBuf(cmds[], len)` 函数，整个初始化序列只产生一次 Start/Stop：
+
+```c
+void OLED_WriteCmdBuf(const uint8_t *cmds, uint8_t len)
+{
+    MyI2C_Start();
+    MyI2C_SendByte(OLED_ADDR << 1);
+    MyI2C_ReciveAck();
+    MyI2C_SendByte(OLED_CMD);       // 控制字节 0x00（进入命令模式）
+    MyI2C_ReciveAck();
+    for (int i = 0; i < len; i++) {
+        MyI2C_SendByte(cmds[i]);    // 所有命令连续发出
+        MyI2C_ReciveAck();
+    }
+    MyI2C_Stop();
+}
+```
+
+> 注意：命令批量用 `OLED_WriteCmdBuf`，字模数据批量用 `OLED_WriteDataBuf`——两者的唯一区别是控制字节为 `0x00` 还是 `0x40`。如果写反，命令被当成数据显示乱码，数据被当成命令执行导致黑屏。
+
+#### 三、字模表和字符集
+
+SSD1306 本身不包含字库，必须提供 ASCII 字模表。常用 6×8 点阵，每个字符 6 字节。
+
+> **踩坑：小写字母缺失导致乱码**
+>
+> 现象：`OLED_ShowString(0, 0, "hello")` 显示乱码，但 `"HELLO"` 大写正常。
+>
+> 原因：字模表只定义了 `' '` 到 `'Z'` (ASCII 32-90)，漏掉了 `'a'` 到 `'z'` (ASCII 97-122)。`'h'` 查表时索引溢出到未定义区域，读出随机数据。
+>
+> 解决：字模表必须覆盖 `' '` (0x20) 到 `'~'` (0x7E) 的全部 95 个可打印 ASCII 字符，共 95×6=570 字节。写 `OLED_ShowString` 时遇到超出范围的字符直接跳过。
+
+#### 四、OLED ShowString 和队列对接
+
+最终的 `Task_OLED_Display` 从队列接收数据，格式化后显示：
+
+```c
+while (1) {
+    xQueueReceive(q, &data, portMAX_DELAY);
+    char buf[17];
+    snprintf(buf, 17, "ax:%+6d", data.ax);
+    OLED_ShowString(0, 0, buf);
+    snprintf(buf, 17, "ay:%+6d", data.ay);
+    OLED_ShowString(1, 0, buf);
+    snprintf(buf, 17, "az:%+6d", data.az);
+    OLED_ShowString(2, 0, buf);
+    // PC13 LED 活动指示
+    HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+}
+```
+
+#### 五、中文字模（扩展方向）
+
+ASCII 逐个字符取模。中文需要 GB2312/UTF-8 解码 + 更大点阵（12×12 或 16×16），对应 24 字节/字。取模工具（PCtoLCD2002）配合 SSD1306 的页寻址模式可实现中英文混显。后续 CLI 控制台项目用到时再展开。
+
+#### 六、性能优化：OLED 刷新从"逐行扫描"变成瞬间完成
+
+> **现象**：屏幕更新时肉眼可见一行一行画出数字，像"卷帘"效果。
+
+**根因**：SSD1306 在 Page Addressing 模式下，每写完一个数据字节后**列地址自动 +1**，无需每列重新定位光标。但原始代码不知道这个特性，每个字符产生约 **7 次独立 I2C 事务**（3 次光标命令 + 6 次逐列写数据），3 个浮点数共 ~105 次 I2C 事务，软件 I2C 的 Start/Stop/延时开销远大于有效传输。
+
+**优化方法**：
+
+```c
+// ❌ 优化前：每字符 7 次 I2C 事务
+void OLED_ShowString(uint8_t page, uint8_t col, const char *str) {
+    while (*str) {
+        OLED_SetCursor(page, col);          // 3 次 I2C (Page + ColLow + ColHigh)
+        const uint8_t *p = OLED_F6x8[*str - ' '];
+        for (int k = 0; k < 6; k++)
+            OLED_WriteData(p[k]);           // 6 次 I2C (每个像素列)
+        col += 6; str++;
+    }
+}
+
+// ✅ 优化后：每字符 1 次 I2C 事务
+void OLED_ShowString(uint8_t page, uint8_t col, const char *str) {
+    OLED_SetCursor(page, col);              // 只设 1 次光标（用 WriteCmdBuf 3 字节合并）
+    while (*str) {
+        OLED_WriteDataBuf(OLED_F6x8[*str - ' '], 6);  // 6 字节一次写入，列地址自动 +6
+        str++;
+    }
+}
+```
+
+**同时优化 `OLED_SetCursor`**：将 3 次独立 `OLED_WriteCmd` 合并为一次 `OLED_WriteCmdBuf(cmds, 3)`。
+
+**同时优化 `OLED_Fill`**：预填充 128 字节 `static` 缓冲区，每页一次 `OLED_WriteDataBuf`（8 次 I2C 覆盖全屏，替代原来的 1024 次）。
+
+**性能对比**：
+
+| 操作 | 优化前 I2C 事务 | 优化后 I2C 事务 |
+|------|----------------|----------------|
+| SetCursor | 3 | 1 |
+| 显示 1 个字符 | 7 | 1 |
+| 显示 3 个浮点数 | ~105 | ~4 |
+| 全屏填充/清屏 | 1024 | 8 |
+
+> **关键认知**：软件 I2C 的速度瓶颈不在 GPIO 翻转频率，而在 **I2C 事务数量**。每次 Start/Stop 之间能连续发多少字节就发多少，不要把完整传输拆散。
+
+#### 七、`snprintf` 浮点格式化失效
+
+> **现象**：`OLED_ShowNum` 调用 `snprintf(buf, sizeof(buf), "%.3f", data)` 后 buf 为空字符串或乱码，OLED 上数字不显示。同时 `printf("%+6d", data.ax_g)` 用 `%d` 打印 `float` 导致串口输出乱码。
+
+**根因**：项目使用 `-specs=nano.specs`（newlib-nano），**浮点 `%f` 格式化默认关闭**以节省 ROM（约 10~15KB）。不加 `-u _printf_float` 链接选项时，`snprintf`/`printf` 遇到 `%f` 静默失败，输出空串。
+
+**解决**：Makefile LDFLAGS 加 `-u _printf_float`；同时修正 `printf` 格式 `%+6d` → `%.3f`（float 参数必须用 `%f`，不能用 `%d`）。
+
+> **经验**：嵌入式调试时如果打印浮点数发现串口卡死或输出乱码，第一反应检查链接选项。能用整数尽量用整数（如 MPU6050 原始 `int16_t` 直接显示），省 ROM 也省 CPU。
+
 ### 2.2 信号量（Semaphore）— ISR 通知任务
 
 **学习目标**：区分二值信号量和计数信号量，掌握 ISR→任务通知模式。
@@ -437,6 +698,14 @@ if (xSemaphoreTake(xI2CMutex, pdMS_TO_TICKS(100)) == pdTRUE) {
 - [ ] 信号量 vs 互斥量：前者用于**同步**（通知事件），后者用于**互斥**（保护资源）
 - [ ] 互斥量**不能**在 ISR 中使用（`xSemaphoreGiveFromISR` 对互斥量无效）
 - [ ] 互斥量是"谁 Take 谁 Give"，不能跨任务
+
+> **实际踩坑：软 I2C 多任务竞争导致 OLED 花屏 / MPU6050 读数异常**
+>
+> `Task_MPU6050_Read`（Prio=2）和 `Task_OLED_Display`（Prio=1）共用 PB6/PB7 软 I2C 总线。未加互斥量时，高优先级的 MPU 任务可随时抢占正在做 OLED I2C 通信的低优先任务——例如 OLED 刚发完 Start 条件，MPU 任务抢占后又发一个 Start，总线协议状态彻底混乱，从机无法解析后续数据。
+>
+> 解决：`xI2CMutex = xSemaphoreCreateMutex()`，两个任务在 I2C 操作区间前 `xSemaphoreTake(xI2CMutex, timeout)`、操作后 `xSemaphoreGive(xI2CMutex)`。互斥量需要 `configUSE_MUTEXES = 1`。
+>
+> **特别注意**：`xSemaphoreCreateMutex()` 实际上是宏，展开为 `xQueueCreateMutex()`，该函数在 `queue.c` 中被 `#if configUSE_MUTEXES == 1` 条件编译。如果忘记开启这个宏，链接器报 `undefined reference to xQueueCreateMutex`。
 
 ### 2.4 事件组（Event Group）— 多传感器同步
 
@@ -685,6 +954,47 @@ OLED 四行布局：
 ```
 
 **涉及知识点**：互斥量保护 I2C、队列传递传感器数据、`vTaskList` 获取任务信息。
+
+---
+
+## 通用踩坑记录
+
+### printf 在 FreeRTOS 中的启动延迟
+
+> **现象**：上电后串口 4~5 秒无输出，引导信息和传感器数据迟迟不出现。
+
+**根因**：`DebugUART_Init()` 在调度器启动前创建了 TX 任务和队列，之后 `printf`（`_write`）看到 `xUartTxQueue != NULL` 就把数据推入队列。但 TX 任务要等 `vTaskStartScheduler()` 才运行——这段时间所有 printf 数据积压在队列中无人消费。
+
+**解决**：在 `_write()` 中增加调度器状态检查，调度器未运行时直接用阻塞式 `HAL_UART_Transmit()`：
+
+```c
+int _write(int file, char *ptr, int len) {
+    if (xUartTxQueue == NULL || xTaskGetSchedulerState() != taskSCHEDULER_RUNNING) {
+        HAL_UART_Transmit(&huart1, (uint8_t *)ptr, len, HAL_MAX_DELAY);
+        return len;
+    }
+    // 调度器运行后走队列 + DMA 路径
+}
+```
+
+`xTaskGetSchedulerState()` 需要 `INCLUDE_xTaskGetSchedulerState = 1`。同时把 `DebugUART_StartRx()`（DMA RX 持续接收）从 `DebugUART_Init()` 推迟到 `vUartRxTask()` 的开头，避免 DMA RX 干扰初始 TX。
+
+### FreeRTOS 条件编译宏缺失导致链接失败
+
+> **现象**：链接时 `undefined reference to xQueueCreateMutex`、`undefined reference to xTaskGetSchedulerState`。
+
+| 错误 | 缺少的宏 | 说明 |
+|------|---------|------|
+| `xQueueCreateMutex` | `configUSE_MUTEXES 1` | `xSemaphoreCreateMutex()` 是宏，本体是 `queue.c` 中的 `xQueueCreateMutex()`，该函数被 `#if configUSE_MUTEXES == 1` 条件编译 |
+| `xTaskGetSchedulerState` | `INCLUDE_xTaskGetSchedulerState 1` | 同名的 API 函数在 `tasks.c` 中被条件编译 |
+
+**通用排查思路**：遇到 FreeRTOS 函数的链接错误 → 搜索该函数在源码中的 `#if` 守卫 → 在 `FreeRTOSConfig.h` 中开启对应宏。
+
+### `#define` 重复定义导致缓冲区大小不一致
+
+> **现象**：`debug_uart.c` 中 `UART_RX_BUF_SIZE` 先定义为 64（消息结构体 buffer），后又被重定义为 256（DMA buffer）。结构体 `UartRxMsg_t.data[64]` 用旧值定义，但 ISR 中的分块逻辑读到新值 256，可能导致栈溢出。
+
+**解决**：用不同名字区分——`UART_MSG_BUF_SIZE`(64) 和 `UART_DMA_RX_BUF_SIZE`(256)。`#define` 重定义在 C 中是未定义行为（UB），编译器不保证报错。
 
 ---
 

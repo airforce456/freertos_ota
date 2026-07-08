@@ -150,3 +150,6 @@ uint8_t MyI2C_ReadWhoAmI(void)
     
     return ID;
 }
+
+
+// 写单个寄存器

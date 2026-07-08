@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 1
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 1
   30:Middlewares/FreeRTOS/Source/event_groups.c **** #include <stdlib.h>
   31:Middlewares/FreeRTOS/Source/event_groups.c **** 
   32:Middlewares/FreeRTOS/Source/event_groups.c **** /* Defining MPU_WRAPPERS_INCLUDED_FROM_API_FILE prevents task.h from redefining
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 2
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 2
 
 
   33:Middlewares/FreeRTOS/Source/event_groups.c ****  * all the API functions to use the MPU wrappers.  That should only be done when
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 1
   87:Middlewares/FreeRTOS/Source/event_groups.c ****  */
   88:Middlewares/FreeRTOS/Source/event_groups.c **** static BaseType_t prvTestWaitCondition( const EventBits_t uxCurrentEventBits,
   89:Middlewares/FreeRTOS/Source/event_groups.c ****                                         const EventBits_t uxBitsToWaitFor,
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 3
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 3
 
 
   90:Middlewares/FreeRTOS/Source/event_groups.c ****                                         const BaseType_t xWaitForAllBits ) PRIVILEGED_FUNCTION;
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 1
  144:Middlewares/FreeRTOS/Source/event_groups.c **** /*-----------------------------------------------------------*/
  145:Middlewares/FreeRTOS/Source/event_groups.c **** 
  146:Middlewares/FreeRTOS/Source/event_groups.c **** #if ( configSUPPORT_DYNAMIC_ALLOCATION == 1 )
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 4
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 4
 
 
  147:Middlewares/FreeRTOS/Source/event_groups.c **** 
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 1
  201:Middlewares/FreeRTOS/Source/event_groups.c ****     BaseType_t xAlreadyYielded;
  202:Middlewares/FreeRTOS/Source/event_groups.c ****     BaseType_t xTimeoutOccurred = pdFALSE;
  203:Middlewares/FreeRTOS/Source/event_groups.c **** 
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 5
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 5
 
 
  204:Middlewares/FreeRTOS/Source/event_groups.c ****     configASSERT( ( uxBitsToWaitFor & eventEVENT_BITS_CONTROL_BYTES ) == 0 );
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 1
  258:Middlewares/FreeRTOS/Source/event_groups.c ****     {
  259:Middlewares/FreeRTOS/Source/event_groups.c ****         if( xAlreadyYielded == pdFALSE )
  260:Middlewares/FreeRTOS/Source/event_groups.c ****         {
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 6
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 6
 
 
  261:Middlewares/FreeRTOS/Source/event_groups.c ****             portYIELD_WITHIN_API();
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 1
  315:Middlewares/FreeRTOS/Source/event_groups.c **** /*-----------------------------------------------------------*/
  316:Middlewares/FreeRTOS/Source/event_groups.c **** 
  317:Middlewares/FreeRTOS/Source/event_groups.c **** EventBits_t xEventGroupWaitBits( EventGroupHandle_t xEventGroup,
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 7
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 7
 
 
  318:Middlewares/FreeRTOS/Source/event_groups.c ****                                  const EventBits_t uxBitsToWaitFor,
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 1
  372:Middlewares/FreeRTOS/Source/event_groups.c ****             /* The task is going to block to wait for its required bits to be
  373:Middlewares/FreeRTOS/Source/event_groups.c ****              * set.  uxControlBits are used to remember the specified behaviour of
  374:Middlewares/FreeRTOS/Source/event_groups.c ****              * this call to xEventGroupWaitBits() - for use when the event bits
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 8
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 8
 
 
  375:Middlewares/FreeRTOS/Source/event_groups.c ****              * unblock the task. */
@@ -478,7 +478,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 1
  429:Middlewares/FreeRTOS/Source/event_groups.c ****             {
  430:Middlewares/FreeRTOS/Source/event_groups.c ****                 /* The task timed out, just return the current event bit value. */
  431:Middlewares/FreeRTOS/Source/event_groups.c ****                 uxReturn = pxEventBits->uxEventBits;
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 9
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 9
 
 
  432:Middlewares/FreeRTOS/Source/event_groups.c **** 
@@ -538,7 +538,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 1
  486:Middlewares/FreeRTOS/Source/event_groups.c ****         traceEVENT_GROUP_CLEAR_BITS( xEventGroup, uxBitsToClear );
  487:Middlewares/FreeRTOS/Source/event_groups.c **** 
  488:Middlewares/FreeRTOS/Source/event_groups.c ****         /* The value returned is the event group value prior to the bits being
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 10
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 10
 
 
  489:Middlewares/FreeRTOS/Source/event_groups.c ****          * cleared. */
@@ -598,7 +598,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 1
  543:Middlewares/FreeRTOS/Source/event_groups.c ****     /* Check the user is not attempting to set the bits used by the kernel
  544:Middlewares/FreeRTOS/Source/event_groups.c ****      * itself. */
  545:Middlewares/FreeRTOS/Source/event_groups.c ****     configASSERT( xEventGroup );
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 11
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 11
 
 
  546:Middlewares/FreeRTOS/Source/event_groups.c ****     configASSERT( ( uxBitsToSet & eventEVENT_BITS_CONTROL_BYTES ) == 0 );
@@ -658,7 +658,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 1
  600:Middlewares/FreeRTOS/Source/event_groups.c ****                 {
  601:Middlewares/FreeRTOS/Source/event_groups.c ****                     mtCOVERAGE_TEST_MARKER();
  602:Middlewares/FreeRTOS/Source/event_groups.c ****                 }
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 12
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 12
 
 
  603:Middlewares/FreeRTOS/Source/event_groups.c **** 
@@ -718,7 +718,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 1
  657:Middlewares/FreeRTOS/Source/event_groups.c ****                 /* The event group could have been allocated statically or
  658:Middlewares/FreeRTOS/Source/event_groups.c ****                  * dynamically, so check before attempting to free the memory. */
  659:Middlewares/FreeRTOS/Source/event_groups.c ****                 if( pxEventBits->ucStaticallyAllocated == ( uint8_t ) pdFALSE )
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 13
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 13
 
 
  660:Middlewares/FreeRTOS/Source/event_groups.c ****                 {
@@ -778,7 +778,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 1
   38 0002 0842     		tst	r0, r1
   39 0004 05D1     		bne	.L4
  696:Middlewares/FreeRTOS/Source/event_groups.c **** 
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 14
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 14
 
 
   40              		.loc 1 696 16 view .LVU6
@@ -838,7 +838,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 1
   70              		.loc 1 721 37 is_stmt 1 view .LVU16
  722:Middlewares/FreeRTOS/Source/event_groups.c ****         }
  723:Middlewares/FreeRTOS/Source/event_groups.c ****     }
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 15
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 15
 
 
  724:Middlewares/FreeRTOS/Source/event_groups.c **** 
@@ -898,7 +898,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 1
  113              		.loc 1 126 21 view .LVU29
  126:Middlewares/FreeRTOS/Source/event_groups.c ****                 }
  114              		.loc 1 126 56 is_stmt 0 view .LVU30
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 16
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 16
 
 
  115 0010 0123     		movs	r3, #1
@@ -958,7 +958,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 1
  169:Middlewares/FreeRTOS/Source/event_groups.c ****             vListInitialise( &( pxEventBits->xTasksWaitingForBits ) );
  159              		.loc 1 169 38 is_stmt 0 view .LVU43
  160 000c 0025     		movs	r5, #0
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 17
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 17
 
 
  161 000e 40F8045B 		str	r5, [r0], #4
@@ -1018,7 +1018,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 1
  207 0006 0D46     		mov	r5, r1
  208 0008 9046     		mov	r8, r2
  209 000a 1F46     		mov	r7, r3
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 18
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 18
 
 
  210 000c DDF82090 		ldr	r9, [sp, #32]
@@ -1037,373 +1037,375 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 1
  217              		.loc 1 331 77 view .LVU59
  332:Middlewares/FreeRTOS/Source/event_groups.c ****     #if ( ( INCLUDE_xTaskGetSchedulerState == 1 ) || ( configUSE_TIMERS == 1 ) )
  218              		.loc 1 332 41 view .LVU60
+ 335:Middlewares/FreeRTOS/Source/event_groups.c ****         }
+ 219              		.loc 1 335 114 view .LVU61
  339:Middlewares/FreeRTOS/Source/event_groups.c ****     {
- 219              		.loc 1 339 5 view .LVU61
- 220 0010 FFF7FEFF 		bl	vTaskSuspendAll
- 221              	.LVL18:
- 222              	.LBB6:
+ 220              		.loc 1 339 5 view .LVU62
+ 221 0010 FFF7FEFF 		bl	vTaskSuspendAll
+ 222              	.LVL18:
+ 223              	.LBB6:
  341:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 223              		.loc 1 341 9 view .LVU62
+ 224              		.loc 1 341 9 view .LVU63
  341:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 224              		.loc 1 341 27 is_stmt 0 view .LVU63
- 225 0014 3468     		ldr	r4, [r6]
- 226              	.LVL19:
+ 225              		.loc 1 341 27 is_stmt 0 view .LVU64
+ 226 0014 3468     		ldr	r4, [r6]
+ 227              	.LVL19:
  344:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 227              		.loc 1 344 9 is_stmt 1 view .LVU64
+ 228              		.loc 1 344 9 is_stmt 1 view .LVU65
  344:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 228              		.loc 1 344 29 is_stmt 0 view .LVU65
- 229 0016 3A46     		mov	r2, r7
- 230 0018 2946     		mov	r1, r5
- 231 001a 2046     		mov	r0, r4
- 232 001c FFF7FEFF 		bl	prvTestWaitCondition
- 233              	.LVL20:
+ 229              		.loc 1 344 29 is_stmt 0 view .LVU66
+ 230 0016 3A46     		mov	r2, r7
+ 231 0018 2946     		mov	r1, r5
+ 232 001a 2046     		mov	r0, r4
+ 233 001c FFF7FEFF 		bl	prvTestWaitCondition
+ 234              	.LVL20:
  346:Middlewares/FreeRTOS/Source/event_groups.c ****         {
- 234              		.loc 1 346 9 is_stmt 1 view .LVU66
+ 235              		.loc 1 346 9 is_stmt 1 view .LVU67
  346:Middlewares/FreeRTOS/Source/event_groups.c ****         {
- 235              		.loc 1 346 11 is_stmt 0 view .LVU67
- 236 0020 10B3     		cbz	r0, .L13
+ 236              		.loc 1 346 11 is_stmt 0 view .LVU68
+ 237 0020 10B3     		cbz	r0, .L13
  350:Middlewares/FreeRTOS/Source/event_groups.c ****             xTicksToWait = ( TickType_t ) 0;
- 237              		.loc 1 350 13 is_stmt 1 view .LVU68
- 238              	.LVL21:
+ 238              		.loc 1 350 13 is_stmt 1 view .LVU69
+ 239              	.LVL21:
  351:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 239              		.loc 1 351 13 view .LVU69
+ 240              		.loc 1 351 13 view .LVU70
  354:Middlewares/FreeRTOS/Source/event_groups.c ****             {
- 240              		.loc 1 354 13 view .LVU70
+ 241              		.loc 1 354 13 view .LVU71
  354:Middlewares/FreeRTOS/Source/event_groups.c ****             {
- 241              		.loc 1 354 15 is_stmt 0 view .LVU71
- 242 0022 B8F1000F 		cmp	r8, #0
- 243 0026 33D0     		beq	.L21
+ 242              		.loc 1 354 15 is_stmt 0 view .LVU72
+ 243 0022 B8F1000F 		cmp	r8, #0
+ 244 0026 33D0     		beq	.L21
  356:Middlewares/FreeRTOS/Source/event_groups.c ****             }
- 244              		.loc 1 356 17 is_stmt 1 view .LVU72
+ 245              		.loc 1 356 17 is_stmt 1 view .LVU73
  356:Middlewares/FreeRTOS/Source/event_groups.c ****             }
- 245              		.loc 1 356 42 is_stmt 0 view .LVU73
- 246 0028 24EA0503 		bic	r3, r4, r5
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 19
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 19
 
 
- 247 002c 3360     		str	r3, [r6]
+ 246              		.loc 1 356 42 is_stmt 0 view .LVU74
+ 247 0028 24EA0503 		bic	r3, r4, r5
+ 248 002c 3360     		str	r3, [r6]
  351:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 248              		.loc 1 351 26 view .LVU74
- 249 002e 4FF00009 		mov	r9, #0
- 250              	.LVL22:
- 251              	.L14:
+ 249              		.loc 1 351 26 view .LVU75
+ 250 002e 4FF00009 		mov	r9, #0
+ 251              	.LVL22:
+ 252              	.L14:
  404:Middlewares/FreeRTOS/Source/event_groups.c ****         }
- 252              		.loc 1 404 77 is_stmt 1 view .LVU75
- 253              	.LBE6:
+ 253              		.loc 1 404 77 is_stmt 1 view .LVU76
+ 254              	.LBE6:
  407:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 254              		.loc 1 407 5 view .LVU76
+ 255              		.loc 1 407 5 view .LVU77
  407:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 255              		.loc 1 407 23 is_stmt 0 view .LVU77
- 256 0032 FFF7FEFF 		bl	xTaskResumeAll
- 257              	.LVL23:
+ 256              		.loc 1 407 23 is_stmt 0 view .LVU78
+ 257 0032 FFF7FEFF 		bl	xTaskResumeAll
+ 258              	.LVL23:
  409:Middlewares/FreeRTOS/Source/event_groups.c ****     {
- 258              		.loc 1 409 5 is_stmt 1 view .LVU78
+ 259              		.loc 1 409 5 is_stmt 1 view .LVU79
  409:Middlewares/FreeRTOS/Source/event_groups.c ****     {
- 259              		.loc 1 409 7 is_stmt 0 view .LVU79
- 260 0036 B9F1000F 		cmp	r9, #0
- 261 003a 12D0     		beq	.L12
+ 260              		.loc 1 409 7 is_stmt 0 view .LVU80
+ 261 0036 B9F1000F 		cmp	r9, #0
+ 262 003a 12D0     		beq	.L12
  411:Middlewares/FreeRTOS/Source/event_groups.c ****         {
- 262              		.loc 1 411 9 is_stmt 1 view .LVU80
+ 263              		.loc 1 411 9 is_stmt 1 view .LVU81
  411:Middlewares/FreeRTOS/Source/event_groups.c ****         {
- 263              		.loc 1 411 11 is_stmt 0 view .LVU81
- 264 003c 48B9     		cbnz	r0, .L18
+ 264              		.loc 1 411 11 is_stmt 0 view .LVU82
+ 265 003c 48B9     		cbnz	r0, .L18
  413:Middlewares/FreeRTOS/Source/event_groups.c ****         }
- 265              		.loc 1 413 13 is_stmt 1 view .LVU82
- 266 003e 4FF0E023 		mov	r3, #-536813568
- 267 0042 4FF08052 		mov	r2, #268435456
- 268 0046 C3F8042D 		str	r2, [r3, #3332]
+ 266              		.loc 1 413 13 is_stmt 1 view .LVU83
+ 267 003e 4FF0E023 		mov	r3, #-536813568
+ 268 0042 4FF08052 		mov	r2, #268435456
+ 269 0046 C3F8042D 		str	r2, [r3, #3332]
  413:Middlewares/FreeRTOS/Source/event_groups.c ****         }
- 269              		.loc 1 413 13 view .LVU83
- 270              		.syntax unified
- 271              	@ 413 "Middlewares/FreeRTOS/Source/event_groups.c" 1
- 272 004a BFF34F8F 		dsb
- 273              	@ 0 "" 2
+ 270              		.loc 1 413 13 view .LVU84
+ 271              		.syntax unified
+ 272              	@ 413 "Middlewares/FreeRTOS/Source/event_groups.c" 1
+ 273 004a BFF34F8F 		dsb
+ 274              	@ 0 "" 2
  413:Middlewares/FreeRTOS/Source/event_groups.c ****         }
- 274              		.loc 1 413 13 view .LVU84
- 275              	@ 413 "Middlewares/FreeRTOS/Source/event_groups.c" 1
- 276 004e BFF36F8F 		isb
- 277              	@ 0 "" 2
+ 275              		.loc 1 413 13 view .LVU85
+ 276              	@ 413 "Middlewares/FreeRTOS/Source/event_groups.c" 1
+ 277 004e BFF36F8F 		isb
+ 278              	@ 0 "" 2
  413:Middlewares/FreeRTOS/Source/event_groups.c ****         }
- 278              		.loc 1 413 35 view .LVU85
- 279              		.thumb
- 280              		.syntax unified
- 281              	.L18:
+ 279              		.loc 1 413 35 view .LVU86
+ 280              		.thumb
+ 281              		.syntax unified
+ 282              	.L18:
  417:Middlewares/FreeRTOS/Source/event_groups.c ****         }
- 282              		.loc 1 417 37 view .LVU86
+ 283              		.loc 1 417 37 view .LVU87
  424:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 283              		.loc 1 424 9 view .LVU87
+ 284              		.loc 1 424 9 view .LVU88
  424:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 284              		.loc 1 424 20 is_stmt 0 view .LVU88
- 285 0052 FFF7FEFF 		bl	uxTaskResetEventItemValue
- 286              	.LVL24:
- 424:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 287              		.loc 1 424 20 view .LVU89
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 20
+ 285              		.loc 1 424 20 is_stmt 0 view .LVU89
+ 286 0052 FFF7FEFF 		bl	uxTaskResetEventItemValue
+ 287              	.LVL24:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 20
 
 
- 288 0056 0446     		mov	r4, r0
- 289              	.LVL25:
+ 424:Middlewares/FreeRTOS/Source/event_groups.c **** 
+ 288              		.loc 1 424 20 view .LVU90
+ 289 0056 0446     		mov	r4, r0
+ 290              	.LVL25:
  426:Middlewares/FreeRTOS/Source/event_groups.c ****         {
- 290              		.loc 1 426 9 is_stmt 1 view .LVU90
+ 291              		.loc 1 426 9 is_stmt 1 view .LVU91
  426:Middlewares/FreeRTOS/Source/event_groups.c ****         {
- 291              		.loc 1 426 11 is_stmt 0 view .LVU91
- 292 0058 10F0007F 		tst	r0, #33554432
- 293 005c 1BD0     		beq	.L24
- 294              	.LVL26:
- 295              	.L19:
+ 292              		.loc 1 426 11 is_stmt 0 view .LVU92
+ 293 0058 10F0007F 		tst	r0, #33554432
+ 294 005c 1BD0     		beq	.L24
+ 295              	.LVL26:
+ 296              	.L19:
  458:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 296              		.loc 1 458 9 is_stmt 1 view .LVU92
+ 297              		.loc 1 458 9 is_stmt 1 view .LVU93
  461:Middlewares/FreeRTOS/Source/event_groups.c ****     }
- 297              		.loc 1 461 9 view .LVU93
+ 298              		.loc 1 461 9 view .LVU94
  461:Middlewares/FreeRTOS/Source/event_groups.c ****     }
- 298              		.loc 1 461 18 is_stmt 0 view .LVU94
- 299 005e 24F07F44 		bic	r4, r4, #-16777216
- 300              	.LVL27:
+ 299              		.loc 1 461 18 is_stmt 0 view .LVU95
+ 300 005e 24F07F44 		bic	r4, r4, #-16777216
+ 301              	.LVL27:
  464:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 301              		.loc 1 464 5 is_stmt 1 view .LVU95
+ 302              		.loc 1 464 5 is_stmt 1 view .LVU96
  467:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 302              		.loc 1 467 5 view .LVU96
+ 303              		.loc 1 467 5 view .LVU97
  469:Middlewares/FreeRTOS/Source/event_groups.c **** }
- 303              		.loc 1 469 5 view .LVU97
- 304              	.L12:
+ 304              		.loc 1 469 5 view .LVU98
+ 305              	.L12:
  470:Middlewares/FreeRTOS/Source/event_groups.c **** /*-----------------------------------------------------------*/
- 305              		.loc 1 470 1 is_stmt 0 view .LVU98
- 306 0062 2046     		mov	r0, r4
- 307 0064 BDE8F883 		pop	{r3, r4, r5, r6, r7, r8, r9, pc}
- 308              	.LVL28:
- 309              	.L13:
- 310              	.LBB7:
+ 306              		.loc 1 470 1 is_stmt 0 view .LVU99
+ 307 0062 2046     		mov	r0, r4
+ 308 0064 BDE8F883 		pop	{r3, r4, r5, r6, r7, r8, r9, pc}
+ 309              	.LVL28:
+ 310              	.L13:
+ 311              	.LBB7:
  363:Middlewares/FreeRTOS/Source/event_groups.c ****         {
- 311              		.loc 1 363 14 is_stmt 1 view .LVU99
+ 312              		.loc 1 363 14 is_stmt 1 view .LVU100
  363:Middlewares/FreeRTOS/Source/event_groups.c ****         {
- 312              		.loc 1 363 16 is_stmt 0 view .LVU100
- 313 0068 B9F1000F 		cmp	r9, #0
- 314 006c E1D0     		beq	.L14
+ 313              		.loc 1 363 16 is_stmt 0 view .LVU101
+ 314 0068 B9F1000F 		cmp	r9, #0
+ 315 006c E1D0     		beq	.L14
  376:Middlewares/FreeRTOS/Source/event_groups.c ****             {
- 315              		.loc 1 376 13 is_stmt 1 view .LVU101
+ 316              		.loc 1 376 13 is_stmt 1 view .LVU102
  376:Middlewares/FreeRTOS/Source/event_groups.c ****             {
- 316              		.loc 1 376 15 is_stmt 0 view .LVU102
- 317 006e B8F1000F 		cmp	r8, #0
- 318 0072 0AD1     		bne	.L22
- 319              	.LBE7:
+ 317              		.loc 1 376 15 is_stmt 0 view .LVU103
+ 318 006e B8F1000F 		cmp	r8, #0
+ 319 0072 0AD1     		bne	.L22
+ 320              	.LBE7:
  324:Middlewares/FreeRTOS/Source/event_groups.c ****     BaseType_t xWaitConditionMet, xAlreadyYielded;
- 320              		.loc 1 324 27 view .LVU103
- 321 0074 0021     		movs	r1, #0
- 322              	.L15:
- 323              	.LVL29:
- 324              	.LBB8:
+ 321              		.loc 1 324 27 view .LVU104
+ 322 0074 0021     		movs	r1, #0
+ 323              	.L15:
+ 324              	.LVL29:
+ 325              	.LBB8:
  382:Middlewares/FreeRTOS/Source/event_groups.c ****             }
- 325              		.loc 1 382 41 is_stmt 1 view .LVU104
+ 326              		.loc 1 382 41 is_stmt 1 view .LVU105
  385:Middlewares/FreeRTOS/Source/event_groups.c ****             {
- 326              		.loc 1 385 13 view .LVU105
- 385:Middlewares/FreeRTOS/Source/event_groups.c ****             {
- 327              		.loc 1 385 15 is_stmt 0 view .LVU106
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 21
+ 327              		.loc 1 385 13 view .LVU106
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 21
 
 
- 328 0076 0FB1     		cbz	r7, .L16
+ 385:Middlewares/FreeRTOS/Source/event_groups.c ****             {
+ 328              		.loc 1 385 15 is_stmt 0 view .LVU107
+ 329 0076 0FB1     		cbz	r7, .L16
  387:Middlewares/FreeRTOS/Source/event_groups.c ****             }
- 329              		.loc 1 387 17 is_stmt 1 view .LVU107
+ 330              		.loc 1 387 17 is_stmt 1 view .LVU108
  387:Middlewares/FreeRTOS/Source/event_groups.c ****             }
- 330              		.loc 1 387 31 is_stmt 0 view .LVU108
- 331 0078 41F08061 		orr	r1, r1, #67108864
- 332              	.LVL30:
- 333              	.L16:
+ 331              		.loc 1 387 31 is_stmt 0 view .LVU109
+ 332 0078 41F08061 		orr	r1, r1, #67108864
+ 333              	.LVL30:
+ 334              	.L16:
  391:Middlewares/FreeRTOS/Source/event_groups.c ****             }
- 334              		.loc 1 391 41 is_stmt 1 view .LVU109
+ 335              		.loc 1 391 41 is_stmt 1 view .LVU110
  397:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 335              		.loc 1 397 13 view .LVU110
- 336 007c 4A46     		mov	r2, r9
- 337 007e 2943     		orrs	r1, r1, r5
- 338              	.LVL31:
+ 336              		.loc 1 397 13 view .LVU111
+ 337 007c 4A46     		mov	r2, r9
+ 338 007e 2943     		orrs	r1, r1, r5
+ 339              	.LVL31:
  397:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 339              		.loc 1 397 13 is_stmt 0 view .LVU111
- 340 0080 301D     		adds	r0, r6, #4
- 341              	.LVL32:
+ 340              		.loc 1 397 13 is_stmt 0 view .LVU112
+ 341 0080 301D     		adds	r0, r6, #4
+ 342              	.LVL32:
  397:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 342              		.loc 1 397 13 view .LVU112
- 343 0082 FFF7FEFF 		bl	vTaskPlaceOnUnorderedEventList
- 344              	.LVL33:
+ 343              		.loc 1 397 13 view .LVU113
+ 344 0082 FFF7FEFF 		bl	vTaskPlaceOnUnorderedEventList
+ 345              	.LVL33:
  402:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 345              		.loc 1 402 13 is_stmt 1 view .LVU113
+ 346              		.loc 1 402 13 is_stmt 1 view .LVU114
  402:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 346              		.loc 1 402 22 is_stmt 0 view .LVU114
- 347 0086 0024     		movs	r4, #0
- 348              	.LVL34:
+ 347              		.loc 1 402 22 is_stmt 0 view .LVU115
+ 348 0086 0024     		movs	r4, #0
+ 349              	.LVL34:
  402:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 349              		.loc 1 402 22 view .LVU115
- 350 0088 D3E7     		b	.L14
- 351              	.LVL35:
- 352              	.L22:
+ 350              		.loc 1 402 22 view .LVU116
+ 351 0088 D3E7     		b	.L14
+ 352              	.LVL35:
+ 353              	.L22:
  378:Middlewares/FreeRTOS/Source/event_groups.c ****             }
- 353              		.loc 1 378 31 view .LVU116
- 354 008a 4FF08071 		mov	r1, #16777216
- 355 008e F2E7     		b	.L15
- 356              	.LVL36:
- 357              	.L21:
+ 354              		.loc 1 378 31 view .LVU117
+ 355 008a 4FF08071 		mov	r1, #16777216
+ 356 008e F2E7     		b	.L15
+ 357              	.LVL36:
+ 358              	.L21:
  351:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 358              		.loc 1 351 26 view .LVU117
- 359 0090 4FF00009 		mov	r9, #0
- 360 0094 CDE7     		b	.L14
- 361              	.LVL37:
- 362              	.L24:
+ 359              		.loc 1 351 26 view .LVU118
+ 360 0090 4FF00009 		mov	r9, #0
+ 361 0094 CDE7     		b	.L14
+ 362              	.LVL37:
+ 363              	.L24:
  351:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 363              		.loc 1 351 26 view .LVU118
- 364              	.LBE8:
+ 364              		.loc 1 351 26 view .LVU119
+ 365              	.LBE8:
  428:Middlewares/FreeRTOS/Source/event_groups.c ****             {
- 365              		.loc 1 428 13 is_stmt 1 view .LVU119
- 366 0096 FFF7FEFF 		bl	vPortEnterCritical
- 367              	.LVL38:
+ 366              		.loc 1 428 13 is_stmt 1 view .LVU120
+ 367 0096 FFF7FEFF 		bl	vPortEnterCritical
+ 368              	.LVL38:
  431:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 368              		.loc 1 431 17 view .LVU120
- 431:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 369              		.loc 1 431 26 is_stmt 0 view .LVU121
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 22
+ 369              		.loc 1 431 17 view .LVU121
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 22
 
 
- 370 009a 3468     		ldr	r4, [r6]
- 371              	.LVL39:
+ 431:Middlewares/FreeRTOS/Source/event_groups.c **** 
+ 370              		.loc 1 431 26 is_stmt 0 view .LVU122
+ 371 009a 3468     		ldr	r4, [r6]
+ 372              	.LVL39:
  435:Middlewares/FreeRTOS/Source/event_groups.c ****                 {
- 372              		.loc 1 435 17 is_stmt 1 view .LVU122
+ 373              		.loc 1 435 17 is_stmt 1 view .LVU123
  435:Middlewares/FreeRTOS/Source/event_groups.c ****                 {
- 373              		.loc 1 435 21 is_stmt 0 view .LVU123
- 374 009c 3A46     		mov	r2, r7
- 375 009e 2946     		mov	r1, r5
- 376 00a0 2046     		mov	r0, r4
- 377 00a2 FFF7FEFF 		bl	prvTestWaitCondition
- 378              	.LVL40:
+ 374              		.loc 1 435 21 is_stmt 0 view .LVU124
+ 375 009c 3A46     		mov	r2, r7
+ 376 009e 2946     		mov	r1, r5
+ 377 00a0 2046     		mov	r0, r4
+ 378 00a2 FFF7FEFF 		bl	prvTestWaitCondition
+ 379              	.LVL40:
  435:Middlewares/FreeRTOS/Source/event_groups.c ****                 {
- 379              		.loc 1 435 19 discriminator 1 view .LVU124
- 380 00a6 28B1     		cbz	r0, .L20
+ 380              		.loc 1 435 19 discriminator 1 view .LVU125
+ 381 00a6 28B1     		cbz	r0, .L20
  437:Middlewares/FreeRTOS/Source/event_groups.c ****                     {
- 381              		.loc 1 437 21 is_stmt 1 view .LVU125
+ 382              		.loc 1 437 21 is_stmt 1 view .LVU126
  437:Middlewares/FreeRTOS/Source/event_groups.c ****                     {
- 382              		.loc 1 437 23 is_stmt 0 view .LVU126
- 383 00a8 B8F1000F 		cmp	r8, #0
- 384 00ac 02D0     		beq	.L20
+ 383              		.loc 1 437 23 is_stmt 0 view .LVU127
+ 384 00a8 B8F1000F 		cmp	r8, #0
+ 385 00ac 02D0     		beq	.L20
  439:Middlewares/FreeRTOS/Source/event_groups.c ****                     }
- 385              		.loc 1 439 25 is_stmt 1 view .LVU127
+ 386              		.loc 1 439 25 is_stmt 1 view .LVU128
  439:Middlewares/FreeRTOS/Source/event_groups.c ****                     }
- 386              		.loc 1 439 50 is_stmt 0 view .LVU128
- 387 00ae 24EA0505 		bic	r5, r4, r5
- 388              	.LVL41:
+ 387              		.loc 1 439 50 is_stmt 0 view .LVU129
+ 388 00ae 24EA0505 		bic	r5, r4, r5
+ 389              	.LVL41:
  439:Middlewares/FreeRTOS/Source/event_groups.c ****                     }
- 389              		.loc 1 439 50 view .LVU129
- 390 00b2 3560     		str	r5, [r6]
- 391              	.L20:
+ 390              		.loc 1 439 50 view .LVU130
+ 391 00b2 3560     		str	r5, [r6]
+ 392              	.L20:
  448:Middlewares/FreeRTOS/Source/event_groups.c ****                 }
- 392              		.loc 1 448 45 is_stmt 1 view .LVU130
+ 393              		.loc 1 448 45 is_stmt 1 view .LVU131
  451:Middlewares/FreeRTOS/Source/event_groups.c ****             }
- 393              		.loc 1 451 17 view .LVU131
- 394              	.LVL42:
+ 394              		.loc 1 451 17 view .LVU132
+ 395              	.LVL42:
  453:Middlewares/FreeRTOS/Source/event_groups.c ****         }
- 395              		.loc 1 453 13 view .LVU132
- 396 00b4 FFF7FEFF 		bl	vPortExitCritical
- 397              	.LVL43:
- 398 00b8 D1E7     		b	.L19
- 399              		.cfi_endproc
- 400              	.LFE73:
- 402              		.section	.text.xEventGroupClearBits,"ax",%progbits
- 403              		.align	1
- 404              		.global	xEventGroupClearBits
- 405              		.syntax unified
- 406              		.thumb
- 407              		.thumb_func
- 409              	xEventGroupClearBits:
- 410              	.LVL44:
- 411              	.LFB74:
+ 396              		.loc 1 453 13 view .LVU133
+ 397 00b4 FFF7FEFF 		bl	vPortExitCritical
+ 398              	.LVL43:
+ 399 00b8 D1E7     		b	.L19
+ 400              		.cfi_endproc
+ 401              	.LFE73:
+ 403              		.section	.text.xEventGroupClearBits,"ax",%progbits
+ 404              		.align	1
+ 405              		.global	xEventGroupClearBits
+ 406              		.syntax unified
+ 407              		.thumb
+ 408              		.thumb_func
+ 410              	xEventGroupClearBits:
+ 411              	.LVL44:
+ 412              	.LFB74:
  475:Middlewares/FreeRTOS/Source/event_groups.c ****     EventGroup_t * pxEventBits = xEventGroup;
- 412              		.loc 1 475 1 view -0
- 413              		.cfi_startproc
- 414              		@ args = 0, pretend = 0, frame = 0
- 415              		@ frame_needed = 0, uses_anonymous_args = 0
- 475:Middlewares/FreeRTOS/Source/event_groups.c ****     EventGroup_t * pxEventBits = xEventGroup;
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 23
+ 413              		.loc 1 475 1 view -0
+ 414              		.cfi_startproc
+ 415              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 23
 
 
- 416              		.loc 1 475 1 is_stmt 0 view .LVU134
- 417 0000 70B5     		push	{r4, r5, r6, lr}
- 418              	.LCFI3:
- 419              		.cfi_def_cfa_offset 16
- 420              		.cfi_offset 4, -16
- 421              		.cfi_offset 5, -12
- 422              		.cfi_offset 6, -8
- 423              		.cfi_offset 14, -4
- 424 0002 0546     		mov	r5, r0
- 425 0004 0C46     		mov	r4, r1
+ 416              		@ frame_needed = 0, uses_anonymous_args = 0
+ 475:Middlewares/FreeRTOS/Source/event_groups.c ****     EventGroup_t * pxEventBits = xEventGroup;
+ 417              		.loc 1 475 1 is_stmt 0 view .LVU135
+ 418 0000 70B5     		push	{r4, r5, r6, lr}
+ 419              	.LCFI3:
+ 420              		.cfi_def_cfa_offset 16
+ 421              		.cfi_offset 4, -16
+ 422              		.cfi_offset 5, -12
+ 423              		.cfi_offset 6, -8
+ 424              		.cfi_offset 14, -4
+ 425 0002 0546     		mov	r5, r0
+ 426 0004 0C46     		mov	r4, r1
  476:Middlewares/FreeRTOS/Source/event_groups.c ****     EventBits_t uxReturn;
- 426              		.loc 1 476 5 is_stmt 1 view .LVU135
- 427              	.LVL45:
+ 427              		.loc 1 476 5 is_stmt 1 view .LVU136
+ 428              	.LVL45:
  477:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 428              		.loc 1 477 5 view .LVU136
+ 429              		.loc 1 477 5 view .LVU137
  481:Middlewares/FreeRTOS/Source/event_groups.c ****     configASSERT( ( uxBitsToClear & eventEVENT_BITS_CONTROL_BYTES ) == 0 );
- 429              		.loc 1 481 32 view .LVU137
+ 430              		.loc 1 481 32 view .LVU138
  482:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 430              		.loc 1 482 75 view .LVU138
+ 431              		.loc 1 482 75 view .LVU139
  484:Middlewares/FreeRTOS/Source/event_groups.c ****     {
- 431              		.loc 1 484 5 view .LVU139
- 432 0006 FFF7FEFF 		bl	vPortEnterCritical
- 433              	.LVL46:
+ 432              		.loc 1 484 5 view .LVU140
+ 433 0006 FFF7FEFF 		bl	vPortEnterCritical
+ 434              	.LVL46:
  486:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 434              		.loc 1 486 66 view .LVU140
+ 435              		.loc 1 486 66 view .LVU141
  490:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 435              		.loc 1 490 9 view .LVU141
+ 436              		.loc 1 490 9 view .LVU142
  490:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 436              		.loc 1 490 18 is_stmt 0 view .LVU142
- 437 000a 2E68     		ldr	r6, [r5]
- 438              	.LVL47:
+ 437              		.loc 1 490 18 is_stmt 0 view .LVU143
+ 438 000a 2E68     		ldr	r6, [r5]
+ 439              	.LVL47:
  493:Middlewares/FreeRTOS/Source/event_groups.c ****     }
- 439              		.loc 1 493 9 is_stmt 1 view .LVU143
+ 440              		.loc 1 493 9 is_stmt 1 view .LVU144
  493:Middlewares/FreeRTOS/Source/event_groups.c ****     }
- 440              		.loc 1 493 34 is_stmt 0 view .LVU144
- 441 000c 26EA0404 		bic	r4, r6, r4
- 442              	.LVL48:
+ 441              		.loc 1 493 34 is_stmt 0 view .LVU145
+ 442 000c 26EA0404 		bic	r4, r6, r4
+ 443              	.LVL48:
  493:Middlewares/FreeRTOS/Source/event_groups.c ****     }
- 443              		.loc 1 493 34 view .LVU145
- 444 0010 2C60     		str	r4, [r5]
+ 444              		.loc 1 493 34 view .LVU146
+ 445 0010 2C60     		str	r4, [r5]
  495:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 445              		.loc 1 495 5 is_stmt 1 view .LVU146
- 446 0012 FFF7FEFF 		bl	vPortExitCritical
- 447              	.LVL49:
+ 446              		.loc 1 495 5 is_stmt 1 view .LVU147
+ 447 0012 FFF7FEFF 		bl	vPortExitCritical
+ 448              	.LVL49:
  497:Middlewares/FreeRTOS/Source/event_groups.c **** }
- 448              		.loc 1 497 5 view .LVU147
+ 449              		.loc 1 497 5 view .LVU148
  498:Middlewares/FreeRTOS/Source/event_groups.c **** /*-----------------------------------------------------------*/
- 449              		.loc 1 498 1 is_stmt 0 view .LVU148
- 450 0016 3046     		mov	r0, r6
- 451 0018 70BD     		pop	{r4, r5, r6, pc}
+ 450              		.loc 1 498 1 is_stmt 0 view .LVU149
+ 451 0016 3046     		mov	r0, r6
+ 452 0018 70BD     		pop	{r4, r5, r6, pc}
  498:Middlewares/FreeRTOS/Source/event_groups.c **** /*-----------------------------------------------------------*/
- 452              		.loc 1 498 1 view .LVU149
- 453              		.cfi_endproc
- 454              	.LFE74:
- 456              		.section	.text.xEventGroupGetBitsFromISR,"ax",%progbits
- 457              		.align	1
- 458              		.global	xEventGroupGetBitsFromISR
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 24
+ 453              		.loc 1 498 1 view .LVU150
+ 454              		.cfi_endproc
+ 455              	.LFE74:
+ 457              		.section	.text.xEventGroupGetBitsFromISR,"ax",%progbits
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 24
 
 
- 459              		.syntax unified
- 460              		.thumb
- 461              		.thumb_func
- 463              	xEventGroupGetBitsFromISR:
- 464              	.LVL50:
- 465              	.LFB75:
+ 458              		.align	1
+ 459              		.global	xEventGroupGetBitsFromISR
+ 460              		.syntax unified
+ 461              		.thumb
+ 462              		.thumb_func
+ 464              	xEventGroupGetBitsFromISR:
+ 465              	.LVL50:
+ 466              	.LFB75:
  518:Middlewares/FreeRTOS/Source/event_groups.c ****     UBaseType_t uxSavedInterruptStatus;
- 466              		.loc 1 518 1 is_stmt 1 view -0
- 467              		.cfi_startproc
- 468              		@ args = 0, pretend = 0, frame = 0
- 469              		@ frame_needed = 0, uses_anonymous_args = 0
- 470              		@ link register save eliminated.
+ 467              		.loc 1 518 1 is_stmt 1 view -0
+ 468              		.cfi_startproc
+ 469              		@ args = 0, pretend = 0, frame = 0
+ 470              		@ frame_needed = 0, uses_anonymous_args = 0
+ 471              		@ link register save eliminated.
  519:Middlewares/FreeRTOS/Source/event_groups.c ****     EventGroup_t const * const pxEventBits = xEventGroup;
- 471              		.loc 1 519 5 view .LVU151
+ 472              		.loc 1 519 5 view .LVU152
  520:Middlewares/FreeRTOS/Source/event_groups.c ****     EventBits_t uxReturn;
- 472              		.loc 1 520 5 view .LVU152
+ 473              		.loc 1 520 5 view .LVU153
  521:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 473              		.loc 1 521 5 view .LVU153
+ 474              		.loc 1 521 5 view .LVU154
  523:Middlewares/FreeRTOS/Source/event_groups.c ****     {
- 474              		.loc 1 523 5 view .LVU154
- 475              	.LBB9:
- 476              	.LBI9:
- 477              		.file 2 "Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h"
+ 475              		.loc 1 523 5 view .LVU155
+ 476              	.LBB9:
+ 477              	.LBI9:
+ 478              		.file 2 "Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h"
    1:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*
    2:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * FreeRTOS Kernel V10.4.6
    3:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * Copyright (C) 2021 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
@@ -1436,11 +1438,11 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 1
   30:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #ifndef PORTMACRO_H
   31:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define PORTMACRO_H
   32:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 25
+
+
   33:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #ifdef __cplusplus
   34:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         extern "C" {
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 25
-
-
   35:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #endif
   36:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
   37:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------
@@ -1496,11 +1498,11 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 1
   87:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****          * within the specified behaviour for the architecture. */ \
   88:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         __asm volatile ( "dsb" ::: "memory" );                     \
   89:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         __asm volatile ( "isb" );                                  \
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 26
+
+
   90:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     }
   91:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 26
-
-
   92:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portNVIC_INT_CTRL_REG     ( *( ( volatile uint32_t * ) 0xe000ed04 ) )
   93:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portNVIC_PENDSVSET_BIT    ( 1UL << 28UL )
   94:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portEND_SWITCHING_ISR( xSwitchRequired )    do { if( xSwitchRequired != pdFALSE ) portY
@@ -1556,11 +1558,11 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 1
  144:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         #endif
  145:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
  146:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* Store/clear the ready priorities in a bit map. */
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 27
+
+
  147:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         #define portRECORD_READY_PRIORITY( uxPriority, uxReadyPriorities )    ( uxReadyPriorities )
  148:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         #define portRESET_READY_PRIORITY( uxPriority, uxReadyPriorities )     ( uxReadyPriorities )
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 27
-
-
  149:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
  150:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
  151:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
@@ -1616,11 +1618,11 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 1
  201:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         (
  202:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****             "	mov %0, %1												\n"\
  203:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****             "	msr basepri, %0											\n"\
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 28
+
+
  204:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****             "	isb														\n"\
  205:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****             "	dsb														\n"\
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 28
-
-
  206:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****             : "=r" ( ulNewBASEPRI ) : "i" ( configMAX_SYSCALL_INTERRUPT_PRIORITY ) : "memory"
  207:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         );
  208:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     }
@@ -1628,24 +1630,24 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 1
  210:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
  211:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
  212:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     portFORCE_INLINE static uint32_t ulPortRaiseBASEPRI( void )
- 478              		.loc 2 212 38 view .LVU155
- 479              	.LBB10:
+ 479              		.loc 2 212 38 view .LVU156
+ 480              	.LBB10:
  213:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     {
  214:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         uint32_t ulOriginalBASEPRI, ulNewBASEPRI;
- 480              		.loc 2 214 9 view .LVU156
+ 481              		.loc 2 214 9 view .LVU157
  215:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
  216:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         __asm volatile
- 481              		.loc 2 216 9 view .LVU157
- 482              		.syntax unified
- 483              	@ 216 "Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h" 1
- 484 0000 EFF31183 			mrs r3, basepri											
- 485 0004 4FF05002 		mov r2, #80												
- 486 0008 82F31188 		msr basepri, r2											
- 487 000c BFF36F8F 		isb														
- 488 0010 BFF34F8F 		dsb														
- 489              	
- 490              	@ 0 "" 2
- 491              	.LVL51:
+ 482              		.loc 2 216 9 view .LVU158
+ 483              		.syntax unified
+ 484              	@ 216 "Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h" 1
+ 485 0000 EFF31183 			mrs r3, basepri											
+ 486 0004 4FF05002 		mov r2, #80												
+ 487 0008 82F31188 		msr basepri, r2											
+ 488 000c BFF36F8F 		isb														
+ 489 0010 BFF34F8F 		dsb														
+ 490              	
+ 491              	@ 0 "" 2
+ 492              	.LVL51:
  217:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         (
  218:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****             "	mrs %0, basepri											\n"\
  219:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****             "	mov %1, %2												\n"\
@@ -1658,692 +1660,694 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 1
  226:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         /* This return will not be reached but is necessary to prevent compiler
  227:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****          * warnings. */
  228:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         return ulOriginalBASEPRI;
- 492              		.loc 2 228 9 view .LVU158
- 493              		.loc 2 228 9 is_stmt 0 view .LVU159
- 494              		.thumb
- 495              		.syntax unified
- 496              	.LBE10:
- 497              	.LBE9:
+ 493              		.loc 2 228 9 view .LVU159
+ 494              		.loc 2 228 9 is_stmt 0 view .LVU160
+ 495              		.thumb
+ 496              		.syntax unified
+ 497              	.LBE10:
+ 498              	.LBE9:
  525:Middlewares/FreeRTOS/Source/event_groups.c ****     }
- 498              		.loc 1 525 9 is_stmt 1 view .LVU160
+ 499              		.loc 1 525 9 is_stmt 1 view .LVU161
  525:Middlewares/FreeRTOS/Source/event_groups.c ****     }
- 499              		.loc 1 525 18 is_stmt 0 view .LVU161
- 500 0014 0068     		ldr	r0, [r0]
- 501              	.LVL52:
+ 500              		.loc 1 525 18 is_stmt 0 view .LVU162
+ 501 0014 0068     		ldr	r0, [r0]
+ 502              	.LVL52:
  527:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 502              		.loc 1 527 5 is_stmt 1 view .LVU162
- 503              	.LBB11:
- 504              	.LBI11:
+ 503              		.loc 1 527 5 is_stmt 1 view .LVU163
+ 504              	.LBB11:
+ 505              	.LBI11:
  229:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     }
  230:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 29
+
+
  231:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
  232:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     portFORCE_INLINE static void vPortSetBASEPRI( uint32_t ulNewMaskValue )
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 29
-
-
- 505              		.loc 2 232 34 view .LVU163
- 506              	.LBB12:
+ 506              		.loc 2 232 34 view .LVU164
+ 507              	.LBB12:
  233:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     {
  234:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         __asm volatile
- 507              		.loc 2 234 9 view .LVU164
- 508              		.syntax unified
- 509              	@ 234 "Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h" 1
- 510 0016 83F31188 			msr basepri, r3	
- 511              	@ 0 "" 2
- 512              	.LVL53:
- 513              		.loc 2 234 9 is_stmt 0 view .LVU165
- 514              		.thumb
- 515              		.syntax unified
- 516              	.LBE12:
- 517              	.LBE11:
+ 508              		.loc 2 234 9 view .LVU165
+ 509              		.syntax unified
+ 510              	@ 234 "Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h" 1
+ 511 0016 83F31188 			msr basepri, r3	
+ 512              	@ 0 "" 2
+ 513              	.LVL53:
+ 514              		.loc 2 234 9 is_stmt 0 view .LVU166
+ 515              		.thumb
+ 516              		.syntax unified
+ 517              	.LBE12:
+ 518              	.LBE11:
  529:Middlewares/FreeRTOS/Source/event_groups.c **** } /*lint !e818 EventGroupHandle_t is a typedef used in other functions to so can't be pointer to co
- 518              		.loc 1 529 5 is_stmt 1 view .LVU166
+ 519              		.loc 1 529 5 is_stmt 1 view .LVU167
  530:Middlewares/FreeRTOS/Source/event_groups.c **** /*-----------------------------------------------------------*/
- 519              		.loc 1 530 1 is_stmt 0 view .LVU167
- 520 001a 7047     		bx	lr
- 521              		.cfi_endproc
- 522              	.LFE75:
- 524              		.section	.text.xEventGroupSetBits,"ax",%progbits
- 525              		.align	1
- 526              		.global	xEventGroupSetBits
- 527              		.syntax unified
- 528              		.thumb
- 529              		.thumb_func
- 531              	xEventGroupSetBits:
- 532              	.LVL54:
- 533              	.LFB76:
+ 520              		.loc 1 530 1 is_stmt 0 view .LVU168
+ 521 001a 7047     		bx	lr
+ 522              		.cfi_endproc
+ 523              	.LFE75:
+ 525              		.section	.text.xEventGroupSetBits,"ax",%progbits
+ 526              		.align	1
+ 527              		.global	xEventGroupSetBits
+ 528              		.syntax unified
+ 529              		.thumb
+ 530              		.thumb_func
+ 532              	xEventGroupSetBits:
+ 533              	.LVL54:
+ 534              	.LFB76:
  535:Middlewares/FreeRTOS/Source/event_groups.c ****     ListItem_t * pxListItem, * pxNext;
- 534              		.loc 1 535 1 is_stmt 1 view -0
- 535              		.cfi_startproc
- 536              		@ args = 0, pretend = 0, frame = 0
- 537              		@ frame_needed = 0, uses_anonymous_args = 0
+ 535              		.loc 1 535 1 is_stmt 1 view -0
+ 536              		.cfi_startproc
+ 537              		@ args = 0, pretend = 0, frame = 0
+ 538              		@ frame_needed = 0, uses_anonymous_args = 0
  535:Middlewares/FreeRTOS/Source/event_groups.c ****     ListItem_t * pxListItem, * pxNext;
- 538              		.loc 1 535 1 is_stmt 0 view .LVU169
- 539 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
- 540              	.LCFI4:
- 541              		.cfi_def_cfa_offset 24
- 542              		.cfi_offset 3, -24
- 543              		.cfi_offset 4, -20
- 544              		.cfi_offset 5, -16
- 545              		.cfi_offset 6, -12
- 546              		.cfi_offset 7, -8
- 547              		.cfi_offset 14, -4
- 548 0002 0446     		mov	r4, r0
- 549 0004 0D46     		mov	r5, r1
+ 539              		.loc 1 535 1 is_stmt 0 view .LVU170
+ 540 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 541              	.LCFI4:
+ 542              		.cfi_def_cfa_offset 24
+ 543              		.cfi_offset 3, -24
+ 544              		.cfi_offset 4, -20
+ 545              		.cfi_offset 5, -16
+ 546              		.cfi_offset 6, -12
+ 547              		.cfi_offset 7, -8
+ 548              		.cfi_offset 14, -4
+ 549 0002 0446     		mov	r4, r0
+ 550 0004 0D46     		mov	r5, r1
  536:Middlewares/FreeRTOS/Source/event_groups.c ****     ListItem_t const * pxListEnd;
- 550              		.loc 1 536 5 is_stmt 1 view .LVU170
+ 551              		.loc 1 536 5 is_stmt 1 view .LVU171
  537:Middlewares/FreeRTOS/Source/event_groups.c ****     List_t const * pxList;
- 551              		.loc 1 537 5 view .LVU171
+ 552              		.loc 1 537 5 view .LVU172
  538:Middlewares/FreeRTOS/Source/event_groups.c ****     EventBits_t uxBitsToClear = 0, uxBitsWaitedFor, uxControlBits;
- 552              		.loc 1 538 5 view .LVU172
+ 553              		.loc 1 538 5 view .LVU173
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 30
+
+
  539:Middlewares/FreeRTOS/Source/event_groups.c ****     EventGroup_t * pxEventBits = xEventGroup;
- 553              		.loc 1 539 5 view .LVU173
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 30
-
-
- 554              	.LVL55:
+ 554              		.loc 1 539 5 view .LVU174
+ 555              	.LVL55:
  540:Middlewares/FreeRTOS/Source/event_groups.c ****     BaseType_t xMatchFound = pdFALSE;
- 555              		.loc 1 540 5 view .LVU174
+ 556              		.loc 1 540 5 view .LVU175
  541:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 556              		.loc 1 541 5 view .LVU175
+ 557              		.loc 1 541 5 view .LVU176
  545:Middlewares/FreeRTOS/Source/event_groups.c ****     configASSERT( ( uxBitsToSet & eventEVENT_BITS_CONTROL_BYTES ) == 0 );
- 557              		.loc 1 545 32 view .LVU176
+ 558              		.loc 1 545 32 view .LVU177
  546:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 558              		.loc 1 546 73 view .LVU177
+ 559              		.loc 1 546 73 view .LVU178
  548:Middlewares/FreeRTOS/Source/event_groups.c ****     pxListEnd = listGET_END_MARKER( pxList ); /*lint !e826 !e740 !e9087 The mini list structure is 
- 559              		.loc 1 548 5 view .LVU178
+ 560              		.loc 1 548 5 view .LVU179
  549:Middlewares/FreeRTOS/Source/event_groups.c ****     vTaskSuspendAll();
- 560              		.loc 1 549 5 view .LVU179
+ 561              		.loc 1 549 5 view .LVU180
  549:Middlewares/FreeRTOS/Source/event_groups.c ****     vTaskSuspendAll();
- 561              		.loc 1 549 15 is_stmt 0 view .LVU180
- 562 0006 00F10C06 		add	r6, r0, #12
- 563              	.LVL56:
+ 562              		.loc 1 549 15 is_stmt 0 view .LVU181
+ 563 0006 00F10C06 		add	r6, r0, #12
+ 564              	.LVL56:
  550:Middlewares/FreeRTOS/Source/event_groups.c ****     {
- 564              		.loc 1 550 5 is_stmt 1 view .LVU181
- 565 000a FFF7FEFF 		bl	vTaskSuspendAll
- 566              	.LVL57:
+ 565              		.loc 1 550 5 is_stmt 1 view .LVU182
+ 566 000a FFF7FEFF 		bl	vTaskSuspendAll
+ 567              	.LVL57:
  552:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 567              		.loc 1 552 62 view .LVU182
+ 568              		.loc 1 552 62 view .LVU183
  554:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 568              		.loc 1 554 9 view .LVU183
+ 569              		.loc 1 554 9 view .LVU184
  554:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 569              		.loc 1 554 20 is_stmt 0 view .LVU184
- 570 000e 2069     		ldr	r0, [r4, #16]
- 571              	.LVL58:
+ 570              		.loc 1 554 20 is_stmt 0 view .LVU185
+ 571 000e 2069     		ldr	r0, [r4, #16]
+ 572              	.LVL58:
  557:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 572              		.loc 1 557 9 is_stmt 1 view .LVU185
+ 573              		.loc 1 557 9 is_stmt 1 view .LVU186
  557:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 573              		.loc 1 557 20 is_stmt 0 view .LVU186
- 574 0010 2368     		ldr	r3, [r4]
+ 574              		.loc 1 557 20 is_stmt 0 view .LVU187
+ 575 0010 2368     		ldr	r3, [r4]
  557:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 575              		.loc 1 557 34 view .LVU187
- 576 0012 2B43     		orrs	r3, r3, r5
- 577 0014 2360     		str	r3, [r4]
+ 576              		.loc 1 557 34 view .LVU188
+ 577 0012 2B43     		orrs	r3, r3, r5
+ 578 0014 2360     		str	r3, [r4]
  560:Middlewares/FreeRTOS/Source/event_groups.c ****         {
- 578              		.loc 1 560 9 is_stmt 1 view .LVU188
+ 579              		.loc 1 560 9 is_stmt 1 view .LVU189
  539:Middlewares/FreeRTOS/Source/event_groups.c ****     EventGroup_t * pxEventBits = xEventGroup;
- 579              		.loc 1 539 17 is_stmt 0 view .LVU189
- 580 0016 0027     		movs	r7, #0
+ 580              		.loc 1 539 17 is_stmt 0 view .LVU190
+ 581 0016 0027     		movs	r7, #0
  560:Middlewares/FreeRTOS/Source/event_groups.c ****         {
- 581              		.loc 1 560 14 view .LVU190
- 582 0018 0AE0     		b	.L29
- 583              	.LVL59:
- 584              	.L30:
+ 582              		.loc 1 560 14 view .LVU191
+ 583 0018 0AE0     		b	.L29
+ 584              	.LVL59:
+ 585              	.L30:
  582:Middlewares/FreeRTOS/Source/event_groups.c ****             {
- 585              		.loc 1 582 18 is_stmt 1 view .LVU191
+ 586              		.loc 1 582 18 is_stmt 1 view .LVU192
  582:Middlewares/FreeRTOS/Source/event_groups.c ****             {
- 586              		.loc 1 582 53 is_stmt 0 view .LVU192
- 587 001a 2168     		ldr	r1, [r4]
+ 587              		.loc 1 582 53 is_stmt 0 view .LVU193
+ 588 001a 2168     		ldr	r1, [r4]
  582:Middlewares/FreeRTOS/Source/event_groups.c ****             {
- 588              		.loc 1 582 20 view .LVU193
- 589 001c 32EA0101 		bics	r1, r2, r1
- 590 0020 05D1     		bne	.L32
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 31
+ 589              		.loc 1 582 20 view .LVU194
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 31
 
 
+ 590 001c 32EA0101 		bics	r1, r2, r1
+ 591 0020 05D1     		bne	.L32
  582:Middlewares/FreeRTOS/Source/event_groups.c ****             {
- 591              		.loc 1 582 20 view .LVU194
- 592 0022 11E0     		b	.L31
- 593              	.LVL60:
- 594              	.L33:
+ 592              		.loc 1 582 20 view .LVU195
+ 593 0022 11E0     		b	.L31
+ 594              	.LVL60:
+ 595              	.L33:
  601:Middlewares/FreeRTOS/Source/event_groups.c ****                 }
- 595              		.loc 1 601 45 is_stmt 1 view .LVU195
+ 596              		.loc 1 601 45 is_stmt 1 view .LVU196
  609:Middlewares/FreeRTOS/Source/event_groups.c ****             }
- 596              		.loc 1 609 17 view .LVU196
+ 597              		.loc 1 609 17 view .LVU197
  609:Middlewares/FreeRTOS/Source/event_groups.c ****             }
- 597              		.loc 1 609 75 is_stmt 0 view .LVU197
- 598 0024 2168     		ldr	r1, [r4]
+ 598              		.loc 1 609 75 is_stmt 0 view .LVU198
+ 599 0024 2168     		ldr	r1, [r4]
  609:Middlewares/FreeRTOS/Source/event_groups.c ****             }
- 599              		.loc 1 609 17 view .LVU198
- 600 0026 41F00071 		orr	r1, r1, #33554432
- 601 002a FFF7FEFF 		bl	vTaskRemoveFromUnorderedEventList
- 602              	.LVL61:
- 603              	.L32:
+ 600              		.loc 1 609 17 view .LVU199
+ 601 0026 41F00071 		orr	r1, r1, #33554432
+ 602 002a FFF7FEFF 		bl	vTaskRemoveFromUnorderedEventList
+ 603              	.LVL61:
+ 604              	.L32:
  535:Middlewares/FreeRTOS/Source/event_groups.c ****     ListItem_t * pxListItem, * pxNext;
- 604              		.loc 1 535 1 view .LVU199
- 605 002e 2846     		mov	r0, r5
- 606              	.LVL62:
- 607              	.L29:
+ 605              		.loc 1 535 1 view .LVU200
+ 606 002e 2846     		mov	r0, r5
+ 607              	.LVL62:
+ 608              	.L29:
  560:Middlewares/FreeRTOS/Source/event_groups.c ****         {
- 608              		.loc 1 560 27 is_stmt 1 view .LVU200
- 609 0030 B042     		cmp	r0, r6
- 610 0032 0ED0     		beq	.L36
+ 609              		.loc 1 560 27 is_stmt 1 view .LVU201
+ 610 0030 B042     		cmp	r0, r6
+ 611 0032 0ED0     		beq	.L36
  562:Middlewares/FreeRTOS/Source/event_groups.c ****             uxBitsWaitedFor = listGET_LIST_ITEM_VALUE( pxListItem );
- 611              		.loc 1 562 13 view .LVU201
+ 612              		.loc 1 562 13 view .LVU202
  562:Middlewares/FreeRTOS/Source/event_groups.c ****             uxBitsWaitedFor = listGET_LIST_ITEM_VALUE( pxListItem );
- 612              		.loc 1 562 20 is_stmt 0 view .LVU202
- 613 0034 4568     		ldr	r5, [r0, #4]
- 614              	.LVL63:
+ 613              		.loc 1 562 20 is_stmt 0 view .LVU203
+ 614 0034 4568     		ldr	r5, [r0, #4]
+ 615              	.LVL63:
  563:Middlewares/FreeRTOS/Source/event_groups.c ****             xMatchFound = pdFALSE;
- 615              		.loc 1 563 13 is_stmt 1 view .LVU203
+ 616              		.loc 1 563 13 is_stmt 1 view .LVU204
  563:Middlewares/FreeRTOS/Source/event_groups.c ****             xMatchFound = pdFALSE;
- 616              		.loc 1 563 29 is_stmt 0 view .LVU204
- 617 0036 0368     		ldr	r3, [r0]
- 618              	.LVL64:
+ 617              		.loc 1 563 29 is_stmt 0 view .LVU205
+ 618 0036 0368     		ldr	r3, [r0]
+ 619              	.LVL64:
  564:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 619              		.loc 1 564 13 is_stmt 1 view .LVU205
+ 620              		.loc 1 564 13 is_stmt 1 view .LVU206
  567:Middlewares/FreeRTOS/Source/event_groups.c ****             uxBitsWaitedFor &= ~eventEVENT_BITS_CONTROL_BYTES;
- 620              		.loc 1 567 13 view .LVU206
+ 621              		.loc 1 567 13 view .LVU207
  568:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 621              		.loc 1 568 13 view .LVU207
+ 622              		.loc 1 568 13 view .LVU208
  568:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 622              		.loc 1 568 29 is_stmt 0 view .LVU208
- 623 0038 23F07F42 		bic	r2, r3, #-16777216
- 624              	.LVL65:
+ 623              		.loc 1 568 29 is_stmt 0 view .LVU209
+ 624 0038 23F07F42 		bic	r2, r3, #-16777216
+ 625              	.LVL65:
  570:Middlewares/FreeRTOS/Source/event_groups.c ****             {
- 625              		.loc 1 570 13 is_stmt 1 view .LVU209
+ 626              		.loc 1 570 13 is_stmt 1 view .LVU210
  570:Middlewares/FreeRTOS/Source/event_groups.c ****             {
- 626              		.loc 1 570 15 is_stmt 0 view .LVU210
- 627 003c 13F0806F 		tst	r3, #67108864
- 628 0040 EBD1     		bne	.L30
- 573:Middlewares/FreeRTOS/Source/event_groups.c ****                 {
- 629              		.loc 1 573 17 is_stmt 1 view .LVU211
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 32
+ 627              		.loc 1 570 15 is_stmt 0 view .LVU211
+ 628 003c 13F0806F 		tst	r3, #67108864
+ 629 0040 EBD1     		bne	.L30
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 32
 
 
  573:Middlewares/FreeRTOS/Source/event_groups.c ****                 {
- 630              		.loc 1 573 52 is_stmt 0 view .LVU212
- 631 0042 2168     		ldr	r1, [r4]
+ 630              		.loc 1 573 17 is_stmt 1 view .LVU212
  573:Middlewares/FreeRTOS/Source/event_groups.c ****                 {
- 632              		.loc 1 573 19 view .LVU213
- 633 0044 1142     		tst	r1, r2
- 634 0046 F2D0     		beq	.L32
- 635              	.L31:
- 636              	.LVL66:
+ 631              		.loc 1 573 52 is_stmt 0 view .LVU213
+ 632 0042 2168     		ldr	r1, [r4]
+ 573:Middlewares/FreeRTOS/Source/event_groups.c ****                 {
+ 633              		.loc 1 573 19 view .LVU214
+ 634 0044 1142     		tst	r1, r2
+ 635 0046 F2D0     		beq	.L32
+ 636              	.L31:
+ 637              	.LVL66:
  595:Middlewares/FreeRTOS/Source/event_groups.c ****                 {
- 637              		.loc 1 595 17 is_stmt 1 view .LVU214
+ 638              		.loc 1 595 17 is_stmt 1 view .LVU215
  595:Middlewares/FreeRTOS/Source/event_groups.c ****                 {
- 638              		.loc 1 595 19 is_stmt 0 view .LVU215
- 639 0048 13F0807F 		tst	r3, #16777216
- 640 004c EAD0     		beq	.L33
+ 639              		.loc 1 595 19 is_stmt 0 view .LVU216
+ 640 0048 13F0807F 		tst	r3, #16777216
+ 641 004c EAD0     		beq	.L33
  597:Middlewares/FreeRTOS/Source/event_groups.c ****                 }
- 641              		.loc 1 597 21 is_stmt 1 view .LVU216
+ 642              		.loc 1 597 21 is_stmt 1 view .LVU217
  597:Middlewares/FreeRTOS/Source/event_groups.c ****                 }
- 642              		.loc 1 597 35 is_stmt 0 view .LVU217
- 643 004e 1743     		orrs	r7, r7, r2
- 644              	.LVL67:
+ 643              		.loc 1 597 35 is_stmt 0 view .LVU218
+ 644 004e 1743     		orrs	r7, r7, r2
+ 645              	.LVL67:
  597:Middlewares/FreeRTOS/Source/event_groups.c ****                 }
- 645              		.loc 1 597 35 view .LVU218
- 646 0050 E8E7     		b	.L33
- 647              	.LVL68:
- 648              	.L36:
+ 646              		.loc 1 597 35 view .LVU219
+ 647 0050 E8E7     		b	.L33
+ 648              	.LVL68:
+ 649              	.L36:
  620:Middlewares/FreeRTOS/Source/event_groups.c ****     }
- 649              		.loc 1 620 9 is_stmt 1 view .LVU219
+ 650              		.loc 1 620 9 is_stmt 1 view .LVU220
  620:Middlewares/FreeRTOS/Source/event_groups.c ****     }
- 650              		.loc 1 620 20 is_stmt 0 view .LVU220
- 651 0052 2368     		ldr	r3, [r4]
+ 651              		.loc 1 620 20 is_stmt 0 view .LVU221
+ 652 0052 2368     		ldr	r3, [r4]
  620:Middlewares/FreeRTOS/Source/event_groups.c ****     }
- 652              		.loc 1 620 34 view .LVU221
- 653 0054 23EA0703 		bic	r3, r3, r7
- 654 0058 2360     		str	r3, [r4]
+ 653              		.loc 1 620 34 view .LVU222
+ 654 0054 23EA0703 		bic	r3, r3, r7
+ 655 0058 2360     		str	r3, [r4]
  622:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 655              		.loc 1 622 5 is_stmt 1 view .LVU222
+ 656              		.loc 1 622 5 is_stmt 1 view .LVU223
  622:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 656              		.loc 1 622 14 is_stmt 0 view .LVU223
- 657 005a FFF7FEFF 		bl	xTaskResumeAll
- 658              	.LVL69:
+ 657              		.loc 1 622 14 is_stmt 0 view .LVU224
+ 658 005a FFF7FEFF 		bl	xTaskResumeAll
+ 659              	.LVL69:
  624:Middlewares/FreeRTOS/Source/event_groups.c **** }
- 659              		.loc 1 624 5 is_stmt 1 view .LVU224
+ 660              		.loc 1 624 5 is_stmt 1 view .LVU225
  625:Middlewares/FreeRTOS/Source/event_groups.c **** /*-----------------------------------------------------------*/
- 660              		.loc 1 625 1 is_stmt 0 view .LVU225
- 661 005e 2068     		ldr	r0, [r4]
- 662 0060 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 661              		.loc 1 625 1 is_stmt 0 view .LVU226
+ 662 005e 2068     		ldr	r0, [r4]
+ 663 0060 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
  625:Middlewares/FreeRTOS/Source/event_groups.c **** /*-----------------------------------------------------------*/
- 663              		.loc 1 625 1 view .LVU226
- 664              		.cfi_endproc
- 665              	.LFE76:
- 667              		.section	.text.xEventGroupSync,"ax",%progbits
- 668              		.align	1
- 669              		.global	xEventGroupSync
- 670              		.syntax unified
- 671              		.thumb
- 672              		.thumb_func
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 33
+ 664              		.loc 1 625 1 view .LVU227
+ 665              		.cfi_endproc
+ 666              	.LFE76:
+ 668              		.section	.text.xEventGroupSync,"ax",%progbits
+ 669              		.align	1
+ 670              		.global	xEventGroupSync
+ 671              		.syntax unified
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 33
 
 
- 674              	xEventGroupSync:
- 675              	.LVL70:
- 676              	.LFB72:
+ 672              		.thumb
+ 673              		.thumb_func
+ 675              	xEventGroupSync:
+ 676              	.LVL70:
+ 677              	.LFB72:
  198:Middlewares/FreeRTOS/Source/event_groups.c ****     EventBits_t uxOriginalBitValue, uxReturn;
- 677              		.loc 1 198 1 is_stmt 1 view -0
- 678              		.cfi_startproc
- 679              		@ args = 0, pretend = 0, frame = 0
- 680              		@ frame_needed = 0, uses_anonymous_args = 0
+ 678              		.loc 1 198 1 is_stmt 1 view -0
+ 679              		.cfi_startproc
+ 680              		@ args = 0, pretend = 0, frame = 0
+ 681              		@ frame_needed = 0, uses_anonymous_args = 0
  198:Middlewares/FreeRTOS/Source/event_groups.c ****     EventBits_t uxOriginalBitValue, uxReturn;
- 681              		.loc 1 198 1 is_stmt 0 view .LVU228
- 682 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
- 683              	.LCFI5:
- 684              		.cfi_def_cfa_offset 24
- 685              		.cfi_offset 4, -24
- 686              		.cfi_offset 5, -20
- 687              		.cfi_offset 6, -16
- 688              		.cfi_offset 7, -12
- 689              		.cfi_offset 8, -8
- 690              		.cfi_offset 14, -4
- 691 0004 0646     		mov	r6, r0
- 692 0006 0D46     		mov	r5, r1
- 693 0008 1746     		mov	r7, r2
- 694 000a 9846     		mov	r8, r3
+ 682              		.loc 1 198 1 is_stmt 0 view .LVU229
+ 683 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 684              	.LCFI5:
+ 685              		.cfi_def_cfa_offset 24
+ 686              		.cfi_offset 4, -24
+ 687              		.cfi_offset 5, -20
+ 688              		.cfi_offset 6, -16
+ 689              		.cfi_offset 7, -12
+ 690              		.cfi_offset 8, -8
+ 691              		.cfi_offset 14, -4
+ 692 0004 0646     		mov	r6, r0
+ 693 0006 0D46     		mov	r5, r1
+ 694 0008 1746     		mov	r7, r2
+ 695 000a 9846     		mov	r8, r3
  199:Middlewares/FreeRTOS/Source/event_groups.c ****     EventGroup_t * pxEventBits = xEventGroup;
- 695              		.loc 1 199 5 is_stmt 1 view .LVU229
+ 696              		.loc 1 199 5 is_stmt 1 view .LVU230
  200:Middlewares/FreeRTOS/Source/event_groups.c ****     BaseType_t xAlreadyYielded;
- 696              		.loc 1 200 5 view .LVU230
- 697              	.LVL71:
+ 697              		.loc 1 200 5 view .LVU231
+ 698              	.LVL71:
  201:Middlewares/FreeRTOS/Source/event_groups.c ****     BaseType_t xTimeoutOccurred = pdFALSE;
- 698              		.loc 1 201 5 view .LVU231
+ 699              		.loc 1 201 5 view .LVU232
  202:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 699              		.loc 1 202 5 view .LVU232
+ 700              		.loc 1 202 5 view .LVU233
  204:Middlewares/FreeRTOS/Source/event_groups.c ****     configASSERT( uxBitsToWaitFor != 0 );
- 700              		.loc 1 204 77 view .LVU233
+ 701              		.loc 1 204 77 view .LVU234
  205:Middlewares/FreeRTOS/Source/event_groups.c ****     #if ( ( INCLUDE_xTaskGetSchedulerState == 1 ) || ( configUSE_TIMERS == 1 ) )
- 701              		.loc 1 205 41 view .LVU234
+ 702              		.loc 1 205 41 view .LVU235
+ 208:Middlewares/FreeRTOS/Source/event_groups.c ****         }
+ 703              		.loc 1 208 114 view .LVU236
  212:Middlewares/FreeRTOS/Source/event_groups.c ****     {
- 702              		.loc 1 212 5 view .LVU235
- 703 000c FFF7FEFF 		bl	vTaskSuspendAll
- 704              	.LVL72:
+ 704              		.loc 1 212 5 view .LVU237
+ 705 000c FFF7FEFF 		bl	vTaskSuspendAll
+ 706              	.LVL72:
  214:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 705              		.loc 1 214 9 view .LVU236
+ 707              		.loc 1 214 9 view .LVU238
  214:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 706              		.loc 1 214 28 is_stmt 0 view .LVU237
- 707 0010 3468     		ldr	r4, [r6]
- 708              	.LVL73:
+ 708              		.loc 1 214 28 is_stmt 0 view .LVU239
+ 709 0010 3468     		ldr	r4, [r6]
+ 710              	.LVL73:
  216:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 709              		.loc 1 216 9 is_stmt 1 view .LVU238
+ 711              		.loc 1 216 9 is_stmt 1 view .LVU240
  216:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 710              		.loc 1 216 18 is_stmt 0 view .LVU239
- 711 0012 2946     		mov	r1, r5
- 712 0014 3046     		mov	r0, r6
- 713 0016 FFF7FEFF 		bl	xEventGroupSetBits
- 714              	.LVL74:
- 218:Middlewares/FreeRTOS/Source/event_groups.c ****         {
- 715              		.loc 1 218 9 is_stmt 1 view .LVU240
- 218:Middlewares/FreeRTOS/Source/event_groups.c ****         {
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 34
+ 712              		.loc 1 216 18 is_stmt 0 view .LVU241
+ 713 0012 2946     		mov	r1, r5
+ 714 0014 3046     		mov	r0, r6
+ 715 0016 FFF7FEFF 		bl	xEventGroupSetBits
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 34
 
 
- 716              		.loc 1 218 36 is_stmt 0 view .LVU241
- 717 001a 2C43     		orrs	r4, r4, r5
- 718              	.LVL75:
+ 716              	.LVL74:
  218:Middlewares/FreeRTOS/Source/event_groups.c ****         {
- 719              		.loc 1 218 11 view .LVU242
- 720 001c 37EA0403 		bics	r3, r7, r4
- 721 0020 1ED0     		beq	.L46
+ 717              		.loc 1 218 9 is_stmt 1 view .LVU242
+ 218:Middlewares/FreeRTOS/Source/event_groups.c ****         {
+ 718              		.loc 1 218 36 is_stmt 0 view .LVU243
+ 719 001a 2C43     		orrs	r4, r4, r5
+ 720              	.LVL75:
+ 218:Middlewares/FreeRTOS/Source/event_groups.c ****         {
+ 721              		.loc 1 218 11 view .LVU244
+ 722 001c 37EA0403 		bics	r3, r7, r4
+ 723 0020 1ED0     		beq	.L46
  231:Middlewares/FreeRTOS/Source/event_groups.c ****             {
- 722              		.loc 1 231 13 is_stmt 1 view .LVU243
+ 724              		.loc 1 231 13 is_stmt 1 view .LVU245
  231:Middlewares/FreeRTOS/Source/event_groups.c ****             {
- 723              		.loc 1 231 15 is_stmt 0 view .LVU244
- 724 0022 B8F1000F 		cmp	r8, #0
- 725 0026 22D1     		bne	.L47
+ 725              		.loc 1 231 15 is_stmt 0 view .LVU246
+ 726 0022 B8F1000F 		cmp	r8, #0
+ 727 0026 22D1     		bne	.L47
  250:Middlewares/FreeRTOS/Source/event_groups.c ****                 xTimeoutOccurred = pdTRUE;
- 726              		.loc 1 250 17 is_stmt 1 view .LVU245
+ 728              		.loc 1 250 17 is_stmt 1 view .LVU247
  250:Middlewares/FreeRTOS/Source/event_groups.c ****                 xTimeoutOccurred = pdTRUE;
- 727              		.loc 1 250 26 is_stmt 0 view .LVU246
- 728 0028 3468     		ldr	r4, [r6]
- 729              	.LVL76:
+ 729              		.loc 1 250 26 is_stmt 0 view .LVU248
+ 730 0028 3468     		ldr	r4, [r6]
+ 731              	.LVL76:
  251:Middlewares/FreeRTOS/Source/event_groups.c ****             }
- 730              		.loc 1 251 17 is_stmt 1 view .LVU247
- 731              	.L39:
+ 732              		.loc 1 251 17 is_stmt 1 view .LVU249
+ 733              	.L39:
  255:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 732              		.loc 1 255 5 view .LVU248
+ 734              		.loc 1 255 5 view .LVU250
  255:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 733              		.loc 1 255 23 is_stmt 0 view .LVU249
- 734 002a FFF7FEFF 		bl	xTaskResumeAll
- 735              	.LVL77:
+ 735              		.loc 1 255 23 is_stmt 0 view .LVU251
+ 736 002a FFF7FEFF 		bl	xTaskResumeAll
+ 737              	.LVL77:
  257:Middlewares/FreeRTOS/Source/event_groups.c ****     {
- 736              		.loc 1 257 5 is_stmt 1 view .LVU250
+ 738              		.loc 1 257 5 is_stmt 1 view .LVU252
  257:Middlewares/FreeRTOS/Source/event_groups.c ****     {
- 737              		.loc 1 257 7 is_stmt 0 view .LVU251
- 738 002e B8F1000F 		cmp	r8, #0
- 739 0032 12D0     		beq	.L37
+ 739              		.loc 1 257 7 is_stmt 0 view .LVU253
+ 740 002e B8F1000F 		cmp	r8, #0
+ 741 0032 12D0     		beq	.L37
  259:Middlewares/FreeRTOS/Source/event_groups.c ****         {
- 740              		.loc 1 259 9 is_stmt 1 view .LVU252
+ 742              		.loc 1 259 9 is_stmt 1 view .LVU254
  259:Middlewares/FreeRTOS/Source/event_groups.c ****         {
- 741              		.loc 1 259 11 is_stmt 0 view .LVU253
- 742 0034 48B9     		cbnz	r0, .L42
+ 743              		.loc 1 259 11 is_stmt 0 view .LVU255
+ 744 0034 48B9     		cbnz	r0, .L42
  261:Middlewares/FreeRTOS/Source/event_groups.c ****         }
- 743              		.loc 1 261 13 is_stmt 1 view .LVU254
- 744 0036 4FF0E023 		mov	r3, #-536813568
- 745 003a 4FF08052 		mov	r2, #268435456
- 746 003e C3F8042D 		str	r2, [r3, #3332]
+ 745              		.loc 1 261 13 is_stmt 1 view .LVU256
+ 746 0036 4FF0E023 		mov	r3, #-536813568
+ 747 003a 4FF08052 		mov	r2, #268435456
+ 748 003e C3F8042D 		str	r2, [r3, #3332]
  261:Middlewares/FreeRTOS/Source/event_groups.c ****         }
- 747              		.loc 1 261 13 view .LVU255
- 748              		.syntax unified
- 749              	@ 261 "Middlewares/FreeRTOS/Source/event_groups.c" 1
- 750 0042 BFF34F8F 		dsb
- 751              	@ 0 "" 2
+ 749              		.loc 1 261 13 view .LVU257
+ 750              		.syntax unified
+ 751              	@ 261 "Middlewares/FreeRTOS/Source/event_groups.c" 1
+ 752 0042 BFF34F8F 		dsb
+ 753              	@ 0 "" 2
  261:Middlewares/FreeRTOS/Source/event_groups.c ****         }
- 752              		.loc 1 261 13 view .LVU256
- 753              	@ 261 "Middlewares/FreeRTOS/Source/event_groups.c" 1
- 754 0046 BFF36F8F 		isb
- 755              	@ 0 "" 2
- 261:Middlewares/FreeRTOS/Source/event_groups.c ****         }
- 756              		.loc 1 261 35 view .LVU257
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 35
+ 754              		.loc 1 261 13 view .LVU258
+ 755              	@ 261 "Middlewares/FreeRTOS/Source/event_groups.c" 1
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 35
 
 
- 757              		.thumb
- 758              		.syntax unified
- 759              	.L42:
+ 756 0046 BFF36F8F 		isb
+ 757              	@ 0 "" 2
+ 261:Middlewares/FreeRTOS/Source/event_groups.c ****         }
+ 758              		.loc 1 261 35 view .LVU259
+ 759              		.thumb
+ 760              		.syntax unified
+ 761              	.L42:
  265:Middlewares/FreeRTOS/Source/event_groups.c ****         }
- 760              		.loc 1 265 37 view .LVU258
+ 762              		.loc 1 265 37 view .LVU260
  272:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 761              		.loc 1 272 9 view .LVU259
+ 763              		.loc 1 272 9 view .LVU261
  272:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 762              		.loc 1 272 20 is_stmt 0 view .LVU260
- 763 004a FFF7FEFF 		bl	uxTaskResetEventItemValue
- 764              	.LVL78:
+ 764              		.loc 1 272 20 is_stmt 0 view .LVU262
+ 765 004a FFF7FEFF 		bl	uxTaskResetEventItemValue
+ 766              	.LVL78:
  272:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 765              		.loc 1 272 20 view .LVU261
- 766 004e 0446     		mov	r4, r0
- 767              	.LVL79:
+ 767              		.loc 1 272 20 view .LVU263
+ 768 004e 0446     		mov	r4, r0
+ 769              	.LVL79:
  274:Middlewares/FreeRTOS/Source/event_groups.c ****         {
- 768              		.loc 1 274 9 is_stmt 1 view .LVU262
+ 770              		.loc 1 274 9 is_stmt 1 view .LVU264
  274:Middlewares/FreeRTOS/Source/event_groups.c ****         {
- 769              		.loc 1 274 11 is_stmt 0 view .LVU263
- 770 0050 10F0007F 		tst	r0, #33554432
- 771 0054 13D0     		beq	.L48
- 772              	.LVL80:
- 773              	.L43:
+ 771              		.loc 1 274 11 is_stmt 0 view .LVU265
+ 772 0050 10F0007F 		tst	r0, #33554432
+ 773 0054 13D0     		beq	.L48
+ 774              	.LVL80:
+ 775              	.L43:
  301:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 774              		.loc 1 301 9 is_stmt 1 view .LVU264
+ 776              		.loc 1 301 9 is_stmt 1 view .LVU266
  305:Middlewares/FreeRTOS/Source/event_groups.c ****     }
- 775              		.loc 1 305 9 view .LVU265
+ 777              		.loc 1 305 9 view .LVU267
  305:Middlewares/FreeRTOS/Source/event_groups.c ****     }
- 776              		.loc 1 305 18 is_stmt 0 view .LVU266
- 777 0056 24F07F44 		bic	r4, r4, #-16777216
- 778              	.LVL81:
+ 778              		.loc 1 305 18 is_stmt 0 view .LVU268
+ 779 0056 24F07F44 		bic	r4, r4, #-16777216
+ 780              	.LVL81:
  308:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 779              		.loc 1 308 5 is_stmt 1 view .LVU267
+ 781              		.loc 1 308 5 is_stmt 1 view .LVU269
  311:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 780              		.loc 1 311 5 view .LVU268
+ 782              		.loc 1 311 5 view .LVU270
  313:Middlewares/FreeRTOS/Source/event_groups.c **** }
- 781              		.loc 1 313 5 view .LVU269
- 782              	.L37:
+ 783              		.loc 1 313 5 view .LVU271
+ 784              	.L37:
  314:Middlewares/FreeRTOS/Source/event_groups.c **** /*-----------------------------------------------------------*/
- 783              		.loc 1 314 1 is_stmt 0 view .LVU270
- 784 005a 2046     		mov	r0, r4
- 785 005c BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
- 786              	.LVL82:
- 787              	.L46:
+ 785              		.loc 1 314 1 is_stmt 0 view .LVU272
+ 786 005a 2046     		mov	r0, r4
+ 787 005c BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 788              	.LVL82:
+ 789              	.L46:
  221:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 788              		.loc 1 221 13 is_stmt 1 view .LVU271
+ 790              		.loc 1 221 13 is_stmt 1 view .LVU273
  225:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 789              		.loc 1 225 13 view .LVU272
+ 791              		.loc 1 225 13 view .LVU274
  225:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 790              		.loc 1 225 24 is_stmt 0 view .LVU273
- 791 0060 3368     		ldr	r3, [r6]
+ 792              		.loc 1 225 24 is_stmt 0 view .LVU275
+ 793 0060 3368     		ldr	r3, [r6]
  225:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 792              		.loc 1 225 38 view .LVU274
- 793 0062 23EA0703 		bic	r3, r3, r7
- 794 0066 3360     		str	r3, [r6]
- 227:Middlewares/FreeRTOS/Source/event_groups.c ****         }
- 795              		.loc 1 227 13 is_stmt 1 view .LVU275
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 36
+ 794              		.loc 1 225 38 view .LVU276
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 36
 
 
- 796              	.LVL83:
+ 795 0062 23EA0703 		bic	r3, r3, r7
+ 796 0066 3360     		str	r3, [r6]
  227:Middlewares/FreeRTOS/Source/event_groups.c ****         }
- 797              		.loc 1 227 26 is_stmt 0 view .LVU276
- 798 0068 4FF00008 		mov	r8, #0
- 799 006c DDE7     		b	.L39
- 800              	.LVL84:
- 801              	.L47:
+ 797              		.loc 1 227 13 is_stmt 1 view .LVU277
+ 798              	.LVL83:
+ 227:Middlewares/FreeRTOS/Source/event_groups.c ****         }
+ 799              		.loc 1 227 26 is_stmt 0 view .LVU278
+ 800 0068 4FF00008 		mov	r8, #0
+ 801 006c DDE7     		b	.L39
+ 802              	.LVL84:
+ 803              	.L47:
  233:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 802              		.loc 1 233 89 is_stmt 1 view .LVU277
+ 804              		.loc 1 233 89 is_stmt 1 view .LVU279
  238:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 803              		.loc 1 238 17 view .LVU278
- 804 006e 4246     		mov	r2, r8
- 805 0070 47F0A061 		orr	r1, r7, #83886080
- 806 0074 301D     		adds	r0, r6, #4
- 807 0076 FFF7FEFF 		bl	vTaskPlaceOnUnorderedEventList
- 808              	.LVL85:
+ 805              		.loc 1 238 17 view .LVU280
+ 806 006e 4246     		mov	r2, r8
+ 807 0070 47F0A061 		orr	r1, r7, #83886080
+ 808 0074 301D     		adds	r0, r6, #4
+ 809 0076 FFF7FEFF 		bl	vTaskPlaceOnUnorderedEventList
+ 810              	.LVL85:
  244:Middlewares/FreeRTOS/Source/event_groups.c ****             }
- 809              		.loc 1 244 17 view .LVU279
+ 811              		.loc 1 244 17 view .LVU281
  244:Middlewares/FreeRTOS/Source/event_groups.c ****             }
- 810              		.loc 1 244 26 is_stmt 0 view .LVU280
- 811 007a 0024     		movs	r4, #0
- 812 007c D5E7     		b	.L39
- 813              	.LVL86:
- 814              	.L48:
+ 812              		.loc 1 244 26 is_stmt 0 view .LVU282
+ 813 007a 0024     		movs	r4, #0
+ 814 007c D5E7     		b	.L39
+ 815              	.LVL86:
+ 816              	.L48:
  277:Middlewares/FreeRTOS/Source/event_groups.c ****             {
- 815              		.loc 1 277 13 is_stmt 1 view .LVU281
- 816 007e FFF7FEFF 		bl	vPortEnterCritical
- 817              	.LVL87:
+ 817              		.loc 1 277 13 is_stmt 1 view .LVU283
+ 818 007e FFF7FEFF 		bl	vPortEnterCritical
+ 819              	.LVL87:
  279:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 818              		.loc 1 279 17 view .LVU282
+ 820              		.loc 1 279 17 view .LVU284
  279:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 819              		.loc 1 279 26 is_stmt 0 view .LVU283
- 820 0082 3468     		ldr	r4, [r6]
- 821              	.LVL88:
+ 821              		.loc 1 279 26 is_stmt 0 view .LVU285
+ 822 0082 3468     		ldr	r4, [r6]
+ 823              	.LVL88:
  285:Middlewares/FreeRTOS/Source/event_groups.c ****                 {
- 822              		.loc 1 285 17 is_stmt 1 view .LVU284
+ 824              		.loc 1 285 17 is_stmt 1 view .LVU286
  285:Middlewares/FreeRTOS/Source/event_groups.c ****                 {
- 823              		.loc 1 285 19 is_stmt 0 view .LVU285
- 824 0084 37EA0403 		bics	r3, r7, r4
- 825 0088 02D0     		beq	.L49
- 826              	.LVL89:
- 827              	.L44:
+ 825              		.loc 1 285 19 is_stmt 0 view .LVU287
+ 826 0084 37EA0403 		bics	r3, r7, r4
+ 827 0088 02D0     		beq	.L49
+ 828              	.LVL89:
+ 829              	.L44:
  291:Middlewares/FreeRTOS/Source/event_groups.c ****                 }
- 828              		.loc 1 291 45 is_stmt 1 view .LVU286
+ 830              		.loc 1 291 45 is_stmt 1 view .LVU288
  294:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 829              		.loc 1 294 13 view .LVU287
- 830 008a FFF7FEFF 		bl	vPortExitCritical
- 831              	.LVL90:
+ 831              		.loc 1 294 13 view .LVU289
+ 832 008a FFF7FEFF 		bl	vPortExitCritical
+ 833              	.LVL90:
  296:Middlewares/FreeRTOS/Source/event_groups.c ****         }
- 832              		.loc 1 296 13 view .LVU288
+ 834              		.loc 1 296 13 view .LVU290
  296:Middlewares/FreeRTOS/Source/event_groups.c ****         }
- 833              		.loc 1 296 13 is_stmt 0 view .LVU289
- 834 008e E2E7     		b	.L43
- 835              	.LVL91:
- 836              	.L49:
- 287:Middlewares/FreeRTOS/Source/event_groups.c ****                 }
- 837              		.loc 1 287 21 is_stmt 1 view .LVU290
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 37
+ 835              		.loc 1 296 13 is_stmt 0 view .LVU291
+ 836 008e E2E7     		b	.L43
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 37
 
 
+ 837              	.LVL91:
+ 838              	.L49:
  287:Middlewares/FreeRTOS/Source/event_groups.c ****                 }
- 838              		.loc 1 287 46 is_stmt 0 view .LVU291
- 839 0090 24EA0707 		bic	r7, r4, r7
- 840              	.LVL92:
+ 839              		.loc 1 287 21 is_stmt 1 view .LVU292
  287:Middlewares/FreeRTOS/Source/event_groups.c ****                 }
- 841              		.loc 1 287 46 view .LVU292
- 842 0094 3760     		str	r7, [r6]
- 843 0096 F8E7     		b	.L44
- 844              		.cfi_endproc
- 845              	.LFE72:
- 847              		.section	.text.vEventGroupDelete,"ax",%progbits
- 848              		.align	1
- 849              		.global	vEventGroupDelete
- 850              		.syntax unified
- 851              		.thumb
- 852              		.thumb_func
- 854              	vEventGroupDelete:
- 855              	.LVL93:
- 856              	.LFB77:
+ 840              		.loc 1 287 46 is_stmt 0 view .LVU293
+ 841 0090 24EA0707 		bic	r7, r4, r7
+ 842              	.LVL92:
+ 287:Middlewares/FreeRTOS/Source/event_groups.c ****                 }
+ 843              		.loc 1 287 46 view .LVU294
+ 844 0094 3760     		str	r7, [r6]
+ 845 0096 F8E7     		b	.L44
+ 846              		.cfi_endproc
+ 847              	.LFE72:
+ 849              		.section	.text.vEventGroupDelete,"ax",%progbits
+ 850              		.align	1
+ 851              		.global	vEventGroupDelete
+ 852              		.syntax unified
+ 853              		.thumb
+ 854              		.thumb_func
+ 856              	vEventGroupDelete:
+ 857              	.LVL93:
+ 858              	.LFB77:
  629:Middlewares/FreeRTOS/Source/event_groups.c ****     EventGroup_t * pxEventBits = xEventGroup;
- 857              		.loc 1 629 1 is_stmt 1 view -0
- 858              		.cfi_startproc
- 859              		@ args = 0, pretend = 0, frame = 0
- 860              		@ frame_needed = 0, uses_anonymous_args = 0
+ 859              		.loc 1 629 1 is_stmt 1 view -0
+ 860              		.cfi_startproc
+ 861              		@ args = 0, pretend = 0, frame = 0
+ 862              		@ frame_needed = 0, uses_anonymous_args = 0
  629:Middlewares/FreeRTOS/Source/event_groups.c ****     EventGroup_t * pxEventBits = xEventGroup;
- 861              		.loc 1 629 1 is_stmt 0 view .LVU294
- 862 0000 10B5     		push	{r4, lr}
- 863              	.LCFI6:
- 864              		.cfi_def_cfa_offset 8
- 865              		.cfi_offset 4, -8
- 866              		.cfi_offset 14, -4
- 867 0002 0446     		mov	r4, r0
+ 863              		.loc 1 629 1 is_stmt 0 view .LVU296
+ 864 0000 10B5     		push	{r4, lr}
+ 865              	.LCFI6:
+ 866              		.cfi_def_cfa_offset 8
+ 867              		.cfi_offset 4, -8
+ 868              		.cfi_offset 14, -4
+ 869 0002 0446     		mov	r4, r0
  630:Middlewares/FreeRTOS/Source/event_groups.c ****     const List_t * pxTasksWaitingForBits;
- 868              		.loc 1 630 5 is_stmt 1 view .LVU295
- 869              	.LVL94:
+ 870              		.loc 1 630 5 is_stmt 1 view .LVU297
+ 871              	.LVL94:
  631:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 870              		.loc 1 631 5 view .LVU296
+ 872              		.loc 1 631 5 view .LVU298
  633:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 871              		.loc 1 633 32 view .LVU297
+ 873              		.loc 1 633 32 view .LVU299
  635:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 872              		.loc 1 635 5 view .LVU298
+ 874              		.loc 1 635 5 view .LVU300
  637:Middlewares/FreeRTOS/Source/event_groups.c ****     {
- 873              		.loc 1 637 5 view .LVU299
- 874 0004 FFF7FEFF 		bl	vTaskSuspendAll
- 875              	.LVL95:
+ 875              		.loc 1 637 5 view .LVU301
+ 876 0004 FFF7FEFF 		bl	vTaskSuspendAll
+ 877              	.LVL95:
  639:Middlewares/FreeRTOS/Source/event_groups.c **** 
- 876              		.loc 1 639 47 view .LVU300
+ 878              		.loc 1 639 47 view .LVU302
  641:Middlewares/FreeRTOS/Source/event_groups.c ****         {
- 877              		.loc 1 641 9 view .LVU301
+ 879              		.loc 1 641 9 view .LVU303
  641:Middlewares/FreeRTOS/Source/event_groups.c ****         {
- 878              		.loc 1 641 14 is_stmt 0 view .LVU302
- 879 0008 04E0     		b	.L51
- 880              	.L52:
+ 880              		.loc 1 641 14 is_stmt 0 view .LVU304
+ 881 0008 04E0     		b	.L51
+ 882              	.L52:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 38
+
+
  645:Middlewares/FreeRTOS/Source/event_groups.c ****             vTaskRemoveFromUnorderedEventList( pxTasksWaitingForBits->xListEnd.pxNext, eventUNBLOCK
- 881              		.loc 1 645 130 is_stmt 1 view .LVU303
+ 883              		.loc 1 645 130 is_stmt 1 view .LVU305
  646:Middlewares/FreeRTOS/Source/event_groups.c ****         }
- 882              		.loc 1 646 13 view .LVU304
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 38
-
-
- 883 000a 4FF00071 		mov	r1, #33554432
- 884 000e 2069     		ldr	r0, [r4, #16]
- 885 0010 FFF7FEFF 		bl	vTaskRemoveFromUnorderedEventList
- 886              	.LVL96:
- 887              	.L51:
+ 884              		.loc 1 646 13 view .LVU306
+ 885 000a 4FF00071 		mov	r1, #33554432
+ 886 000e 2069     		ldr	r0, [r4, #16]
+ 887 0010 FFF7FEFF 		bl	vTaskRemoveFromUnorderedEventList
+ 888              	.LVL96:
+ 889              	.L51:
  641:Middlewares/FreeRTOS/Source/event_groups.c ****         {
- 888              		.loc 1 641 65 view .LVU305
+ 890              		.loc 1 641 65 view .LVU307
  641:Middlewares/FreeRTOS/Source/event_groups.c ****         {
- 889              		.loc 1 641 16 is_stmt 0 view .LVU306
- 890 0014 6368     		ldr	r3, [r4, #4]
+ 891              		.loc 1 641 16 is_stmt 0 view .LVU308
+ 892 0014 6368     		ldr	r3, [r4, #4]
  641:Middlewares/FreeRTOS/Source/event_groups.c ****         {
- 891              		.loc 1 641 65 view .LVU307
- 892 0016 002B     		cmp	r3, #0
- 893 0018 F7D1     		bne	.L52
+ 893              		.loc 1 641 65 view .LVU309
+ 894 0016 002B     		cmp	r3, #0
+ 895 0018 F7D1     		bne	.L52
  659:Middlewares/FreeRTOS/Source/event_groups.c ****                 {
- 894              		.loc 1 659 17 is_stmt 1 view .LVU308
+ 896              		.loc 1 659 17 is_stmt 1 view .LVU310
  659:Middlewares/FreeRTOS/Source/event_groups.c ****                 {
- 895              		.loc 1 659 32 is_stmt 0 view .LVU309
- 896 001a 237F     		ldrb	r3, [r4, #28]	@ zero_extendqisi2
+ 897              		.loc 1 659 32 is_stmt 0 view .LVU311
+ 898 001a 237F     		ldrb	r3, [r4, #28]	@ zero_extendqisi2
  659:Middlewares/FreeRTOS/Source/event_groups.c ****                 {
- 897              		.loc 1 659 19 view .LVU310
- 898 001c 13B1     		cbz	r3, .L55
- 899              	.L53:
+ 899              		.loc 1 659 19 view .LVU312
+ 900 001c 13B1     		cbz	r3, .L55
+ 901              	.L53:
  665:Middlewares/FreeRTOS/Source/event_groups.c ****                 }
- 900              		.loc 1 665 45 is_stmt 1 view .LVU311
+ 902              		.loc 1 665 45 is_stmt 1 view .LVU313
  670:Middlewares/FreeRTOS/Source/event_groups.c **** }
- 901              		.loc 1 670 5 view .LVU312
+ 903              		.loc 1 670 5 view .LVU314
  670:Middlewares/FreeRTOS/Source/event_groups.c **** }
- 902              		.loc 1 670 14 is_stmt 0 view .LVU313
- 903 001e FFF7FEFF 		bl	xTaskResumeAll
- 904              	.LVL97:
+ 904              		.loc 1 670 14 is_stmt 0 view .LVU315
+ 905 001e FFF7FEFF 		bl	xTaskResumeAll
+ 906              	.LVL97:
  671:Middlewares/FreeRTOS/Source/event_groups.c **** /*-----------------------------------------------------------*/
- 905              		.loc 1 671 1 view .LVU314
- 906 0022 10BD     		pop	{r4, pc}
- 907              	.LVL98:
- 908              	.L55:
+ 907              		.loc 1 671 1 view .LVU316
+ 908 0022 10BD     		pop	{r4, pc}
+ 909              	.LVL98:
+ 910              	.L55:
  661:Middlewares/FreeRTOS/Source/event_groups.c ****                 }
- 909              		.loc 1 661 21 is_stmt 1 view .LVU315
- 910 0024 2046     		mov	r0, r4
- 911 0026 FFF7FEFF 		bl	vPortFree
- 912              	.LVL99:
- 913 002a F8E7     		b	.L53
- 914              		.cfi_endproc
- 915              	.LFE77:
- 917              		.section	.text.vEventGroupSetBitsCallback,"ax",%progbits
- 918              		.align	1
- 919              		.global	vEventGroupSetBitsCallback
- 920              		.syntax unified
- 921              		.thumb
- 922              		.thumb_func
- 924              	vEventGroupSetBitsCallback:
- 925              	.LVL100:
- 926              	.LFB78:
- 678:Middlewares/FreeRTOS/Source/event_groups.c ****     ( void ) xEventGroupSetBits( pvEventGroup, ( EventBits_t ) ulBitsToSet ); /*lint !e9079 Can't a
- 927              		.loc 1 678 1 view -0
- 928              		.cfi_startproc
- 929              		@ args = 0, pretend = 0, frame = 0
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 39
+ 911              		.loc 1 661 21 is_stmt 1 view .LVU317
+ 912 0024 2046     		mov	r0, r4
+ 913 0026 FFF7FEFF 		bl	vPortFree
+ 914              	.LVL99:
+ 915 002a F8E7     		b	.L53
+ 916              		.cfi_endproc
+ 917              	.LFE77:
+ 919              		.section	.text.vEventGroupSetBitsCallback,"ax",%progbits
+ 920              		.align	1
+ 921              		.global	vEventGroupSetBitsCallback
+ 922              		.syntax unified
+ 923              		.thumb
+ 924              		.thumb_func
+ 926              	vEventGroupSetBitsCallback:
+ 927              	.LVL100:
+ 928              	.LFB78:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 39
 
 
- 930              		@ frame_needed = 0, uses_anonymous_args = 0
  678:Middlewares/FreeRTOS/Source/event_groups.c ****     ( void ) xEventGroupSetBits( pvEventGroup, ( EventBits_t ) ulBitsToSet ); /*lint !e9079 Can't a
- 931              		.loc 1 678 1 is_stmt 0 view .LVU317
- 932 0000 08B5     		push	{r3, lr}
- 933              	.LCFI7:
- 934              		.cfi_def_cfa_offset 8
- 935              		.cfi_offset 3, -8
- 936              		.cfi_offset 14, -4
+ 929              		.loc 1 678 1 view -0
+ 930              		.cfi_startproc
+ 931              		@ args = 0, pretend = 0, frame = 0
+ 932              		@ frame_needed = 0, uses_anonymous_args = 0
+ 678:Middlewares/FreeRTOS/Source/event_groups.c ****     ( void ) xEventGroupSetBits( pvEventGroup, ( EventBits_t ) ulBitsToSet ); /*lint !e9079 Can't a
+ 933              		.loc 1 678 1 is_stmt 0 view .LVU319
+ 934 0000 08B5     		push	{r3, lr}
+ 935              	.LCFI7:
+ 936              		.cfi_def_cfa_offset 8
+ 937              		.cfi_offset 3, -8
+ 938              		.cfi_offset 14, -4
  679:Middlewares/FreeRTOS/Source/event_groups.c **** }
- 937              		.loc 1 679 5 is_stmt 1 view .LVU318
+ 939              		.loc 1 679 5 is_stmt 1 view .LVU320
  679:Middlewares/FreeRTOS/Source/event_groups.c **** }
- 938              		.loc 1 679 14 is_stmt 0 view .LVU319
- 939 0002 FFF7FEFF 		bl	xEventGroupSetBits
- 940              	.LVL101:
+ 940              		.loc 1 679 14 is_stmt 0 view .LVU321
+ 941 0002 FFF7FEFF 		bl	xEventGroupSetBits
+ 942              	.LVL101:
  680:Middlewares/FreeRTOS/Source/event_groups.c **** /*-----------------------------------------------------------*/
- 941              		.loc 1 680 1 view .LVU320
- 942 0006 08BD     		pop	{r3, pc}
- 943              		.cfi_endproc
- 944              	.LFE78:
- 946              		.section	.text.vEventGroupClearBitsCallback,"ax",%progbits
- 947              		.align	1
- 948              		.global	vEventGroupClearBitsCallback
- 949              		.syntax unified
- 950              		.thumb
- 951              		.thumb_func
- 953              	vEventGroupClearBitsCallback:
- 954              	.LVL102:
- 955              	.LFB79:
+ 943              		.loc 1 680 1 view .LVU322
+ 944 0006 08BD     		pop	{r3, pc}
+ 945              		.cfi_endproc
+ 946              	.LFE78:
+ 948              		.section	.text.vEventGroupClearBitsCallback,"ax",%progbits
+ 949              		.align	1
+ 950              		.global	vEventGroupClearBitsCallback
+ 951              		.syntax unified
+ 952              		.thumb
+ 953              		.thumb_func
+ 955              	vEventGroupClearBitsCallback:
+ 956              	.LVL102:
+ 957              	.LFB79:
  687:Middlewares/FreeRTOS/Source/event_groups.c ****     ( void ) xEventGroupClearBits( pvEventGroup, ( EventBits_t ) ulBitsToClear ); /*lint !e9079 Can
- 956              		.loc 1 687 1 is_stmt 1 view -0
- 957              		.cfi_startproc
- 958              		@ args = 0, pretend = 0, frame = 0
- 959              		@ frame_needed = 0, uses_anonymous_args = 0
+ 958              		.loc 1 687 1 is_stmt 1 view -0
+ 959              		.cfi_startproc
+ 960              		@ args = 0, pretend = 0, frame = 0
+ 961              		@ frame_needed = 0, uses_anonymous_args = 0
  687:Middlewares/FreeRTOS/Source/event_groups.c ****     ( void ) xEventGroupClearBits( pvEventGroup, ( EventBits_t ) ulBitsToClear ); /*lint !e9079 Can
- 960              		.loc 1 687 1 is_stmt 0 view .LVU322
- 961 0000 08B5     		push	{r3, lr}
- 962              	.LCFI8:
- 963              		.cfi_def_cfa_offset 8
- 964              		.cfi_offset 3, -8
- 965              		.cfi_offset 14, -4
+ 962              		.loc 1 687 1 is_stmt 0 view .LVU324
+ 963 0000 08B5     		push	{r3, lr}
+ 964              	.LCFI8:
+ 965              		.cfi_def_cfa_offset 8
+ 966              		.cfi_offset 3, -8
+ 967              		.cfi_offset 14, -4
  688:Middlewares/FreeRTOS/Source/event_groups.c **** }
- 966              		.loc 1 688 5 is_stmt 1 view .LVU323
+ 968              		.loc 1 688 5 is_stmt 1 view .LVU325
  688:Middlewares/FreeRTOS/Source/event_groups.c **** }
- 967              		.loc 1 688 14 is_stmt 0 view .LVU324
- 968 0002 FFF7FEFF 		bl	xEventGroupClearBits
- 969              	.LVL103:
+ 969              		.loc 1 688 14 is_stmt 0 view .LVU326
+ 970 0002 FFF7FEFF 		bl	xEventGroupClearBits
+ 971              	.LVL103:
  689:Middlewares/FreeRTOS/Source/event_groups.c **** /*-----------------------------------------------------------*/
- 970              		.loc 1 689 1 view .LVU325
- 971 0006 08BD     		pop	{r3, pc}
- 972              		.cfi_endproc
- 973              	.LFE79:
- 975              		.section	.text.uxEventGroupGetNumber,"ax",%progbits
- 976              		.align	1
- 977              		.global	uxEventGroupGetNumber
- 978              		.syntax unified
- 979              		.thumb
- 980              		.thumb_func
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 40
+ 972              		.loc 1 689 1 view .LVU327
+ 973 0006 08BD     		pop	{r3, pc}
+ 974              		.cfi_endproc
+ 975              	.LFE79:
+ 977              		.section	.text.uxEventGroupGetNumber,"ax",%progbits
+ 978              		.align	1
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 40
 
 
- 982              	uxEventGroupGetNumber:
- 983              	.LVL104:
- 984              	.LFB81:
+ 979              		.global	uxEventGroupGetNumber
+ 980              		.syntax unified
+ 981              		.thumb
+ 982              		.thumb_func
+ 984              	uxEventGroupGetNumber:
+ 985              	.LVL104:
+ 986              	.LFB81:
  727:Middlewares/FreeRTOS/Source/event_groups.c **** /*-----------------------------------------------------------*/
  728:Middlewares/FreeRTOS/Source/event_groups.c **** 
  729:Middlewares/FreeRTOS/Source/event_groups.c **** #if ( ( configUSE_TRACE_FACILITY == 1 ) && ( INCLUDE_xTimerPendFunctionCall == 1 ) && ( configUSE_T
@@ -2367,59 +2371,59 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 1
  747:Middlewares/FreeRTOS/Source/event_groups.c **** 
  748:Middlewares/FreeRTOS/Source/event_groups.c ****     UBaseType_t uxEventGroupGetNumber( void * xEventGroup )
  749:Middlewares/FreeRTOS/Source/event_groups.c ****     {
- 985              		.loc 1 749 5 is_stmt 1 view -0
- 986              		.cfi_startproc
- 987              		@ args = 0, pretend = 0, frame = 0
- 988              		@ frame_needed = 0, uses_anonymous_args = 0
- 989              		@ link register save eliminated.
+ 987              		.loc 1 749 5 is_stmt 1 view -0
+ 988              		.cfi_startproc
+ 989              		@ args = 0, pretend = 0, frame = 0
+ 990              		@ frame_needed = 0, uses_anonymous_args = 0
+ 991              		@ link register save eliminated.
  750:Middlewares/FreeRTOS/Source/event_groups.c ****         UBaseType_t xReturn;
- 990              		.loc 1 750 9 view .LVU327
+ 992              		.loc 1 750 9 view .LVU329
  751:Middlewares/FreeRTOS/Source/event_groups.c ****         EventGroup_t const * pxEventBits = ( EventGroup_t * ) xEventGroup; /*lint !e9087 !e9079 Eve
- 991              		.loc 1 751 9 view .LVU328
+ 993              		.loc 1 751 9 view .LVU330
  752:Middlewares/FreeRTOS/Source/event_groups.c **** 
  753:Middlewares/FreeRTOS/Source/event_groups.c ****         if( xEventGroup == NULL )
- 992              		.loc 1 753 9 view .LVU329
- 993              		.loc 1 753 11 is_stmt 0 view .LVU330
- 994 0000 08B1     		cbz	r0, .L62
+ 994              		.loc 1 753 9 view .LVU331
+ 995              		.loc 1 753 11 is_stmt 0 view .LVU332
+ 996 0000 08B1     		cbz	r0, .L62
  754:Middlewares/FreeRTOS/Source/event_groups.c ****         {
  755:Middlewares/FreeRTOS/Source/event_groups.c ****             xReturn = 0;
  756:Middlewares/FreeRTOS/Source/event_groups.c ****         }
  757:Middlewares/FreeRTOS/Source/event_groups.c ****         else
  758:Middlewares/FreeRTOS/Source/event_groups.c ****         {
  759:Middlewares/FreeRTOS/Source/event_groups.c ****             xReturn = pxEventBits->uxEventGroupNumber;
- 995              		.loc 1 759 13 is_stmt 1 view .LVU331
- 996              		.loc 1 759 21 is_stmt 0 view .LVU332
- 997 0002 8069     		ldr	r0, [r0, #24]
- 998              	.LVL105:
- 999              		.loc 1 759 21 view .LVU333
- 1000 0004 7047     		bx	lr
- 1001              	.LVL106:
- 1002              	.L62:
+ 997              		.loc 1 759 13 is_stmt 1 view .LVU333
+ 998              		.loc 1 759 21 is_stmt 0 view .LVU334
+ 999 0002 8069     		ldr	r0, [r0, #24]
+ 1000              	.LVL105:
+ 1001              		.loc 1 759 21 view .LVU335
+ 1002 0004 7047     		bx	lr
+ 1003              	.LVL106:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 41
+
+
+ 1004              	.L62:
  755:Middlewares/FreeRTOS/Source/event_groups.c ****         }
- 1003              		.loc 1 755 21 view .LVU334
- 1004 0006 0020     		movs	r0, #0
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 41
-
-
- 1005              	.LVL107:
+ 1005              		.loc 1 755 21 view .LVU336
+ 1006 0006 0020     		movs	r0, #0
+ 1007              	.LVL107:
  760:Middlewares/FreeRTOS/Source/event_groups.c ****         }
  761:Middlewares/FreeRTOS/Source/event_groups.c **** 
  762:Middlewares/FreeRTOS/Source/event_groups.c ****         return xReturn;
- 1006              		.loc 1 762 9 is_stmt 1 view .LVU335
+ 1008              		.loc 1 762 9 is_stmt 1 view .LVU337
  763:Middlewares/FreeRTOS/Source/event_groups.c ****     }
- 1007              		.loc 1 763 5 is_stmt 0 view .LVU336
- 1008 0008 7047     		bx	lr
- 1009              		.cfi_endproc
- 1010              	.LFE81:
- 1012              		.section	.text.vEventGroupSetNumber,"ax",%progbits
- 1013              		.align	1
- 1014              		.global	vEventGroupSetNumber
- 1015              		.syntax unified
- 1016              		.thumb
- 1017              		.thumb_func
- 1019              	vEventGroupSetNumber:
- 1020              	.LVL108:
- 1021              	.LFB82:
+ 1009              		.loc 1 763 5 is_stmt 0 view .LVU338
+ 1010 0008 7047     		bx	lr
+ 1011              		.cfi_endproc
+ 1012              	.LFE81:
+ 1014              		.section	.text.vEventGroupSetNumber,"ax",%progbits
+ 1015              		.align	1
+ 1016              		.global	vEventGroupSetNumber
+ 1017              		.syntax unified
+ 1018              		.thumb
+ 1019              		.thumb_func
+ 1021              	vEventGroupSetNumber:
+ 1022              	.LVL108:
+ 1023              	.LFB82:
  764:Middlewares/FreeRTOS/Source/event_groups.c **** 
  765:Middlewares/FreeRTOS/Source/event_groups.c **** #endif /* configUSE_TRACE_FACILITY */
  766:Middlewares/FreeRTOS/Source/event_groups.c **** /*-----------------------------------------------------------*/
@@ -2429,61 +2433,61 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 1
  770:Middlewares/FreeRTOS/Source/event_groups.c ****     void vEventGroupSetNumber( void * xEventGroup,
  771:Middlewares/FreeRTOS/Source/event_groups.c ****                                UBaseType_t uxEventGroupNumber )
  772:Middlewares/FreeRTOS/Source/event_groups.c ****     {
- 1022              		.loc 1 772 5 is_stmt 1 view -0
- 1023              		.cfi_startproc
- 1024              		@ args = 0, pretend = 0, frame = 0
- 1025              		@ frame_needed = 0, uses_anonymous_args = 0
- 1026              		@ link register save eliminated.
+ 1024              		.loc 1 772 5 is_stmt 1 view -0
+ 1025              		.cfi_startproc
+ 1026              		@ args = 0, pretend = 0, frame = 0
+ 1027              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1028              		@ link register save eliminated.
  773:Middlewares/FreeRTOS/Source/event_groups.c ****         ( ( EventGroup_t * ) xEventGroup )->uxEventGroupNumber = uxEventGroupNumber; /*lint !e9087 
- 1027              		.loc 1 773 9 view .LVU338
- 1028              		.loc 1 773 64 is_stmt 0 view .LVU339
- 1029 0000 8161     		str	r1, [r0, #24]
+ 1029              		.loc 1 773 9 view .LVU340
+ 1030              		.loc 1 773 64 is_stmt 0 view .LVU341
+ 1031 0000 8161     		str	r1, [r0, #24]
  774:Middlewares/FreeRTOS/Source/event_groups.c ****     }
- 1030              		.loc 1 774 5 view .LVU340
- 1031 0002 7047     		bx	lr
- 1032              		.cfi_endproc
- 1033              	.LFE82:
- 1035              		.text
- 1036              	.Letext0:
- 1037              		.file 3 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/lib/gcc/arm-none-eabi/14.2.1/includ
- 1038              		.file 4 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_defa
- 1039              		.file 5 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h
- 1040              		.file 6 "Middlewares/FreeRTOS/Source/include/FreeRTOS.h"
- 1041              		.file 7 "Middlewares/FreeRTOS/Source/include/list.h"
- 1042              		.file 8 "Middlewares/FreeRTOS/Source/include/event_groups.h"
- 1043              		.file 9 "Middlewares/FreeRTOS/Source/include/portable.h"
- 1044              		.file 10 "Middlewares/FreeRTOS/Source/include/task.h"
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s 			page 42
+ 1032              		.loc 1 774 5 view .LVU342
+ 1033 0002 7047     		bx	lr
+ 1034              		.cfi_endproc
+ 1035              	.LFE82:
+ 1037              		.text
+ 1038              	.Letext0:
+ 1039              		.file 3 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/lib/gcc/arm-none-eabi/14.2.1/includ
+ 1040              		.file 4 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_defa
+ 1041              		.file 5 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h
+ 1042              		.file 6 "Middlewares/FreeRTOS/Source/include/FreeRTOS.h"
+ 1043              		.file 7 "Middlewares/FreeRTOS/Source/include/list.h"
+ 1044              		.file 8 "Middlewares/FreeRTOS/Source/include/event_groups.h"
+ 1045              		.file 9 "Middlewares/FreeRTOS/Source/include/portable.h"
+ 1046              		.file 10 "Middlewares/FreeRTOS/Source/include/task.h"
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s 			page 42
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 event_groups.c
-C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s:19     .text.prvTestWaitCondition:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s:24     .text.prvTestWaitCondition:00000000 prvTestWaitCondition
-C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s:78     .text.xEventGroupCreateStatic:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s:84     .text.xEventGroupCreateStatic:00000000 xEventGroupCreateStatic
-C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s:129    .text.xEventGroupCreate:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s:135    .text.xEventGroupCreate:00000000 xEventGroupCreate
-C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s:181    .text.xEventGroupWaitBits:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s:187    .text.xEventGroupWaitBits:00000000 xEventGroupWaitBits
-C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s:403    .text.xEventGroupClearBits:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s:409    .text.xEventGroupClearBits:00000000 xEventGroupClearBits
-C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s:457    .text.xEventGroupGetBitsFromISR:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s:463    .text.xEventGroupGetBitsFromISR:00000000 xEventGroupGetBitsFromISR
-C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s:525    .text.xEventGroupSetBits:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s:531    .text.xEventGroupSetBits:00000000 xEventGroupSetBits
-C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s:668    .text.xEventGroupSync:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s:674    .text.xEventGroupSync:00000000 xEventGroupSync
-C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s:848    .text.vEventGroupDelete:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s:854    .text.vEventGroupDelete:00000000 vEventGroupDelete
-C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s:918    .text.vEventGroupSetBitsCallback:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s:924    .text.vEventGroupSetBitsCallback:00000000 vEventGroupSetBitsCallback
-C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s:947    .text.vEventGroupClearBitsCallback:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s:953    .text.vEventGroupClearBitsCallback:00000000 vEventGroupClearBitsCallback
-C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s:976    .text.uxEventGroupGetNumber:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s:982    .text.uxEventGroupGetNumber:00000000 uxEventGroupGetNumber
-C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s:1013   .text.vEventGroupSetNumber:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccNHTqKg.s:1019   .text.vEventGroupSetNumber:00000000 vEventGroupSetNumber
+C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s:19     .text.prvTestWaitCondition:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s:24     .text.prvTestWaitCondition:00000000 prvTestWaitCondition
+C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s:78     .text.xEventGroupCreateStatic:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s:84     .text.xEventGroupCreateStatic:00000000 xEventGroupCreateStatic
+C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s:129    .text.xEventGroupCreate:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s:135    .text.xEventGroupCreate:00000000 xEventGroupCreate
+C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s:181    .text.xEventGroupWaitBits:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s:187    .text.xEventGroupWaitBits:00000000 xEventGroupWaitBits
+C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s:404    .text.xEventGroupClearBits:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s:410    .text.xEventGroupClearBits:00000000 xEventGroupClearBits
+C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s:458    .text.xEventGroupGetBitsFromISR:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s:464    .text.xEventGroupGetBitsFromISR:00000000 xEventGroupGetBitsFromISR
+C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s:526    .text.xEventGroupSetBits:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s:532    .text.xEventGroupSetBits:00000000 xEventGroupSetBits
+C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s:669    .text.xEventGroupSync:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s:675    .text.xEventGroupSync:00000000 xEventGroupSync
+C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s:850    .text.vEventGroupDelete:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s:856    .text.vEventGroupDelete:00000000 vEventGroupDelete
+C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s:920    .text.vEventGroupSetBitsCallback:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s:926    .text.vEventGroupSetBitsCallback:00000000 vEventGroupSetBitsCallback
+C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s:949    .text.vEventGroupClearBitsCallback:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s:955    .text.vEventGroupClearBitsCallback:00000000 vEventGroupClearBitsCallback
+C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s:978    .text.uxEventGroupGetNumber:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s:984    .text.uxEventGroupGetNumber:00000000 uxEventGroupGetNumber
+C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s:1015   .text.vEventGroupSetNumber:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccMyl6JG.s:1021   .text.vEventGroupSetNumber:00000000 vEventGroupSetNumber
 
 UNDEFINED SYMBOLS
 vListInitialise

@@ -34,7 +34,10 @@ build/main.o: Core/Src/main.c Core/Inc/main.h \
  Middlewares/FreeRTOS/Source/include/list.h \
  Middlewares/FreeRTOS/Source/include/queue.h \
  Middlewares/FreeRTOS/Source/include/task.h Core/Inc/debug_uart.h \
- Core/Inc/mpu6050.h Core/Inc/i2c.h Core/Inc/soft_i2c.h
+ Core/Inc/mpu6050.h Core/Inc/i2c.h Core/Inc/soft_i2c.h \
+ Middlewares/FreeRTOS/Source/include/semphr.h \
+ Middlewares/FreeRTOS/Source/include/queue.h Core/Inc/soft_i2c.h \
+ Core/Inc/oled.h
 Core/Inc/main.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 Core/Inc/stm32f1xx_hal_conf.h:
@@ -82,3 +85,7 @@ Core/Inc/debug_uart.h:
 Core/Inc/mpu6050.h:
 Core/Inc/i2c.h:
 Core/Inc/soft_i2c.h:
+Middlewares/FreeRTOS/Source/include/semphr.h:
+Middlewares/FreeRTOS/Source/include/queue.h:
+Core/Inc/soft_i2c.h:
+Core/Inc/oled.h:

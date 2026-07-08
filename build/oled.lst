@@ -1,0 +1,1391 @@
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.arch armv7-m
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"oled.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.file 1 "Core/Src/oled.c"
+  18              		.section	.text.OLED_WriteCmd,"ax",%progbits
+  19              		.align	1
+  20              		.global	OLED_WriteCmd
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  25              	OLED_WriteCmd:
+  26              	.LVL0:
+  27              	.LFB73:
+   1:Core/Src/oled.c **** #include"oled.h"
+   2:Core/Src/oled.c **** extern const uint8_t OLED_F6x8[][6];
+   3:Core/Src/oled.c **** 
+   4:Core/Src/oled.c **** void OLED_WriteCmd(uint8_t cmd)
+   5:Core/Src/oled.c **** {
+  28              		.loc 1 5 1 view -0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		.loc 1 5 1 is_stmt 0 view .LVU1
+  33 0000 10B5     		push	{r4, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 8
+  36              		.cfi_offset 4, -8
+  37              		.cfi_offset 14, -4
+  38 0002 0446     		mov	r4, r0
+   6:Core/Src/oled.c ****     MyI2C_Start();
+  39              		.loc 1 6 5 is_stmt 1 view .LVU2
+  40 0004 FFF7FEFF 		bl	MyI2C_Start
+  41              	.LVL1:
+   7:Core/Src/oled.c **** 
+   8:Core/Src/oled.c ****     MyI2C_SendByte(OLED_ADDR<<1);
+  42              		.loc 1 8 5 view .LVU3
+  43 0008 7820     		movs	r0, #120
+  44 000a FFF7FEFF 		bl	MyI2C_SendByte
+  45              	.LVL2:
+   9:Core/Src/oled.c **** 
+  10:Core/Src/oled.c ****     if(MyI2C_ReciveAck())
+  46              		.loc 1 10 5 view .LVU4
+  47              		.loc 1 10 8 is_stmt 0 view .LVU5
+  48 000e FFF7FEFF 		bl	MyI2C_ReciveAck
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s 			page 2
+
+
+  49              	.LVL3:
+  50              		.loc 1 10 7 discriminator 1 view .LVU6
+  51 0012 70B9     		cbnz	r0, .L7
+  11:Core/Src/oled.c ****     {
+  12:Core/Src/oled.c ****         MyI2C_Stop();
+  13:Core/Src/oled.c ****         return ;
+  14:Core/Src/oled.c ****     }
+  15:Core/Src/oled.c ****     MyI2C_SendByte(OLED_CMD);
+  52              		.loc 1 15 5 is_stmt 1 view .LVU7
+  53 0014 0020     		movs	r0, #0
+  54 0016 FFF7FEFF 		bl	MyI2C_SendByte
+  55              	.LVL4:
+  16:Core/Src/oled.c ****     if(MyI2C_ReciveAck())
+  56              		.loc 1 16 5 view .LVU8
+  57              		.loc 1 16 8 is_stmt 0 view .LVU9
+  58 001a FFF7FEFF 		bl	MyI2C_ReciveAck
+  59              	.LVL5:
+  60              		.loc 1 16 7 discriminator 1 view .LVU10
+  61 001e 58B9     		cbnz	r0, .L8
+  17:Core/Src/oled.c ****     {
+  18:Core/Src/oled.c ****         MyI2C_Stop();
+  19:Core/Src/oled.c ****         return ;
+  20:Core/Src/oled.c ****     }
+  21:Core/Src/oled.c **** 
+  22:Core/Src/oled.c ****     MyI2C_SendByte(cmd);
+  62              		.loc 1 22 5 is_stmt 1 view .LVU11
+  63 0020 2046     		mov	r0, r4
+  64 0022 FFF7FEFF 		bl	MyI2C_SendByte
+  65              	.LVL6:
+  23:Core/Src/oled.c ****     if(MyI2C_ReciveAck())
+  66              		.loc 1 23 5 view .LVU12
+  67              		.loc 1 23 8 is_stmt 0 view .LVU13
+  68 0026 FFF7FEFF 		bl	MyI2C_ReciveAck
+  69              	.LVL7:
+  70              		.loc 1 23 7 discriminator 1 view .LVU14
+  71 002a 40B9     		cbnz	r0, .L9
+  24:Core/Src/oled.c ****     {
+  25:Core/Src/oled.c ****         MyI2C_Stop();
+  26:Core/Src/oled.c ****         return ;
+  27:Core/Src/oled.c ****     }
+  28:Core/Src/oled.c ****     MyI2C_Stop();
+  72              		.loc 1 28 5 is_stmt 1 view .LVU15
+  73 002c FFF7FEFF 		bl	MyI2C_Stop
+  74              	.LVL8:
+  75 0030 01E0     		b	.L1
+  76              	.L7:
+  12:Core/Src/oled.c ****         return ;
+  77              		.loc 1 12 9 view .LVU16
+  78 0032 FFF7FEFF 		bl	MyI2C_Stop
+  79              	.LVL9:
+  13:Core/Src/oled.c ****     }
+  80              		.loc 1 13 9 view .LVU17
+  81              	.L1:
+  29:Core/Src/oled.c **** 
+  30:Core/Src/oled.c **** }
+  82              		.loc 1 30 1 is_stmt 0 view .LVU18
+  83 0036 10BD     		pop	{r4, pc}
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s 			page 3
+
+
+  84              	.LVL10:
+  85              	.L8:
+  18:Core/Src/oled.c ****         return ;
+  86              		.loc 1 18 9 is_stmt 1 view .LVU19
+  87 0038 FFF7FEFF 		bl	MyI2C_Stop
+  88              	.LVL11:
+  19:Core/Src/oled.c ****     }
+  89              		.loc 1 19 9 view .LVU20
+  90 003c FBE7     		b	.L1
+  91              	.L9:
+  25:Core/Src/oled.c ****         return ;
+  92              		.loc 1 25 9 view .LVU21
+  93 003e FFF7FEFF 		bl	MyI2C_Stop
+  94              	.LVL12:
+  26:Core/Src/oled.c ****     }
+  95              		.loc 1 26 9 view .LVU22
+  96 0042 F8E7     		b	.L1
+  97              		.cfi_endproc
+  98              	.LFE73:
+ 100              		.section	.text.OLED_WriteData,"ax",%progbits
+ 101              		.align	1
+ 102              		.global	OLED_WriteData
+ 103              		.syntax unified
+ 104              		.thumb
+ 105              		.thumb_func
+ 107              	OLED_WriteData:
+ 108              	.LVL13:
+ 109              	.LFB74:
+  31:Core/Src/oled.c **** 
+  32:Core/Src/oled.c **** void OLED_WriteData(uint8_t data)
+  33:Core/Src/oled.c **** {
+ 110              		.loc 1 33 1 view -0
+ 111              		.cfi_startproc
+ 112              		@ args = 0, pretend = 0, frame = 0
+ 113              		@ frame_needed = 0, uses_anonymous_args = 0
+ 114              		.loc 1 33 1 is_stmt 0 view .LVU24
+ 115 0000 10B5     		push	{r4, lr}
+ 116              	.LCFI1:
+ 117              		.cfi_def_cfa_offset 8
+ 118              		.cfi_offset 4, -8
+ 119              		.cfi_offset 14, -4
+ 120 0002 0446     		mov	r4, r0
+  34:Core/Src/oled.c ****     MyI2C_Start();
+ 121              		.loc 1 34 5 is_stmt 1 view .LVU25
+ 122 0004 FFF7FEFF 		bl	MyI2C_Start
+ 123              	.LVL14:
+  35:Core/Src/oled.c **** 
+  36:Core/Src/oled.c ****     MyI2C_SendByte(OLED_ADDR<<1);
+ 124              		.loc 1 36 5 view .LVU26
+ 125 0008 7820     		movs	r0, #120
+ 126 000a FFF7FEFF 		bl	MyI2C_SendByte
+ 127              	.LVL15:
+  37:Core/Src/oled.c **** 
+  38:Core/Src/oled.c ****     if(MyI2C_ReciveAck())
+ 128              		.loc 1 38 5 view .LVU27
+ 129              		.loc 1 38 8 is_stmt 0 view .LVU28
+ 130 000e FFF7FEFF 		bl	MyI2C_ReciveAck
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s 			page 4
+
+
+ 131              	.LVL16:
+ 132              		.loc 1 38 7 discriminator 1 view .LVU29
+ 133 0012 70B9     		cbnz	r0, .L16
+  39:Core/Src/oled.c ****     {
+  40:Core/Src/oled.c ****         MyI2C_Stop();
+  41:Core/Src/oled.c ****         return ;
+  42:Core/Src/oled.c ****     }
+  43:Core/Src/oled.c ****      MyI2C_SendByte(OLED_DATA);
+ 134              		.loc 1 43 6 is_stmt 1 view .LVU30
+ 135 0014 4020     		movs	r0, #64
+ 136 0016 FFF7FEFF 		bl	MyI2C_SendByte
+ 137              	.LVL17:
+  44:Core/Src/oled.c ****     if(MyI2C_ReciveAck())
+ 138              		.loc 1 44 5 view .LVU31
+ 139              		.loc 1 44 8 is_stmt 0 view .LVU32
+ 140 001a FFF7FEFF 		bl	MyI2C_ReciveAck
+ 141              	.LVL18:
+ 142              		.loc 1 44 7 discriminator 1 view .LVU33
+ 143 001e 58B9     		cbnz	r0, .L17
+  45:Core/Src/oled.c ****     {
+  46:Core/Src/oled.c ****         MyI2C_Stop();
+  47:Core/Src/oled.c ****         return ;
+  48:Core/Src/oled.c ****     }
+  49:Core/Src/oled.c ****     
+  50:Core/Src/oled.c ****     MyI2C_SendByte(data);
+ 144              		.loc 1 50 5 is_stmt 1 view .LVU34
+ 145 0020 2046     		mov	r0, r4
+ 146 0022 FFF7FEFF 		bl	MyI2C_SendByte
+ 147              	.LVL19:
+  51:Core/Src/oled.c ****     if(MyI2C_ReciveAck())
+ 148              		.loc 1 51 5 view .LVU35
+ 149              		.loc 1 51 8 is_stmt 0 view .LVU36
+ 150 0026 FFF7FEFF 		bl	MyI2C_ReciveAck
+ 151              	.LVL20:
+ 152              		.loc 1 51 7 discriminator 1 view .LVU37
+ 153 002a 40B9     		cbnz	r0, .L18
+  52:Core/Src/oled.c ****     {
+  53:Core/Src/oled.c ****         MyI2C_Stop();
+  54:Core/Src/oled.c ****         return ;
+  55:Core/Src/oled.c ****     }
+  56:Core/Src/oled.c ****     MyI2C_Stop();
+ 154              		.loc 1 56 5 is_stmt 1 view .LVU38
+ 155 002c FFF7FEFF 		bl	MyI2C_Stop
+ 156              	.LVL21:
+ 157 0030 01E0     		b	.L10
+ 158              	.L16:
+  40:Core/Src/oled.c ****         return ;
+ 159              		.loc 1 40 9 view .LVU39
+ 160 0032 FFF7FEFF 		bl	MyI2C_Stop
+ 161              	.LVL22:
+  41:Core/Src/oled.c ****     }
+ 162              		.loc 1 41 9 view .LVU40
+ 163              	.L10:
+  57:Core/Src/oled.c **** }
+ 164              		.loc 1 57 1 is_stmt 0 view .LVU41
+ 165 0036 10BD     		pop	{r4, pc}
+ 166              	.LVL23:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s 			page 5
+
+
+ 167              	.L17:
+  46:Core/Src/oled.c ****         return ;
+ 168              		.loc 1 46 9 is_stmt 1 view .LVU42
+ 169 0038 FFF7FEFF 		bl	MyI2C_Stop
+ 170              	.LVL24:
+  47:Core/Src/oled.c ****     }
+ 171              		.loc 1 47 9 view .LVU43
+ 172 003c FBE7     		b	.L10
+ 173              	.L18:
+  53:Core/Src/oled.c ****         return ;
+ 174              		.loc 1 53 9 view .LVU44
+ 175 003e FFF7FEFF 		bl	MyI2C_Stop
+ 176              	.LVL25:
+  54:Core/Src/oled.c ****     }
+ 177              		.loc 1 54 9 view .LVU45
+ 178 0042 F8E7     		b	.L10
+ 179              		.cfi_endproc
+ 180              	.LFE74:
+ 182              		.section	.text.OLED_WriteCmdBuf,"ax",%progbits
+ 183              		.align	1
+ 184              		.global	OLED_WriteCmdBuf
+ 185              		.syntax unified
+ 186              		.thumb
+ 187              		.thumb_func
+ 189              	OLED_WriteCmdBuf:
+ 190              	.LVL26:
+ 191              	.LFB75:
+  58:Core/Src/oled.c **** 
+  59:Core/Src/oled.c **** 
+  60:Core/Src/oled.c **** void OLED_WriteCmdBuf(const uint8_t *cmds,uint8_t len)
+  61:Core/Src/oled.c **** {
+ 192              		.loc 1 61 1 view -0
+ 193              		.cfi_startproc
+ 194              		@ args = 0, pretend = 0, frame = 0
+ 195              		@ frame_needed = 0, uses_anonymous_args = 0
+ 196              		.loc 1 61 1 is_stmt 0 view .LVU47
+ 197 0000 70B5     		push	{r4, r5, r6, lr}
+ 198              	.LCFI2:
+ 199              		.cfi_def_cfa_offset 16
+ 200              		.cfi_offset 4, -16
+ 201              		.cfi_offset 5, -12
+ 202              		.cfi_offset 6, -8
+ 203              		.cfi_offset 14, -4
+ 204 0002 0646     		mov	r6, r0
+ 205 0004 0D46     		mov	r5, r1
+  62:Core/Src/oled.c ****     MyI2C_Start();
+ 206              		.loc 1 62 5 is_stmt 1 view .LVU48
+ 207 0006 FFF7FEFF 		bl	MyI2C_Start
+ 208              	.LVL27:
+  63:Core/Src/oled.c **** 
+  64:Core/Src/oled.c ****     MyI2C_SendByte(OLED_ADDR<<1);
+ 209              		.loc 1 64 5 view .LVU49
+ 210 000a 7820     		movs	r0, #120
+ 211 000c FFF7FEFF 		bl	MyI2C_SendByte
+ 212              	.LVL28:
+  65:Core/Src/oled.c **** 
+  66:Core/Src/oled.c ****     if(MyI2C_ReciveAck())
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s 			page 6
+
+
+ 213              		.loc 1 66 5 view .LVU50
+ 214              		.loc 1 66 8 is_stmt 0 view .LVU51
+ 215 0010 FFF7FEFF 		bl	MyI2C_ReciveAck
+ 216              	.LVL29:
+ 217              		.loc 1 66 7 discriminator 1 view .LVU52
+ 218 0014 88B9     		cbnz	r0, .L26
+  67:Core/Src/oled.c ****     {
+  68:Core/Src/oled.c ****         MyI2C_Stop();
+  69:Core/Src/oled.c ****         return ;
+  70:Core/Src/oled.c ****     }
+  71:Core/Src/oled.c ****     MyI2C_SendByte(OLED_CMD);
+ 219              		.loc 1 71 5 is_stmt 1 view .LVU53
+ 220 0016 0020     		movs	r0, #0
+ 221 0018 FFF7FEFF 		bl	MyI2C_SendByte
+ 222              	.LVL30:
+  72:Core/Src/oled.c ****     if(MyI2C_ReciveAck())
+ 223              		.loc 1 72 5 view .LVU54
+ 224              		.loc 1 72 8 is_stmt 0 view .LVU55
+ 225 001c FFF7FEFF 		bl	MyI2C_ReciveAck
+ 226              	.LVL31:
+ 227              		.loc 1 72 7 discriminator 1 view .LVU56
+ 228 0020 0446     		mov	r4, r0
+ 229 0022 68B9     		cbnz	r0, .L27
+ 230              	.L22:
+ 231              	.LVL32:
+ 232              	.LBB2:
+  73:Core/Src/oled.c ****     {
+  74:Core/Src/oled.c ****         MyI2C_Stop();
+  75:Core/Src/oled.c ****         return ;
+  76:Core/Src/oled.c ****     }
+  77:Core/Src/oled.c ****     for(uint8_t i=0;i<len;i++)
+ 233              		.loc 1 77 22 is_stmt 1 discriminator 1 view .LVU57
+ 234 0024 AC42     		cmp	r4, r5
+ 235 0026 11D2     		bcs	.L28
+  78:Core/Src/oled.c ****     {
+  79:Core/Src/oled.c ****         MyI2C_SendByte(cmds[i]);
+ 236              		.loc 1 79 9 view .LVU58
+ 237 0028 305D     		ldrb	r0, [r6, r4]	@ zero_extendqisi2
+ 238 002a FFF7FEFF 		bl	MyI2C_SendByte
+ 239              	.LVL33:
+  80:Core/Src/oled.c ****         if(MyI2C_ReciveAck())
+ 240              		.loc 1 80 9 view .LVU59
+ 241              		.loc 1 80 12 is_stmt 0 view .LVU60
+ 242 002e FFF7FEFF 		bl	MyI2C_ReciveAck
+ 243              	.LVL34:
+ 244              		.loc 1 80 11 discriminator 1 view .LVU61
+ 245 0032 40B9     		cbnz	r0, .L29
+  77:Core/Src/oled.c ****     {
+ 246              		.loc 1 77 28 is_stmt 1 discriminator 2 view .LVU62
+ 247 0034 0134     		adds	r4, r4, #1
+ 248              	.LVL35:
+  77:Core/Src/oled.c ****     {
+ 249              		.loc 1 77 28 is_stmt 0 discriminator 2 view .LVU63
+ 250 0036 E4B2     		uxtb	r4, r4
+ 251              	.LVL36:
+  77:Core/Src/oled.c ****     {
+ 252              		.loc 1 77 28 discriminator 2 view .LVU64
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s 			page 7
+
+
+ 253 0038 F4E7     		b	.L22
+ 254              	.LVL37:
+ 255              	.L26:
+  77:Core/Src/oled.c ****     {
+ 256              		.loc 1 77 28 discriminator 2 view .LVU65
+ 257              	.LBE2:
+  68:Core/Src/oled.c ****         return ;
+ 258              		.loc 1 68 9 is_stmt 1 view .LVU66
+ 259 003a FFF7FEFF 		bl	MyI2C_Stop
+ 260              	.LVL38:
+  69:Core/Src/oled.c ****     }
+ 261              		.loc 1 69 9 view .LVU67
+ 262              	.L19:
+  81:Core/Src/oled.c ****         {
+  82:Core/Src/oled.c ****             MyI2C_Stop();
+  83:Core/Src/oled.c ****             return ;
+  84:Core/Src/oled.c ****         }
+  85:Core/Src/oled.c **** 
+  86:Core/Src/oled.c ****     }
+  87:Core/Src/oled.c ****     
+  88:Core/Src/oled.c ****     
+  89:Core/Src/oled.c ****     MyI2C_Stop();
+  90:Core/Src/oled.c **** }
+ 263              		.loc 1 90 1 is_stmt 0 view .LVU68
+ 264 003e 70BD     		pop	{r4, r5, r6, pc}
+ 265              	.LVL39:
+ 266              	.L27:
+  74:Core/Src/oled.c ****         return ;
+ 267              		.loc 1 74 9 is_stmt 1 view .LVU69
+ 268 0040 FFF7FEFF 		bl	MyI2C_Stop
+ 269              	.LVL40:
+  75:Core/Src/oled.c ****     }
+ 270              		.loc 1 75 9 view .LVU70
+ 271 0044 FBE7     		b	.L19
+ 272              	.LVL41:
+ 273              	.L29:
+ 274              	.LBB3:
+  82:Core/Src/oled.c ****             return ;
+ 275              		.loc 1 82 13 view .LVU71
+ 276 0046 FFF7FEFF 		bl	MyI2C_Stop
+ 277              	.LVL42:
+  83:Core/Src/oled.c ****         }
+ 278              		.loc 1 83 13 view .LVU72
+ 279 004a F8E7     		b	.L19
+ 280              	.L28:
+  83:Core/Src/oled.c ****         }
+ 281              		.loc 1 83 13 is_stmt 0 view .LVU73
+ 282              	.LBE3:
+  89:Core/Src/oled.c **** }
+ 283              		.loc 1 89 5 is_stmt 1 view .LVU74
+ 284 004c FFF7FEFF 		bl	MyI2C_Stop
+ 285              	.LVL43:
+ 286 0050 F5E7     		b	.L19
+ 287              		.cfi_endproc
+ 288              	.LFE75:
+ 290              		.section	.text.OLED_WriteDataBuf,"ax",%progbits
+ 291              		.align	1
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s 			page 8
+
+
+ 292              		.global	OLED_WriteDataBuf
+ 293              		.syntax unified
+ 294              		.thumb
+ 295              		.thumb_func
+ 297              	OLED_WriteDataBuf:
+ 298              	.LVL44:
+ 299              	.LFB76:
+  91:Core/Src/oled.c **** void OLED_WriteDataBuf(const uint8_t *data,uint8_t len)
+  92:Core/Src/oled.c **** {
+ 300              		.loc 1 92 1 view -0
+ 301              		.cfi_startproc
+ 302              		@ args = 0, pretend = 0, frame = 0
+ 303              		@ frame_needed = 0, uses_anonymous_args = 0
+ 304              		.loc 1 92 1 is_stmt 0 view .LVU76
+ 305 0000 70B5     		push	{r4, r5, r6, lr}
+ 306              	.LCFI3:
+ 307              		.cfi_def_cfa_offset 16
+ 308              		.cfi_offset 4, -16
+ 309              		.cfi_offset 5, -12
+ 310              		.cfi_offset 6, -8
+ 311              		.cfi_offset 14, -4
+ 312 0002 0646     		mov	r6, r0
+ 313 0004 0D46     		mov	r5, r1
+  93:Core/Src/oled.c ****     MyI2C_Start();
+ 314              		.loc 1 93 5 is_stmt 1 view .LVU77
+ 315 0006 FFF7FEFF 		bl	MyI2C_Start
+ 316              	.LVL45:
+  94:Core/Src/oled.c **** 
+  95:Core/Src/oled.c ****     MyI2C_SendByte(OLED_ADDR<<1);
+ 317              		.loc 1 95 5 view .LVU78
+ 318 000a 7820     		movs	r0, #120
+ 319 000c FFF7FEFF 		bl	MyI2C_SendByte
+ 320              	.LVL46:
+  96:Core/Src/oled.c **** 
+  97:Core/Src/oled.c ****     if(MyI2C_ReciveAck())
+ 321              		.loc 1 97 5 view .LVU79
+ 322              		.loc 1 97 8 is_stmt 0 view .LVU80
+ 323 0010 FFF7FEFF 		bl	MyI2C_ReciveAck
+ 324              	.LVL47:
+ 325              		.loc 1 97 7 discriminator 1 view .LVU81
+ 326 0014 88B9     		cbnz	r0, .L37
+  98:Core/Src/oled.c ****     {
+  99:Core/Src/oled.c ****         MyI2C_Stop();
+ 100:Core/Src/oled.c ****         return ;
+ 101:Core/Src/oled.c ****     }
+ 102:Core/Src/oled.c ****     MyI2C_SendByte(OLED_DATA);
+ 327              		.loc 1 102 5 is_stmt 1 view .LVU82
+ 328 0016 4020     		movs	r0, #64
+ 329 0018 FFF7FEFF 		bl	MyI2C_SendByte
+ 330              	.LVL48:
+ 103:Core/Src/oled.c ****     if(MyI2C_ReciveAck())
+ 331              		.loc 1 103 5 view .LVU83
+ 332              		.loc 1 103 8 is_stmt 0 view .LVU84
+ 333 001c FFF7FEFF 		bl	MyI2C_ReciveAck
+ 334              	.LVL49:
+ 335              		.loc 1 103 7 discriminator 1 view .LVU85
+ 336 0020 0446     		mov	r4, r0
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s 			page 9
+
+
+ 337 0022 68B9     		cbnz	r0, .L38
+ 338              	.L33:
+ 339              	.LVL50:
+ 340              	.LBB4:
+ 104:Core/Src/oled.c ****     {
+ 105:Core/Src/oled.c ****         MyI2C_Stop();
+ 106:Core/Src/oled.c ****         return ;
+ 107:Core/Src/oled.c ****     }
+ 108:Core/Src/oled.c ****     for(uint8_t i=0;i<len;i++)
+ 341              		.loc 1 108 22 is_stmt 1 discriminator 1 view .LVU86
+ 342 0024 AC42     		cmp	r4, r5
+ 343 0026 11D2     		bcs	.L39
+ 109:Core/Src/oled.c ****     {
+ 110:Core/Src/oled.c ****         MyI2C_SendByte(data[i]);
+ 344              		.loc 1 110 9 view .LVU87
+ 345 0028 305D     		ldrb	r0, [r6, r4]	@ zero_extendqisi2
+ 346 002a FFF7FEFF 		bl	MyI2C_SendByte
+ 347              	.LVL51:
+ 111:Core/Src/oled.c ****         if(MyI2C_ReciveAck())
+ 348              		.loc 1 111 9 view .LVU88
+ 349              		.loc 1 111 12 is_stmt 0 view .LVU89
+ 350 002e FFF7FEFF 		bl	MyI2C_ReciveAck
+ 351              	.LVL52:
+ 352              		.loc 1 111 11 discriminator 1 view .LVU90
+ 353 0032 40B9     		cbnz	r0, .L40
+ 108:Core/Src/oled.c ****     {
+ 354              		.loc 1 108 28 is_stmt 1 discriminator 2 view .LVU91
+ 355 0034 0134     		adds	r4, r4, #1
+ 356              	.LVL53:
+ 108:Core/Src/oled.c ****     {
+ 357              		.loc 1 108 28 is_stmt 0 discriminator 2 view .LVU92
+ 358 0036 E4B2     		uxtb	r4, r4
+ 359              	.LVL54:
+ 108:Core/Src/oled.c ****     {
+ 360              		.loc 1 108 28 discriminator 2 view .LVU93
+ 361 0038 F4E7     		b	.L33
+ 362              	.LVL55:
+ 363              	.L37:
+ 108:Core/Src/oled.c ****     {
+ 364              		.loc 1 108 28 discriminator 2 view .LVU94
+ 365              	.LBE4:
+  99:Core/Src/oled.c ****         return ;
+ 366              		.loc 1 99 9 is_stmt 1 view .LVU95
+ 367 003a FFF7FEFF 		bl	MyI2C_Stop
+ 368              	.LVL56:
+ 100:Core/Src/oled.c ****     }
+ 369              		.loc 1 100 9 view .LVU96
+ 370              	.L30:
+ 112:Core/Src/oled.c ****         {
+ 113:Core/Src/oled.c ****             MyI2C_Stop();
+ 114:Core/Src/oled.c ****             return ;
+ 115:Core/Src/oled.c ****         }
+ 116:Core/Src/oled.c **** 
+ 117:Core/Src/oled.c ****     }
+ 118:Core/Src/oled.c ****     
+ 119:Core/Src/oled.c ****     
+ 120:Core/Src/oled.c ****     MyI2C_Stop();
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s 			page 10
+
+
+ 121:Core/Src/oled.c **** }
+ 371              		.loc 1 121 1 is_stmt 0 view .LVU97
+ 372 003e 70BD     		pop	{r4, r5, r6, pc}
+ 373              	.LVL57:
+ 374              	.L38:
+ 105:Core/Src/oled.c ****         return ;
+ 375              		.loc 1 105 9 is_stmt 1 view .LVU98
+ 376 0040 FFF7FEFF 		bl	MyI2C_Stop
+ 377              	.LVL58:
+ 106:Core/Src/oled.c ****     }
+ 378              		.loc 1 106 9 view .LVU99
+ 379 0044 FBE7     		b	.L30
+ 380              	.LVL59:
+ 381              	.L40:
+ 382              	.LBB5:
+ 113:Core/Src/oled.c ****             return ;
+ 383              		.loc 1 113 13 view .LVU100
+ 384 0046 FFF7FEFF 		bl	MyI2C_Stop
+ 385              	.LVL60:
+ 114:Core/Src/oled.c ****         }
+ 386              		.loc 1 114 13 view .LVU101
+ 387 004a F8E7     		b	.L30
+ 388              	.L39:
+ 114:Core/Src/oled.c ****         }
+ 389              		.loc 1 114 13 is_stmt 0 view .LVU102
+ 390              	.LBE5:
+ 120:Core/Src/oled.c **** }
+ 391              		.loc 1 120 5 is_stmt 1 view .LVU103
+ 392 004c FFF7FEFF 		bl	MyI2C_Stop
+ 393              	.LVL61:
+ 394 0050 F5E7     		b	.L30
+ 395              		.cfi_endproc
+ 396              	.LFE76:
+ 398              		.section	.text.OLED_SetCursor,"ax",%progbits
+ 399              		.align	1
+ 400              		.global	OLED_SetCursor
+ 401              		.syntax unified
+ 402              		.thumb
+ 403              		.thumb_func
+ 405              	OLED_SetCursor:
+ 406              	.LVL62:
+ 407              	.LFB78:
+ 122:Core/Src/oled.c **** void OLED_Init(void)
+ 123:Core/Src/oled.c **** {
+ 124:Core/Src/oled.c ****     // SSD1306 上电后需等待 VDD 稳定
+ 125:Core/Src/oled.c ****     HAL_Delay(100);
+ 126:Core/Src/oled.c **** 
+ 127:Core/Src/oled.c ****     // Initialize OLED display
+ 128:Core/Src/oled.c ****     const uint8_t init_cmds[] = {
+ 129:Core/Src/oled.c ****         0xAE,       // Display OFF
+ 130:Core/Src/oled.c ****         0xD5, 0x80, // Set OSC freq / divider
+ 131:Core/Src/oled.c ****         0xA8, 0x3F, // MUX ratio = 63 (128x64)
+ 132:Core/Src/oled.c ****         0xD3, 0x00, // Display offset = 0
+ 133:Core/Src/oled.c ****         0x40,       // Start line = 0
+ 134:Core/Src/oled.c ****         0x8D, 0x14, // Charge pump enable
+ 135:Core/Src/oled.c ****         0x20, 0x02, // Page addressing mode (配合 OLED_SetCursor 使用)
+ 136:Core/Src/oled.c ****         0xA1,       // Segment remap (左右镜像)
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s 			page 11
+
+
+ 137:Core/Src/oled.c ****         0xC8,       // COM scan direction (从上到下)
+ 138:Core/Src/oled.c ****         0xDA, 0x12, // COM pins hardware config (128x64)
+ 139:Core/Src/oled.c ****         0x81, 0xCF, // Contrast
+ 140:Core/Src/oled.c ****         0xD9, 0xF1, // Pre-charge period
+ 141:Core/Src/oled.c ****         0xDB, 0x40, // VCOMH deselect level
+ 142:Core/Src/oled.c ****         0xA4,       // Display normal (非全亮)
+ 143:Core/Src/oled.c ****         0xA6,       // Normal display (非反相)
+ 144:Core/Src/oled.c ****         0x2E,       // Deactivate scroll
+ 145:Core/Src/oled.c ****         0xAF        // Display ON
+ 146:Core/Src/oled.c ****     };
+ 147:Core/Src/oled.c ****     OLED_WriteCmdBuf(init_cmds, sizeof(init_cmds));
+ 148:Core/Src/oled.c ****     OLED_Clear();
+ 149:Core/Src/oled.c **** 
+ 150:Core/Src/oled.c **** }
+ 151:Core/Src/oled.c **** void OLED_SetCursor(uint8_t page, uint8_t col)
+ 152:Core/Src/oled.c **** {
+ 408              		.loc 1 152 1 view -0
+ 409              		.cfi_startproc
+ 410              		@ args = 0, pretend = 0, frame = 8
+ 411              		@ frame_needed = 0, uses_anonymous_args = 0
+ 412              		.loc 1 152 1 is_stmt 0 view .LVU105
+ 413 0000 00B5     		push	{lr}
+ 414              	.LCFI4:
+ 415              		.cfi_def_cfa_offset 4
+ 416              		.cfi_offset 14, -4
+ 417 0002 83B0     		sub	sp, sp, #12
+ 418              	.LCFI5:
+ 419              		.cfi_def_cfa_offset 16
+ 153:Core/Src/oled.c ****     /* 将 3 字节命令合并为一次 I2C 传输，减少总线开销 */
+ 154:Core/Src/oled.c ****     uint8_t cmds[3];
+ 420              		.loc 1 154 5 is_stmt 1 view .LVU106
+ 155:Core/Src/oled.c ****     cmds[0] = 0xB0 + page;
+ 421              		.loc 1 155 5 view .LVU107
+ 422              		.loc 1 155 20 is_stmt 0 view .LVU108
+ 423 0004 5038     		subs	r0, r0, #80
+ 424              	.LVL63:
+ 425              		.loc 1 155 13 view .LVU109
+ 426 0006 8DF80400 		strb	r0, [sp, #4]
+ 156:Core/Src/oled.c ****     cmds[1] = 0x00 + (col & 0x0F);
+ 427              		.loc 1 156 5 is_stmt 1 view .LVU110
+ 428              		.loc 1 156 20 is_stmt 0 view .LVU111
+ 429 000a 01F00F03 		and	r3, r1, #15
+ 430              		.loc 1 156 13 view .LVU112
+ 431 000e 8DF80530 		strb	r3, [sp, #5]
+ 157:Core/Src/oled.c ****     cmds[2] = 0x10 + ((col >> 4) & 0x0F);
+ 432              		.loc 1 157 5 is_stmt 1 view .LVU113
+ 433              		.loc 1 157 20 is_stmt 0 view .LVU114
+ 434 0012 0909     		lsrs	r1, r1, #4
+ 435              	.LVL64:
+ 436              		.loc 1 157 20 view .LVU115
+ 437 0014 1031     		adds	r1, r1, #16
+ 438              		.loc 1 157 13 view .LVU116
+ 439 0016 8DF80610 		strb	r1, [sp, #6]
+ 158:Core/Src/oled.c ****     OLED_WriteCmdBuf(cmds, 3);
+ 440              		.loc 1 158 5 is_stmt 1 view .LVU117
+ 441 001a 0321     		movs	r1, #3
+ 442 001c 01A8     		add	r0, sp, #4
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s 			page 12
+
+
+ 443              	.LVL65:
+ 444              		.loc 1 158 5 is_stmt 0 view .LVU118
+ 445 001e FFF7FEFF 		bl	OLED_WriteCmdBuf
+ 446              	.LVL66:
+ 159:Core/Src/oled.c **** }
+ 447              		.loc 1 159 1 view .LVU119
+ 448 0022 03B0     		add	sp, sp, #12
+ 449              	.LCFI6:
+ 450              		.cfi_def_cfa_offset 4
+ 451              		@ sp needed
+ 452 0024 5DF804FB 		ldr	pc, [sp], #4
+ 453              		.cfi_endproc
+ 454              	.LFE78:
+ 456              		.section	.text.OLED_Fill,"ax",%progbits
+ 457              		.align	1
+ 458              		.global	OLED_Fill
+ 459              		.syntax unified
+ 460              		.thumb
+ 461              		.thumb_func
+ 463              	OLED_Fill:
+ 464              	.LVL67:
+ 465              	.LFB80:
+ 160:Core/Src/oled.c **** 
+ 161:Core/Src/oled.c **** void OLED_Clear(void)
+ 162:Core/Src/oled.c **** {
+ 163:Core/Src/oled.c ****     OLED_Fill(0x00);
+ 164:Core/Src/oled.c **** }
+ 165:Core/Src/oled.c **** 
+ 166:Core/Src/oled.c **** /* 全屏填充：val=0xFF 全亮，val=0x00 全灭 — 每页一次 WriteDataBuf */
+ 167:Core/Src/oled.c **** void OLED_Fill(uint8_t val)
+ 168:Core/Src/oled.c **** {
+ 466              		.loc 1 168 1 is_stmt 1 view -0
+ 467              		.cfi_startproc
+ 468              		@ args = 0, pretend = 0, frame = 0
+ 469              		@ frame_needed = 0, uses_anonymous_args = 0
+ 470              		.loc 1 168 1 is_stmt 0 view .LVU121
+ 471 0000 10B5     		push	{r4, lr}
+ 472              	.LCFI7:
+ 473              		.cfi_def_cfa_offset 8
+ 474              		.cfi_offset 4, -8
+ 475              		.cfi_offset 14, -4
+ 169:Core/Src/oled.c ****     static uint8_t fill_buf[128];
+ 476              		.loc 1 169 5 is_stmt 1 view .LVU122
+ 170:Core/Src/oled.c ****     static uint8_t fill_initialized = 0;
+ 477              		.loc 1 170 5 view .LVU123
+ 171:Core/Src/oled.c ****     static uint8_t last_val = 0xFF;  /* 跟踪上次填充值，避免重复初始化 */
+ 478              		.loc 1 171 5 view .LVU124
+ 172:Core/Src/oled.c **** 
+ 173:Core/Src/oled.c ****     /* 仅在值变化时重新填充缓冲区 */
+ 174:Core/Src/oled.c ****     if (!fill_initialized || val != last_val) {
+ 479              		.loc 1 174 5 view .LVU125
+ 480              		.loc 1 174 9 is_stmt 0 view .LVU126
+ 481 0002 124B     		ldr	r3, .L52
+ 482 0004 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 483              		.loc 1 174 8 view .LVU127
+ 484 0006 4BB1     		cbz	r3, .L46
+ 485              		.loc 1 174 34 discriminator 1 view .LVU128
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s 			page 13
+
+
+ 486 0008 114B     		ldr	r3, .L52+4
+ 487 000a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 488              		.loc 1 174 27 discriminator 1 view .LVU129
+ 489 000c 8342     		cmp	r3, r0
+ 490 000e 0DD0     		beq	.L45
+ 491 0010 0023     		movs	r3, #0
+ 492 0012 03E0     		b	.L46
+ 493              	.LVL68:
+ 494              	.L47:
+ 495              	.LBB6:
+ 175:Core/Src/oled.c ****         for (uint8_t i = 0; i < 128; i++) {
+ 176:Core/Src/oled.c ****             fill_buf[i] = val;
+ 496              		.loc 1 176 13 is_stmt 1 view .LVU130
+ 497              		.loc 1 176 25 is_stmt 0 view .LVU131
+ 498 0014 0F4A     		ldr	r2, .L52+8
+ 499 0016 D054     		strb	r0, [r2, r3]
+ 175:Core/Src/oled.c ****         for (uint8_t i = 0; i < 128; i++) {
+ 500              		.loc 1 175 39 is_stmt 1 discriminator 3 view .LVU132
+ 501 0018 0133     		adds	r3, r3, #1
+ 502              	.LVL69:
+ 175:Core/Src/oled.c ****         for (uint8_t i = 0; i < 128; i++) {
+ 503              		.loc 1 175 39 is_stmt 0 discriminator 3 view .LVU133
+ 504 001a DBB2     		uxtb	r3, r3
+ 505              	.LVL70:
+ 506              	.L46:
+ 175:Core/Src/oled.c ****         for (uint8_t i = 0; i < 128; i++) {
+ 507              		.loc 1 175 31 is_stmt 1 discriminator 1 view .LVU134
+ 508 001c 13F0800F 		tst	r3, #128
+ 509 0020 F8D0     		beq	.L47
+ 510              	.LBE6:
+ 177:Core/Src/oled.c ****         }
+ 178:Core/Src/oled.c ****         fill_initialized = 1;
+ 511              		.loc 1 178 9 view .LVU135
+ 512              		.loc 1 178 26 is_stmt 0 view .LVU136
+ 513 0022 0A4B     		ldr	r3, .L52
+ 514              	.LVL71:
+ 515              		.loc 1 178 26 view .LVU137
+ 516 0024 0122     		movs	r2, #1
+ 517 0026 1A70     		strb	r2, [r3]
+ 179:Core/Src/oled.c ****         last_val = val;
+ 518              		.loc 1 179 9 is_stmt 1 view .LVU138
+ 519              		.loc 1 179 18 is_stmt 0 view .LVU139
+ 520 0028 094B     		ldr	r3, .L52+4
+ 521 002a 1870     		strb	r0, [r3]
+ 522              	.LVL72:
+ 523              	.L45:
+ 524              		.loc 1 179 18 view .LVU140
+ 525 002c 0024     		movs	r4, #0
+ 526 002e 09E0     		b	.L48
+ 527              	.LVL73:
+ 528              	.L49:
+ 529              	.LBB7:
+ 180:Core/Src/oled.c ****     }
+ 181:Core/Src/oled.c **** 
+ 182:Core/Src/oled.c ****     for (uint8_t i = 0; i < 8; i++) {
+ 183:Core/Src/oled.c ****         OLED_SetCursor(i, 0);
+ 530              		.loc 1 183 9 is_stmt 1 view .LVU141
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s 			page 14
+
+
+ 531 0030 0021     		movs	r1, #0
+ 532 0032 2046     		mov	r0, r4
+ 533 0034 FFF7FEFF 		bl	OLED_SetCursor
+ 534              	.LVL74:
+ 184:Core/Src/oled.c ****         OLED_WriteDataBuf(fill_buf, 128);
+ 535              		.loc 1 184 9 view .LVU142
+ 536 0038 8021     		movs	r1, #128
+ 537 003a 0648     		ldr	r0, .L52+8
+ 538 003c FFF7FEFF 		bl	OLED_WriteDataBuf
+ 539              	.LVL75:
+ 182:Core/Src/oled.c ****         OLED_SetCursor(i, 0);
+ 540              		.loc 1 182 33 discriminator 3 view .LVU143
+ 541 0040 0134     		adds	r4, r4, #1
+ 542              	.LVL76:
+ 182:Core/Src/oled.c ****         OLED_SetCursor(i, 0);
+ 543              		.loc 1 182 33 is_stmt 0 discriminator 3 view .LVU144
+ 544 0042 E4B2     		uxtb	r4, r4
+ 545              	.LVL77:
+ 546              	.L48:
+ 182:Core/Src/oled.c ****         OLED_SetCursor(i, 0);
+ 547              		.loc 1 182 27 is_stmt 1 discriminator 1 view .LVU145
+ 548 0044 072C     		cmp	r4, #7
+ 549 0046 F3D9     		bls	.L49
+ 550              	.LBE7:
+ 185:Core/Src/oled.c ****     }
+ 186:Core/Src/oled.c **** }
+ 551              		.loc 1 186 1 is_stmt 0 view .LVU146
+ 552 0048 10BD     		pop	{r4, pc}
+ 553              	.LVL78:
+ 554              	.L53:
+ 555              		.loc 1 186 1 view .LVU147
+ 556 004a 00BF     		.align	2
+ 557              	.L52:
+ 558 004c 00000000 		.word	fill_initialized.2
+ 559 0050 00000000 		.word	last_val.1
+ 560 0054 00000000 		.word	fill_buf.0
+ 561              		.cfi_endproc
+ 562              	.LFE80:
+ 564              		.section	.text.OLED_Clear,"ax",%progbits
+ 565              		.align	1
+ 566              		.global	OLED_Clear
+ 567              		.syntax unified
+ 568              		.thumb
+ 569              		.thumb_func
+ 571              	OLED_Clear:
+ 572              	.LFB79:
+ 162:Core/Src/oled.c ****     OLED_Fill(0x00);
+ 573              		.loc 1 162 1 is_stmt 1 view -0
+ 574              		.cfi_startproc
+ 575              		@ args = 0, pretend = 0, frame = 0
+ 576              		@ frame_needed = 0, uses_anonymous_args = 0
+ 577 0000 08B5     		push	{r3, lr}
+ 578              	.LCFI8:
+ 579              		.cfi_def_cfa_offset 8
+ 580              		.cfi_offset 3, -8
+ 581              		.cfi_offset 14, -4
+ 163:Core/Src/oled.c **** }
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s 			page 15
+
+
+ 582              		.loc 1 163 5 view .LVU149
+ 583 0002 0020     		movs	r0, #0
+ 584 0004 FFF7FEFF 		bl	OLED_Fill
+ 585              	.LVL79:
+ 164:Core/Src/oled.c **** 
+ 586              		.loc 1 164 1 is_stmt 0 view .LVU150
+ 587 0008 08BD     		pop	{r3, pc}
+ 588              		.cfi_endproc
+ 589              	.LFE79:
+ 591              		.section	.text.OLED_Init,"ax",%progbits
+ 592              		.align	1
+ 593              		.global	OLED_Init
+ 594              		.syntax unified
+ 595              		.thumb
+ 596              		.thumb_func
+ 598              	OLED_Init:
+ 599              	.LFB77:
+ 123:Core/Src/oled.c ****     // SSD1306 上电后需等待 VDD 稳定
+ 600              		.loc 1 123 1 is_stmt 1 view -0
+ 601              		.cfi_startproc
+ 602              		@ args = 0, pretend = 0, frame = 32
+ 603              		@ frame_needed = 0, uses_anonymous_args = 0
+ 604 0000 10B5     		push	{r4, lr}
+ 605              	.LCFI9:
+ 606              		.cfi_def_cfa_offset 8
+ 607              		.cfi_offset 4, -8
+ 608              		.cfi_offset 14, -4
+ 609 0002 88B0     		sub	sp, sp, #32
+ 610              	.LCFI10:
+ 611              		.cfi_def_cfa_offset 40
+ 125:Core/Src/oled.c **** 
+ 612              		.loc 1 125 5 view .LVU152
+ 613 0004 6420     		movs	r0, #100
+ 614 0006 FFF7FEFF 		bl	HAL_Delay
+ 615              	.LVL80:
+ 128:Core/Src/oled.c ****         0xAE,       // Display OFF
+ 616              		.loc 1 128 5 view .LVU153
+ 128:Core/Src/oled.c ****         0xAE,       // Display OFF
+ 617              		.loc 1 128 19 is_stmt 0 view .LVU154
+ 618 000a 0DF1040C 		add	ip, sp, #4
+ 619 000e 094C     		ldr	r4, .L58
+ 620 0010 0FCC     		ldmia	r4!, {r0, r1, r2, r3}
+ 621 0012 ACE80F00 		stmia	ip!, {r0, r1, r2, r3}
+ 622 0016 94E80700 		ldm	r4, {r0, r1, r2}
+ 623 001a ACE80300 		stmia	ip!, {r0, r1}
+ 624 001e ACF80020 		strh	r2, [ip]	@ movhi
+ 147:Core/Src/oled.c ****     OLED_Clear();
+ 625              		.loc 1 147 5 is_stmt 1 view .LVU155
+ 626 0022 1A21     		movs	r1, #26
+ 627 0024 01A8     		add	r0, sp, #4
+ 628 0026 FFF7FEFF 		bl	OLED_WriteCmdBuf
+ 629              	.LVL81:
+ 148:Core/Src/oled.c **** 
+ 630              		.loc 1 148 5 view .LVU156
+ 631 002a FFF7FEFF 		bl	OLED_Clear
+ 632              	.LVL82:
+ 150:Core/Src/oled.c **** void OLED_SetCursor(uint8_t page, uint8_t col)
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s 			page 16
+
+
+ 633              		.loc 1 150 1 is_stmt 0 view .LVU157
+ 634 002e 08B0     		add	sp, sp, #32
+ 635              	.LCFI11:
+ 636              		.cfi_def_cfa_offset 8
+ 637              		@ sp needed
+ 638 0030 10BD     		pop	{r4, pc}
+ 639              	.L59:
+ 640 0032 00BF     		.align	2
+ 641              	.L58:
+ 642 0034 00000000 		.word	.LANCHOR0
+ 643              		.cfi_endproc
+ 644              	.LFE77:
+ 646              		.section	.text.OLED_ShowString,"ax",%progbits
+ 647              		.align	1
+ 648              		.global	OLED_ShowString
+ 649              		.syntax unified
+ 650              		.thumb
+ 651              		.thumb_func
+ 653              	OLED_ShowString:
+ 654              	.LVL83:
+ 655              	.LFB81:
+ 187:Core/Src/oled.c **** void OLED_ShowString(uint8_t page, uint8_t col, const char *str)
+ 188:Core/Src/oled.c **** {
+ 656              		.loc 1 188 1 is_stmt 1 view -0
+ 657              		.cfi_startproc
+ 658              		@ args = 0, pretend = 0, frame = 0
+ 659              		@ frame_needed = 0, uses_anonymous_args = 0
+ 660              		.loc 1 188 1 is_stmt 0 view .LVU159
+ 661 0000 10B5     		push	{r4, lr}
+ 662              	.LCFI12:
+ 663              		.cfi_def_cfa_offset 8
+ 664              		.cfi_offset 4, -8
+ 665              		.cfi_offset 14, -4
+ 666 0002 1446     		mov	r4, r2
+ 189:Core/Src/oled.c ****     /* 只设置一次光标 — SSD1306 列地址在每字节写入后自动递增 */
+ 190:Core/Src/oled.c ****     OLED_SetCursor(page, col);
+ 667              		.loc 1 190 5 is_stmt 1 view .LVU160
+ 668 0004 FFF7FEFF 		bl	OLED_SetCursor
+ 669              	.LVL84:
+ 191:Core/Src/oled.c **** 
+ 192:Core/Src/oled.c ****     while (*str != '\0')
+ 670              		.loc 1 192 5 view .LVU161
+ 671              		.loc 1 192 11 is_stmt 0 view .LVU162
+ 672 0008 09E0     		b	.L61
+ 673              	.L62:
+ 674              	.LBB8:
+ 193:Core/Src/oled.c ****     {
+ 194:Core/Src/oled.c ****         if (*str < ' ' || *str > '~')
+ 195:Core/Src/oled.c ****         {
+ 196:Core/Src/oled.c ****             str++;
+ 197:Core/Src/oled.c ****             continue;
+ 198:Core/Src/oled.c ****         }
+ 199:Core/Src/oled.c ****         /* 一次 WriteDataBuf 写入 6 字节（一个字符），替代 6 次单独 WriteData */
+ 200:Core/Src/oled.c ****         const uint8_t *font = OLED_F6x8[*str - ' '];
+ 675              		.loc 1 200 9 is_stmt 1 view .LVU163
+ 676              		.loc 1 200 46 is_stmt 0 view .LVU164
+ 677 000a 2038     		subs	r0, r0, #32
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s 			page 17
+
+
+ 678              		.loc 1 200 24 view .LVU165
+ 679 000c 00EB4000 		add	r0, r0, r0, lsl #1
+ 680              	.LVL85:
+ 201:Core/Src/oled.c ****         OLED_WriteDataBuf(font, 6);
+ 681              		.loc 1 201 9 is_stmt 1 view .LVU166
+ 682 0010 0621     		movs	r1, #6
+ 683 0012 084B     		ldr	r3, .L67
+ 684 0014 03EB4000 		add	r0, r3, r0, lsl #1
+ 685              	.LVL86:
+ 686              		.loc 1 201 9 is_stmt 0 view .LVU167
+ 687 0018 FFF7FEFF 		bl	OLED_WriteDataBuf
+ 688              	.LVL87:
+ 202:Core/Src/oled.c ****         str++;
+ 689              		.loc 1 202 9 is_stmt 1 view .LVU168
+ 690              		.loc 1 202 12 is_stmt 0 view .LVU169
+ 691 001c 0134     		adds	r4, r4, #1
+ 692              	.LVL88:
+ 693              	.L61:
+ 694              		.loc 1 202 12 view .LVU170
+ 695              	.LBE8:
+ 192:Core/Src/oled.c ****     {
+ 696              		.loc 1 192 17 is_stmt 1 view .LVU171
+ 192:Core/Src/oled.c ****     {
+ 697              		.loc 1 192 12 is_stmt 0 view .LVU172
+ 698 001e 2078     		ldrb	r0, [r4]	@ zero_extendqisi2
+ 192:Core/Src/oled.c ****     {
+ 699              		.loc 1 192 17 view .LVU173
+ 700 0020 30B1     		cbz	r0, .L66
+ 701              	.LBB9:
+ 194:Core/Src/oled.c ****         {
+ 702              		.loc 1 194 9 is_stmt 1 view .LVU174
+ 194:Core/Src/oled.c ****         {
+ 703              		.loc 1 194 24 is_stmt 0 view .LVU175
+ 704 0022 A0F12003 		sub	r3, r0, #32
+ 705 0026 DBB2     		uxtb	r3, r3
+ 194:Core/Src/oled.c ****         {
+ 706              		.loc 1 194 12 view .LVU176
+ 707 0028 5E2B     		cmp	r3, #94
+ 708 002a EED9     		bls	.L62
+ 196:Core/Src/oled.c ****             continue;
+ 709              		.loc 1 196 13 is_stmt 1 view .LVU177
+ 196:Core/Src/oled.c ****             continue;
+ 710              		.loc 1 196 16 is_stmt 0 view .LVU178
+ 711 002c 0134     		adds	r4, r4, #1
+ 712              	.LVL89:
+ 197:Core/Src/oled.c ****         }
+ 713              		.loc 1 197 13 is_stmt 1 view .LVU179
+ 714 002e F6E7     		b	.L61
+ 715              	.L66:
+ 197:Core/Src/oled.c ****         }
+ 716              		.loc 1 197 13 is_stmt 0 view .LVU180
+ 717              	.LBE9:
+ 203:Core/Src/oled.c ****     }
+ 204:Core/Src/oled.c **** }
+ 718              		.loc 1 204 1 view .LVU181
+ 719 0030 10BD     		pop	{r4, pc}
+ 720              	.LVL90:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s 			page 18
+
+
+ 721              	.L68:
+ 722              		.loc 1 204 1 view .LVU182
+ 723 0032 00BF     		.align	2
+ 724              	.L67:
+ 725 0034 00000000 		.word	OLED_F6x8
+ 726              		.cfi_endproc
+ 727              	.LFE81:
+ 729              		.section	.rodata.OLED_ShowNum.str1.4,"aMS",%progbits,1
+ 730              		.align	2
+ 731              	.LC1:
+ 732 0000 252E3366 		.ascii	"%.3f\000"
+ 732      00
+ 733              		.section	.text.OLED_ShowNum,"ax",%progbits
+ 734              		.align	1
+ 735              		.global	OLED_ShowNum
+ 736              		.syntax unified
+ 737              		.thumb
+ 738              		.thumb_func
+ 740              	OLED_ShowNum:
+ 741              	.LVL91:
+ 742              	.LFB82:
+ 205:Core/Src/oled.c **** 
+ 206:Core/Src/oled.c **** void OLED_ShowNum(uint8_t page,uint8_t col, float  data)
+ 207:Core/Src/oled.c **** {
+ 743              		.loc 1 207 1 is_stmt 1 view -0
+ 744              		.cfi_startproc
+ 745              		@ args = 0, pretend = 0, frame = 16
+ 746              		@ frame_needed = 0, uses_anonymous_args = 0
+ 747              		.loc 1 207 1 is_stmt 0 view .LVU184
+ 748 0000 70B5     		push	{r4, r5, r6, lr}
+ 749              	.LCFI13:
+ 750              		.cfi_def_cfa_offset 16
+ 751              		.cfi_offset 4, -16
+ 752              		.cfi_offset 5, -12
+ 753              		.cfi_offset 6, -8
+ 754              		.cfi_offset 14, -4
+ 755 0002 86B0     		sub	sp, sp, #24
+ 756              	.LCFI14:
+ 757              		.cfi_def_cfa_offset 40
+ 758 0004 0446     		mov	r4, r0
+ 759 0006 0D46     		mov	r5, r1
+ 208:Core/Src/oled.c ****     char buf[12];
+ 760              		.loc 1 208 5 is_stmt 1 view .LVU185
+ 209:Core/Src/oled.c ****     snprintf(buf, sizeof(buf), "%.3f", data);
+ 761              		.loc 1 209 5 view .LVU186
+ 762 0008 03AE     		add	r6, sp, #12
+ 763 000a 1046     		mov	r0, r2
+ 764              	.LVL92:
+ 765              		.loc 1 209 5 is_stmt 0 view .LVU187
+ 766 000c FFF7FEFF 		bl	__aeabi_f2d
+ 767              	.LVL93:
+ 768              		.loc 1 209 5 view .LVU188
+ 769 0010 CDE90001 		strd	r0, [sp]
+ 770 0014 054A     		ldr	r2, .L71
+ 771 0016 0C21     		movs	r1, #12
+ 772 0018 3046     		mov	r0, r6
+ 773 001a FFF7FEFF 		bl	snprintf
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s 			page 19
+
+
+ 774              	.LVL94:
+ 210:Core/Src/oled.c ****     OLED_ShowString(page, col, buf);
+ 775              		.loc 1 210 5 is_stmt 1 view .LVU189
+ 776 001e 3246     		mov	r2, r6
+ 777 0020 2946     		mov	r1, r5
+ 778 0022 2046     		mov	r0, r4
+ 779 0024 FFF7FEFF 		bl	OLED_ShowString
+ 780              	.LVL95:
+ 211:Core/Src/oled.c **** }
+ 781              		.loc 1 211 1 is_stmt 0 view .LVU190
+ 782 0028 06B0     		add	sp, sp, #24
+ 783              	.LCFI15:
+ 784              		.cfi_def_cfa_offset 16
+ 785              		@ sp needed
+ 786 002a 70BD     		pop	{r4, r5, r6, pc}
+ 787              	.LVL96:
+ 788              	.L72:
+ 789              		.loc 1 211 1 view .LVU191
+ 790              		.align	2
+ 791              	.L71:
+ 792 002c 00000000 		.word	.LC1
+ 793              		.cfi_endproc
+ 794              	.LFE82:
+ 796              		.section	.bss.fill_buf.0,"aw",%nobits
+ 797              		.align	2
+ 800              	fill_buf.0:
+ 801 0000 00000000 		.space	128
+ 801      00000000 
+ 801      00000000 
+ 801      00000000 
+ 801      00000000 
+ 802              		.section	.data.last_val.1,"aw"
+ 805              	last_val.1:
+ 806 0000 FF       		.byte	-1
+ 807              		.section	.bss.fill_initialized.2,"aw",%nobits
+ 810              	fill_initialized.2:
+ 811 0000 00       		.space	1
+ 812              		.global	OLED_F6x8
+ 813              		.section	.rodata.OLED_F6x8,"a"
+ 814              		.align	2
+ 817              	OLED_F6x8:
+ 818 0000 00000000 		.ascii	"\000\000\000\000\000\000"
+ 818      0000
+ 819 0006 00005F00 		.ascii	"\000\000_\000\000\000"
+ 819      0000
+ 820 000c 00070007 		.ascii	"\000\007\000\007\000\000"
+ 820      0000
+ 821 0012 147F147F 		.ascii	"\024\177\024\177\024\000"
+ 821      1400
+ 822 0018 242A7F2A 		.ascii	"$*\177*\022\000"
+ 822      1200
+ 823 001e 23130864 		.ascii	"#\023\010db\000"
+ 823      6200
+ 824 0024 36495522 		.ascii	"6IU\"P\000"
+ 824      5000
+ 825 002a 00050300 		.ascii	"\000\005\003\000\000\000"
+ 825      0000
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s 			page 20
+
+
+ 826 0030 001C2241 		.ascii	"\000\034\"A\000\000"
+ 826      0000
+ 827 0036 0041221C 		.ascii	"\000A\"\034\000\000"
+ 827      0000
+ 828 003c 14083E08 		.ascii	"\024\010>\010\024\000"
+ 828      1400
+ 829 0042 08083E08 		.ascii	"\010\010>\010\010\000"
+ 829      0800
+ 830 0048 00503000 		.ascii	"\000P0\000\000\000"
+ 830      0000
+ 831 004e 08080808 		.ascii	"\010\010\010\010\010\000"
+ 831      0800
+ 832 0054 00606000 		.ascii	"\000``\000\000\000"
+ 832      0000
+ 833 005a 20100804 		.ascii	" \020\010\004\002\000"
+ 833      0200
+ 834 0060 3E514945 		.ascii	">QIE>\000"
+ 834      3E00
+ 835 0066 00427F40 		.ascii	"\000B\177@\000\000"
+ 835      0000
+ 836 006c 42615149 		.ascii	"BaQIF\000"
+ 836      4600
+ 837 0072 2141454B 		.ascii	"!AEK1\000"
+ 837      3100
+ 838 0078 1814127F 		.ascii	"\030\024\022\177\020\000"
+ 838      1000
+ 839 007e 27454545 		.ascii	"'EEE9\000"
+ 839      3900
+ 840 0084 3C4A4949 		.ascii	"<JII0\000"
+ 840      3000
+ 841 008a 01710905 		.ascii	"\001q\011\005\003\000"
+ 841      0300
+ 842 0090 36494949 		.ascii	"6III6\000"
+ 842      3600
+ 843 0096 06494929 		.ascii	"\006II)\036\000"
+ 843      1E00
+ 844 009c 00363600 		.ascii	"\00066\000\000\000"
+ 844      0000
+ 845 00a2 00563600 		.ascii	"\000V6\000\000\000"
+ 845      0000
+ 846 00a8 08142241 		.ascii	"\010\024\"A\000\000"
+ 846      0000
+ 847 00ae 14141414 		.ascii	"\024\024\024\024\024\000"
+ 847      1400
+ 848 00b4 00412214 		.ascii	"\000A\"\024\010\000"
+ 848      0800
+ 849 00ba 02015109 		.ascii	"\002\001Q\011\006\000"
+ 849      0600
+ 850 00c0 32497941 		.ascii	"2IyA>\000"
+ 850      3E00
+ 851 00c6 7E111111 		.ascii	"~\021\021\021~\000"
+ 851      7E00
+ 852 00cc 7F494949 		.ascii	"\177III6\000"
+ 852      3600
+ 853 00d2 3E414141 		.ascii	">AAA\"\000"
+ 853      2200
+ 854 00d8 7F414122 		.ascii	"\177AA\"\034\000"
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s 			page 21
+
+
+ 854      1C00
+ 855 00de 7F494949 		.ascii	"\177IIIA\000"
+ 855      4100
+ 856 00e4 7F090909 		.ascii	"\177\011\011\011\001\000"
+ 856      0100
+ 857 00ea 3E414949 		.ascii	">AIIz\000"
+ 857      7A00
+ 858 00f0 7F080808 		.ascii	"\177\010\010\010\177\000"
+ 858      7F00
+ 859 00f6 00417F41 		.ascii	"\000A\177A\000\000"
+ 859      0000
+ 860 00fc 2040413F 		.ascii	" @A?\001\000"
+ 860      0100
+ 861 0102 7F081422 		.ascii	"\177\010\024\"A\000"
+ 861      4100
+ 862 0108 7F404040 		.ascii	"\177@@@@\000"
+ 862      4000
+ 863 010e 7F020C02 		.ascii	"\177\002\014\002\177\000"
+ 863      7F00
+ 864 0114 7F040810 		.ascii	"\177\004\010\020\177\000"
+ 864      7F00
+ 865 011a 3E414141 		.ascii	">AAA>\000"
+ 865      3E00
+ 866 0120 7F090909 		.ascii	"\177\011\011\011\006\000"
+ 866      0600
+ 867 0126 3E415121 		.ascii	">AQ!^\000"
+ 867      5E00
+ 868 012c 7F091929 		.ascii	"\177\011\031)F\000"
+ 868      4600
+ 869 0132 46494949 		.ascii	"FIII1\000"
+ 869      3100
+ 870 0138 01017F01 		.ascii	"\001\001\177\001\001\000"
+ 870      0100
+ 871 013e 3F404040 		.ascii	"?@@@?\000"
+ 871      3F00
+ 872 0144 1F204020 		.ascii	"\037 @ \037\000"
+ 872      1F00
+ 873 014a 3F403840 		.ascii	"?@8@?\000"
+ 873      3F00
+ 874 0150 63140814 		.ascii	"c\024\010\024c\000"
+ 874      6300
+ 875 0156 07087008 		.ascii	"\007\010p\010\007\000"
+ 875      0700
+ 876 015c 61514945 		.ascii	"aQIEC\000"
+ 876      4300
+ 877 0162 007F4141 		.ascii	"\000\177AA\000\000"
+ 877      0000
+ 878 0168 02040810 		.ascii	"\002\004\010\020 \000"
+ 878      2000
+ 879 016e 0041417F 		.ascii	"\000AA\177\000\000"
+ 879      0000
+ 880 0174 04020102 		.ascii	"\004\002\001\002\004\000"
+ 880      0400
+ 881 017a 40404040 		.ascii	"@@@@@\000"
+ 881      4000
+ 882 0180 00010204 		.ascii	"\000\001\002\004\000\000"
+ 882      0000
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s 			page 22
+
+
+ 883 0186 20545454 		.ascii	" TTTx\000"
+ 883      7800
+ 884 018c 7F484444 		.ascii	"\177HDD8\000"
+ 884      3800
+ 885 0192 38444444 		.ascii	"8DDD \000"
+ 885      2000
+ 886 0198 38444448 		.ascii	"8DDH\177\000"
+ 886      7F00
+ 887 019e 38545454 		.ascii	"8TTT\030\000"
+ 887      1800
+ 888 01a4 087E0901 		.ascii	"\010~\011\001\002\000"
+ 888      0200
+ 889 01aa 0C525252 		.ascii	"\014RRR>\000"
+ 889      3E00
+ 890 01b0 7F080404 		.ascii	"\177\010\004\004x\000"
+ 890      7800
+ 891 01b6 00447D40 		.ascii	"\000D}@\000\000"
+ 891      0000
+ 892 01bc 2040443D 		.ascii	" @D=\000\000"
+ 892      0000
+ 893 01c2 7F102844 		.ascii	"\177\020(D\000\000"
+ 893      0000
+ 894 01c8 00417F40 		.ascii	"\000A\177@\000\000"
+ 894      0000
+ 895 01ce 7C041804 		.ascii	"|\004\030\004x\000"
+ 895      7800
+ 896 01d4 7C080404 		.ascii	"|\010\004\004x\000"
+ 896      7800
+ 897 01da 38444444 		.ascii	"8DDD8\000"
+ 897      3800
+ 898 01e0 7C141414 		.ascii	"|\024\024\024\010\000"
+ 898      0800
+ 899 01e6 08141418 		.ascii	"\010\024\024\030|\000"
+ 899      7C00
+ 900 01ec 7C080404 		.ascii	"|\010\004\004\010\000"
+ 900      0800
+ 901 01f2 48545454 		.ascii	"HTTT \000"
+ 901      2000
+ 902 01f8 043F4440 		.ascii	"\004?D@ \000"
+ 902      2000
+ 903 01fe 3C404020 		.ascii	"<@@ |\000"
+ 903      7C00
+ 904 0204 1C204020 		.ascii	"\034 @ \034\000"
+ 904      1C00
+ 905 020a 3C403040 		.ascii	"<@0@<\000"
+ 905      3C00
+ 906 0210 44281028 		.ascii	"D(\020(D\000"
+ 906      4400
+ 907 0216 0C505050 		.ascii	"\014PPP<\000"
+ 907      3C00
+ 908 021c 4464544C 		.ascii	"DdTLD\000"
+ 908      4400
+ 909 0222 08364100 		.ascii	"\0106A\000\000\000"
+ 909      0000
+ 910 0228 00007F00 		.ascii	"\000\000\177\000\000\000"
+ 910      0000
+ 911 022e 00413608 		.ascii	"\000A6\010\000\000"
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s 			page 23
+
+
+ 911      0000
+ 912 0234 08040810 		.ascii	"\010\004\010\020\010\000"
+ 912      0800
+ 913              		.section	.rodata
+ 914              		.align	2
+ 915              		.set	.LANCHOR0,. + 0
+ 916              	.LC0:
+ 917 0000 AED580A8 		.ascii	"\256\325\200\250?\323\000@\215\024 \002\241\310\332"
+ 917      3FD30040 
+ 917      8D142002 
+ 917      A1C8DA
+ 918 000f 1281CFD9 		.ascii	"\022\201\317\331\361\333@\244\246.\257"
+ 918      F1DB40A4 
+ 918      A62EAF
+ 919              		.text
+ 920              	.Letext0:
+ 921              		.file 2 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_defa
+ 922              		.file 3 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h
+ 923              		.file 4 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h"
+ 924              		.file 5 "Core/Inc/soft_i2c.h"
+ 925              		.file 6 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/stdio.h"
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s 			page 24
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 oled.c
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:19     .text.OLED_WriteCmd:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:25     .text.OLED_WriteCmd:00000000 OLED_WriteCmd
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:101    .text.OLED_WriteData:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:107    .text.OLED_WriteData:00000000 OLED_WriteData
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:183    .text.OLED_WriteCmdBuf:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:189    .text.OLED_WriteCmdBuf:00000000 OLED_WriteCmdBuf
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:291    .text.OLED_WriteDataBuf:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:297    .text.OLED_WriteDataBuf:00000000 OLED_WriteDataBuf
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:399    .text.OLED_SetCursor:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:405    .text.OLED_SetCursor:00000000 OLED_SetCursor
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:457    .text.OLED_Fill:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:463    .text.OLED_Fill:00000000 OLED_Fill
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:558    .text.OLED_Fill:0000004c $d
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:810    .bss.fill_initialized.2:00000000 fill_initialized.2
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:805    .data.last_val.1:00000000 last_val.1
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:800    .bss.fill_buf.0:00000000 fill_buf.0
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:565    .text.OLED_Clear:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:571    .text.OLED_Clear:00000000 OLED_Clear
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:592    .text.OLED_Init:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:598    .text.OLED_Init:00000000 OLED_Init
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:642    .text.OLED_Init:00000034 $d
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:647    .text.OLED_ShowString:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:653    .text.OLED_ShowString:00000000 OLED_ShowString
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:725    .text.OLED_ShowString:00000034 $d
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:817    .rodata.OLED_F6x8:00000000 OLED_F6x8
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:730    .rodata.OLED_ShowNum.str1.4:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:734    .text.OLED_ShowNum:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:740    .text.OLED_ShowNum:00000000 OLED_ShowNum
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:792    .text.OLED_ShowNum:0000002c $d
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:797    .bss.fill_buf.0:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:811    .bss.fill_initialized.2:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:814    .rodata.OLED_F6x8:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccVWERl6.s:914    .rodata:00000000 $d
+
+UNDEFINED SYMBOLS
+MyI2C_Start
+MyI2C_SendByte
+MyI2C_ReciveAck
+MyI2C_Stop
+HAL_Delay
+__aeabi_f2d
+snprintf

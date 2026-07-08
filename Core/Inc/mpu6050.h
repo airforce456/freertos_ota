@@ -3,7 +3,7 @@
 
 #include "main.h"
 #include "i2c.h"
-
+#include "soft_i2c.h"
 /* MPU6050 I2C 地址 (AD0 接 GND) */
 #define MPU6050_ADDR           0x68 << 1   /* HAL 库需要左移 1 位 */
 
@@ -16,6 +16,12 @@
 #define MPU6050_REG_ACCEL_CONFIG 0x1C      /* 加速度计量程 */
 #define MPU6050_REG_ACCEL_XOUT_H 0x3B      /* 加速度计 X 高字节（共 6 字节） */
 #define MPU6050_REG_GYRO_XOUT_H  0x43      /* 陀螺仪 X 高字节（共 6 字节） */
+typedef struct {
+    float ax_g, ay_g, az_g;     /* 加速度修复值 */
+    float gx, gy, gz;     /* 角速度原始值（±131 = ±1°/s @ ±250°/s 量程） */
+    float count;           /* 温度原始值 */
+}SensorCooked_t;
+
 
 /* 传感器数据结构体 */
 typedef struct {
@@ -23,14 +29,18 @@ typedef struct {
     int16_t gx, gy, gz;     /* 角速度原始值（±131 = ±1°/s @ ±250°/s 量程） */
     int16_t temp;           /* 温度原始值 */
 } MPU6050_Data_t;
+uint8_t MyI2C_ReadWhoAmI(void);
+SoftI2C_Status I2C_WriteReg(uint8_t devAddr, uint8_t regAddr, uint8_t val);
+SoftI2C_Status I2C_ReadReg(uint8_t devAddr, uint8_t regAddr, uint8_t *val);
 
+SoftI2C_Status I2C_ReadRegs(uint8_t devAddr, uint8_t regAddr, uint8_t *buf, uint8_t len);
 /* 初始化 MPU6050：唤醒 + 配置量程 + 采样率 */
-HAL_StatusTypeDef MPU6050_Init(void);
+SoftI2C_Status MPU6050_Init(void);
 
 /* 读取 WHO_AM_I 寄存器，应返回 0x68 */
 uint8_t MPU6050_ReadWhoAmI(void);
 
 /* 读加速度 + 角速度 + 温度（14 字节） */
-HAL_StatusTypeDef MPU6050_ReadAll(MPU6050_Data_t *data);
+SoftI2C_Status MPU6050_ReadAll(MPU6050_Data_t *data);
 
 #endif /* __MPU6050_H__ */
