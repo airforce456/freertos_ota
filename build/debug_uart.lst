@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s 			page 1
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -38,92 +38,93 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s 			page 1
   10:Core/Src/debug_uart.c **** #define UART_TX_QUEUE_LEN   16    /* queue depth: buffer 16 messages */
   11:Core/Src/debug_uart.c **** #define UART_RX_QUEUE_LEN    8    /* queue depth: buffer 8 messages */
   12:Core/Src/debug_uart.c **** #define UART_TX_BUF_SIZE    64    /* max bytes per message */
-  13:Core/Src/debug_uart.c **** #define UART_RX_BUF_SIZE    64    /* max bytes per message */
-  14:Core/Src/debug_uart.c **** 
-  15:Core/Src/debug_uart.c **** static QueueHandle_t     xUartTxQueue      = NULL;
-  16:Core/Src/debug_uart.c **** static QueueHandle_t     xUartRxQueue      = NULL;
-  17:Core/Src/debug_uart.c **** static SemaphoreHandle_t xTxDmaSemaphore   = NULL;  /* DMA TX complete signal */
-  18:Core/Src/debug_uart.c **** static SemaphoreHandle_t xRxDmaSemaphore   = NULL;  /* DMA RX complete signal */
-  19:Core/Src/debug_uart.c **** 
-  20:Core/Src/debug_uart.c **** typedef struct {
-  21:Core/Src/debug_uart.c ****     char data[UART_TX_BUF_SIZE];
-  22:Core/Src/debug_uart.c ****     uint16_t len;
-  23:Core/Src/debug_uart.c **** } UartTxMsg_t;
-  24:Core/Src/debug_uart.c **** 
-  25:Core/Src/debug_uart.c **** typedef struct {
-  26:Core/Src/debug_uart.c ****     char data[UART_RX_BUF_SIZE];
-  27:Core/Src/debug_uart.c ****     uint16_t len;
-  28:Core/Src/debug_uart.c **** } UartRxMsg_t;
-  29:Core/Src/debug_uart.c **** 
-  30:Core/Src/debug_uart.c **** /* forward declaration */
-  31:Core/Src/debug_uart.c **** void vUartTxTask(void *pvParameters);
-  32:Core/Src/debug_uart.c **** void vUartRxTask(void *pvParameters);
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s 			page 2
+  13:Core/Src/debug_uart.c **** #define UART_MSG_BUF_SIZE   64    /* max bytes per message (RX msg buffer) */
+  14:Core/Src/debug_uart.c **** #define UART_DMA_RX_BUF_SIZE 256  /* DMA RX buffer size (must be >= MSG_BUF_SIZE) */
+  15:Core/Src/debug_uart.c **** 
+  16:Core/Src/debug_uart.c **** static QueueHandle_t     xUartTxQueue      = NULL;
+  17:Core/Src/debug_uart.c **** static QueueHandle_t     xUartRxQueue      = NULL;
+  18:Core/Src/debug_uart.c **** static SemaphoreHandle_t xTxDmaSemaphore   = NULL;  /* DMA TX complete signal */
+  19:Core/Src/debug_uart.c **** static SemaphoreHandle_t xRxDmaSemaphore   = NULL;  /* DMA RX complete signal */
+  20:Core/Src/debug_uart.c **** 
+  21:Core/Src/debug_uart.c **** typedef struct {
+  22:Core/Src/debug_uart.c ****     char data[UART_TX_BUF_SIZE];
+  23:Core/Src/debug_uart.c ****     uint16_t len;
+  24:Core/Src/debug_uart.c **** } UartTxMsg_t;
+  25:Core/Src/debug_uart.c **** 
+  26:Core/Src/debug_uart.c **** typedef struct {
+  27:Core/Src/debug_uart.c ****     char data[UART_MSG_BUF_SIZE];
+  28:Core/Src/debug_uart.c ****     uint16_t len;
+  29:Core/Src/debug_uart.c **** } UartRxMsg_t;
+  30:Core/Src/debug_uart.c **** 
+  31:Core/Src/debug_uart.c **** /* forward declaration */
+  32:Core/Src/debug_uart.c **** void vUartTxTask(void *pvParameters);
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s 			page 2
 
 
-  33:Core/Src/debug_uart.c **** 
-  34:Core/Src/debug_uart.c **** /* ===== Init debug UART (create queue + TX task + DMA semaphore) ===== */
-  35:Core/Src/debug_uart.c **** void DebugUART_Init(void)
-  36:Core/Src/debug_uart.c **** {
-  37:Core/Src/debug_uart.c ****     if (xUartTxQueue != NULL) return;  /* already initialized */
-  38:Core/Src/debug_uart.c **** 
-  39:Core/Src/debug_uart.c ****     /* Create binary semaphore for DMA TX complete signaling */
-  40:Core/Src/debug_uart.c ****     xTxDmaSemaphore = xSemaphoreCreateBinary();
-  41:Core/Src/debug_uart.c ****     if (xTxDmaSemaphore == NULL) return;
-  42:Core/Src/debug_uart.c **** 
-  43:Core/Src/debug_uart.c ****     xUartTxQueue = xQueueCreate(UART_TX_QUEUE_LEN, sizeof(UartTxMsg_t));
-  44:Core/Src/debug_uart.c ****     if (xUartTxQueue != NULL) {
-  45:Core/Src/debug_uart.c ****         xTaskCreate(vUartTxTask, "UartTX", 256, NULL, 1, NULL);
-  46:Core/Src/debug_uart.c ****     }
-  47:Core/Src/debug_uart.c **** 
-  48:Core/Src/debug_uart.c ****     xUartRxQueue = xQueueCreate(UART_RX_QUEUE_LEN, sizeof(UartRxMsg_t));
-  49:Core/Src/debug_uart.c ****     if (xUartRxQueue != NULL) {
-  50:Core/Src/debug_uart.c ****         xTaskCreate(vUartRxTask, "UartRX", 256, NULL, 1, NULL);
-  51:Core/Src/debug_uart.c ****     }
-  52:Core/Src/debug_uart.c ****     DebugUART_StartRx(); 
-  53:Core/Src/debug_uart.c **** }
-  54:Core/Src/debug_uart.c **** 
-  55:Core/Src/debug_uart.c **** /* ===== _write: printf redirect to UART ===== */
-  56:Core/Src/debug_uart.c **** int _write(int file, char *ptr, int len)
-  57:Core/Src/debug_uart.c **** {
-  58:Core/Src/debug_uart.c ****     (void)file;
-  59:Core/Src/debug_uart.c **** 
-  60:Core/Src/debug_uart.c ****     /* Before scheduler starts, fallback to blocking polling transmit */
-  61:Core/Src/debug_uart.c ****     if (xUartTxQueue == NULL) {
-  62:Core/Src/debug_uart.c ****         HAL_UART_Transmit(&huart1, (uint8_t *)ptr, len, HAL_MAX_DELAY);
-  63:Core/Src/debug_uart.c ****         return len;
-  64:Core/Src/debug_uart.c ****     }
-  65:Core/Src/debug_uart.c **** 
-  66:Core/Src/debug_uart.c ****     /* Push data chunks into queue */
-  67:Core/Src/debug_uart.c ****     size_t offset = 0;
-  68:Core/Src/debug_uart.c ****     while (offset < (size_t)len) {
-  69:Core/Src/debug_uart.c ****         UartTxMsg_t msg;
-  70:Core/Src/debug_uart.c ****         size_t chunk = (size_t)len - offset;
-  71:Core/Src/debug_uart.c ****         if (chunk > UART_TX_BUF_SIZE) chunk = UART_TX_BUF_SIZE;
-  72:Core/Src/debug_uart.c ****         memcpy(msg.data, ptr + offset, chunk);
-  73:Core/Src/debug_uart.c ****         msg.len = (uint16_t)chunk;
-  74:Core/Src/debug_uart.c **** 
-  75:Core/Src/debug_uart.c ****         if (xQueueSend(xUartTxQueue, &msg, pdMS_TO_TICKS(10)) != pdPASS) {
-  76:Core/Src/debug_uart.c ****             break;  /* drop remaining data if queue full */
-  77:Core/Src/debug_uart.c ****         }
-  78:Core/Src/debug_uart.c ****         offset += chunk;
-  79:Core/Src/debug_uart.c ****     }
-  80:Core/Src/debug_uart.c ****     return len;
-  81:Core/Src/debug_uart.c **** }
-  82:Core/Src/debug_uart.c **** 
-  83:Core/Src/debug_uart.c **** /* ===== UART TX task: dequeues messages, sends via DMA ===== */
-  84:Core/Src/debug_uart.c **** void vUartTxTask(void *pvParameters)
-  85:Core/Src/debug_uart.c **** {
-  27              		.loc 1 85 1 view -0
+  33:Core/Src/debug_uart.c **** void vUartRxTask(void *pvParameters);
+  34:Core/Src/debug_uart.c **** 
+  35:Core/Src/debug_uart.c **** /* ===== Init debug UART (create queue + TX task + DMA semaphore) ===== */
+  36:Core/Src/debug_uart.c **** void DebugUART_Init(void)
+  37:Core/Src/debug_uart.c **** {
+  38:Core/Src/debug_uart.c ****     if (xUartTxQueue != NULL) return;  /* already initialized */
+  39:Core/Src/debug_uart.c **** 
+  40:Core/Src/debug_uart.c ****     /* Create binary semaphore for DMA TX complete signaling */
+  41:Core/Src/debug_uart.c ****     xTxDmaSemaphore = xSemaphoreCreateBinary();
+  42:Core/Src/debug_uart.c ****     if (xTxDmaSemaphore == NULL) return;
+  43:Core/Src/debug_uart.c **** 
+  44:Core/Src/debug_uart.c ****     xUartTxQueue = xQueueCreate(UART_TX_QUEUE_LEN, sizeof(UartTxMsg_t));
+  45:Core/Src/debug_uart.c ****     if (xUartTxQueue != NULL) {
+  46:Core/Src/debug_uart.c ****         xTaskCreate(vUartTxTask, "UartTX", 256, NULL, 1, NULL);
+  47:Core/Src/debug_uart.c ****     }
+  48:Core/Src/debug_uart.c **** 
+  49:Core/Src/debug_uart.c ****     xUartRxQueue = xQueueCreate(UART_RX_QUEUE_LEN, sizeof(UartRxMsg_t));
+  50:Core/Src/debug_uart.c ****     if (xUartRxQueue != NULL) {
+  51:Core/Src/debug_uart.c ****         xTaskCreate(vUartRxTask, "UartRX", 256, NULL, 1, NULL);
+  52:Core/Src/debug_uart.c ****     }
+  53:Core/Src/debug_uart.c ****     /* RX DMA is started in vUartRxTask to avoid DMA conflict with initial TX */
+  54:Core/Src/debug_uart.c **** }
+  55:Core/Src/debug_uart.c **** 
+  56:Core/Src/debug_uart.c **** /* ===== _write: printf redirect to UART ===== */
+  57:Core/Src/debug_uart.c **** int _write(int file, char *ptr, int len)
+  58:Core/Src/debug_uart.c **** {
+  59:Core/Src/debug_uart.c ****     (void)file;
+  60:Core/Src/debug_uart.c **** 
+  61:Core/Src/debug_uart.c ****     /* Before scheduler starts (or before queue init), fallback to blocking transmit */
+  62:Core/Src/debug_uart.c ****     if (xUartTxQueue == NULL || xTaskGetSchedulerState() != taskSCHEDULER_RUNNING) {
+  63:Core/Src/debug_uart.c ****         HAL_UART_Transmit(&huart1, (uint8_t *)ptr, len, HAL_MAX_DELAY);
+  64:Core/Src/debug_uart.c ****         return len;
+  65:Core/Src/debug_uart.c ****     }
+  66:Core/Src/debug_uart.c **** 
+  67:Core/Src/debug_uart.c ****     /* Push data chunks into queue */
+  68:Core/Src/debug_uart.c ****     size_t offset = 0;
+  69:Core/Src/debug_uart.c ****     while (offset < (size_t)len) {
+  70:Core/Src/debug_uart.c ****         UartTxMsg_t msg;
+  71:Core/Src/debug_uart.c ****         size_t chunk = (size_t)len - offset;
+  72:Core/Src/debug_uart.c ****         if (chunk > UART_TX_BUF_SIZE) chunk = UART_TX_BUF_SIZE;
+  73:Core/Src/debug_uart.c ****         memcpy(msg.data, ptr + offset, chunk);
+  74:Core/Src/debug_uart.c ****         msg.len = (uint16_t)chunk;
+  75:Core/Src/debug_uart.c **** 
+  76:Core/Src/debug_uart.c ****         if (xQueueSend(xUartTxQueue, &msg, pdMS_TO_TICKS(10)) != pdPASS) {
+  77:Core/Src/debug_uart.c ****             break;  /* drop remaining data if queue full */
+  78:Core/Src/debug_uart.c ****         }
+  79:Core/Src/debug_uart.c ****         offset += chunk;
+  80:Core/Src/debug_uart.c ****     }
+  81:Core/Src/debug_uart.c ****     return len;
+  82:Core/Src/debug_uart.c **** }
+  83:Core/Src/debug_uart.c **** 
+  84:Core/Src/debug_uart.c **** /* ===== UART TX task: dequeues messages, sends via DMA ===== */
+  85:Core/Src/debug_uart.c **** void vUartTxTask(void *pvParameters)
+  86:Core/Src/debug_uart.c **** {
+  27              		.loc 1 86 1 view -0
   28              		.cfi_startproc
   29              		@ Volatile: function does not return.
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s 			page 3
+
+
   30              		@ args = 0, pretend = 0, frame = 72
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s 			page 3
-
-
   31              		@ frame_needed = 0, uses_anonymous_args = 0
   32              	.LVL0:
-  33              		.loc 1 85 1 is_stmt 0 view .LVU1
+  33              		.loc 1 86 1 is_stmt 0 view .LVU1
   34 0000 00B5     		push	{lr}
   35              	.LCFI0:
   36              		.cfi_def_cfa_offset 4
@@ -133,41 +134,41 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s 			page 1
   40              		.cfi_def_cfa_offset 80
   41              	.LVL1:
   42              	.L2:
-  86:Core/Src/debug_uart.c ****     (void)pvParameters;
-  43              		.loc 1 86 5 is_stmt 1 view .LVU2
-  87:Core/Src/debug_uart.c ****     UartTxMsg_t msg;
-  44              		.loc 1 87 5 view .LVU3
-  88:Core/Src/debug_uart.c **** 
-  89:Core/Src/debug_uart.c ****     while (1) {
-  45              		.loc 1 89 5 view .LVU4
-  90:Core/Src/debug_uart.c ****         /* Block until a message arrives */
-  91:Core/Src/debug_uart.c ****         if (xQueueReceive(xUartTxQueue, &msg, portMAX_DELAY) == pdPASS) {
-  46              		.loc 1 91 9 view .LVU5
-  47              		.loc 1 91 13 is_stmt 0 view .LVU6
+  87:Core/Src/debug_uart.c ****     (void)pvParameters;
+  43              		.loc 1 87 5 is_stmt 1 view .LVU2
+  88:Core/Src/debug_uart.c ****     UartTxMsg_t msg;
+  44              		.loc 1 88 5 view .LVU3
+  89:Core/Src/debug_uart.c **** 
+  90:Core/Src/debug_uart.c ****     while (1) {
+  45              		.loc 1 90 5 view .LVU4
+  91:Core/Src/debug_uart.c ****         /* Block until a message arrives */
+  92:Core/Src/debug_uart.c ****         if (xQueueReceive(xUartTxQueue, &msg, portMAX_DELAY) == pdPASS) {
+  46              		.loc 1 92 9 view .LVU5
+  47              		.loc 1 92 13 is_stmt 0 view .LVU6
   48 0004 4FF0FF32 		mov	r2, #-1
   49 0008 01A9     		add	r1, sp, #4
   50 000a 0A4B     		ldr	r3, .L6
   51 000c 1868     		ldr	r0, [r3]
   52 000e FFF7FEFF 		bl	xQueueReceive
   53              	.LVL2:
-  54              		.loc 1 91 12 discriminator 1 view .LVU7
+  54              		.loc 1 92 12 discriminator 1 view .LVU7
   55 0012 0128     		cmp	r0, #1
   56 0014 F6D1     		bne	.L2
-  92:Core/Src/debug_uart.c ****             /* Start DMA transfer (non-blocking) */
-  93:Core/Src/debug_uart.c ****             if (HAL_UART_Transmit_DMA(&huart1, (uint8_t *)msg.data, msg.len) == HAL_OK) {
-  57              		.loc 1 93 13 is_stmt 1 view .LVU8
-  58              		.loc 1 93 17 is_stmt 0 view .LVU9
+  93:Core/Src/debug_uart.c ****             /* Start DMA transfer (non-blocking) */
+  94:Core/Src/debug_uart.c ****             if (HAL_UART_Transmit_DMA(&huart1, (uint8_t *)msg.data, msg.len) == HAL_OK) {
+  57              		.loc 1 94 13 is_stmt 1 view .LVU8
+  58              		.loc 1 94 17 is_stmt 0 view .LVU9
   59 0016 BDF84420 		ldrh	r2, [sp, #68]
   60 001a 01A9     		add	r1, sp, #4
   61 001c 0648     		ldr	r0, .L6+4
   62 001e FFF7FEFF 		bl	HAL_UART_Transmit_DMA
   63              	.LVL3:
-  64              		.loc 1 93 16 discriminator 1 view .LVU10
+  64              		.loc 1 94 16 discriminator 1 view .LVU10
   65 0022 0028     		cmp	r0, #0
   66 0024 EED1     		bne	.L2
-  94:Core/Src/debug_uart.c ****                 /* Wait for DMA to finish before sending next message */
-  95:Core/Src/debug_uart.c ****                 xSemaphoreTake(xTxDmaSemaphore, portMAX_DELAY);
-  67              		.loc 1 95 17 is_stmt 1 view .LVU11
+  95:Core/Src/debug_uart.c ****                 /* Wait for DMA to finish before sending next message */
+  96:Core/Src/debug_uart.c ****                 xSemaphoreTake(xTxDmaSemaphore, portMAX_DELAY);
+  67              		.loc 1 96 17 is_stmt 1 view .LVU11
   68 0026 4FF0FF31 		mov	r1, #-1
   69 002a 044B     		ldr	r3, .L6+8
   70 002c 1868     		ldr	r0, [r3]
@@ -177,850 +178,869 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s 			page 1
   74              	.L7:
   75              		.align	2
   76              	.L6:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s 			page 4
+
+
   77 0034 00000000 		.word	xUartTxQueue
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s 			page 4
-
-
   78 0038 00000000 		.word	huart1
   79 003c 00000000 		.word	xTxDmaSemaphore
   80              		.cfi_endproc
   81              	.LFE75:
-  83              		.section	.rodata.vUartRxTask.str1.4,"aMS",%progbits,1
+  83              		.section	.rodata.DebugUART_Init.str1.4,"aMS",%progbits,1
   84              		.align	2
   85              	.LC0:
-  86 0000 5B52585D 		.ascii	"[RX] %s\015\012\000"
-  86      2025730D 
-  86      0A00
-  87              		.section	.text.vUartRxTask,"ax",%progbits
-  88              		.align	1
-  89              		.global	vUartRxTask
-  90              		.syntax unified
-  91              		.thumb
-  92              		.thumb_func
-  94              	vUartRxTask:
-  95              	.LFB76:
-  96:Core/Src/debug_uart.c ****             }
-  97:Core/Src/debug_uart.c ****         }
-  98:Core/Src/debug_uart.c ****     }
-  99:Core/Src/debug_uart.c **** }
- 100:Core/Src/debug_uart.c **** void vUartRxTask(void *pvParameters)
- 101:Core/Src/debug_uart.c **** {
-  96              		.loc 1 101 1 view -0
-  97              		.cfi_startproc
-  98              		@ Volatile: function does not return.
-  99              		@ args = 0, pretend = 0, frame = 72
- 100              		@ frame_needed = 0, uses_anonymous_args = 0
- 101              	.LVL5:
- 102              		.loc 1 101 1 is_stmt 0 view .LVU13
- 103 0000 00B5     		push	{lr}
- 104              	.LCFI2:
- 105              		.cfi_def_cfa_offset 4
- 106              		.cfi_offset 14, -4
- 107 0002 93B0     		sub	sp, sp, #76
- 108              	.LCFI3:
- 109              		.cfi_def_cfa_offset 80
- 110              	.LVL6:
- 111              	.L9:
- 102:Core/Src/debug_uart.c ****     (void)pvParameters;
- 112              		.loc 1 102 5 is_stmt 1 view .LVU14
- 103:Core/Src/debug_uart.c ****     UartRxMsg_t msg;
- 113              		.loc 1 103 5 view .LVU15
- 104:Core/Src/debug_uart.c **** 
- 105:Core/Src/debug_uart.c ****     while (1) {
- 114              		.loc 1 105 5 view .LVU16
- 106:Core/Src/debug_uart.c ****         if (xQueueReceive(xUartRxQueue, &msg, portMAX_DELAY) == pdPASS) {
- 115              		.loc 1 106 9 view .LVU17
- 116              		.loc 1 106 13 is_stmt 0 view .LVU18
- 117 0004 4FF0FF32 		mov	r2, #-1
- 118 0008 01A9     		add	r1, sp, #4
- 119 000a 094B     		ldr	r3, .L12
- 120 000c 1868     		ldr	r0, [r3]
- 121 000e FFF7FEFF 		bl	xQueueReceive
- 122              	.LVL7:
- 123              		.loc 1 106 12 discriminator 1 view .LVU19
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s 			page 5
+  86 0000 55617274 		.ascii	"UartTX\000"
+  86      545800
+  87 0007 00       		.align	2
+  88              	.LC1:
+  89 0008 55617274 		.ascii	"UartRX\000"
+  89      525800
+  90              		.section	.text.DebugUART_Init,"ax",%progbits
+  91              		.align	1
+  92              		.global	DebugUART_Init
+  93              		.syntax unified
+  94              		.thumb
+  95              		.thumb_func
+  97              	DebugUART_Init:
+  98              	.LFB73:
+  37:Core/Src/debug_uart.c ****     if (xUartTxQueue != NULL) return;  /* already initialized */
+  99              		.loc 1 37 1 view -0
+ 100              		.cfi_startproc
+ 101              		@ args = 0, pretend = 0, frame = 0
+ 102              		@ frame_needed = 0, uses_anonymous_args = 0
+  38:Core/Src/debug_uart.c **** 
+ 103              		.loc 1 38 5 view .LVU13
+  38:Core/Src/debug_uart.c **** 
+ 104              		.loc 1 38 22 is_stmt 0 view .LVU14
+ 105 0000 1A4B     		ldr	r3, .L16
+ 106 0002 1B68     		ldr	r3, [r3]
+  38:Core/Src/debug_uart.c **** 
+ 107              		.loc 1 38 8 view .LVU15
+ 108 0004 03B1     		cbz	r3, .L15
+ 109 0006 7047     		bx	lr
+ 110              	.L15:
+  37:Core/Src/debug_uart.c ****     if (xUartTxQueue != NULL) return;  /* already initialized */
+ 111              		.loc 1 37 1 view .LVU16
+ 112 0008 00B5     		push	{lr}
+ 113              	.LCFI2:
+ 114              		.cfi_def_cfa_offset 4
+ 115              		.cfi_offset 14, -4
+ 116 000a 83B0     		sub	sp, sp, #12
+ 117              	.LCFI3:
+ 118              		.cfi_def_cfa_offset 16
+  41:Core/Src/debug_uart.c ****     if (xTxDmaSemaphore == NULL) return;
+ 119              		.loc 1 41 5 is_stmt 1 view .LVU17
+  41:Core/Src/debug_uart.c ****     if (xTxDmaSemaphore == NULL) return;
+ 120              		.loc 1 41 23 is_stmt 0 view .LVU18
+ 121 000c 0322     		movs	r2, #3
+ 122 000e 0021     		movs	r1, #0
+ 123 0010 0120     		movs	r0, #1
+ 124 0012 FFF7FEFF 		bl	xQueueGenericCreate
+ 125              	.LVL5:
+  41:Core/Src/debug_uart.c ****     if (xTxDmaSemaphore == NULL) return;
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s 			page 5
 
 
- 124 0012 0128     		cmp	r0, #1
- 125 0014 F6D1     		bne	.L9
- 107:Core/Src/debug_uart.c ****             msg.data[msg.len] = '\0';
- 126              		.loc 1 107 13 is_stmt 1 view .LVU20
- 127              		.loc 1 107 25 is_stmt 0 view .LVU21
- 128 0016 BDF84430 		ldrh	r3, [sp, #68]
- 129              		.loc 1 107 31 view .LVU22
- 130 001a 4833     		adds	r3, r3, #72
- 131 001c 6B44     		add	r3, sp, r3
- 132 001e 0022     		movs	r2, #0
- 133 0020 03F8442C 		strb	r2, [r3, #-68]
- 108:Core/Src/debug_uart.c ****             /* 暂为透传回显，后续改为 CLI 命令解析 */
- 109:Core/Src/debug_uart.c ****             printf("[RX] %s\r\n", msg.data);
- 134              		.loc 1 109 13 is_stmt 1 view .LVU23
- 135 0024 01A9     		add	r1, sp, #4
- 136 0026 0348     		ldr	r0, .L12+4
- 137 0028 FFF7FEFF 		bl	printf
- 138              	.LVL8:
- 139 002c EAE7     		b	.L9
- 140              	.L13:
- 141 002e 00BF     		.align	2
- 142              	.L12:
- 143 0030 00000000 		.word	xUartRxQueue
- 144 0034 00000000 		.word	.LC0
- 145              		.cfi_endproc
- 146              	.LFE76:
- 148              		.section	.text._write,"ax",%progbits
- 149              		.align	1
- 150              		.global	_write
- 151              		.syntax unified
- 152              		.thumb
- 153              		.thumb_func
- 155              	_write:
- 156              	.LVL9:
- 157              	.LFB74:
-  57:Core/Src/debug_uart.c ****     (void)file;
- 158              		.loc 1 57 1 view -0
- 159              		.cfi_startproc
- 160              		@ args = 0, pretend = 0, frame = 72
- 161              		@ frame_needed = 0, uses_anonymous_args = 0
-  57:Core/Src/debug_uart.c ****     (void)file;
- 162              		.loc 1 57 1 is_stmt 0 view .LVU25
- 163 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
- 164              	.LCFI4:
- 165              		.cfi_def_cfa_offset 24
- 166              		.cfi_offset 4, -24
- 167              		.cfi_offset 5, -20
- 168              		.cfi_offset 6, -16
- 169              		.cfi_offset 7, -12
- 170              		.cfi_offset 8, -8
- 171              		.cfi_offset 14, -4
- 172 0004 92B0     		sub	sp, sp, #72
- 173              	.LCFI5:
- 174              		.cfi_def_cfa_offset 96
- 175 0006 8846     		mov	r8, r1
- 176 0008 1746     		mov	r7, r2
-  58:Core/Src/debug_uart.c **** 
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s 			page 6
+ 126              		.loc 1 41 21 discriminator 1 view .LVU19
+ 127 0016 164B     		ldr	r3, .L16+4
+ 128 0018 1860     		str	r0, [r3]
+  42:Core/Src/debug_uart.c **** 
+ 129              		.loc 1 42 5 is_stmt 1 view .LVU20
+  42:Core/Src/debug_uart.c **** 
+ 130              		.loc 1 42 8 is_stmt 0 view .LVU21
+ 131 001a 18B3     		cbz	r0, .L8
+  44:Core/Src/debug_uart.c ****     if (xUartTxQueue != NULL) {
+ 132              		.loc 1 44 5 is_stmt 1 view .LVU22
+  44:Core/Src/debug_uart.c ****     if (xUartTxQueue != NULL) {
+ 133              		.loc 1 44 20 is_stmt 0 view .LVU23
+ 134 001c 0022     		movs	r2, #0
+ 135 001e 4221     		movs	r1, #66
+ 136 0020 1020     		movs	r0, #16
+ 137 0022 FFF7FEFF 		bl	xQueueGenericCreate
+ 138              	.LVL6:
+  44:Core/Src/debug_uart.c ****     if (xUartTxQueue != NULL) {
+ 139              		.loc 1 44 18 discriminator 1 view .LVU24
+ 140 0026 114B     		ldr	r3, .L16
+ 141 0028 1860     		str	r0, [r3]
+  45:Core/Src/debug_uart.c ****         xTaskCreate(vUartTxTask, "UartTX", 256, NULL, 1, NULL);
+ 142              		.loc 1 45 5 is_stmt 1 view .LVU25
+  45:Core/Src/debug_uart.c ****         xTaskCreate(vUartTxTask, "UartTX", 256, NULL, 1, NULL);
+ 143              		.loc 1 45 8 is_stmt 0 view .LVU26
+ 144 002a 48B1     		cbz	r0, .L10
+  46:Core/Src/debug_uart.c ****     }
+ 145              		.loc 1 46 9 is_stmt 1 view .LVU27
+ 146 002c 0023     		movs	r3, #0
+ 147 002e 0193     		str	r3, [sp, #4]
+ 148 0030 0122     		movs	r2, #1
+ 149 0032 0092     		str	r2, [sp]
+ 150 0034 4FF48072 		mov	r2, #256
+ 151 0038 0E49     		ldr	r1, .L16+8
+ 152 003a 0F48     		ldr	r0, .L16+12
+ 153 003c FFF7FEFF 		bl	xTaskCreate
+ 154              	.LVL7:
+ 155              	.L10:
+  49:Core/Src/debug_uart.c ****     if (xUartRxQueue != NULL) {
+ 156              		.loc 1 49 5 view .LVU28
+  49:Core/Src/debug_uart.c ****     if (xUartRxQueue != NULL) {
+ 157              		.loc 1 49 20 is_stmt 0 view .LVU29
+ 158 0040 0022     		movs	r2, #0
+ 159 0042 4221     		movs	r1, #66
+ 160 0044 0820     		movs	r0, #8
+ 161 0046 FFF7FEFF 		bl	xQueueGenericCreate
+ 162              	.LVL8:
+  49:Core/Src/debug_uart.c ****     if (xUartRxQueue != NULL) {
+ 163              		.loc 1 49 18 discriminator 1 view .LVU30
+ 164 004a 0C4B     		ldr	r3, .L16+16
+ 165 004c 1860     		str	r0, [r3]
+  50:Core/Src/debug_uart.c ****         xTaskCreate(vUartRxTask, "UartRX", 256, NULL, 1, NULL);
+ 166              		.loc 1 50 5 is_stmt 1 view .LVU31
+  50:Core/Src/debug_uart.c ****         xTaskCreate(vUartRxTask, "UartRX", 256, NULL, 1, NULL);
+ 167              		.loc 1 50 8 is_stmt 0 view .LVU32
+ 168 004e 48B1     		cbz	r0, .L8
+  51:Core/Src/debug_uart.c ****     }
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s 			page 6
 
 
- 177              		.loc 1 58 5 is_stmt 1 view .LVU26
-  61:Core/Src/debug_uart.c ****         HAL_UART_Transmit(&huart1, (uint8_t *)ptr, len, HAL_MAX_DELAY);
- 178              		.loc 1 61 5 view .LVU27
-  61:Core/Src/debug_uart.c ****         HAL_UART_Transmit(&huart1, (uint8_t *)ptr, len, HAL_MAX_DELAY);
- 179              		.loc 1 61 22 is_stmt 0 view .LVU28
- 180 000a 144B     		ldr	r3, .L24
- 181 000c 1B68     		ldr	r3, [r3]
-  61:Core/Src/debug_uart.c ****         HAL_UART_Transmit(&huart1, (uint8_t *)ptr, len, HAL_MAX_DELAY);
- 182              		.loc 1 61 8 view .LVU29
- 183 000e 0BB1     		cbz	r3, .L23
-  67:Core/Src/debug_uart.c ****     while (offset < (size_t)len) {
- 184              		.loc 1 67 12 view .LVU30
- 185 0010 0025     		movs	r5, #0
- 186 0012 1CE0     		b	.L15
- 187              	.L23:
-  62:Core/Src/debug_uart.c ****         return len;
- 188              		.loc 1 62 9 is_stmt 1 view .LVU31
- 189 0014 4FF0FF33 		mov	r3, #-1
- 190 0018 92B2     		uxth	r2, r2
- 191              	.LVL10:
-  62:Core/Src/debug_uart.c ****         return len;
- 192              		.loc 1 62 9 is_stmt 0 view .LVU32
- 193 001a 1148     		ldr	r0, .L24+4
- 194              	.LVL11:
-  62:Core/Src/debug_uart.c ****         return len;
- 195              		.loc 1 62 9 view .LVU33
- 196 001c FFF7FEFF 		bl	HAL_UART_Transmit
- 197              	.LVL12:
-  63:Core/Src/debug_uart.c ****     }
- 198              		.loc 1 63 9 is_stmt 1 view .LVU34
- 199              	.L16:
-  81:Core/Src/debug_uart.c **** 
- 200              		.loc 1 81 1 is_stmt 0 view .LVU35
- 201 0020 3846     		mov	r0, r7
- 202 0022 12B0     		add	sp, sp, #72
- 203              	.LCFI6:
- 204              		.cfi_remember_state
- 205              		.cfi_def_cfa_offset 24
- 206              		@ sp needed
- 207 0024 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
- 208              	.LVL13:
- 209              	.L17:
- 210              	.LCFI7:
- 211              		.cfi_restore_state
- 212              	.LBB2:
-  72:Core/Src/debug_uart.c ****         msg.len = (uint16_t)chunk;
- 213              		.loc 1 72 9 is_stmt 1 view .LVU36
- 214 0028 01AE     		add	r6, sp, #4
- 215 002a 2246     		mov	r2, r4
- 216 002c 08EB0501 		add	r1, r8, r5
- 217 0030 3046     		mov	r0, r6
- 218 0032 FFF7FEFF 		bl	memcpy
- 219              	.LVL14:
-  73:Core/Src/debug_uart.c **** 
- 220              		.loc 1 73 9 view .LVU37
-  73:Core/Src/debug_uart.c **** 
- 221              		.loc 1 73 17 is_stmt 0 view .LVU38
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s 			page 7
+ 169              		.loc 1 51 9 is_stmt 1 view .LVU33
+ 170 0050 0023     		movs	r3, #0
+ 171 0052 0193     		str	r3, [sp, #4]
+ 172 0054 0122     		movs	r2, #1
+ 173 0056 0092     		str	r2, [sp]
+ 174 0058 4FF48072 		mov	r2, #256
+ 175 005c 0849     		ldr	r1, .L16+20
+ 176 005e 0948     		ldr	r0, .L16+24
+ 177 0060 FFF7FEFF 		bl	xTaskCreate
+ 178              	.LVL9:
+ 179              	.L8:
+  54:Core/Src/debug_uart.c **** 
+ 180              		.loc 1 54 1 is_stmt 0 view .LVU34
+ 181 0064 03B0     		add	sp, sp, #12
+ 182              	.LCFI4:
+ 183              		.cfi_def_cfa_offset 4
+ 184              		@ sp needed
+ 185 0066 5DF804FB 		ldr	pc, [sp], #4
+ 186              	.L17:
+ 187 006a 00BF     		.align	2
+ 188              	.L16:
+ 189 006c 00000000 		.word	xUartTxQueue
+ 190 0070 00000000 		.word	xTxDmaSemaphore
+ 191 0074 00000000 		.word	.LC0
+ 192 0078 00000000 		.word	vUartTxTask
+ 193 007c 00000000 		.word	xUartRxQueue
+ 194 0080 08000000 		.word	.LC1
+ 195 0084 00000000 		.word	vUartRxTask
+ 196              		.cfi_endproc
+ 197              	.LFE73:
+ 199              		.section	.text._write,"ax",%progbits
+ 200              		.align	1
+ 201              		.global	_write
+ 202              		.syntax unified
+ 203              		.thumb
+ 204              		.thumb_func
+ 206              	_write:
+ 207              	.LVL10:
+ 208              	.LFB74:
+  58:Core/Src/debug_uart.c ****     (void)file;
+ 209              		.loc 1 58 1 is_stmt 1 view -0
+ 210              		.cfi_startproc
+ 211              		@ args = 0, pretend = 0, frame = 72
+ 212              		@ frame_needed = 0, uses_anonymous_args = 0
+  58:Core/Src/debug_uart.c ****     (void)file;
+ 213              		.loc 1 58 1 is_stmt 0 view .LVU36
+ 214 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 215              	.LCFI5:
+ 216              		.cfi_def_cfa_offset 24
+ 217              		.cfi_offset 4, -24
+ 218              		.cfi_offset 5, -20
+ 219              		.cfi_offset 6, -16
+ 220              		.cfi_offset 7, -12
+ 221              		.cfi_offset 8, -8
+ 222              		.cfi_offset 14, -4
+ 223 0004 92B0     		sub	sp, sp, #72
+ 224              	.LCFI6:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s 			page 7
 
 
- 222 0036 ADF84440 		strh	r4, [sp, #68]	@ movhi
-  75:Core/Src/debug_uart.c ****             break;  /* drop remaining data if queue full */
- 223              		.loc 1 75 9 is_stmt 1 view .LVU39
-  75:Core/Src/debug_uart.c ****             break;  /* drop remaining data if queue full */
- 224              		.loc 1 75 13 is_stmt 0 view .LVU40
- 225 003a 0023     		movs	r3, #0
- 226 003c 0A22     		movs	r2, #10
- 227 003e 3146     		mov	r1, r6
- 228 0040 0648     		ldr	r0, .L24
- 229 0042 0068     		ldr	r0, [r0]
- 230 0044 FFF7FEFF 		bl	xQueueGenericSend
- 231              	.LVL15:
-  75:Core/Src/debug_uart.c ****             break;  /* drop remaining data if queue full */
- 232              		.loc 1 75 12 discriminator 1 view .LVU41
- 233 0048 0128     		cmp	r0, #1
- 234 004a E9D1     		bne	.L16
-  78:Core/Src/debug_uart.c ****     }
- 235              		.loc 1 78 9 is_stmt 1 view .LVU42
-  78:Core/Src/debug_uart.c ****     }
- 236              		.loc 1 78 16 is_stmt 0 view .LVU43
- 237 004c 2544     		add	r5, r5, r4
- 238              	.LVL16:
- 239              	.L15:
-  78:Core/Src/debug_uart.c ****     }
- 240              		.loc 1 78 16 view .LVU44
- 241              	.LBE2:
-  68:Core/Src/debug_uart.c ****         UartTxMsg_t msg;
- 242              		.loc 1 68 19 is_stmt 1 view .LVU45
- 243 004e AF42     		cmp	r7, r5
- 244 0050 E6D9     		bls	.L16
- 245              	.LBB3:
-  69:Core/Src/debug_uart.c ****         size_t chunk = (size_t)len - offset;
- 246              		.loc 1 69 9 view .LVU46
-  70:Core/Src/debug_uart.c ****         if (chunk > UART_TX_BUF_SIZE) chunk = UART_TX_BUF_SIZE;
- 247              		.loc 1 70 9 view .LVU47
-  70:Core/Src/debug_uart.c ****         if (chunk > UART_TX_BUF_SIZE) chunk = UART_TX_BUF_SIZE;
- 248              		.loc 1 70 16 is_stmt 0 view .LVU48
- 249 0052 7C1B     		subs	r4, r7, r5
- 250              	.LVL17:
-  71:Core/Src/debug_uart.c ****         memcpy(msg.data, ptr + offset, chunk);
- 251              		.loc 1 71 9 is_stmt 1 view .LVU49
-  71:Core/Src/debug_uart.c ****         memcpy(msg.data, ptr + offset, chunk);
- 252              		.loc 1 71 12 is_stmt 0 view .LVU50
- 253 0054 402C     		cmp	r4, #64
- 254 0056 E7D9     		bls	.L17
-  71:Core/Src/debug_uart.c ****         memcpy(msg.data, ptr + offset, chunk);
- 255              		.loc 1 71 45 discriminator 1 view .LVU51
- 256 0058 4024     		movs	r4, #64
- 257              	.LVL18:
-  71:Core/Src/debug_uart.c ****         memcpy(msg.data, ptr + offset, chunk);
- 258              		.loc 1 71 45 discriminator 1 view .LVU52
- 259 005a E5E7     		b	.L17
- 260              	.L25:
- 261              		.align	2
- 262              	.L24:
- 263 005c 00000000 		.word	xUartTxQueue
- 264 0060 00000000 		.word	huart1
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s 			page 8
+ 225              		.cfi_def_cfa_offset 96
+ 226 0006 8846     		mov	r8, r1
+ 227 0008 1646     		mov	r6, r2
+  59:Core/Src/debug_uart.c **** 
+ 228              		.loc 1 59 5 is_stmt 1 view .LVU37
+  62:Core/Src/debug_uart.c ****         HAL_UART_Transmit(&huart1, (uint8_t *)ptr, len, HAL_MAX_DELAY);
+ 229              		.loc 1 62 5 view .LVU38
+  62:Core/Src/debug_uart.c ****         HAL_UART_Transmit(&huart1, (uint8_t *)ptr, len, HAL_MAX_DELAY);
+ 230              		.loc 1 62 22 is_stmt 0 view .LVU39
+ 231 000a 174B     		ldr	r3, .L28
+ 232 000c 1B68     		ldr	r3, [r3]
+  62:Core/Src/debug_uart.c ****         HAL_UART_Transmit(&huart1, (uint8_t *)ptr, len, HAL_MAX_DELAY);
+ 233              		.loc 1 62 8 view .LVU40
+ 234 000e 1BB1     		cbz	r3, .L19
+  62:Core/Src/debug_uart.c ****         HAL_UART_Transmit(&huart1, (uint8_t *)ptr, len, HAL_MAX_DELAY);
+ 235              		.loc 1 62 33 discriminator 1 view .LVU41
+ 236 0010 FFF7FEFF 		bl	xTaskGetSchedulerState
+ 237              	.LVL11:
+  62:Core/Src/debug_uart.c ****         HAL_UART_Transmit(&huart1, (uint8_t *)ptr, len, HAL_MAX_DELAY);
+ 238              		.loc 1 62 30 discriminator 1 view .LVU42
+ 239 0014 0228     		cmp	r0, #2
+ 240 0016 24D0     		beq	.L25
+ 241              	.L19:
+  63:Core/Src/debug_uart.c ****         return len;
+ 242              		.loc 1 63 9 is_stmt 1 view .LVU43
+ 243 0018 4FF0FF33 		mov	r3, #-1
+ 244 001c B2B2     		uxth	r2, r6
+ 245 001e 4146     		mov	r1, r8
+ 246 0020 1248     		ldr	r0, .L28+4
+ 247 0022 FFF7FEFF 		bl	HAL_UART_Transmit
+ 248              	.LVL12:
+  64:Core/Src/debug_uart.c ****     }
+ 249              		.loc 1 64 9 view .LVU44
+ 250              	.L21:
+  82:Core/Src/debug_uart.c **** 
+ 251              		.loc 1 82 1 is_stmt 0 view .LVU45
+ 252 0026 3046     		mov	r0, r6
+ 253 0028 12B0     		add	sp, sp, #72
+ 254              	.LCFI7:
+ 255              		.cfi_remember_state
+ 256              		.cfi_def_cfa_offset 24
+ 257              		@ sp needed
+ 258 002a BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 259              	.LVL13:
+ 260              	.L22:
+ 261              	.LCFI8:
+ 262              		.cfi_restore_state
+ 263              	.LBB2:
+  73:Core/Src/debug_uart.c ****         msg.len = (uint16_t)chunk;
+ 264              		.loc 1 73 9 is_stmt 1 view .LVU46
+ 265 002e 01AF     		add	r7, sp, #4
+ 266 0030 2246     		mov	r2, r4
+ 267 0032 08EB0501 		add	r1, r8, r5
+ 268 0036 3846     		mov	r0, r7
+ 269 0038 FFF7FEFF 		bl	memcpy
+ 270              	.LVL14:
+  74:Core/Src/debug_uart.c **** 
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s 			page 8
 
 
- 265              	.LBE3:
- 266              		.cfi_endproc
- 267              	.LFE74:
- 269              		.section	.text.HAL_UART_TxCpltCallback,"ax",%progbits
- 270              		.align	1
- 271              		.global	HAL_UART_TxCpltCallback
- 272              		.syntax unified
- 273              		.thumb
- 274              		.thumb_func
- 276              	HAL_UART_TxCpltCallback:
- 277              	.LVL19:
- 278              	.LFB77:
- 110:Core/Src/debug_uart.c ****         }
- 111:Core/Src/debug_uart.c ****     }
- 112:Core/Src/debug_uart.c **** }
- 113:Core/Src/debug_uart.c **** 
- 114:Core/Src/debug_uart.c **** /* ===== HAL callback: DMA TX complete → signal semaphore from ISR ===== */
- 115:Core/Src/debug_uart.c **** void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
- 116:Core/Src/debug_uart.c **** {
- 279              		.loc 1 116 1 is_stmt 1 view -0
- 280              		.cfi_startproc
- 281              		@ args = 0, pretend = 0, frame = 8
- 282              		@ frame_needed = 0, uses_anonymous_args = 0
- 117:Core/Src/debug_uart.c ****     if (huart->Instance == USART1 && xTxDmaSemaphore != NULL) {
- 283              		.loc 1 117 5 view .LVU54
- 284              		.loc 1 117 14 is_stmt 0 view .LVU55
- 285 0000 0268     		ldr	r2, [r0]
- 286              		.loc 1 117 8 view .LVU56
- 287 0002 0F4B     		ldr	r3, .L34
- 288 0004 9A42     		cmp	r2, r3
- 289 0006 00D0     		beq	.L33
- 290              	.LVL20:
- 291              	.L30:
- 292              		.loc 1 117 8 view .LVU57
- 293 0008 7047     		bx	lr
- 294              	.LVL21:
- 295              	.L33:
- 296              		.loc 1 117 54 discriminator 1 view .LVU58
- 297 000a 0E4B     		ldr	r3, .L34+4
- 298 000c 1868     		ldr	r0, [r3]
- 299              	.LVL22:
- 300              		.loc 1 117 35 discriminator 1 view .LVU59
- 301 000e 0028     		cmp	r0, #0
- 302 0010 FAD0     		beq	.L30
- 116:Core/Src/debug_uart.c ****     if (huart->Instance == USART1 && xTxDmaSemaphore != NULL) {
- 303              		.loc 1 116 1 view .LVU60
- 304 0012 00B5     		push	{lr}
- 305              	.LCFI8:
- 306              		.cfi_def_cfa_offset 4
- 307              		.cfi_offset 14, -4
- 308 0014 83B0     		sub	sp, sp, #12
- 309              	.LCFI9:
- 310              		.cfi_def_cfa_offset 16
- 311              	.LBB4:
- 118:Core/Src/debug_uart.c ****         BaseType_t xHigherPriorityTaskWoken = pdFALSE;
- 312              		.loc 1 118 9 is_stmt 1 view .LVU61
- 313              		.loc 1 118 20 is_stmt 0 view .LVU62
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s 			page 9
+ 271              		.loc 1 74 9 view .LVU47
+  74:Core/Src/debug_uart.c **** 
+ 272              		.loc 1 74 17 is_stmt 0 view .LVU48
+ 273 003c ADF84440 		strh	r4, [sp, #68]	@ movhi
+  76:Core/Src/debug_uart.c ****             break;  /* drop remaining data if queue full */
+ 274              		.loc 1 76 9 is_stmt 1 view .LVU49
+  76:Core/Src/debug_uart.c ****             break;  /* drop remaining data if queue full */
+ 275              		.loc 1 76 13 is_stmt 0 view .LVU50
+ 276 0040 0023     		movs	r3, #0
+ 277 0042 0A22     		movs	r2, #10
+ 278 0044 3946     		mov	r1, r7
+ 279 0046 0848     		ldr	r0, .L28
+ 280 0048 0068     		ldr	r0, [r0]
+ 281 004a FFF7FEFF 		bl	xQueueGenericSend
+ 282              	.LVL15:
+  76:Core/Src/debug_uart.c ****             break;  /* drop remaining data if queue full */
+ 283              		.loc 1 76 12 discriminator 1 view .LVU51
+ 284 004e 0128     		cmp	r0, #1
+ 285 0050 E9D1     		bne	.L21
+  79:Core/Src/debug_uart.c ****     }
+ 286              		.loc 1 79 9 is_stmt 1 view .LVU52
+  79:Core/Src/debug_uart.c ****     }
+ 287              		.loc 1 79 16 is_stmt 0 view .LVU53
+ 288 0052 2544     		add	r5, r5, r4
+ 289              	.LVL16:
+ 290              	.L20:
+  79:Core/Src/debug_uart.c ****     }
+ 291              		.loc 1 79 16 view .LVU54
+ 292              	.LBE2:
+  69:Core/Src/debug_uart.c ****         UartTxMsg_t msg;
+ 293              		.loc 1 69 19 is_stmt 1 view .LVU55
+ 294 0054 AE42     		cmp	r6, r5
+ 295 0056 E6D9     		bls	.L21
+ 296              	.LBB3:
+  70:Core/Src/debug_uart.c ****         size_t chunk = (size_t)len - offset;
+ 297              		.loc 1 70 9 view .LVU56
+  71:Core/Src/debug_uart.c ****         if (chunk > UART_TX_BUF_SIZE) chunk = UART_TX_BUF_SIZE;
+ 298              		.loc 1 71 9 view .LVU57
+  71:Core/Src/debug_uart.c ****         if (chunk > UART_TX_BUF_SIZE) chunk = UART_TX_BUF_SIZE;
+ 299              		.loc 1 71 16 is_stmt 0 view .LVU58
+ 300 0058 741B     		subs	r4, r6, r5
+ 301              	.LVL17:
+  72:Core/Src/debug_uart.c ****         memcpy(msg.data, ptr + offset, chunk);
+ 302              		.loc 1 72 9 is_stmt 1 view .LVU59
+  72:Core/Src/debug_uart.c ****         memcpy(msg.data, ptr + offset, chunk);
+ 303              		.loc 1 72 12 is_stmt 0 view .LVU60
+ 304 005a 402C     		cmp	r4, #64
+ 305 005c E7D9     		bls	.L22
+  72:Core/Src/debug_uart.c ****         memcpy(msg.data, ptr + offset, chunk);
+ 306              		.loc 1 72 45 discriminator 1 view .LVU61
+ 307 005e 4024     		movs	r4, #64
+ 308              	.LVL18:
+  72:Core/Src/debug_uart.c ****         memcpy(msg.data, ptr + offset, chunk);
+ 309              		.loc 1 72 45 discriminator 1 view .LVU62
+ 310 0060 E5E7     		b	.L22
+ 311              	.LVL19:
+ 312              	.L25:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s 			page 9
 
 
- 314 0016 0023     		movs	r3, #0
- 315 0018 0193     		str	r3, [sp, #4]
- 119:Core/Src/debug_uart.c ****         xSemaphoreGiveFromISR(xTxDmaSemaphore, &xHigherPriorityTaskWoken);
- 316              		.loc 1 119 9 is_stmt 1 view .LVU63
- 317 001a 01A9     		add	r1, sp, #4
- 318 001c FFF7FEFF 		bl	xQueueGiveFromISR
- 319              	.LVL23:
- 120:Core/Src/debug_uart.c ****         portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
- 320              		.loc 1 120 9 view .LVU64
- 321              		.loc 1 120 9 view .LVU65
- 322 0020 019B     		ldr	r3, [sp, #4]
- 323 0022 4BB1     		cbz	r3, .L26
- 324              		.loc 1 120 9 discriminator 1 view .LVU66
- 325 0024 4FF0E023 		mov	r3, #-536813568
- 326 0028 4FF08052 		mov	r2, #268435456
- 327 002c C3F8042D 		str	r2, [r3, #3332]
- 328              		.loc 1 120 9 view .LVU67
- 329              		.loc 1 120 9 is_stmt 0 discriminator 1 view .LVU68
- 330              		.syntax unified
- 331              	@ 120 "Core/Src/debug_uart.c" 1
- 332 0030 BFF34F8F 		dsb
- 333              	@ 0 "" 2
- 334              		.loc 1 120 9 is_stmt 1 view .LVU69
- 335              		.loc 1 120 9 is_stmt 0 discriminator 1 view .LVU70
- 336              	@ 120 "Core/Src/debug_uart.c" 1
- 337 0034 BFF36F8F 		isb
- 338              	@ 0 "" 2
- 339              		.loc 1 120 9 is_stmt 1 discriminator 3 view .LVU71
- 340              		.loc 1 120 9 discriminator 3 view .LVU72
- 341              		.thumb
- 342              		.syntax unified
- 343              	.L26:
- 344              	.LBE4:
- 121:Core/Src/debug_uart.c ****     }
- 122:Core/Src/debug_uart.c **** }
- 345              		.loc 1 122 1 is_stmt 0 view .LVU73
- 346 0038 03B0     		add	sp, sp, #12
- 347              	.LCFI10:
- 348              		.cfi_def_cfa_offset 4
- 349              		@ sp needed
- 350 003a 5DF804FB 		ldr	pc, [sp], #4
- 351              	.L35:
- 352 003e 00BF     		.align	2
- 353              	.L34:
- 354 0040 00380140 		.word	1073821696
- 355 0044 00000000 		.word	xTxDmaSemaphore
- 356              		.cfi_endproc
- 357              	.LFE77:
- 359              		.section	.text.DebugUART_StartRx,"ax",%progbits
- 360              		.align	1
- 361              		.global	DebugUART_StartRx
- 362              		.syntax unified
- 363              		.thumb
- 364              		.thumb_func
- 366              	DebugUART_StartRx:
- 367              	.LFB78:
- 123:Core/Src/debug_uart.c **** 
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s 			page 10
+  72:Core/Src/debug_uart.c ****         memcpy(msg.data, ptr + offset, chunk);
+ 313              		.loc 1 72 45 discriminator 1 view .LVU63
+ 314              	.LBE3:
+  68:Core/Src/debug_uart.c ****     while (offset < (size_t)len) {
+ 315              		.loc 1 68 12 view .LVU64
+ 316 0062 0025     		movs	r5, #0
+ 317 0064 F6E7     		b	.L20
+ 318              	.L29:
+ 319 0066 00BF     		.align	2
+ 320              	.L28:
+ 321 0068 00000000 		.word	xUartTxQueue
+ 322 006c 00000000 		.word	huart1
+ 323              		.cfi_endproc
+ 324              	.LFE74:
+ 326              		.section	.text.HAL_UART_TxCpltCallback,"ax",%progbits
+ 327              		.align	1
+ 328              		.global	HAL_UART_TxCpltCallback
+ 329              		.syntax unified
+ 330              		.thumb
+ 331              		.thumb_func
+ 333              	HAL_UART_TxCpltCallback:
+ 334              	.LVL20:
+ 335              	.LFB77:
+  97:Core/Src/debug_uart.c ****             }
+  98:Core/Src/debug_uart.c ****         }
+  99:Core/Src/debug_uart.c ****     }
+ 100:Core/Src/debug_uart.c **** }
+ 101:Core/Src/debug_uart.c **** void vUartRxTask(void *pvParameters)
+ 102:Core/Src/debug_uart.c **** {
+ 103:Core/Src/debug_uart.c ****     (void)pvParameters;
+ 104:Core/Src/debug_uart.c ****     UartRxMsg_t msg;
+ 105:Core/Src/debug_uart.c **** 
+ 106:Core/Src/debug_uart.c ****     /* Start DMA RX now — scheduler is running, initial TX is done */
+ 107:Core/Src/debug_uart.c ****     DebugUART_StartRx();
+ 108:Core/Src/debug_uart.c **** 
+ 109:Core/Src/debug_uart.c ****     while (1) {
+ 110:Core/Src/debug_uart.c ****         if (xQueueReceive(xUartRxQueue, &msg, portMAX_DELAY) == pdPASS) {
+ 111:Core/Src/debug_uart.c ****             msg.data[msg.len] = '\0';
+ 112:Core/Src/debug_uart.c ****             /* 暂为透传回显，后续改为 CLI 命令解析 */
+ 113:Core/Src/debug_uart.c ****             printf("[RX] %s\r\n", msg.data);
+ 114:Core/Src/debug_uart.c ****         }
+ 115:Core/Src/debug_uart.c ****     }
+ 116:Core/Src/debug_uart.c **** }
+ 117:Core/Src/debug_uart.c **** 
+ 118:Core/Src/debug_uart.c **** /* ===== HAL callback: DMA TX complete → signal semaphore from ISR ===== */
+ 119:Core/Src/debug_uart.c **** void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+ 120:Core/Src/debug_uart.c **** {
+ 336              		.loc 1 120 1 is_stmt 1 view -0
+ 337              		.cfi_startproc
+ 338              		@ args = 0, pretend = 0, frame = 8
+ 339              		@ frame_needed = 0, uses_anonymous_args = 0
+ 121:Core/Src/debug_uart.c ****     if (huart->Instance == USART1 && xTxDmaSemaphore != NULL) {
+ 340              		.loc 1 121 5 view .LVU66
+ 341              		.loc 1 121 14 is_stmt 0 view .LVU67
+ 342 0000 0268     		ldr	r2, [r0]
+ 343              		.loc 1 121 8 view .LVU68
+ 344 0002 0F4B     		ldr	r3, .L38
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s 			page 10
 
 
- 124:Core/Src/debug_uart.c **** /* ==================================================================
- 125:Core/Src/debug_uart.c ****  *  DMA RX (USART1 IDLE detection)
- 126:Core/Src/debug_uart.c ****  *  Receives variable-length data from host PC.
- 127:Core/Src/debug_uart.c ****  *  HAL_UARTEx_ReceiveToIdle_DMA → IDLE interrupt → RxEventCallback
- 128:Core/Src/debug_uart.c ****  * ================================================================== */
- 129:Core/Src/debug_uart.c **** 
- 130:Core/Src/debug_uart.c **** #define UART_RX_BUF_SIZE    256
- 131:Core/Src/debug_uart.c **** 
- 132:Core/Src/debug_uart.c **** static uint8_t uart_rx_buf[UART_RX_BUF_SIZE];
+ 345 0004 9A42     		cmp	r2, r3
+ 346 0006 00D0     		beq	.L37
+ 347              	.LVL21:
+ 348              	.L34:
+ 349              		.loc 1 121 8 view .LVU69
+ 350 0008 7047     		bx	lr
+ 351              	.LVL22:
+ 352              	.L37:
+ 353              		.loc 1 121 54 discriminator 1 view .LVU70
+ 354 000a 0E4B     		ldr	r3, .L38+4
+ 355 000c 1868     		ldr	r0, [r3]
+ 356              	.LVL23:
+ 357              		.loc 1 121 35 discriminator 1 view .LVU71
+ 358 000e 0028     		cmp	r0, #0
+ 359 0010 FAD0     		beq	.L34
+ 120:Core/Src/debug_uart.c ****     if (huart->Instance == USART1 && xTxDmaSemaphore != NULL) {
+ 360              		.loc 1 120 1 view .LVU72
+ 361 0012 00B5     		push	{lr}
+ 362              	.LCFI9:
+ 363              		.cfi_def_cfa_offset 4
+ 364              		.cfi_offset 14, -4
+ 365 0014 83B0     		sub	sp, sp, #12
+ 366              	.LCFI10:
+ 367              		.cfi_def_cfa_offset 16
+ 368              	.LBB4:
+ 122:Core/Src/debug_uart.c ****         BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+ 369              		.loc 1 122 9 is_stmt 1 view .LVU73
+ 370              		.loc 1 122 20 is_stmt 0 view .LVU74
+ 371 0016 0023     		movs	r3, #0
+ 372 0018 0193     		str	r3, [sp, #4]
+ 123:Core/Src/debug_uart.c ****         xSemaphoreGiveFromISR(xTxDmaSemaphore, &xHigherPriorityTaskWoken);
+ 373              		.loc 1 123 9 is_stmt 1 view .LVU75
+ 374 001a 01A9     		add	r1, sp, #4
+ 375 001c FFF7FEFF 		bl	xQueueGiveFromISR
+ 376              	.LVL24:
+ 124:Core/Src/debug_uart.c ****         portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+ 377              		.loc 1 124 9 view .LVU76
+ 378              		.loc 1 124 9 view .LVU77
+ 379 0020 019B     		ldr	r3, [sp, #4]
+ 380 0022 4BB1     		cbz	r3, .L30
+ 381              		.loc 1 124 9 discriminator 1 view .LVU78
+ 382 0024 4FF0E023 		mov	r3, #-536813568
+ 383 0028 4FF08052 		mov	r2, #268435456
+ 384 002c C3F8042D 		str	r2, [r3, #3332]
+ 385              		.loc 1 124 9 view .LVU79
+ 386              		.loc 1 124 9 is_stmt 0 discriminator 1 view .LVU80
+ 387              		.syntax unified
+ 388              	@ 124 "Core/Src/debug_uart.c" 1
+ 389 0030 BFF34F8F 		dsb
+ 390              	@ 0 "" 2
+ 391              		.loc 1 124 9 is_stmt 1 view .LVU81
+ 392              		.loc 1 124 9 is_stmt 0 discriminator 1 view .LVU82
+ 393              	@ 124 "Core/Src/debug_uart.c" 1
+ 394 0034 BFF36F8F 		isb
+ 395              	@ 0 "" 2
+ 396              		.loc 1 124 9 is_stmt 1 discriminator 3 view .LVU83
+ 397              		.loc 1 124 9 discriminator 3 view .LVU84
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s 			page 11
+
+
+ 398              		.thumb
+ 399              		.syntax unified
+ 400              	.L30:
+ 401              	.LBE4:
+ 125:Core/Src/debug_uart.c ****     }
+ 126:Core/Src/debug_uart.c **** }
+ 402              		.loc 1 126 1 is_stmt 0 view .LVU85
+ 403 0038 03B0     		add	sp, sp, #12
+ 404              	.LCFI11:
+ 405              		.cfi_def_cfa_offset 4
+ 406              		@ sp needed
+ 407 003a 5DF804FB 		ldr	pc, [sp], #4
+ 408              	.L39:
+ 409 003e 00BF     		.align	2
+ 410              	.L38:
+ 411 0040 00380140 		.word	1073821696
+ 412 0044 00000000 		.word	xTxDmaSemaphore
+ 413              		.cfi_endproc
+ 414              	.LFE77:
+ 416              		.section	.text.DebugUART_StartRx,"ax",%progbits
+ 417              		.align	1
+ 418              		.global	DebugUART_StartRx
+ 419              		.syntax unified
+ 420              		.thumb
+ 421              		.thumb_func
+ 423              	DebugUART_StartRx:
+ 424              	.LFB78:
+ 127:Core/Src/debug_uart.c **** 
+ 128:Core/Src/debug_uart.c **** /* ==================================================================
+ 129:Core/Src/debug_uart.c ****  *  DMA RX (USART1 IDLE detection)
+ 130:Core/Src/debug_uart.c ****  *  Receives variable-length data from host PC.
+ 131:Core/Src/debug_uart.c ****  *  HAL_UARTEx_ReceiveToIdle_DMA → IDLE interrupt → RxEventCallback
+ 132:Core/Src/debug_uart.c ****  * ================================================================== */
  133:Core/Src/debug_uart.c **** 
- 134:Core/Src/debug_uart.c **** /* Start DMA reception with IDLE detection */
- 135:Core/Src/debug_uart.c **** void DebugUART_StartRx(void)
- 136:Core/Src/debug_uart.c **** {
- 368              		.loc 1 136 1 is_stmt 1 view -0
- 369              		.cfi_startproc
- 370              		@ args = 0, pretend = 0, frame = 0
- 371              		@ frame_needed = 0, uses_anonymous_args = 0
- 372 0000 08B5     		push	{r3, lr}
- 373              	.LCFI11:
- 374              		.cfi_def_cfa_offset 8
- 375              		.cfi_offset 3, -8
- 376              		.cfi_offset 14, -4
- 137:Core/Src/debug_uart.c ****     HAL_UARTEx_ReceiveToIdle_DMA(&huart1, uart_rx_buf, UART_RX_BUF_SIZE);
- 377              		.loc 1 137 5 view .LVU75
- 378 0002 4FF48072 		mov	r2, #256
- 379 0006 0249     		ldr	r1, .L38
- 380 0008 0248     		ldr	r0, .L38+4
- 381 000a FFF7FEFF 		bl	HAL_UARTEx_ReceiveToIdle_DMA
- 382              	.LVL24:
- 138:Core/Src/debug_uart.c **** }
- 383              		.loc 1 138 1 is_stmt 0 view .LVU76
- 384 000e 08BD     		pop	{r3, pc}
- 385              	.L39:
- 386              		.align	2
- 387              	.L38:
- 388 0010 00000000 		.word	uart_rx_buf
- 389 0014 00000000 		.word	huart1
- 390              		.cfi_endproc
- 391              	.LFE78:
- 393              		.section	.rodata.DebugUART_Init.str1.4,"aMS",%progbits,1
- 394              		.align	2
- 395              	.LC1:
- 396 0000 55617274 		.ascii	"UartTX\000"
- 396      545800
- 397 0007 00       		.align	2
- 398              	.LC2:
- 399 0008 55617274 		.ascii	"UartRX\000"
- 399      525800
- 400              		.section	.text.DebugUART_Init,"ax",%progbits
- 401              		.align	1
- 402              		.global	DebugUART_Init
- 403              		.syntax unified
- 404              		.thumb
- 405              		.thumb_func
- 407              	DebugUART_Init:
- 408              	.LFB73:
-  36:Core/Src/debug_uart.c ****     if (xUartTxQueue != NULL) return;  /* already initialized */
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s 			page 11
+ 134:Core/Src/debug_uart.c **** static uint8_t uart_rx_buf[UART_DMA_RX_BUF_SIZE];
+ 135:Core/Src/debug_uart.c **** 
+ 136:Core/Src/debug_uart.c **** /* Start DMA reception with IDLE detection */
+ 137:Core/Src/debug_uart.c **** void DebugUART_StartRx(void)
+ 138:Core/Src/debug_uart.c **** {
+ 425              		.loc 1 138 1 is_stmt 1 view -0
+ 426              		.cfi_startproc
+ 427              		@ args = 0, pretend = 0, frame = 0
+ 428              		@ frame_needed = 0, uses_anonymous_args = 0
+ 429 0000 08B5     		push	{r3, lr}
+ 430              	.LCFI12:
+ 431              		.cfi_def_cfa_offset 8
+ 432              		.cfi_offset 3, -8
+ 433              		.cfi_offset 14, -4
+ 139:Core/Src/debug_uart.c ****     HAL_UARTEx_ReceiveToIdle_DMA(&huart1, uart_rx_buf, UART_DMA_RX_BUF_SIZE);
+ 434              		.loc 1 139 5 view .LVU87
+ 435 0002 4FF48072 		mov	r2, #256
+ 436 0006 0249     		ldr	r1, .L42
+ 437 0008 0248     		ldr	r0, .L42+4
+ 438 000a FFF7FEFF 		bl	HAL_UARTEx_ReceiveToIdle_DMA
+ 439              	.LVL25:
+ 140:Core/Src/debug_uart.c **** }
+ 440              		.loc 1 140 1 is_stmt 0 view .LVU88
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s 			page 12
 
 
- 409              		.loc 1 36 1 is_stmt 1 view -0
- 410              		.cfi_startproc
- 411              		@ args = 0, pretend = 0, frame = 0
- 412              		@ frame_needed = 0, uses_anonymous_args = 0
-  37:Core/Src/debug_uart.c **** 
- 413              		.loc 1 37 5 view .LVU78
-  37:Core/Src/debug_uart.c **** 
- 414              		.loc 1 37 22 is_stmt 0 view .LVU79
- 415 0000 1B4B     		ldr	r3, .L49
- 416 0002 1B68     		ldr	r3, [r3]
-  37:Core/Src/debug_uart.c **** 
- 417              		.loc 1 37 8 view .LVU80
- 418 0004 03B1     		cbz	r3, .L48
- 419 0006 7047     		bx	lr
- 420              	.L48:
-  36:Core/Src/debug_uart.c ****     if (xUartTxQueue != NULL) return;  /* already initialized */
- 421              		.loc 1 36 1 view .LVU81
- 422 0008 00B5     		push	{lr}
- 423              	.LCFI12:
- 424              		.cfi_def_cfa_offset 4
- 425              		.cfi_offset 14, -4
- 426 000a 83B0     		sub	sp, sp, #12
- 427              	.LCFI13:
- 428              		.cfi_def_cfa_offset 16
-  40:Core/Src/debug_uart.c ****     if (xTxDmaSemaphore == NULL) return;
- 429              		.loc 1 40 5 is_stmt 1 view .LVU82
-  40:Core/Src/debug_uart.c ****     if (xTxDmaSemaphore == NULL) return;
- 430              		.loc 1 40 23 is_stmt 0 view .LVU83
- 431 000c 0322     		movs	r2, #3
- 432 000e 0021     		movs	r1, #0
- 433 0010 0120     		movs	r0, #1
- 434 0012 FFF7FEFF 		bl	xQueueGenericCreate
- 435              	.LVL25:
-  40:Core/Src/debug_uart.c ****     if (xTxDmaSemaphore == NULL) return;
- 436              		.loc 1 40 21 discriminator 1 view .LVU84
- 437 0016 174B     		ldr	r3, .L49+4
- 438 0018 1860     		str	r0, [r3]
-  41:Core/Src/debug_uart.c **** 
- 439              		.loc 1 41 5 is_stmt 1 view .LVU85
-  41:Core/Src/debug_uart.c **** 
- 440              		.loc 1 41 8 is_stmt 0 view .LVU86
- 441 001a 28B3     		cbz	r0, .L40
-  43:Core/Src/debug_uart.c ****     if (xUartTxQueue != NULL) {
- 442              		.loc 1 43 5 is_stmt 1 view .LVU87
-  43:Core/Src/debug_uart.c ****     if (xUartTxQueue != NULL) {
- 443              		.loc 1 43 20 is_stmt 0 view .LVU88
- 444 001c 0022     		movs	r2, #0
- 445 001e 4221     		movs	r1, #66
- 446 0020 1020     		movs	r0, #16
- 447 0022 FFF7FEFF 		bl	xQueueGenericCreate
- 448              	.LVL26:
-  43:Core/Src/debug_uart.c ****     if (xUartTxQueue != NULL) {
- 449              		.loc 1 43 18 discriminator 1 view .LVU89
- 450 0026 124B     		ldr	r3, .L49
- 451 0028 1860     		str	r0, [r3]
-  44:Core/Src/debug_uart.c ****         xTaskCreate(vUartTxTask, "UartTX", 256, NULL, 1, NULL);
- 452              		.loc 1 44 5 is_stmt 1 view .LVU90
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s 			page 12
+ 441 000e 08BD     		pop	{r3, pc}
+ 442              	.L43:
+ 443              		.align	2
+ 444              	.L42:
+ 445 0010 00000000 		.word	uart_rx_buf
+ 446 0014 00000000 		.word	huart1
+ 447              		.cfi_endproc
+ 448              	.LFE78:
+ 450              		.section	.rodata.vUartRxTask.str1.4,"aMS",%progbits,1
+ 451              		.align	2
+ 452              	.LC2:
+ 453 0000 5B52585D 		.ascii	"[RX] %s\015\012\000"
+ 453      2025730D 
+ 453      0A00
+ 454              		.section	.text.vUartRxTask,"ax",%progbits
+ 455              		.align	1
+ 456              		.global	vUartRxTask
+ 457              		.syntax unified
+ 458              		.thumb
+ 459              		.thumb_func
+ 461              	vUartRxTask:
+ 462              	.LVL26:
+ 463              	.LFB76:
+ 102:Core/Src/debug_uart.c ****     (void)pvParameters;
+ 464              		.loc 1 102 1 is_stmt 1 view -0
+ 465              		.cfi_startproc
+ 466              		@ Volatile: function does not return.
+ 467              		@ args = 0, pretend = 0, frame = 72
+ 468              		@ frame_needed = 0, uses_anonymous_args = 0
+ 102:Core/Src/debug_uart.c ****     (void)pvParameters;
+ 469              		.loc 1 102 1 is_stmt 0 view .LVU90
+ 470 0000 00B5     		push	{lr}
+ 471              	.LCFI13:
+ 472              		.cfi_def_cfa_offset 4
+ 473              		.cfi_offset 14, -4
+ 474 0002 93B0     		sub	sp, sp, #76
+ 475              	.LCFI14:
+ 476              		.cfi_def_cfa_offset 80
+ 103:Core/Src/debug_uart.c ****     UartRxMsg_t msg;
+ 477              		.loc 1 103 5 is_stmt 1 view .LVU91
+ 104:Core/Src/debug_uart.c **** 
+ 478              		.loc 1 104 5 view .LVU92
+ 107:Core/Src/debug_uart.c **** 
+ 479              		.loc 1 107 5 view .LVU93
+ 480 0004 FFF7FEFF 		bl	DebugUART_StartRx
+ 481              	.LVL27:
+ 482              	.L45:
+ 109:Core/Src/debug_uart.c ****         if (xQueueReceive(xUartRxQueue, &msg, portMAX_DELAY) == pdPASS) {
+ 483              		.loc 1 109 5 view .LVU94
+ 110:Core/Src/debug_uart.c ****             msg.data[msg.len] = '\0';
+ 484              		.loc 1 110 9 view .LVU95
+ 110:Core/Src/debug_uart.c ****             msg.data[msg.len] = '\0';
+ 485              		.loc 1 110 13 is_stmt 0 view .LVU96
+ 486 0008 4FF0FF32 		mov	r2, #-1
+ 487 000c 01A9     		add	r1, sp, #4
+ 488 000e 094B     		ldr	r3, .L48
+ 489 0010 1868     		ldr	r0, [r3]
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s 			page 13
 
 
-  44:Core/Src/debug_uart.c ****         xTaskCreate(vUartTxTask, "UartTX", 256, NULL, 1, NULL);
- 453              		.loc 1 44 8 is_stmt 0 view .LVU91
- 454 002a 48B1     		cbz	r0, .L42
-  45:Core/Src/debug_uart.c ****     }
- 455              		.loc 1 45 9 is_stmt 1 view .LVU92
- 456 002c 0023     		movs	r3, #0
- 457 002e 0193     		str	r3, [sp, #4]
- 458 0030 0122     		movs	r2, #1
- 459 0032 0092     		str	r2, [sp]
- 460 0034 4FF48072 		mov	r2, #256
- 461 0038 0F49     		ldr	r1, .L49+8
- 462 003a 1048     		ldr	r0, .L49+12
- 463 003c FFF7FEFF 		bl	xTaskCreate
- 464              	.LVL27:
- 465              	.L42:
-  48:Core/Src/debug_uart.c ****     if (xUartRxQueue != NULL) {
- 466              		.loc 1 48 5 view .LVU93
-  48:Core/Src/debug_uart.c ****     if (xUartRxQueue != NULL) {
- 467              		.loc 1 48 20 is_stmt 0 view .LVU94
- 468 0040 0022     		movs	r2, #0
- 469 0042 4221     		movs	r1, #66
- 470 0044 0820     		movs	r0, #8
- 471 0046 FFF7FEFF 		bl	xQueueGenericCreate
- 472              	.LVL28:
-  48:Core/Src/debug_uart.c ****     if (xUartRxQueue != NULL) {
- 473              		.loc 1 48 18 discriminator 1 view .LVU95
- 474 004a 0D4B     		ldr	r3, .L49+16
- 475 004c 1860     		str	r0, [r3]
-  49:Core/Src/debug_uart.c ****         xTaskCreate(vUartRxTask, "UartRX", 256, NULL, 1, NULL);
- 476              		.loc 1 49 5 is_stmt 1 view .LVU96
-  49:Core/Src/debug_uart.c ****         xTaskCreate(vUartRxTask, "UartRX", 256, NULL, 1, NULL);
- 477              		.loc 1 49 8 is_stmt 0 view .LVU97
- 478 004e 48B1     		cbz	r0, .L43
-  50:Core/Src/debug_uart.c ****     }
- 479              		.loc 1 50 9 is_stmt 1 view .LVU98
- 480 0050 0023     		movs	r3, #0
- 481 0052 0193     		str	r3, [sp, #4]
- 482 0054 0122     		movs	r2, #1
- 483 0056 0092     		str	r2, [sp]
- 484 0058 4FF48072 		mov	r2, #256
- 485 005c 0949     		ldr	r1, .L49+20
- 486 005e 0A48     		ldr	r0, .L49+24
- 487 0060 FFF7FEFF 		bl	xTaskCreate
- 488              	.LVL29:
- 489              	.L43:
-  52:Core/Src/debug_uart.c **** }
- 490              		.loc 1 52 5 view .LVU99
- 491 0064 FFF7FEFF 		bl	DebugUART_StartRx
- 492              	.LVL30:
- 493              	.L40:
-  53:Core/Src/debug_uart.c **** 
- 494              		.loc 1 53 1 is_stmt 0 view .LVU100
- 495 0068 03B0     		add	sp, sp, #12
- 496              	.LCFI14:
- 497              		.cfi_def_cfa_offset 4
- 498              		@ sp needed
- 499 006a 5DF804FB 		ldr	pc, [sp], #4
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s 			page 13
+ 490 0012 FFF7FEFF 		bl	xQueueReceive
+ 491              	.LVL28:
+ 110:Core/Src/debug_uart.c ****             msg.data[msg.len] = '\0';
+ 492              		.loc 1 110 12 discriminator 1 view .LVU97
+ 493 0016 0128     		cmp	r0, #1
+ 494 0018 F6D1     		bne	.L45
+ 111:Core/Src/debug_uart.c ****             /* 暂为透传回显，后续改为 CLI 命令解析 */
+ 495              		.loc 1 111 13 is_stmt 1 view .LVU98
+ 111:Core/Src/debug_uart.c ****             /* 暂为透传回显，后续改为 CLI 命令解析 */
+ 496              		.loc 1 111 25 is_stmt 0 view .LVU99
+ 497 001a BDF84430 		ldrh	r3, [sp, #68]
+ 111:Core/Src/debug_uart.c ****             /* 暂为透传回显，后续改为 CLI 命令解析 */
+ 498              		.loc 1 111 31 view .LVU100
+ 499 001e 4833     		adds	r3, r3, #72
+ 500 0020 6B44     		add	r3, sp, r3
+ 501 0022 0022     		movs	r2, #0
+ 502 0024 03F8442C 		strb	r2, [r3, #-68]
+ 113:Core/Src/debug_uart.c ****         }
+ 503              		.loc 1 113 13 is_stmt 1 view .LVU101
+ 504 0028 01A9     		add	r1, sp, #4
+ 505 002a 0348     		ldr	r0, .L48+4
+ 506 002c FFF7FEFF 		bl	printf
+ 507              	.LVL29:
+ 508 0030 EAE7     		b	.L45
+ 509              	.L49:
+ 510 0032 00BF     		.align	2
+ 511              	.L48:
+ 512 0034 00000000 		.word	xUartRxQueue
+ 513 0038 00000000 		.word	.LC2
+ 514              		.cfi_endproc
+ 515              	.LFE76:
+ 517              		.section	.text.HAL_UARTEx_RxEventCallback,"ax",%progbits
+ 518              		.align	1
+ 519              		.global	HAL_UARTEx_RxEventCallback
+ 520              		.syntax unified
+ 521              		.thumb
+ 522              		.thumb_func
+ 524              	HAL_UARTEx_RxEventCallback:
+ 525              	.LVL30:
+ 526              	.LFB79:
+ 141:Core/Src/debug_uart.c **** 
+ 142:Core/Src/debug_uart.c **** /* HAL callback: DMA RX complete (full buffer or IDLE detected) */
+ 143:Core/Src/debug_uart.c **** void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
+ 144:Core/Src/debug_uart.c **** {
+ 527              		.loc 1 144 1 view -0
+ 528              		.cfi_startproc
+ 529              		@ args = 0, pretend = 0, frame = 72
+ 530              		@ frame_needed = 0, uses_anonymous_args = 0
+ 145:Core/Src/debug_uart.c ****     if (huart->Instance == USART1 && Size > 0 && xUartRxQueue != NULL) {
+ 531              		.loc 1 145 5 view .LVU103
+ 532              		.loc 1 145 14 is_stmt 0 view .LVU104
+ 533 0000 0268     		ldr	r2, [r0]
+ 534              		.loc 1 145 8 view .LVU105
+ 535 0002 1E4B     		ldr	r3, .L63
+ 536 0004 9A42     		cmp	r2, r3
+ 537 0006 00D0     		beq	.L61
+ 538 0008 7047     		bx	lr
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s 			page 14
 
 
- 500              	.L50:
- 501 006e 00BF     		.align	2
- 502              	.L49:
- 503 0070 00000000 		.word	xUartTxQueue
- 504 0074 00000000 		.word	xTxDmaSemaphore
- 505 0078 00000000 		.word	.LC1
- 506 007c 00000000 		.word	vUartTxTask
- 507 0080 00000000 		.word	xUartRxQueue
- 508 0084 08000000 		.word	.LC2
- 509 0088 00000000 		.word	vUartRxTask
- 510              		.cfi_endproc
- 511              	.LFE73:
- 513              		.section	.text.HAL_UARTEx_RxEventCallback,"ax",%progbits
- 514              		.align	1
- 515              		.global	HAL_UARTEx_RxEventCallback
- 516              		.syntax unified
- 517              		.thumb
- 518              		.thumb_func
- 520              	HAL_UARTEx_RxEventCallback:
- 521              	.LVL31:
- 522              	.LFB79:
- 139:Core/Src/debug_uart.c **** 
- 140:Core/Src/debug_uart.c **** /* HAL callback: DMA RX complete (full buffer or IDLE detected) */
- 141:Core/Src/debug_uart.c **** void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
- 142:Core/Src/debug_uart.c **** {
- 523              		.loc 1 142 1 is_stmt 1 view -0
- 524              		.cfi_startproc
- 525              		@ args = 0, pretend = 0, frame = 72
- 526              		@ frame_needed = 0, uses_anonymous_args = 0
- 143:Core/Src/debug_uart.c ****     if (huart->Instance == USART1 && Size > 0 && xUartRxQueue != NULL) {
- 527              		.loc 1 143 5 view .LVU102
- 528              		.loc 1 143 14 is_stmt 0 view .LVU103
- 529 0000 0268     		ldr	r2, [r0]
- 530              		.loc 1 143 8 view .LVU104
- 531 0002 1F4B     		ldr	r3, .L64
- 532 0004 9A42     		cmp	r2, r3
- 533 0006 00D0     		beq	.L62
- 534 0008 7047     		bx	lr
- 535              	.L62:
- 142:Core/Src/debug_uart.c ****     if (huart->Instance == USART1 && Size > 0 && xUartRxQueue != NULL) {
- 536              		.loc 1 142 1 view .LVU105
- 537 000a F0B5     		push	{r4, r5, r6, r7, lr}
- 538              	.LCFI15:
- 539              		.cfi_def_cfa_offset 20
- 540              		.cfi_offset 4, -20
- 541              		.cfi_offset 5, -16
- 542              		.cfi_offset 6, -12
- 543              		.cfi_offset 7, -8
- 544              		.cfi_offset 14, -4
- 545 000c 93B0     		sub	sp, sp, #76
- 546              	.LCFI16:
- 547              		.cfi_def_cfa_offset 96
- 548 000e 0E46     		mov	r6, r1
- 549              		.loc 1 143 35 discriminator 1 view .LVU106
- 550 0010 99B3     		cbz	r1, .L51
- 551              		.loc 1 143 63 discriminator 2 view .LVU107
- 552 0012 1C4B     		ldr	r3, .L64+4
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s 			page 14
+ 539              	.L61:
+ 144:Core/Src/debug_uart.c ****     if (huart->Instance == USART1 && Size > 0 && xUartRxQueue != NULL) {
+ 540              		.loc 1 144 1 view .LVU106
+ 541 000a F0B5     		push	{r4, r5, r6, r7, lr}
+ 542              	.LCFI15:
+ 543              		.cfi_def_cfa_offset 20
+ 544              		.cfi_offset 4, -20
+ 545              		.cfi_offset 5, -16
+ 546              		.cfi_offset 6, -12
+ 547              		.cfi_offset 7, -8
+ 548              		.cfi_offset 14, -4
+ 549 000c 93B0     		sub	sp, sp, #76
+ 550              	.LCFI16:
+ 551              		.cfi_def_cfa_offset 96
+ 552 000e 0E46     		mov	r6, r1
+ 553              		.loc 1 145 35 discriminator 1 view .LVU107
+ 554 0010 89B3     		cbz	r1, .L50
+ 555              		.loc 1 145 63 discriminator 2 view .LVU108
+ 556 0012 1B4B     		ldr	r3, .L63+4
+ 557 0014 1B68     		ldr	r3, [r3]
+ 558              		.loc 1 145 47 discriminator 2 view .LVU109
+ 559 0016 73B3     		cbz	r3, .L50
+ 560              	.LBB5:
+ 146:Core/Src/debug_uart.c ****         BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+ 561              		.loc 1 146 9 is_stmt 1 view .LVU110
+ 562              		.loc 1 146 20 is_stmt 0 view .LVU111
+ 563 0018 0024     		movs	r4, #0
+ 564 001a 0094     		str	r4, [sp]
+ 147:Core/Src/debug_uart.c **** 
+ 148:Core/Src/debug_uart.c ****         /* Echo received data back as-is (proof of RX functionality) */
+ 149:Core/Src/debug_uart.c ****         for (uint16_t i = 0; i < Size; ) {
+ 565              		.loc 1 149 9 is_stmt 1 view .LVU112
+ 566              	.LBB6:
+ 567              		.loc 1 149 14 view .LVU113
+ 568              	.LVL31:
+ 569              		.loc 1 149 9 is_stmt 0 view .LVU114
+ 570 001c 11E0     		b	.L52
+ 571              	.LVL32:
+ 572              	.L53:
+ 573              	.LBB7:
+ 150:Core/Src/debug_uart.c ****             UartRxMsg_t msg;
+ 151:Core/Src/debug_uart.c ****             uint16_t chunk = Size - i;
+ 152:Core/Src/debug_uart.c ****             if (chunk > UART_MSG_BUF_SIZE) chunk = UART_MSG_BUF_SIZE;
+ 153:Core/Src/debug_uart.c ****             memcpy(msg.data, (char *)&uart_rx_buf[i], chunk);
+ 574              		.loc 1 153 13 is_stmt 1 view .LVU115
+ 575 001e 01AF     		add	r7, sp, #4
+ 576 0020 2A46     		mov	r2, r5
+ 577 0022 1849     		ldr	r1, .L63+8
+ 578 0024 2144     		add	r1, r1, r4
+ 579 0026 3846     		mov	r0, r7
+ 580 0028 FFF7FEFF 		bl	memcpy
+ 581              	.LVL33:
+ 154:Core/Src/debug_uart.c ****             msg.len = chunk;
+ 582              		.loc 1 154 13 view .LVU116
+ 583              		.loc 1 154 21 is_stmt 0 view .LVU117
+ 584 002c ADF84450 		strh	r5, [sp, #68]	@ movhi
+ 155:Core/Src/debug_uart.c ****             xQueueSendFromISR(xUartRxQueue, &msg, &xHigherPriorityTaskWoken);
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s 			page 15
 
 
- 553 0014 1B68     		ldr	r3, [r3]
- 554              		.loc 1 143 47 discriminator 2 view .LVU108
- 555 0016 83B3     		cbz	r3, .L51
- 556              	.LBB5:
- 144:Core/Src/debug_uart.c ****         BaseType_t xHigherPriorityTaskWoken = pdFALSE;
- 557              		.loc 1 144 9 is_stmt 1 view .LVU109
- 558              		.loc 1 144 20 is_stmt 0 view .LVU110
- 559 0018 0024     		movs	r4, #0
- 560 001a 0094     		str	r4, [sp]
- 145:Core/Src/debug_uart.c **** 
- 146:Core/Src/debug_uart.c ****         /* Echo received data back as-is (proof of RX functionality) */
- 147:Core/Src/debug_uart.c ****         for (uint16_t i = 0; i < Size; ) {
- 561              		.loc 1 147 9 is_stmt 1 view .LVU111
- 562              	.LBB6:
- 563              		.loc 1 147 14 view .LVU112
- 564              	.LVL32:
- 565              		.loc 1 147 9 is_stmt 0 view .LVU113
- 566 001c 11E0     		b	.L53
- 567              	.LVL33:
- 568              	.L54:
- 569              	.LBB7:
- 148:Core/Src/debug_uart.c ****             UartRxMsg_t msg;
- 149:Core/Src/debug_uart.c ****             uint16_t chunk = Size - i;
- 150:Core/Src/debug_uart.c ****             if (chunk > UART_RX_BUF_SIZE) chunk = UART_RX_BUF_SIZE;
- 151:Core/Src/debug_uart.c ****             memcpy(msg.data, (char *)&uart_rx_buf[i], chunk);
- 570              		.loc 1 151 13 is_stmt 1 view .LVU114
- 571 001e 01AF     		add	r7, sp, #4
- 572 0020 2A46     		mov	r2, r5
- 573 0022 1949     		ldr	r1, .L64+8
- 574 0024 2144     		add	r1, r1, r4
- 575 0026 3846     		mov	r0, r7
- 576 0028 FFF7FEFF 		bl	memcpy
- 577              	.LVL34:
- 152:Core/Src/debug_uart.c ****             msg.len = chunk;
- 578              		.loc 1 152 13 view .LVU115
- 579              		.loc 1 152 21 is_stmt 0 view .LVU116
- 580 002c ADF84450 		strh	r5, [sp, #68]	@ movhi
- 153:Core/Src/debug_uart.c ****             xQueueSendFromISR(xUartRxQueue, &msg, &xHigherPriorityTaskWoken);
- 581              		.loc 1 153 13 is_stmt 1 view .LVU117
- 582 0030 0023     		movs	r3, #0
- 583 0032 6A46     		mov	r2, sp
- 584 0034 3946     		mov	r1, r7
- 585 0036 1348     		ldr	r0, .L64+4
- 586 0038 0068     		ldr	r0, [r0]
- 587 003a FFF7FEFF 		bl	xQueueGenericSendFromISR
- 588              	.LVL35:
- 154:Core/Src/debug_uart.c ****             i += chunk;
- 589              		.loc 1 154 13 view .LVU118
- 590              		.loc 1 154 15 is_stmt 0 view .LVU119
- 591 003e 2C44     		add	r4, r4, r5
- 592              	.LVL36:
- 593              		.loc 1 154 15 view .LVU120
- 594 0040 A4B2     		uxth	r4, r4
- 595              	.LVL37:
- 596              	.L53:
- 597              		.loc 1 154 15 view .LVU121
- 598              	.LBE7:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s 			page 15
+ 585              		.loc 1 155 13 is_stmt 1 view .LVU118
+ 586 0030 0023     		movs	r3, #0
+ 587 0032 6A46     		mov	r2, sp
+ 588 0034 3946     		mov	r1, r7
+ 589 0036 1248     		ldr	r0, .L63+4
+ 590 0038 0068     		ldr	r0, [r0]
+ 591 003a FFF7FEFF 		bl	xQueueGenericSendFromISR
+ 592              	.LVL34:
+ 156:Core/Src/debug_uart.c ****             i += chunk;
+ 593              		.loc 1 156 13 view .LVU119
+ 594              		.loc 1 156 15 is_stmt 0 view .LVU120
+ 595 003e 2C44     		add	r4, r4, r5
+ 596              	.LVL35:
+ 597              		.loc 1 156 15 view .LVU121
+ 598 0040 A4B2     		uxth	r4, r4
+ 599              	.LVL36:
+ 600              	.L52:
+ 601              		.loc 1 156 15 view .LVU122
+ 602              	.LBE7:
+ 149:Core/Src/debug_uart.c ****             UartRxMsg_t msg;
+ 603              		.loc 1 149 32 is_stmt 1 discriminator 1 view .LVU123
+ 604 0042 B442     		cmp	r4, r6
+ 605 0044 05D2     		bcs	.L62
+ 606              	.LBB8:
+ 150:Core/Src/debug_uart.c ****             uint16_t chunk = Size - i;
+ 607              		.loc 1 150 13 view .LVU124
+ 151:Core/Src/debug_uart.c ****             if (chunk > UART_MSG_BUF_SIZE) chunk = UART_MSG_BUF_SIZE;
+ 608              		.loc 1 151 13 view .LVU125
+ 151:Core/Src/debug_uart.c ****             if (chunk > UART_MSG_BUF_SIZE) chunk = UART_MSG_BUF_SIZE;
+ 609              		.loc 1 151 22 is_stmt 0 view .LVU126
+ 610 0046 351B     		subs	r5, r6, r4
+ 611 0048 ADB2     		uxth	r5, r5
+ 612              	.LVL37:
+ 152:Core/Src/debug_uart.c ****             memcpy(msg.data, (char *)&uart_rx_buf[i], chunk);
+ 613              		.loc 1 152 13 is_stmt 1 view .LVU127
+ 152:Core/Src/debug_uart.c ****             memcpy(msg.data, (char *)&uart_rx_buf[i], chunk);
+ 614              		.loc 1 152 16 is_stmt 0 view .LVU128
+ 615 004a 402D     		cmp	r5, #64
+ 616 004c E7D9     		bls	.L53
+ 152:Core/Src/debug_uart.c ****             memcpy(msg.data, (char *)&uart_rx_buf[i], chunk);
+ 617              		.loc 1 152 50 discriminator 1 view .LVU129
+ 618 004e 4025     		movs	r5, #64
+ 619              	.LVL38:
+ 152:Core/Src/debug_uart.c ****             memcpy(msg.data, (char *)&uart_rx_buf[i], chunk);
+ 620              		.loc 1 152 50 discriminator 1 view .LVU130
+ 621 0050 E5E7     		b	.L53
+ 622              	.LVL39:
+ 623              	.L62:
+ 152:Core/Src/debug_uart.c ****             memcpy(msg.data, (char *)&uart_rx_buf[i], chunk);
+ 624              		.loc 1 152 50 discriminator 1 view .LVU131
+ 625              	.LBE8:
+ 626              	.LBE6:
+ 157:Core/Src/debug_uart.c ****         }
+ 158:Core/Src/debug_uart.c **** 
+ 159:Core/Src/debug_uart.c ****         /* Restart DMA reception for next frame */
+ 160:Core/Src/debug_uart.c ****         HAL_UARTEx_ReceiveToIdle_DMA(&huart1, uart_rx_buf, UART_DMA_RX_BUF_SIZE);
+ 627              		.loc 1 160 9 is_stmt 1 view .LVU132
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s 			page 16
 
 
- 147:Core/Src/debug_uart.c ****             UartRxMsg_t msg;
- 599              		.loc 1 147 32 is_stmt 1 discriminator 1 view .LVU122
- 600 0042 B442     		cmp	r4, r6
- 601 0044 07D2     		bcs	.L63
- 602              	.LBB8:
- 148:Core/Src/debug_uart.c ****             uint16_t chunk = Size - i;
- 603              		.loc 1 148 13 view .LVU123
- 149:Core/Src/debug_uart.c ****             if (chunk > UART_RX_BUF_SIZE) chunk = UART_RX_BUF_SIZE;
- 604              		.loc 1 149 13 view .LVU124
- 149:Core/Src/debug_uart.c ****             if (chunk > UART_RX_BUF_SIZE) chunk = UART_RX_BUF_SIZE;
- 605              		.loc 1 149 22 is_stmt 0 view .LVU125
- 606 0046 351B     		subs	r5, r6, r4
- 607 0048 ADB2     		uxth	r5, r5
- 608              	.LVL38:
- 150:Core/Src/debug_uart.c ****             memcpy(msg.data, (char *)&uart_rx_buf[i], chunk);
- 609              		.loc 1 150 13 is_stmt 1 view .LVU126
- 150:Core/Src/debug_uart.c ****             memcpy(msg.data, (char *)&uart_rx_buf[i], chunk);
- 610              		.loc 1 150 16 is_stmt 0 view .LVU127
- 611 004a B5F5807F 		cmp	r5, #256
- 612 004e E6D9     		bls	.L54
- 150:Core/Src/debug_uart.c ****             memcpy(msg.data, (char *)&uart_rx_buf[i], chunk);
- 613              		.loc 1 150 49 discriminator 1 view .LVU128
- 614 0050 4FF48075 		mov	r5, #256
- 615              	.LVL39:
- 150:Core/Src/debug_uart.c ****             memcpy(msg.data, (char *)&uart_rx_buf[i], chunk);
- 616              		.loc 1 150 49 discriminator 1 view .LVU129
- 617 0054 E3E7     		b	.L54
- 618              	.LVL40:
- 619              	.L63:
- 150:Core/Src/debug_uart.c ****             memcpy(msg.data, (char *)&uart_rx_buf[i], chunk);
- 620              		.loc 1 150 49 discriminator 1 view .LVU130
- 621              	.LBE8:
- 622              	.LBE6:
- 155:Core/Src/debug_uart.c ****         }
- 156:Core/Src/debug_uart.c ****         
- 157:Core/Src/debug_uart.c ****         /* Restart DMA reception for next frame */
- 158:Core/Src/debug_uart.c ****         HAL_UARTEx_ReceiveToIdle_DMA(&huart1, uart_rx_buf, UART_RX_BUF_SIZE);
- 623              		.loc 1 158 9 is_stmt 1 view .LVU131
- 624 0056 4FF48072 		mov	r2, #256
- 625 005a 0B49     		ldr	r1, .L64+8
- 626 005c 0B48     		ldr	r0, .L64+12
- 627 005e FFF7FEFF 		bl	HAL_UARTEx_ReceiveToIdle_DMA
- 628              	.LVL41:
- 159:Core/Src/debug_uart.c ****         portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
- 629              		.loc 1 159 9 view .LVU132
- 630              		.loc 1 159 9 view .LVU133
- 631 0062 009B     		ldr	r3, [sp]
- 632 0064 4BB1     		cbz	r3, .L51
- 633              		.loc 1 159 9 discriminator 1 view .LVU134
- 634 0066 4FF0E023 		mov	r3, #-536813568
- 635 006a 4FF08052 		mov	r2, #268435456
- 636 006e C3F8042D 		str	r2, [r3, #3332]
- 637              		.loc 1 159 9 view .LVU135
- 638              		.loc 1 159 9 is_stmt 0 discriminator 1 view .LVU136
- 639              		.syntax unified
- 640              	@ 159 "Core/Src/debug_uart.c" 1
- 641 0072 BFF34F8F 		dsb
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s 			page 16
+ 628 0052 4FF48072 		mov	r2, #256
+ 629 0056 0B49     		ldr	r1, .L63+8
+ 630 0058 0B48     		ldr	r0, .L63+12
+ 631 005a FFF7FEFF 		bl	HAL_UARTEx_ReceiveToIdle_DMA
+ 632              	.LVL40:
+ 161:Core/Src/debug_uart.c ****         portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+ 633              		.loc 1 161 9 view .LVU133
+ 634              		.loc 1 161 9 view .LVU134
+ 635 005e 009B     		ldr	r3, [sp]
+ 636 0060 4BB1     		cbz	r3, .L50
+ 637              		.loc 1 161 9 discriminator 1 view .LVU135
+ 638 0062 4FF0E023 		mov	r3, #-536813568
+ 639 0066 4FF08052 		mov	r2, #268435456
+ 640 006a C3F8042D 		str	r2, [r3, #3332]
+ 641              		.loc 1 161 9 view .LVU136
+ 642              		.loc 1 161 9 is_stmt 0 discriminator 1 view .LVU137
+ 643              		.syntax unified
+ 644              	@ 161 "Core/Src/debug_uart.c" 1
+ 645 006e BFF34F8F 		dsb
+ 646              	@ 0 "" 2
+ 647              		.loc 1 161 9 is_stmt 1 view .LVU138
+ 648              		.loc 1 161 9 is_stmt 0 discriminator 1 view .LVU139
+ 649              	@ 161 "Core/Src/debug_uart.c" 1
+ 650 0072 BFF36F8F 		isb
+ 651              	@ 0 "" 2
+ 652              		.loc 1 161 9 is_stmt 1 discriminator 3 view .LVU140
+ 653              		.loc 1 161 9 discriminator 3 view .LVU141
+ 654              	.LVL41:
+ 655              		.thumb
+ 656              		.syntax unified
+ 657              	.L50:
+ 658              		.loc 1 161 9 is_stmt 0 discriminator 3 view .LVU142
+ 659              	.LBE5:
+ 162:Core/Src/debug_uart.c ****     }
+ 163:Core/Src/debug_uart.c **** }
+ 660              		.loc 1 163 1 view .LVU143
+ 661 0076 13B0     		add	sp, sp, #76
+ 662              	.LCFI17:
+ 663              		.cfi_def_cfa_offset 20
+ 664              		@ sp needed
+ 665 0078 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 666              	.L64:
+ 667 007a 00BF     		.align	2
+ 668              	.L63:
+ 669 007c 00380140 		.word	1073821696
+ 670 0080 00000000 		.word	xUartRxQueue
+ 671 0084 00000000 		.word	uart_rx_buf
+ 672 0088 00000000 		.word	huart1
+ 673              		.cfi_endproc
+ 674              	.LFE79:
+ 676              		.section	.bss.uart_rx_buf,"aw",%nobits
+ 677              		.align	2
+ 680              	uart_rx_buf:
+ 681 0000 00000000 		.space	256
+ 681      00000000 
+ 681      00000000 
+ 681      00000000 
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s 			page 17
 
 
- 642              	@ 0 "" 2
- 643              		.loc 1 159 9 is_stmt 1 view .LVU137
- 644              		.loc 1 159 9 is_stmt 0 discriminator 1 view .LVU138
- 645              	@ 159 "Core/Src/debug_uart.c" 1
- 646 0076 BFF36F8F 		isb
- 647              	@ 0 "" 2
- 648              		.loc 1 159 9 is_stmt 1 discriminator 3 view .LVU139
- 649              		.loc 1 159 9 discriminator 3 view .LVU140
- 650              	.LVL42:
- 651              		.thumb
- 652              		.syntax unified
- 653              	.L51:
- 654              		.loc 1 159 9 is_stmt 0 discriminator 3 view .LVU141
- 655              	.LBE5:
- 160:Core/Src/debug_uart.c ****     }
- 161:Core/Src/debug_uart.c **** }
- 656              		.loc 1 161 1 view .LVU142
- 657 007a 13B0     		add	sp, sp, #76
- 658              	.LCFI17:
- 659              		.cfi_def_cfa_offset 20
- 660              		@ sp needed
- 661 007c F0BD     		pop	{r4, r5, r6, r7, pc}
- 662              	.L65:
- 663 007e 00BF     		.align	2
- 664              	.L64:
- 665 0080 00380140 		.word	1073821696
- 666 0084 00000000 		.word	xUartRxQueue
- 667 0088 00000000 		.word	uart_rx_buf
- 668 008c 00000000 		.word	huart1
- 669              		.cfi_endproc
- 670              	.LFE79:
- 672              		.section	.bss.uart_rx_buf,"aw",%nobits
- 673              		.align	2
- 676              	uart_rx_buf:
- 677 0000 00000000 		.space	256
- 677      00000000 
- 677      00000000 
- 677      00000000 
- 677      00000000 
- 678              		.section	.bss.xTxDmaSemaphore,"aw",%nobits
- 679              		.align	2
- 682              	xTxDmaSemaphore:
- 683 0000 00000000 		.space	4
- 684              		.section	.bss.xUartRxQueue,"aw",%nobits
- 685              		.align	2
- 688              	xUartRxQueue:
- 689 0000 00000000 		.space	4
- 690              		.section	.bss.xUartTxQueue,"aw",%nobits
- 691              		.align	2
- 694              	xUartTxQueue:
- 695 0000 00000000 		.space	4
- 696              		.text
- 697              	.Letext0:
- 698              		.file 2 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_defa
- 699              		.file 3 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/lib/gcc/arm-none-eabi/14.2.1/includ
- 700              		.file 4 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h
- 701              		.file 5 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h"
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s 			page 17
-
-
- 702              		.file 6 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h"
- 703              		.file 7 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h"
- 704              		.file 8 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h"
- 705              		.file 9 "Middlewares/FreeRTOS/Source/include/projdefs.h"
- 706              		.file 10 "Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h"
- 707              		.file 11 "Middlewares/FreeRTOS/Source/include/task.h"
- 708              		.file 12 "Middlewares/FreeRTOS/Source/include/queue.h"
- 709              		.file 13 "Middlewares/FreeRTOS/Source/include/semphr.h"
- 710              		.file 14 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/stdio.h"
- 711              		.file 15 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/string.h"
- 712              		.file 16 "Core/Inc/usart.h"
- 713              		.file 17 "<built-in>"
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s 			page 18
+ 681      00000000 
+ 682              		.section	.bss.xTxDmaSemaphore,"aw",%nobits
+ 683              		.align	2
+ 686              	xTxDmaSemaphore:
+ 687 0000 00000000 		.space	4
+ 688              		.section	.bss.xUartRxQueue,"aw",%nobits
+ 689              		.align	2
+ 692              	xUartRxQueue:
+ 693 0000 00000000 		.space	4
+ 694              		.section	.bss.xUartTxQueue,"aw",%nobits
+ 695              		.align	2
+ 698              	xUartTxQueue:
+ 699 0000 00000000 		.space	4
+ 700              		.text
+ 701              	.Letext0:
+ 702              		.file 2 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_defa
+ 703              		.file 3 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/lib/gcc/arm-none-eabi/14.2.1/includ
+ 704              		.file 4 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h
+ 705              		.file 5 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h"
+ 706              		.file 6 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h"
+ 707              		.file 7 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h"
+ 708              		.file 8 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h"
+ 709              		.file 9 "Middlewares/FreeRTOS/Source/include/projdefs.h"
+ 710              		.file 10 "Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h"
+ 711              		.file 11 "Middlewares/FreeRTOS/Source/include/task.h"
+ 712              		.file 12 "Middlewares/FreeRTOS/Source/include/queue.h"
+ 713              		.file 13 "Middlewares/FreeRTOS/Source/include/semphr.h"
+ 714              		.file 14 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/stdio.h"
+ 715              		.file 15 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/string.h"
+ 716              		.file 16 "Core/Inc/usart.h"
+ 717              		.file 17 "<built-in>"
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s 			page 18
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 debug_uart.c
-C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s:19     .text.vUartTxTask:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s:25     .text.vUartTxTask:00000000 vUartTxTask
-C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s:77     .text.vUartTxTask:00000034 $d
-C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s:694    .bss.xUartTxQueue:00000000 xUartTxQueue
-C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s:682    .bss.xTxDmaSemaphore:00000000 xTxDmaSemaphore
-C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s:84     .rodata.vUartRxTask.str1.4:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s:88     .text.vUartRxTask:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s:94     .text.vUartRxTask:00000000 vUartRxTask
-C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s:143    .text.vUartRxTask:00000030 $d
-C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s:688    .bss.xUartRxQueue:00000000 xUartRxQueue
-C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s:149    .text._write:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s:155    .text._write:00000000 _write
-C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s:263    .text._write:0000005c $d
-C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s:270    .text.HAL_UART_TxCpltCallback:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s:276    .text.HAL_UART_TxCpltCallback:00000000 HAL_UART_TxCpltCallback
-C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s:354    .text.HAL_UART_TxCpltCallback:00000040 $d
-C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s:360    .text.DebugUART_StartRx:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s:366    .text.DebugUART_StartRx:00000000 DebugUART_StartRx
-C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s:388    .text.DebugUART_StartRx:00000010 $d
-C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s:676    .bss.uart_rx_buf:00000000 uart_rx_buf
-C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s:394    .rodata.DebugUART_Init.str1.4:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s:401    .text.DebugUART_Init:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s:407    .text.DebugUART_Init:00000000 DebugUART_Init
-C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s:503    .text.DebugUART_Init:00000070 $d
-C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s:514    .text.HAL_UARTEx_RxEventCallback:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s:520    .text.HAL_UARTEx_RxEventCallback:00000000 HAL_UARTEx_RxEventCallback
-C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s:665    .text.HAL_UARTEx_RxEventCallback:00000080 $d
-C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s:673    .bss.uart_rx_buf:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s:679    .bss.xTxDmaSemaphore:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s:685    .bss.xUartRxQueue:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\cc7BoDfv.s:691    .bss.xUartTxQueue:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s:19     .text.vUartTxTask:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s:25     .text.vUartTxTask:00000000 vUartTxTask
+C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s:77     .text.vUartTxTask:00000034 $d
+C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s:698    .bss.xUartTxQueue:00000000 xUartTxQueue
+C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s:686    .bss.xTxDmaSemaphore:00000000 xTxDmaSemaphore
+C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s:84     .rodata.DebugUART_Init.str1.4:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s:91     .text.DebugUART_Init:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s:97     .text.DebugUART_Init:00000000 DebugUART_Init
+C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s:189    .text.DebugUART_Init:0000006c $d
+C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s:692    .bss.xUartRxQueue:00000000 xUartRxQueue
+C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s:461    .text.vUartRxTask:00000000 vUartRxTask
+C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s:200    .text._write:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s:206    .text._write:00000000 _write
+C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s:321    .text._write:00000068 $d
+C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s:327    .text.HAL_UART_TxCpltCallback:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s:333    .text.HAL_UART_TxCpltCallback:00000000 HAL_UART_TxCpltCallback
+C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s:411    .text.HAL_UART_TxCpltCallback:00000040 $d
+C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s:417    .text.DebugUART_StartRx:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s:423    .text.DebugUART_StartRx:00000000 DebugUART_StartRx
+C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s:445    .text.DebugUART_StartRx:00000010 $d
+C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s:680    .bss.uart_rx_buf:00000000 uart_rx_buf
+C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s:451    .rodata.vUartRxTask.str1.4:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s:455    .text.vUartRxTask:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s:512    .text.vUartRxTask:00000034 $d
+C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s:518    .text.HAL_UARTEx_RxEventCallback:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s:524    .text.HAL_UARTEx_RxEventCallback:00000000 HAL_UARTEx_RxEventCallback
+C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s:669    .text.HAL_UARTEx_RxEventCallback:0000007c $d
+C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s:677    .bss.uart_rx_buf:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s:683    .bss.xTxDmaSemaphore:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s:689    .bss.xUartRxQueue:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccq12XKY.s:695    .bss.xUartTxQueue:00000000 $d
 
 UNDEFINED SYMBOLS
 xQueueReceive
 HAL_UART_Transmit_DMA
 xQueueSemaphoreTake
 huart1
-printf
+xQueueGenericCreate
+xTaskCreate
+xTaskGetSchedulerState
 HAL_UART_Transmit
 memcpy
 xQueueGenericSend
 xQueueGiveFromISR
 HAL_UARTEx_ReceiveToIdle_DMA
-xQueueGenericCreate
-xTaskCreate
+printf
 xQueueGenericSendFromISR

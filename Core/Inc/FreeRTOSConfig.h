@@ -63,4 +63,10 @@
 #define configUSE_TRACE_FACILITY                1
 #define configUSE_STATS_FORMATTING_FUNCTIONS    1
 
+/* 启用互斥量 (xSemaphoreCreateMutex 需要) */
+#define configUSE_MUTEXES                       1
+
+/* 启用 xTaskGetSchedulerState() */
+#define INCLUDE_xTaskGetSchedulerState          1
+
 #endif

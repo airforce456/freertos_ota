@@ -1,6 +1,11 @@
 #ifndef __SOFT_I2C_H__
 #define __SOFT_I2C_H__
 #include "main.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
+
+/* I2C bus mutex — shared by MPU6050 and OLED (both use PB6/PB7 soft I2C) */
+extern SemaphoreHandle_t xI2CMutex;
 
 #define SOFT_I2C_SCL_PORT   GPIOB
 #define SOFT_I2C_SCL_PIN    GPIO_PIN_6
@@ -12,12 +17,15 @@
 #define SCL_Low()   GPIOB->BRR = GPIO_PIN_6
 #define SDA_High()  GPIOB->BSRR = GPIO_PIN_7
 #define SDA_Low()   GPIOB->BRR = GPIO_PIN_7
-
+typedef enum {
+    SOFT_I2C_OK    = 0,
+    SOFT_I2C_ERROR = 1
+} SoftI2C_Status;
 
 
 uint8_t MyI2C_R_SDA(void); 
 
-#define I2C_Delay_US()  { for (volatile int i = 0; i < 5; i++); }  /* 简单延时，约 8~10us (确保 > 标准模式 4.7us) */
+#define I2C_Delay_US()  { for (volatile int i = 0; i < 80; i++); }  /* 简单延时，约 8~10us (确保 > 标准模式 4.7us) */
 void MyI2C_Init(void);
 
 

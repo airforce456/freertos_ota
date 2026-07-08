@@ -1,4 +1,4 @@
-build/soft_i2c.o: Core/Src/soft_i2c.c Core/Inc/soft_i2c.h Core/Inc/main.h \
+build/oled.o: Core/Src/oled.c Core/Inc/oled.h Core/Inc/main.h \
  Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h \
  Core/Inc/stm32f1xx_hal_conf.h \
  Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h \
@@ -23,8 +23,8 @@ build/soft_i2c.o: Core/Src/soft_i2c.c Core/Inc/soft_i2c.h Core/Inc/main.h \
  Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h \
  Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h \
  Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h \
- Middlewares/FreeRTOS/Source/include/FreeRTOS.h Core/Inc/FreeRTOSConfig.h \
- Middlewares/FreeRTOS/Source/include/projdefs.h \
+ Core/Inc/soft_i2c.h Middlewares/FreeRTOS/Source/include/FreeRTOS.h \
+ Core/Inc/FreeRTOSConfig.h Middlewares/FreeRTOS/Source/include/projdefs.h \
  Middlewares/FreeRTOS/Source/include/portable.h \
  Middlewares/FreeRTOS/Source/include/deprecated_definitions.h \
  Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h \
@@ -32,8 +32,8 @@ build/soft_i2c.o: Core/Src/soft_i2c.c Core/Inc/soft_i2c.h Core/Inc/main.h \
  Middlewares/FreeRTOS/Source/include/semphr.h \
  Middlewares/FreeRTOS/Source/include/queue.h \
  Middlewares/FreeRTOS/Source/include/task.h \
- Middlewares/FreeRTOS/Source/include/list.h Core/Inc/main.h
-Core/Inc/soft_i2c.h:
+ Middlewares/FreeRTOS/Source/include/list.h
+Core/Inc/oled.h:
 Core/Inc/main.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 Core/Inc/stm32f1xx_hal_conf.h:
@@ -61,6 +61,7 @@ Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h:
+Core/Inc/soft_i2c.h:
 Middlewares/FreeRTOS/Source/include/FreeRTOS.h:
 Core/Inc/FreeRTOSConfig.h:
 Middlewares/FreeRTOS/Source/include/projdefs.h:
@@ -72,4 +73,3 @@ Middlewares/FreeRTOS/Source/include/semphr.h:
 Middlewares/FreeRTOS/Source/include/queue.h:
 Middlewares/FreeRTOS/Source/include/task.h:
 Middlewares/FreeRTOS/Source/include/list.h:
-Core/Inc/main.h:

@@ -22,7 +22,17 @@ build/mpu6050.o: Core/Src/mpu6050.c Core/Inc/mpu6050.h Core/Inc/main.h \
  Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h \
  Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h \
  Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h \
- Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h Core/Inc/i2c.h
+ Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h \
+ Core/Inc/soft_i2c.h Middlewares/FreeRTOS/Source/include/FreeRTOS.h \
+ Core/Inc/FreeRTOSConfig.h Middlewares/FreeRTOS/Source/include/projdefs.h \
+ Middlewares/FreeRTOS/Source/include/portable.h \
+ Middlewares/FreeRTOS/Source/include/deprecated_definitions.h \
+ Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h \
+ Middlewares/FreeRTOS/Source/include/mpu_wrappers.h \
+ Middlewares/FreeRTOS/Source/include/semphr.h \
+ Middlewares/FreeRTOS/Source/include/queue.h \
+ Middlewares/FreeRTOS/Source/include/task.h \
+ Middlewares/FreeRTOS/Source/include/list.h
 Core/Inc/mpu6050.h:
 Core/Inc/main.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
@@ -51,4 +61,15 @@ Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h:
-Core/Inc/i2c.h:
+Core/Inc/soft_i2c.h:
+Middlewares/FreeRTOS/Source/include/FreeRTOS.h:
+Core/Inc/FreeRTOSConfig.h:
+Middlewares/FreeRTOS/Source/include/projdefs.h:
+Middlewares/FreeRTOS/Source/include/portable.h:
+Middlewares/FreeRTOS/Source/include/deprecated_definitions.h:
+Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h:
+Middlewares/FreeRTOS/Source/include/mpu_wrappers.h:
+Middlewares/FreeRTOS/Source/include/semphr.h:
+Middlewares/FreeRTOS/Source/include/queue.h:
+Middlewares/FreeRTOS/Source/include/task.h:
+Middlewares/FreeRTOS/Source/include/list.h:
