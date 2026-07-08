@@ -4,16 +4,6 @@
   * @file           : main.c
   * @brief          : Main program body
   ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2026 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
@@ -38,25 +28,21 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-
 /* USER CODE BEGIN PV */
-QueueHandle_t xSensorQueue = NULL;   /* MPU6050_Data_t: 生产者→消费�? */
-QueueHandle_t xCookedQueue = NULL;   /* Cooked_Data_t: 消费者→消费�? */
-SemaphoreHandle_t xI2CMutex = NULL;  /* 保护�? I2C 总线 (MPU6050 & OLED 共享) */
+QueueHandle_t xSensorQueue = NULL;   /* MPU6050_Data_t: 生产者→消费者 */
+QueueHandle_t xCookedQueue = NULL;   /* Cooked_Data_t: 消费者→消费者 */
+SemaphoreHandle_t xI2CMutex = NULL;  /* 保护软 I2C 总线 (MPU6050 & OLED 共享) */
 typedef struct
 {
     QueueHandle_t xSensorQueue;
@@ -66,7 +52,6 @@ typedef struct
     int16_t az_offset;
 } TaskParam_t;
 TaskParam_t ProcessTaskParam;
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -79,7 +64,7 @@ void Task_DataProcess(void *argument);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-uint8_t rebyte=0;
+uint8_t rebyte = 0;
 /* USER CODE END 0 */
 
 /**
@@ -88,77 +73,110 @@ uint8_t rebyte=0;
   */
 int main(void)
 {
-    /* ---- HAL & �����ʼ�� ---- */
-    HAL_Init();
-    SystemClock_Config();
-    MX_DMA_Init();
-    MX_GPIO_Init();
-    
-    MX_USART1_UART_Init();
+  /* USER CODE BEGIN 1 */
+  /* 此处可放少量初始化代码（CubeMX 会在 HAL_Init() 之前执行） */
+  /* USER CODE END 1 */
 
-    /* ---- �� I2C ��ʼ�����ӹ� PB6/PB7���ͷ�Ӳ�� I2C1�� ---- */
-    MyI2C_Init();
+  /* MCU Configuration--------------------------------------------------------*/
 
-    /* ---- OLED ��ʼ�� ---- */
-    OLED_Init();
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+  HAL_Init();
 
-    /* ---- MPU6050 ��ʼ�� ---- */
-    if (MPU6050_Init() != SOFT_I2C_OK) {
-        printf("[ERR] MPU6050 init failed! Check wiring.\r\n");
-        while (1) {}
-    }
-    printf("[OK] MPU6050 WHO_AM_I = 0x%02X\r\n", MPU6050_ReadWhoAmI());
+  /* USER CODE BEGIN Init */
+  /* USER CODE END Init */
 
-    /* ---- ��ƫУ׼�����������뱣�־�ֹ�� ---- */
-    int16_t offset_ax = 0, offset_ay = 0, offset_az = 0;
-    MPU6050_Calibrate(&offset_ax, &offset_ay, &offset_az);
+  /* Configure the system clock */
+  SystemClock_Config();
 
-    /* ---- ���� I2C ���߻�������MPU6050 & OLED ������ I2C�� ---- */
-    xI2CMutex = xSemaphoreCreateMutex();
-    if (xI2CMutex == NULL) {
-        printf("[ERR] Failed to create I2C mutex!\r\n");
-        while (1) {}
-    }
+  /* USER CODE BEGIN SysInit */
+  /* USER CODE END SysInit */
 
-    /* ---- �����������ݹܵ����� ---- */
-    xSensorQueue = xQueueCreate(8, sizeof(MPU6050_Data_t));     /* ԭʼ����: 8 �� */
-    xCookedQueue = xQueueCreate(4, sizeof(SensorCooked_t));     /* ��������: 4 �� */
-    if (xSensorQueue == NULL || xCookedQueue == NULL) {
-        printf("[ERR] Failed to create queues!\r\n");
-        while (1) {}
-    }
+  /* Initialize all configured peripherals */
+  MX_DMA_Init();
+  MX_GPIO_Init();
+  MX_USART1_UART_Init();
+  /* 注意：不调用 MX_I2C1_Init() — 使用软 I2C */
 
-    /* ---- ��ʼ�������ṹ�� ---- */
-    ProcessTaskParam.xSensorQueue = xSensorQueue;
-    ProcessTaskParam.xCookedQueue = xCookedQueue;
-    ProcessTaskParam.ax_offset = offset_ax;
-    ProcessTaskParam.ay_offset = offset_ay;
-    ProcessTaskParam.az_offset = offset_az;
+  /* USER CODE BEGIN 2 */
+  /* ============================================================
+   *  以下为用户自定义初始化代码 — CubeMX 生成时不会被覆盖
+   * ============================================================ */
 
-    /* ---- ���� 3 ����ˮ������ ---- */
-    /* MPU6050 ��ȡ���������ߣ�Prio=2�� */
-    xTaskCreate(Task_MPU6050_Read, "MPU_Read", 256,
-                (void *)xSensorQueue, 2, NULL);
+  /* ---- 软 I2C 初始化（接管 PB6/PB7，释放硬件 I2C1） ---- */
+  MyI2C_Init();
 
-    /* ���ݴ������񣨴�������Prio=2�� */
-    xTaskCreate(Task_DataProcess, "DataProc", 512,
-                (void *)&ProcessTaskParam, 2, NULL);
+  /* ---- OLED 初始化 ---- */
+  OLED_Init();
 
-    /* OLED ��ʾ���������ߣ�Prio=1�� */
-    xTaskCreate(Task_OLED_Display, "OLED_Disp", 256,
-                (void *)xCookedQueue, 1, NULL);
+  /* ---- MPU6050 初始化 ---- */
+  if (MPU6050_Init() != SOFT_I2C_OK) {
+      printf("[ERR] MPU6050 init failed! Check wiring.\r\n");
+      while (1) {}
+  }
+  printf("[OK] MPU6050 WHO_AM_I = 0x%02X\r\n", MPU6050_ReadWhoAmI());
 
-    /* ---- �������Դ��ڣ����� UART TX/RX ���� ---- */
-    DebugUART_Init();
+  /* ---- 零偏校准（校准时传感器需保持静止） ---- */
+  int16_t offset_ax = 0, offset_ay = 0, offset_az = 0;
+  MPU6050_Calibrate(&offset_ax, &offset_ay, &offset_az);
 
-    printf("\r\n========== FreeRTOS + MPU6050 + OLED Data Pipeline ==========\r\n");
-    printf("Tasks: MPU_Read(2) -> Queue[8] -> DataProc(2) -> Queue[4] -> OLED_Disp(1)\r\n\r\n");
+  /* ---- 创建 I2C 总线互斥锁（MPU6050 & OLED 共享软 I2C） ---- */
+  xI2CMutex = xSemaphoreCreateMutex();
+  if (xI2CMutex == NULL) {
+      printf("[ERR] Failed to create I2C mutex!\r\n");
+      while (1) {}
+  }
 
-    /* ---- �������������������أ� ---- */
-    vTaskStartScheduler();
+  /* ---- 创建传感器数据管道队列 ---- */
+  xSensorQueue = xQueueCreate(8, sizeof(MPU6050_Data_t));     /* 原始数据: 8 槽 */
+  xCookedQueue = xQueueCreate(4, sizeof(SensorCooked_t));     /* 处理后数据: 4 槽 */
+  if (xSensorQueue == NULL || xCookedQueue == NULL) {
+      printf("[ERR] Failed to create queues!\r\n");
+      while (1) {}
+  }
 
-    /* ��������Զ���᷵������ */
-    while (1) {}
+  /* ---- 初始化任务参数结构体 ---- */
+  ProcessTaskParam.xSensorQueue = xSensorQueue;
+  ProcessTaskParam.xCookedQueue = xCookedQueue;
+  ProcessTaskParam.ax_offset = offset_ax;
+  ProcessTaskParam.ay_offset = offset_ay;
+  ProcessTaskParam.az_offset = offset_az;
+
+  /* ---- 创建 3 级流水线任务 ---- */
+  /* MPU6050 读取任务（生产者，Prio=2） */
+  xTaskCreate(Task_MPU6050_Read, "MPU_Read", 256,
+              (void *)xSensorQueue, 2, NULL);
+
+  /* 数据处理任务（处理层，Prio=2） */
+  xTaskCreate(Task_DataProcess, "DataProc", 512,
+              (void *)&ProcessTaskParam, 2, NULL);
+
+  /* OLED 显示任务（消费者，Prio=1） */
+  xTaskCreate(Task_OLED_Display, "OLED_Disp", 256,
+              (void *)xCookedQueue, 1, NULL);
+
+  /* ---- 初始化调试串口，启动 UART TX/RX 任务 ---- */
+  DebugUART_Init();
+
+  printf("\r\n========== FreeRTOS + MPU6050 + OLED Data Pipeline ==========\r\n");
+  printf("Tasks: MPU_Read(2) -> Queue[8] -> DataProc(2) -> Queue[4] -> OLED_Disp(1)\r\n\r\n");
+
+  /* ---- 启动 FreeRTOS 调度器（此调用永不返回） ---- */
+  vTaskStartScheduler();
+
+  /* 调度器永远不会返回 */
+  while (1) {}
+  /* USER CODE END 2 */
+
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
+  while (1)
+  {
+    /* USER CODE END WHILE */
+
+    /* USER CODE BEGIN 3 */
+    /* 用户循环代码 — 调度器启动后不会到达此处 */
+    /* USER CODE END 3 */
+  }
 }
 
 /**
@@ -170,9 +188,6 @@ void SystemClock_Config(void)
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
-  /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
-  */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
@@ -181,10 +196,9 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  /** Initializes the CPU, AHB and APB buses clocks
-  */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
+                              | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
@@ -200,7 +214,6 @@ void SystemClock_Config(void)
 
 /* ==================================================================
  *  Static allocation support for Idle task
- *  Required when configSUPPORT_STATIC_ALLOCATION is enabled.
  * ================================================================== */
 void vApplicationGetIdleTaskMemory(StaticTask_t **ppxIdleTaskTCBBuffer,
                                    StackType_t **ppxIdleTaskStackBuffer,
@@ -215,7 +228,7 @@ void vApplicationGetIdleTaskMemory(StaticTask_t **ppxIdleTaskTCBBuffer,
 }
 
 /* ==================================================================
- *  Stack overflow hook (required by configCHECK_FOR_STACK_OVERFLOW=2)
+ *  Stack overflow hook
  * ================================================================== */
 void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
 {
@@ -225,7 +238,7 @@ void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
     while (1) {}
 }
 
-/* ===== 2.1A: MPU6050 读取任务（生产�?�） ===== */
+/* ===== 2.1A: MPU6050 读取任务（生产者） ===== */
 void Task_MPU6050_Read(void *argument)
 {
     QueueHandle_t q = (QueueHandle_t)argument;
@@ -233,7 +246,7 @@ void Task_MPU6050_Read(void *argument)
     uint32_t count = 0;
 
     while (1) {
-        /* 获取 I2C 总线�? */
+        /* 获取 I2C 总线锁 */
         if (xSemaphoreTake(xI2CMutex, pdMS_TO_TICKS(200)) == pdPASS) {
             if (MPU6050_ReadAll(&data) == SOFT_I2C_OK) {
                 count++;
@@ -249,20 +262,20 @@ void Task_MPU6050_Read(void *argument)
     }
 }
 
-/* ===== 2.1B: OLED 显示任务（消费�?�） ===== */
+/* ===== 2.1B: OLED 显示任务（消费者） ===== */
 void Task_OLED_Display(void *argument)
 {
     QueueHandle_t q = (QueueHandle_t)argument;
     SensorCooked_t data;
     uint32_t count = 0;
-    /* 清屏后显�? hello */
+    /* 清屏后显示 hello */
     OLED_Fill(0x00);
     OLED_ShowString(0, 0, "hello");
-    printf("[OLED] Task started, q=%p\r\n", (void*)q);
+    printf("[OLED] Task started, q=%p\r\n", (void *)q);
     while (1) {
         if (xQueueReceive(q, &data, portMAX_DELAY) == pdPASS) {
             count++;
-            /* 获取 I2C 总线锁，保护 OLED 写操�? */
+            /* 获取 I2C 总线锁，保护 OLED 写操作 */
             if (xSemaphoreTake(xI2CMutex, pdMS_TO_TICKS(100)) == pdPASS) {
                 OLED_ShowNum(2, 1, data.ax_g);
                 OLED_ShowNum(3, 1, data.ay_g);
@@ -276,6 +289,7 @@ void Task_OLED_Display(void *argument)
     }
 }
 
+/* ===== 数据处理任务 ===== */
 void Task_DataProcess(void *argument)
 {
     TaskParam_t *param = (TaskParam_t *)argument;
@@ -286,12 +300,12 @@ void Task_DataProcess(void *argument)
     SensorCooked_t cooked;
 
     /* 校准已在 main() 中完成，直接进入处理循环 */
-    while(1)
+    while (1)
     {
         if (xQueueReceive(xSensorQueue, &data, portMAX_DELAY) == pdPASS) {
-            cooked.ax_g  = (float)(data.ax - param->ax_offset) / 16384.0f;
-            cooked.ay_g  = (float)(data.ay - param->ay_offset) / 16384.0f;
-            cooked.az_g  = (float)(data.az - param->az_offset) / 16384.0f;
+            cooked.ax_g = (float)(data.ax - param->ax_offset) / 16384.0f;
+            cooked.ay_g = (float)(data.ay - param->ay_offset) / 16384.0f;
+            cooked.az_g = (float)(data.az - param->az_offset) / 16384.0f;
             xQueueSend(xCookedQueue, &cooked, pdMS_TO_TICKS(100));
         }
     }
@@ -300,22 +314,17 @@ void Task_DataProcess(void *argument)
 
 /**
   * @brief  Period elapsed callback in non blocking mode
-  * @note   This function is called  when TIM2 interrupt took place, inside
-  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
-  * a global variable "uwTick" used as application time base.
   * @param  htim : TIM handle
   * @retval None
   */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   /* USER CODE BEGIN Callback 0 */
-
   /* USER CODE END Callback 0 */
   if (htim->Instance == TIM2) {
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
-
   /* USER CODE END Callback 1 */
 }
 
@@ -326,7 +335,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
   while (1)
   {
@@ -335,19 +343,9 @@ void Error_Handler(void)
 }
 
 #ifdef  USE_FULL_ASSERT
-/**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
 void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
-
