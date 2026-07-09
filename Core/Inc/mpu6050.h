@@ -16,7 +16,8 @@
 #define MPU6050_REG_ACCEL_CONFIG 0x1C      /* 加速度计量程 */
 #define MPU6050_REG_ACCEL_XOUT_H 0x3B      /* 加速度计 X 高字节（共 6 字节） */
 #define MPU6050_REG_GYRO_XOUT_H  0x43      /* 陀螺仪 X 高字节（共 6 字节） */
-
+#define INT_PIN_CFG   0x37      /* 中断引脚配置 */
+#define INT_ENABLE   0x38      /* 中断使能 */
 /* ---- 原始传感器数据结构体（队列传递） ---- */
 typedef struct {
     int16_t ax, ay, az;     /* 加速度原始值（±16384 = ±1g @ ±2g 量程） */

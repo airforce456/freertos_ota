@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 1
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 1
   31:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** *----------------------------------------------------------*/
   32:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
   33:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /* Scheduler includes. */
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 2
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s 			page 2
 
 
   34:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #include "FreeRTOS.h"
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 1
   88:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
   89:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /* A fiddle factor to estimate the number of SysTick counts that would have
   90:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * occurred while the SysTick counter is stopped during tickless idle
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 3
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s 			page 3
 
 
   91:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * calculations. */
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 1
  145:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * The maximum number of tick periods that can be suppressed is limited by the
  146:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  * 24 bit resolution of the SysTick timer.
  147:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****  */
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 4
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s 			page 4
 
 
  148:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** #if ( configUSE_TICKLESS_IDLE == 1 )
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 1
   30              		@ link register save eliminated.
   31 0000 82B0     		sub	sp, sp, #8
   32              	.LCFI0:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 5
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s 			page 5
 
 
   33              		.cfi_def_cfa_offset 8
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 1
   35:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #endif
   36:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
   37:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 6
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s 			page 6
 
 
   38:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * Port specific definitions.
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 1
   92:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portNVIC_INT_CTRL_REG     ( *( ( volatile uint32_t * ) 0xe000ed04 ) )
   93:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portNVIC_PENDSVSET_BIT    ( 1UL << 28UL )
   94:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portEND_SWITCHING_ISR( xSwitchRequired )    do { if( xSwitchRequired != pdFALSE ) portY
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 7
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s 			page 7
 
 
   95:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     #define portYIELD_FROM_ISR( x )                     portEND_SWITCHING_ISR( x )
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 1
  149:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
  150:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
  151:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 8
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s 			page 8
 
 
  152:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         #define portGET_HIGHEST_PRIORITY( uxTopPriority, uxReadyPriorities )    uxTopPriority = ( 3
@@ -478,7 +478,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 1
   48              	@ 200 "Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h" 1
   49 0006 4FF05003 			mov r3, #80												
   50 000a 83F31188 		msr basepri, r3											
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 9
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s 			page 9
 
 
   51 000e BFF36F8F 		isb														
@@ -538,7 +538,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 1
  231:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	mov r0, #0 						\n"
  232:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	msr	basepri, r0					\n"
  233:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	orr r14, #0xd					\n"
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 10
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s 			page 10
 
 
  234:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	bx r14							\n"
@@ -598,7 +598,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 1
  113              		.syntax unified
  114              		.thumb
  115              		.thumb_func
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 11
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s 			page 11
 
 
  117              	pxPortInitialiseStack:
@@ -658,7 +658,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 1
  153              		.loc 1 193 1 is_stmt 0 view .LVU32
  154 001a 4038     		subs	r0, r0, #64
  155              	.LVL6:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 12
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s 			page 12
 
 
  193:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*-----------------------------------------------------------*/
@@ -718,7 +718,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 1
  210              	vPortEndScheduler:
  211              	.LFB75:
  258:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** /*-----------------------------------------------------------*/
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 13
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s 			page 13
 
 
  259:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
@@ -778,7 +778,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 1
  313:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                 {
  314:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                     /* Check the FreeRTOS configuration that defines the number of
  315:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                      * priority bits matches the number of priority bits actually queried
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 14
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s 			page 14
 
 
  316:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****                      * from the hardware. */
@@ -838,7 +838,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 1
  217              		.loc 1 364 48 view .LVU38
  365:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** }
  218              		.loc 1 365 1 is_stmt 0 view .LVU39
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 15
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s 			page 15
 
 
  219 0000 7047     		bx	lr
@@ -898,7 +898,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 1
  377:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****      * assert function also uses a critical section. */
  378:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     if( uxCriticalNesting == 1 )
  262              		.loc 1 378 5 is_stmt 1 view .LVU47
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 16
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s 			page 16
 
 
  379:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     {
@@ -958,7 +958,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 1
  205:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****             "	dsb														\n"\
  206:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****             : "=r" ( ulNewBASEPRI ) : "i" ( configMAX_SYSCALL_INTERRUPT_PRIORITY ) : "memory"
  207:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         );
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 17
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s 			page 17
 
 
  208:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****     }
@@ -1018,7 +1018,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 1
  327              		.syntax unified
  328              		.thumb
  329              		.thumb_func
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 18
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s 			page 18
 
 
  331              	PendSV_Handler:
@@ -1078,7 +1078,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 1
  411:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "										\n"
  412:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	stmdb sp!, {r3, r14}				\n"
  413:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	mov r0, %0							\n"
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 19
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s 			page 19
 
 
  414:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****         "	msr basepri, r0						\n"
@@ -1138,7 +1138,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 1
  397              	.LBB19:
  198:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
  398              		.loc 2 198 9 view .LVU67
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 20
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s 			page 20
 
 
  200:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****         (
@@ -1198,7 +1198,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 1
  441              	.LBE20:
  451:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** }
  442              		.loc 1 451 1 view .LVU78
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 21
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s 			page 21
 
 
  443 002a 08BD     		pop	{r3, pc}
@@ -1258,7 +1258,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 1
  495:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             portNVIC_SYSTICK_LOAD_REG = portNVIC_SYSTICK_CURRENT_VALUE_REG;
  496:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
  497:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             /* Restart SysTick. */
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 22
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s 			page 22
 
 
  498:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             portNVIC_SYSTICK_CTRL_REG |= portNVIC_SYSTICK_ENABLE_BIT;
@@ -1318,7 +1318,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 1
  552:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             /* Disable the SysTick clock without reading the
  553:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * portNVIC_SYSTICK_CTRL_REG register to ensure the
  554:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * portNVIC_SYSTICK_COUNT_FLAG_BIT is not cleared if it is set.  Again,
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 23
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s 			page 23
 
 
  555:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * the time the SysTick is stopped for is accounted for as best it can
@@ -1378,7 +1378,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 1
  609:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * again, then set portNVIC_SYSTICK_LOAD_REG back to its standard
  610:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****              * value. */
  611:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             portNVIC_SYSTICK_CURRENT_VALUE_REG = 0UL;
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 24
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s 			page 24
 
 
  612:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****             portNVIC_SYSTICK_CTRL_REG |= portNVIC_SYSTICK_ENABLE_BIT;
@@ -1438,7 +1438,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 1
  477 0016 013B     		subs	r3, r3, #1
  478              		.loc 1 644 31 view .LVU87
  479 0018 5361     		str	r3, [r2, #20]
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 25
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s 			page 25
 
 
  645:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c ****     portNVIC_SYSTICK_CTRL_REG = ( portNVIC_SYSTICK_CLK_BIT | portNVIC_SYSTICK_INT_BIT | portNVIC_SY
@@ -1498,7 +1498,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 1
  341:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
  527              		.loc 1 341 5 view .LVU98
  341:Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c **** 
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 26
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s 			page 26
 
 
  528              		.loc 1 341 23 is_stmt 0 view .LVU99
@@ -1540,46 +1540,46 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 1
  562              		.file 5 "Middlewares/FreeRTOS/Source/include/projdefs.h"
  563              		.file 6 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/system_stm32f1xx.h"
  564              		.file 7 "Middlewares/FreeRTOS/Source/include/task.h"
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s 			page 27
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s 			page 27
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 port.c
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:19     .text.prvTaskExitError:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:24     .text.prvTaskExitError:00000000 prvTaskExitError
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:76     .text.prvPortStartFirstTask:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:81     .text.prvPortStartFirstTask:00000000 prvPortStartFirstTask
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:101    .text.prvPortStartFirstTask:0000001a $d
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:101    .text.prvPortStartFirstTask:0000001c $d
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:111    .text.pxPortInitialiseStack:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:117    .text.pxPortInitialiseStack:00000000 pxPortInitialiseStack
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:161    .text.pxPortInitialiseStack:00000020 $d
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:166    .text.SVC_Handler:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:172    .text.SVC_Handler:00000000 SVC_Handler
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:194    .text.SVC_Handler:00000020 pxCurrentTCBConst2
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:194    .text.SVC_Handler:00000020 $d
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:204    .text.vPortEndScheduler:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:210    .text.vPortEndScheduler:00000000 vPortEndScheduler
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:224    .text.vPortEnterCritical:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:230    .text.vPortEnterCritical:00000000 vPortEnterCritical
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:269    .text.vPortEnterCritical:0000001c $d
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:556    .data.uxCriticalNesting:00000000 uxCriticalNesting
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:274    .text.vPortExitCritical:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:280    .text.vPortExitCritical:00000000 vPortExitCritical
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:320    .text.vPortExitCritical:00000010 $d
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:325    .text.PendSV_Handler:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:331    .text.PendSV_Handler:00000000 PendSV_Handler
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:366    .text.PendSV_Handler:00000040 pxCurrentTCBConst
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:366    .text.PendSV_Handler:00000040 $d
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:376    .text.SysTick_Handler:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:382    .text.SysTick_Handler:00000000 SysTick_Handler
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:448    .text.vPortSetupTimerInterrupt:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:454    .text.vPortSetupTimerInterrupt:00000000 vPortSetupTimerInterrupt
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:489    .text.vPortSetupTimerInterrupt:00000020 $d
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:495    .text.xPortStartScheduler:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:501    .text.xPortStartScheduler:00000000 xPortStartScheduler
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:548    .text.xPortStartScheduler:00000038 $d
-C:\Users\airforce\AppData\Local\Temp\ccwEJeEH.s:553    .data.uxCriticalNesting:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:19     .text.prvTaskExitError:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:24     .text.prvTaskExitError:00000000 prvTaskExitError
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:76     .text.prvPortStartFirstTask:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:81     .text.prvPortStartFirstTask:00000000 prvPortStartFirstTask
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:101    .text.prvPortStartFirstTask:0000001a $d
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:101    .text.prvPortStartFirstTask:0000001c $d
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:111    .text.pxPortInitialiseStack:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:117    .text.pxPortInitialiseStack:00000000 pxPortInitialiseStack
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:161    .text.pxPortInitialiseStack:00000020 $d
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:166    .text.SVC_Handler:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:172    .text.SVC_Handler:00000000 SVC_Handler
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:194    .text.SVC_Handler:00000020 pxCurrentTCBConst2
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:194    .text.SVC_Handler:00000020 $d
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:204    .text.vPortEndScheduler:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:210    .text.vPortEndScheduler:00000000 vPortEndScheduler
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:224    .text.vPortEnterCritical:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:230    .text.vPortEnterCritical:00000000 vPortEnterCritical
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:269    .text.vPortEnterCritical:0000001c $d
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:556    .data.uxCriticalNesting:00000000 uxCriticalNesting
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:274    .text.vPortExitCritical:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:280    .text.vPortExitCritical:00000000 vPortExitCritical
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:320    .text.vPortExitCritical:00000010 $d
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:325    .text.PendSV_Handler:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:331    .text.PendSV_Handler:00000000 PendSV_Handler
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:366    .text.PendSV_Handler:00000040 pxCurrentTCBConst
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:366    .text.PendSV_Handler:00000040 $d
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:376    .text.SysTick_Handler:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:382    .text.SysTick_Handler:00000000 SysTick_Handler
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:448    .text.vPortSetupTimerInterrupt:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:454    .text.vPortSetupTimerInterrupt:00000000 vPortSetupTimerInterrupt
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:489    .text.vPortSetupTimerInterrupt:00000020 $d
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:495    .text.xPortStartScheduler:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:501    .text.xPortStartScheduler:00000000 xPortStartScheduler
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:548    .text.xPortStartScheduler:00000038 $d
+C:\Users\airforce\AppData\Local\Temp\ccCYXDXJ.s:553    .data.uxCriticalNesting:00000000 $d
 
 UNDEFINED SYMBOLS
 pxCurrentTCB

@@ -3,6 +3,7 @@
 #include <string.h>
 
 /* ---- 私有辅助函数：用软 I2C 封装 I2C 读写，替代 HAL I2C（避免 F1 硬件 RESTART bug） ---- */
+extern SemaphoreHandle_t MPU_Sem;
 
 /* 写单个寄存器：发设备地址+W → 寄存器号 → 数据值 */
 static SoftI2C_Status I2C_WriteReg(uint8_t devAddr, uint8_t regAddr, uint8_t val)
@@ -72,7 +73,10 @@ SoftI2C_Status MPU6050_Init(void)
     /* 5. 陀螺仪量程 ±250°/s */
     if (I2C_WriteReg(MPU6050_ADDR, MPU6050_REG_GYRO_CONFIG, 0x00) != SOFT_I2C_OK)
         return SOFT_I2C_ERROR;
-
+    if (I2C_WriteReg(MPU6050_ADDR, INT_PIN_CFG, 0x10) != SOFT_I2C_OK)
+        return SOFT_I2C_ERROR;
+    if (I2C_WriteReg(MPU6050_ADDR, INT_ENABLE, 0x01) != SOFT_I2C_OK)
+        return SOFT_I2C_ERROR;
     return SOFT_I2C_OK;
 }
 
@@ -125,4 +129,14 @@ void MPU6050_Calibrate(int16_t *offset_ax, int16_t *offset_ay, int16_t *offset_a
     *offset_az = (int16_t)(sum_az / 100);
     printf("[MPU] Calibration done: bias_ax=%d, bias_ay=%d, bias_az=%d\r\n",
            *offset_ax, *offset_ay, *offset_az);
+}
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+  if (GPIO_Pin == GPIO_PIN_0) {
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    xSemaphoreGiveFromISR(MPU_Sem, &xHigherPriorityTaskWoken);
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+    HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_14);
+    
+  }
 }

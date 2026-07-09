@@ -11,7 +11,7 @@
 #define UART_RX_QUEUE_LEN    8    /* queue depth: buffer 8 messages */
 #define UART_TX_BUF_SIZE    64    /* max bytes per message */
 #define UART_MSG_BUF_SIZE   64    /* max bytes per message (RX msg buffer) */
-#define UART_DMA_RX_BUF_SIZE 256  /* DMA RX buffer size (must be >= MSG_BUF_SIZE) */
+#define UART_DMA_RX_BUF_SIZE 128  /* DMA RX buffer size (must be >= MSG_BUF_SIZE) */
 
 static QueueHandle_t     xUartTxQueue      = NULL;
 static QueueHandle_t     xUartRxQueue      = NULL;
@@ -43,12 +43,12 @@ void DebugUART_Init(void)
 
     xUartTxQueue = xQueueCreate(UART_TX_QUEUE_LEN, sizeof(UartTxMsg_t));
     if (xUartTxQueue != NULL) {
-        xTaskCreate(vUartTxTask, "UartTX", 256, NULL, 1, NULL);
+        xTaskCreate(vUartTxTask, "UartTX", 256, NULL, 2, NULL);
     }
 
     xUartRxQueue = xQueueCreate(UART_RX_QUEUE_LEN, sizeof(UartRxMsg_t));
     if (xUartRxQueue != NULL) {
-        xTaskCreate(vUartRxTask, "UartRX", 256, NULL, 1, NULL);
+        xTaskCreate(vUartRxTask, "UartRX", 256, NULL, 2, NULL);
     }
     /* RX DMA is started in vUartRxTask to avoid DMA conflict with initial TX */
 }

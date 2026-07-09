@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s 			page 1
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -31,15 +31,16 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s 			page 1
    3:Core/Src/mpu6050.c **** #include <string.h>
    4:Core/Src/mpu6050.c **** 
    5:Core/Src/mpu6050.c **** /* ---- 私有辅助函数：用软 I2C 封装 I2C 读写，替代 HAL I2C（避免 F1 硬件 RESTA
-   6:Core/Src/mpu6050.c **** 
-   7:Core/Src/mpu6050.c **** /* 写单个寄存器：发设备地址+W → 寄存器号 → 数据值 */
-   8:Core/Src/mpu6050.c **** static SoftI2C_Status I2C_WriteReg(uint8_t devAddr, uint8_t regAddr, uint8_t val)
-   9:Core/Src/mpu6050.c **** {
-  27              		.loc 1 9 1 view -0
+   6:Core/Src/mpu6050.c **** extern SemaphoreHandle_t MPU_Sem;
+   7:Core/Src/mpu6050.c **** 
+   8:Core/Src/mpu6050.c **** /* 写单个寄存器：发设备地址+W → 寄存器号 → 数据值 */
+   9:Core/Src/mpu6050.c **** static SoftI2C_Status I2C_WriteReg(uint8_t devAddr, uint8_t regAddr, uint8_t val)
+  10:Core/Src/mpu6050.c **** {
+  27              		.loc 1 10 1 view -0
   28              		.cfi_startproc
   29              		@ args = 0, pretend = 0, frame = 0
   30              		@ frame_needed = 0, uses_anonymous_args = 0
-  31              		.loc 1 9 1 is_stmt 0 view .LVU1
+  31              		.loc 1 10 1 is_stmt 0 view .LVU1
   32 0000 70B5     		push	{r4, r5, r6, lr}
   33              	.LCFI0:
   34              		.cfi_def_cfa_offset 16
@@ -50,105 +51,105 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s 			page 1
   39 0002 0446     		mov	r4, r0
   40 0004 0D46     		mov	r5, r1
   41 0006 1646     		mov	r6, r2
-  10:Core/Src/mpu6050.c ****     MyI2C_Start();
-  42              		.loc 1 10 5 is_stmt 1 view .LVU2
+  11:Core/Src/mpu6050.c ****     MyI2C_Start();
+  42              		.loc 1 11 5 is_stmt 1 view .LVU2
   43 0008 FFF7FEFF 		bl	MyI2C_Start
   44              	.LVL1:
-  11:Core/Src/mpu6050.c ****     MyI2C_SendByte(devAddr << 1);
-  45              		.loc 1 11 5 view .LVU3
+  12:Core/Src/mpu6050.c ****     MyI2C_SendByte(devAddr << 1);
+  45              		.loc 1 12 5 view .LVU3
   46 000c 6400     		lsls	r4, r4, #1
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s 			page 2
+
+
   47              	.LVL2:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s 			page 2
-
-
-  48              		.loc 1 11 5 is_stmt 0 view .LVU4
+  48              		.loc 1 12 5 is_stmt 0 view .LVU4
   49 000e 04F0FE00 		and	r0, r4, #254
   50 0012 FFF7FEFF 		bl	MyI2C_SendByte
   51              	.LVL3:
-  12:Core/Src/mpu6050.c ****     if (MyI2C_ReciveAck()) { MyI2C_Stop(); return SOFT_I2C_ERROR; }
-  52              		.loc 1 12 5 is_stmt 1 view .LVU5
-  53              		.loc 1 12 9 is_stmt 0 view .LVU6
+  13:Core/Src/mpu6050.c ****     if (MyI2C_ReciveAck()) { MyI2C_Stop(); return SOFT_I2C_ERROR; }
+  52              		.loc 1 13 5 is_stmt 1 view .LVU5
+  53              		.loc 1 13 9 is_stmt 0 view .LVU6
   54 0016 FFF7FEFF 		bl	MyI2C_ReciveAck
   55              	.LVL4:
-  56              		.loc 1 12 8 discriminator 1 view .LVU7
+  56              		.loc 1 13 8 discriminator 1 view .LVU7
   57 001a 78B9     		cbnz	r0, .L7
-  13:Core/Src/mpu6050.c ****     MyI2C_SendByte(regAddr);
-  58              		.loc 1 13 5 is_stmt 1 view .LVU8
+  14:Core/Src/mpu6050.c ****     MyI2C_SendByte(regAddr);
+  58              		.loc 1 14 5 is_stmt 1 view .LVU8
   59 001c 2846     		mov	r0, r5
   60 001e FFF7FEFF 		bl	MyI2C_SendByte
   61              	.LVL5:
-  14:Core/Src/mpu6050.c ****     if (MyI2C_ReciveAck()) { MyI2C_Stop(); return SOFT_I2C_ERROR; }
-  62              		.loc 1 14 5 view .LVU9
-  63              		.loc 1 14 9 is_stmt 0 view .LVU10
+  15:Core/Src/mpu6050.c ****     if (MyI2C_ReciveAck()) { MyI2C_Stop(); return SOFT_I2C_ERROR; }
+  62              		.loc 1 15 5 view .LVU9
+  63              		.loc 1 15 9 is_stmt 0 view .LVU10
   64 0022 FFF7FEFF 		bl	MyI2C_ReciveAck
   65              	.LVL6:
-  66              		.loc 1 14 8 discriminator 1 view .LVU11
+  66              		.loc 1 15 8 discriminator 1 view .LVU11
   67 0026 70B9     		cbnz	r0, .L8
-  15:Core/Src/mpu6050.c ****     MyI2C_SendByte(val);
-  68              		.loc 1 15 5 is_stmt 1 view .LVU12
+  16:Core/Src/mpu6050.c ****     MyI2C_SendByte(val);
+  68              		.loc 1 16 5 is_stmt 1 view .LVU12
   69 0028 3046     		mov	r0, r6
   70 002a FFF7FEFF 		bl	MyI2C_SendByte
   71              	.LVL7:
-  16:Core/Src/mpu6050.c ****     if (MyI2C_ReciveAck()) { MyI2C_Stop(); return SOFT_I2C_ERROR; }
-  72              		.loc 1 16 5 view .LVU13
-  73              		.loc 1 16 9 is_stmt 0 view .LVU14
+  17:Core/Src/mpu6050.c ****     if (MyI2C_ReciveAck()) { MyI2C_Stop(); return SOFT_I2C_ERROR; }
+  72              		.loc 1 17 5 view .LVU13
+  73              		.loc 1 17 9 is_stmt 0 view .LVU14
   74 002e FFF7FEFF 		bl	MyI2C_ReciveAck
   75              	.LVL8:
-  76              		.loc 1 16 8 discriminator 1 view .LVU15
+  76              		.loc 1 17 8 discriminator 1 view .LVU15
   77 0032 0446     		mov	r4, r0
   78 0034 58B9     		cbnz	r0, .L9
-  17:Core/Src/mpu6050.c ****     MyI2C_Stop();
-  79              		.loc 1 17 5 is_stmt 1 view .LVU16
+  18:Core/Src/mpu6050.c ****     MyI2C_Stop();
+  79              		.loc 1 18 5 is_stmt 1 view .LVU16
   80 0036 FFF7FEFF 		bl	MyI2C_Stop
   81              	.LVL9:
-  18:Core/Src/mpu6050.c ****     return SOFT_I2C_OK;
-  82              		.loc 1 18 5 view .LVU17
-  83              		.loc 1 18 12 is_stmt 0 view .LVU18
+  19:Core/Src/mpu6050.c ****     return SOFT_I2C_OK;
+  82              		.loc 1 19 5 view .LVU17
+  83              		.loc 1 19 12 is_stmt 0 view .LVU18
   84 003a 02E0     		b	.L3
   85              	.L7:
-  12:Core/Src/mpu6050.c ****     MyI2C_SendByte(regAddr);
-  86              		.loc 1 12 30 is_stmt 1 discriminator 1 view .LVU19
+  13:Core/Src/mpu6050.c ****     MyI2C_SendByte(regAddr);
+  86              		.loc 1 13 30 is_stmt 1 discriminator 1 view .LVU19
   87 003c FFF7FEFF 		bl	MyI2C_Stop
   88              	.LVL10:
-  12:Core/Src/mpu6050.c ****     MyI2C_SendByte(regAddr);
-  89              		.loc 1 12 44 discriminator 1 view .LVU20
-  12:Core/Src/mpu6050.c ****     MyI2C_SendByte(regAddr);
-  90              		.loc 1 12 51 is_stmt 0 discriminator 1 view .LVU21
+  13:Core/Src/mpu6050.c ****     MyI2C_SendByte(regAddr);
+  89              		.loc 1 13 44 discriminator 1 view .LVU20
+  13:Core/Src/mpu6050.c ****     MyI2C_SendByte(regAddr);
+  90              		.loc 1 13 51 is_stmt 0 discriminator 1 view .LVU21
   91 0040 0124     		movs	r4, #1
   92              	.L3:
-  19:Core/Src/mpu6050.c **** }
-  93              		.loc 1 19 1 view .LVU22
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s 			page 3
+  20:Core/Src/mpu6050.c **** }
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s 			page 3
 
 
+  93              		.loc 1 20 1 view .LVU22
   94 0042 2046     		mov	r0, r4
   95 0044 70BD     		pop	{r4, r5, r6, pc}
   96              	.LVL11:
   97              	.L8:
-  14:Core/Src/mpu6050.c ****     MyI2C_SendByte(val);
-  98              		.loc 1 14 30 is_stmt 1 discriminator 1 view .LVU23
+  15:Core/Src/mpu6050.c ****     MyI2C_SendByte(val);
+  98              		.loc 1 15 30 is_stmt 1 discriminator 1 view .LVU23
   99 0046 FFF7FEFF 		bl	MyI2C_Stop
  100              	.LVL12:
-  14:Core/Src/mpu6050.c ****     MyI2C_SendByte(val);
- 101              		.loc 1 14 44 discriminator 1 view .LVU24
-  14:Core/Src/mpu6050.c ****     MyI2C_SendByte(val);
- 102              		.loc 1 14 51 is_stmt 0 discriminator 1 view .LVU25
+  15:Core/Src/mpu6050.c ****     MyI2C_SendByte(val);
+ 101              		.loc 1 15 44 discriminator 1 view .LVU24
+  15:Core/Src/mpu6050.c ****     MyI2C_SendByte(val);
+ 102              		.loc 1 15 51 is_stmt 0 discriminator 1 view .LVU25
  103 004a 0124     		movs	r4, #1
-  14:Core/Src/mpu6050.c ****     MyI2C_SendByte(val);
- 104              		.loc 1 14 51 view .LVU26
+  15:Core/Src/mpu6050.c ****     MyI2C_SendByte(val);
+ 104              		.loc 1 15 51 view .LVU26
  105 004c F9E7     		b	.L3
  106              	.L9:
-  16:Core/Src/mpu6050.c ****     MyI2C_Stop();
- 107              		.loc 1 16 30 is_stmt 1 discriminator 1 view .LVU27
+  17:Core/Src/mpu6050.c ****     MyI2C_Stop();
+ 107              		.loc 1 17 30 is_stmt 1 discriminator 1 view .LVU27
  108 004e FFF7FEFF 		bl	MyI2C_Stop
  109              	.LVL13:
-  16:Core/Src/mpu6050.c ****     MyI2C_Stop();
- 110              		.loc 1 16 44 discriminator 1 view .LVU28
-  16:Core/Src/mpu6050.c ****     MyI2C_Stop();
- 111              		.loc 1 16 51 is_stmt 0 discriminator 1 view .LVU29
+  17:Core/Src/mpu6050.c ****     MyI2C_Stop();
+ 110              		.loc 1 17 44 discriminator 1 view .LVU28
+  17:Core/Src/mpu6050.c ****     MyI2C_Stop();
+ 111              		.loc 1 17 51 is_stmt 0 discriminator 1 view .LVU29
  112 0052 0124     		movs	r4, #1
-  16:Core/Src/mpu6050.c ****     MyI2C_Stop();
- 113              		.loc 1 16 51 view .LVU30
+  17:Core/Src/mpu6050.c ****     MyI2C_Stop();
+ 113              		.loc 1 17 51 view .LVU30
  114 0054 F5E7     		b	.L3
  115              		.cfi_endproc
  116              	.LFE73:
@@ -160,16 +161,16 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s 			page 1
  124              	I2C_ReadRegs:
  125              	.LVL14:
  126              	.LFB74:
-  20:Core/Src/mpu6050.c **** 
-  21:Core/Src/mpu6050.c **** /* 读多个寄存器：先发设备地址+W → 寄存器号 → Stop → 再发设备地址+R →
-  22:Core/Src/mpu6050.c **** static SoftI2C_Status I2C_ReadRegs(uint8_t devAddr, uint8_t regAddr,
-  23:Core/Src/mpu6050.c ****                                     uint8_t *buf, uint8_t len)
-  24:Core/Src/mpu6050.c **** {
- 127              		.loc 1 24 1 is_stmt 1 view -0
+  21:Core/Src/mpu6050.c **** 
+  22:Core/Src/mpu6050.c **** /* 读多个寄存器：先发设备地址+W → 寄存器号 → Stop → 再发设备地址+R →
+  23:Core/Src/mpu6050.c **** static SoftI2C_Status I2C_ReadRegs(uint8_t devAddr, uint8_t regAddr,
+  24:Core/Src/mpu6050.c ****                                     uint8_t *buf, uint8_t len)
+  25:Core/Src/mpu6050.c **** {
+ 127              		.loc 1 25 1 is_stmt 1 view -0
  128              		.cfi_startproc
  129              		@ args = 0, pretend = 0, frame = 0
  130              		@ frame_needed = 0, uses_anonymous_args = 0
- 131              		.loc 1 24 1 is_stmt 0 view .LVU32
+ 131              		.loc 1 25 1 is_stmt 0 view .LVU32
  132 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
  133              	.LCFI1:
  134              		.cfi_def_cfa_offset 24
@@ -177,170 +178,170 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s 			page 1
  136              		.cfi_offset 4, -20
  137              		.cfi_offset 5, -16
  138              		.cfi_offset 6, -12
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s 			page 4
+
+
  139              		.cfi_offset 7, -8
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s 			page 4
-
-
  140              		.cfi_offset 14, -4
  141 0002 0446     		mov	r4, r0
  142 0004 0F46     		mov	r7, r1
  143 0006 1646     		mov	r6, r2
  144 0008 1D46     		mov	r5, r3
-  25:Core/Src/mpu6050.c ****     /* 第一步：写寄存器号 */
-  26:Core/Src/mpu6050.c ****     MyI2C_Start();
- 145              		.loc 1 26 5 is_stmt 1 view .LVU33
+  26:Core/Src/mpu6050.c ****     /* 第一步：写寄存器号 */
+  27:Core/Src/mpu6050.c ****     MyI2C_Start();
+ 145              		.loc 1 27 5 is_stmt 1 view .LVU33
  146 000a FFF7FEFF 		bl	MyI2C_Start
  147              	.LVL15:
-  27:Core/Src/mpu6050.c ****     MyI2C_SendByte(devAddr << 1);
- 148              		.loc 1 27 5 view .LVU34
+  28:Core/Src/mpu6050.c ****     MyI2C_SendByte(devAddr << 1);
+ 148              		.loc 1 28 5 view .LVU34
  149 000e 6000     		lsls	r0, r4, #1
  150 0010 00F0FE00 		and	r0, r0, #254
  151 0014 FFF7FEFF 		bl	MyI2C_SendByte
  152              	.LVL16:
-  28:Core/Src/mpu6050.c ****     if (MyI2C_ReciveAck()) { MyI2C_Stop(); return SOFT_I2C_ERROR; }
- 153              		.loc 1 28 5 view .LVU35
- 154              		.loc 1 28 9 is_stmt 0 view .LVU36
+  29:Core/Src/mpu6050.c ****     if (MyI2C_ReciveAck()) { MyI2C_Stop(); return SOFT_I2C_ERROR; }
+ 153              		.loc 1 29 5 view .LVU35
+ 154              		.loc 1 29 9 is_stmt 0 view .LVU36
  155 0018 FFF7FEFF 		bl	MyI2C_ReciveAck
  156              	.LVL17:
- 157              		.loc 1 28 8 discriminator 1 view .LVU37
+ 157              		.loc 1 29 8 discriminator 1 view .LVU37
  158 001c A8B9     		cbnz	r0, .L18
-  29:Core/Src/mpu6050.c ****     MyI2C_SendByte(regAddr);
- 159              		.loc 1 29 5 is_stmt 1 view .LVU38
+  30:Core/Src/mpu6050.c ****     MyI2C_SendByte(regAddr);
+ 159              		.loc 1 30 5 is_stmt 1 view .LVU38
  160 001e 3846     		mov	r0, r7
  161 0020 FFF7FEFF 		bl	MyI2C_SendByte
  162              	.LVL18:
-  30:Core/Src/mpu6050.c ****     if (MyI2C_ReciveAck()) { MyI2C_Stop(); return SOFT_I2C_ERROR; }
- 163              		.loc 1 30 5 view .LVU39
- 164              		.loc 1 30 9 is_stmt 0 view .LVU40
+  31:Core/Src/mpu6050.c ****     if (MyI2C_ReciveAck()) { MyI2C_Stop(); return SOFT_I2C_ERROR; }
+ 163              		.loc 1 31 5 view .LVU39
+ 164              		.loc 1 31 9 is_stmt 0 view .LVU40
  165 0024 FFF7FEFF 		bl	MyI2C_ReciveAck
  166              	.LVL19:
- 167              		.loc 1 30 8 discriminator 1 view .LVU41
+ 167              		.loc 1 31 8 discriminator 1 view .LVU41
  168 0028 98B9     		cbnz	r0, .L19
-  31:Core/Src/mpu6050.c ****     MyI2C_Stop();
- 169              		.loc 1 31 5 is_stmt 1 view .LVU42
+  32:Core/Src/mpu6050.c ****     MyI2C_Stop();
+ 169              		.loc 1 32 5 is_stmt 1 view .LVU42
  170 002a FFF7FEFF 		bl	MyI2C_Stop
  171              	.LVL20:
-  32:Core/Src/mpu6050.c **** 
-  33:Core/Src/mpu6050.c ****     /* 第二步：读数据 */
-  34:Core/Src/mpu6050.c ****     MyI2C_Start();
- 172              		.loc 1 34 5 view .LVU43
+  33:Core/Src/mpu6050.c **** 
+  34:Core/Src/mpu6050.c ****     /* 第二步：读数据 */
+  35:Core/Src/mpu6050.c ****     MyI2C_Start();
+ 172              		.loc 1 35 5 view .LVU43
  173 002e FFF7FEFF 		bl	MyI2C_Start
  174              	.LVL21:
-  35:Core/Src/mpu6050.c ****     MyI2C_SendByte((devAddr << 1) | 1);
- 175              		.loc 1 35 5 view .LVU44
- 176              		.loc 1 35 35 is_stmt 0 view .LVU45
+  36:Core/Src/mpu6050.c ****     MyI2C_SendByte((devAddr << 1) | 1);
+ 175              		.loc 1 36 5 view .LVU44
+ 176              		.loc 1 36 35 is_stmt 0 view .LVU45
  177 0032 6000     		lsls	r0, r4, #1
  178 0034 40F00100 		orr	r0, r0, #1
- 179              		.loc 1 35 5 view .LVU46
+ 179              		.loc 1 36 5 view .LVU46
  180 0038 C0B2     		uxtb	r0, r0
  181 003a FFF7FEFF 		bl	MyI2C_SendByte
  182              	.LVL22:
-  36:Core/Src/mpu6050.c ****     if (MyI2C_ReciveAck()) { MyI2C_Stop(); return SOFT_I2C_ERROR; }
- 183              		.loc 1 36 5 is_stmt 1 view .LVU47
- 184              		.loc 1 36 9 is_stmt 0 view .LVU48
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s 			page 5
+  37:Core/Src/mpu6050.c ****     if (MyI2C_ReciveAck()) { MyI2C_Stop(); return SOFT_I2C_ERROR; }
+ 183              		.loc 1 37 5 is_stmt 1 view .LVU47
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s 			page 5
 
 
+ 184              		.loc 1 37 9 is_stmt 0 view .LVU48
  185 003e FFF7FEFF 		bl	MyI2C_ReciveAck
  186              	.LVL23:
- 187              		.loc 1 36 8 discriminator 1 view .LVU49
+ 187              		.loc 1 37 8 discriminator 1 view .LVU49
  188 0042 0746     		mov	r7, r0
  189              	.LVL24:
- 190              		.loc 1 36 8 discriminator 1 view .LVU50
+ 190              		.loc 1 37 8 discriminator 1 view .LVU50
  191 0044 48B9     		cbnz	r0, .L20
  192              	.LBB2:
-  37:Core/Src/mpu6050.c ****     for (uint8_t i = 0; i < len; i++) {
- 193              		.loc 1 37 18 view .LVU51
+  38:Core/Src/mpu6050.c ****     for (uint8_t i = 0; i < len; i++) {
+ 193              		.loc 1 38 18 view .LVU51
  194 0046 0446     		mov	r4, r0
  195              	.LVL25:
- 196              		.loc 1 37 18 view .LVU52
+ 196              		.loc 1 38 18 view .LVU52
  197 0048 15E0     		b	.L14
  198              	.L18:
  199              	.LBE2:
-  28:Core/Src/mpu6050.c ****     MyI2C_SendByte(regAddr);
- 200              		.loc 1 28 30 is_stmt 1 discriminator 1 view .LVU53
+  29:Core/Src/mpu6050.c ****     MyI2C_SendByte(regAddr);
+ 200              		.loc 1 29 30 is_stmt 1 discriminator 1 view .LVU53
  201 004a FFF7FEFF 		bl	MyI2C_Stop
  202              	.LVL26:
-  28:Core/Src/mpu6050.c ****     MyI2C_SendByte(regAddr);
- 203              		.loc 1 28 44 discriminator 1 view .LVU54
-  28:Core/Src/mpu6050.c ****     MyI2C_SendByte(regAddr);
- 204              		.loc 1 28 51 is_stmt 0 discriminator 1 view .LVU55
+  29:Core/Src/mpu6050.c ****     MyI2C_SendByte(regAddr);
+ 203              		.loc 1 29 44 discriminator 1 view .LVU54
+  29:Core/Src/mpu6050.c ****     MyI2C_SendByte(regAddr);
+ 204              		.loc 1 29 51 is_stmt 0 discriminator 1 view .LVU55
  205 004e 0127     		movs	r7, #1
-  28:Core/Src/mpu6050.c ****     MyI2C_SendByte(regAddr);
- 206              		.loc 1 28 51 view .LVU56
+  29:Core/Src/mpu6050.c ****     MyI2C_SendByte(regAddr);
+ 206              		.loc 1 29 51 view .LVU56
  207 0050 15E0     		b	.L12
  208              	.L19:
-  30:Core/Src/mpu6050.c ****     MyI2C_Stop();
- 209              		.loc 1 30 30 is_stmt 1 discriminator 1 view .LVU57
+  31:Core/Src/mpu6050.c ****     MyI2C_Stop();
+ 209              		.loc 1 31 30 is_stmt 1 discriminator 1 view .LVU57
  210 0052 FFF7FEFF 		bl	MyI2C_Stop
  211              	.LVL27:
-  30:Core/Src/mpu6050.c ****     MyI2C_Stop();
- 212              		.loc 1 30 44 discriminator 1 view .LVU58
-  30:Core/Src/mpu6050.c ****     MyI2C_Stop();
- 213              		.loc 1 30 51 is_stmt 0 discriminator 1 view .LVU59
+  31:Core/Src/mpu6050.c ****     MyI2C_Stop();
+ 212              		.loc 1 31 44 discriminator 1 view .LVU58
+  31:Core/Src/mpu6050.c ****     MyI2C_Stop();
+ 213              		.loc 1 31 51 is_stmt 0 discriminator 1 view .LVU59
  214 0056 0127     		movs	r7, #1
-  30:Core/Src/mpu6050.c ****     MyI2C_Stop();
- 215              		.loc 1 30 51 view .LVU60
+  31:Core/Src/mpu6050.c ****     MyI2C_Stop();
+ 215              		.loc 1 31 51 view .LVU60
  216 0058 11E0     		b	.L12
  217              	.L20:
-  36:Core/Src/mpu6050.c ****     for (uint8_t i = 0; i < len; i++) {
- 218              		.loc 1 36 30 is_stmt 1 discriminator 1 view .LVU61
+  37:Core/Src/mpu6050.c ****     for (uint8_t i = 0; i < len; i++) {
+ 218              		.loc 1 37 30 is_stmt 1 discriminator 1 view .LVU61
  219 005a FFF7FEFF 		bl	MyI2C_Stop
  220              	.LVL28:
-  36:Core/Src/mpu6050.c ****     for (uint8_t i = 0; i < len; i++) {
- 221              		.loc 1 36 44 discriminator 1 view .LVU62
-  36:Core/Src/mpu6050.c ****     for (uint8_t i = 0; i < len; i++) {
- 222              		.loc 1 36 51 is_stmt 0 discriminator 1 view .LVU63
+  37:Core/Src/mpu6050.c ****     for (uint8_t i = 0; i < len; i++) {
+ 221              		.loc 1 37 44 discriminator 1 view .LVU62
+  37:Core/Src/mpu6050.c ****     for (uint8_t i = 0; i < len; i++) {
+ 222              		.loc 1 37 51 is_stmt 0 discriminator 1 view .LVU63
  223 005e 0127     		movs	r7, #1
-  36:Core/Src/mpu6050.c ****     for (uint8_t i = 0; i < len; i++) {
- 224              		.loc 1 36 51 view .LVU64
+  37:Core/Src/mpu6050.c ****     for (uint8_t i = 0; i < len; i++) {
+ 224              		.loc 1 37 51 view .LVU64
  225 0060 0DE0     		b	.L12
  226              	.LVL29:
  227              	.L15:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s 			page 6
+
+
  228              	.LBB3:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s 			page 6
-
-
-  38:Core/Src/mpu6050.c ****         buf[i] = MyI2C_RecvByte(i == (len - 1) ? 1 : 0);  /* 最后一字节发NACK */
- 229              		.loc 1 38 9 is_stmt 1 view .LVU65
- 230              		.loc 1 38 43 is_stmt 0 view .LVU66
+  39:Core/Src/mpu6050.c ****         buf[i] = MyI2C_RecvByte(i == (len - 1) ? 1 : 0);  /* 最后一字节发NACK */
+ 229              		.loc 1 39 9 is_stmt 1 view .LVU65
+ 230              		.loc 1 39 43 is_stmt 0 view .LVU66
  231 0062 681E     		subs	r0, r5, #1
- 232              		.loc 1 38 18 view .LVU67
+ 232              		.loc 1 39 18 view .LVU67
  233 0064 8442     		cmp	r4, r0
  234 0066 14BF     		ite	ne
  235 0068 0020     		movne	r0, #0
  236 006a 0120     		moveq	r0, #1
  237 006c FFF7FEFF 		bl	MyI2C_RecvByte
  238              	.LVL30:
- 239              		.loc 1 38 16 discriminator 1 view .LVU68
+ 239              		.loc 1 39 16 discriminator 1 view .LVU68
  240 0070 3055     		strb	r0, [r6, r4]
-  37:Core/Src/mpu6050.c ****         buf[i] = MyI2C_RecvByte(i == (len - 1) ? 1 : 0);  /* 最后一字节发NACK */
- 241              		.loc 1 37 35 is_stmt 1 discriminator 3 view .LVU69
+  38:Core/Src/mpu6050.c ****         buf[i] = MyI2C_RecvByte(i == (len - 1) ? 1 : 0);  /* 最后一字节发NACK */
+ 241              		.loc 1 38 35 is_stmt 1 discriminator 3 view .LVU69
  242 0072 0134     		adds	r4, r4, #1
  243              	.LVL31:
-  37:Core/Src/mpu6050.c ****         buf[i] = MyI2C_RecvByte(i == (len - 1) ? 1 : 0);  /* 最后一字节发NACK */
- 244              		.loc 1 37 35 is_stmt 0 discriminator 3 view .LVU70
+  38:Core/Src/mpu6050.c ****         buf[i] = MyI2C_RecvByte(i == (len - 1) ? 1 : 0);  /* 最后一字节发NACK */
+ 244              		.loc 1 38 35 is_stmt 0 discriminator 3 view .LVU70
  245 0074 E4B2     		uxtb	r4, r4
  246              	.LVL32:
  247              	.L14:
-  37:Core/Src/mpu6050.c ****         buf[i] = MyI2C_RecvByte(i == (len - 1) ? 1 : 0);  /* 最后一字节发NACK */
- 248              		.loc 1 37 27 is_stmt 1 discriminator 1 view .LVU71
+  38:Core/Src/mpu6050.c ****         buf[i] = MyI2C_RecvByte(i == (len - 1) ? 1 : 0);  /* 最后一字节发NACK */
+ 248              		.loc 1 38 27 is_stmt 1 discriminator 1 view .LVU71
  249 0076 AC42     		cmp	r4, r5
  250 0078 F3D3     		bcc	.L15
  251              	.LBE3:
-  39:Core/Src/mpu6050.c ****     }
-  40:Core/Src/mpu6050.c ****     MyI2C_Stop();
- 252              		.loc 1 40 5 view .LVU72
+  40:Core/Src/mpu6050.c ****     }
+  41:Core/Src/mpu6050.c ****     MyI2C_Stop();
+ 252              		.loc 1 41 5 view .LVU72
  253 007a FFF7FEFF 		bl	MyI2C_Stop
  254              	.LVL33:
-  41:Core/Src/mpu6050.c ****     return SOFT_I2C_OK;
- 255              		.loc 1 41 5 view .LVU73
+  42:Core/Src/mpu6050.c ****     return SOFT_I2C_OK;
+ 255              		.loc 1 42 5 view .LVU73
  256              	.L12:
-  42:Core/Src/mpu6050.c **** }
- 257              		.loc 1 42 1 is_stmt 0 view .LVU74
+  43:Core/Src/mpu6050.c **** }
+ 257              		.loc 1 43 1 is_stmt 0 view .LVU74
  258 007e 3846     		mov	r0, r7
  259 0080 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
- 260              		.loc 1 42 1 view .LVU75
+ 260              		.loc 1 43 1 view .LVU75
  261              		.cfi_endproc
  262              	.LFE74:
  264              		.section	.text.I2C_ReadReg,"ax",%progbits
@@ -351,31 +352,31 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s 			page 1
  270              	I2C_ReadReg:
  271              	.LVL34:
  272              	.LFB75:
-  43:Core/Src/mpu6050.c **** 
-  44:Core/Src/mpu6050.c **** /* 读单个寄存器 */
-  45:Core/Src/mpu6050.c **** static SoftI2C_Status I2C_ReadReg(uint8_t devAddr, uint8_t regAddr, uint8_t *val)
-  46:Core/Src/mpu6050.c **** {
- 273              		.loc 1 46 1 is_stmt 1 view -0
+  44:Core/Src/mpu6050.c **** 
+  45:Core/Src/mpu6050.c **** /* 读单个寄存器 */
+  46:Core/Src/mpu6050.c **** static SoftI2C_Status I2C_ReadReg(uint8_t devAddr, uint8_t regAddr, uint8_t *val)
+  47:Core/Src/mpu6050.c **** {
+ 273              		.loc 1 47 1 is_stmt 1 view -0
  274              		.cfi_startproc
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s 			page 7
+
+
  275              		@ args = 0, pretend = 0, frame = 0
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s 			page 7
-
-
  276              		@ frame_needed = 0, uses_anonymous_args = 0
- 277              		.loc 1 46 1 is_stmt 0 view .LVU77
+ 277              		.loc 1 47 1 is_stmt 0 view .LVU77
  278 0000 08B5     		push	{r3, lr}
  279              	.LCFI2:
  280              		.cfi_def_cfa_offset 8
  281              		.cfi_offset 3, -8
  282              		.cfi_offset 14, -4
-  47:Core/Src/mpu6050.c ****     return I2C_ReadRegs(devAddr, regAddr, val, 1);
- 283              		.loc 1 47 5 is_stmt 1 view .LVU78
- 284              		.loc 1 47 12 is_stmt 0 view .LVU79
+  48:Core/Src/mpu6050.c ****     return I2C_ReadRegs(devAddr, regAddr, val, 1);
+ 283              		.loc 1 48 5 is_stmt 1 view .LVU78
+ 284              		.loc 1 48 12 is_stmt 0 view .LVU79
  285 0002 0123     		movs	r3, #1
  286 0004 FFF7FEFF 		bl	I2C_ReadRegs
  287              	.LVL35:
-  48:Core/Src/mpu6050.c **** }
- 288              		.loc 1 48 1 view .LVU80
+  49:Core/Src/mpu6050.c **** }
+ 288              		.loc 1 49 1 view .LVU80
  289 0008 08BD     		pop	{r3, pc}
  290              		.cfi_endproc
  291              	.LFE75:
@@ -387,11 +388,11 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s 			page 1
  298              		.thumb_func
  300              	MPU6050_Init:
  301              	.LFB76:
-  49:Core/Src/mpu6050.c **** 
-  50:Core/Src/mpu6050.c **** /* ===== 初始化 MPU6050 ===== */
-  51:Core/Src/mpu6050.c **** SoftI2C_Status MPU6050_Init(void)
-  52:Core/Src/mpu6050.c **** {
- 302              		.loc 1 52 1 is_stmt 1 view -0
+  50:Core/Src/mpu6050.c **** 
+  51:Core/Src/mpu6050.c **** /* ===== 初始化 MPU6050 ===== */
+  52:Core/Src/mpu6050.c **** SoftI2C_Status MPU6050_Init(void)
+  53:Core/Src/mpu6050.c **** {
+ 302              		.loc 1 53 1 is_stmt 1 view -0
  303              		.cfi_startproc
  304              		@ args = 0, pretend = 0, frame = 8
  305              		@ frame_needed = 0, uses_anonymous_args = 0
@@ -402,600 +403,745 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s 			page 1
  310 0002 83B0     		sub	sp, sp, #12
  311              	.LCFI4:
  312              		.cfi_def_cfa_offset 16
-  53:Core/Src/mpu6050.c ****     uint8_t reg;
- 313              		.loc 1 53 5 view .LVU82
-  54:Core/Src/mpu6050.c **** 
-  55:Core/Src/mpu6050.c ****     /* 1. 检查 WHO_AM_I */
-  56:Core/Src/mpu6050.c ****     if (I2C_ReadReg(MPU6050_ADDR, MPU6050_REG_WHO_AM_I, &reg) != SOFT_I2C_OK)
- 314              		.loc 1 56 5 view .LVU83
- 315              		.loc 1 56 9 is_stmt 0 view .LVU84
+  54:Core/Src/mpu6050.c ****     uint8_t reg;
+ 313              		.loc 1 54 5 view .LVU82
+  55:Core/Src/mpu6050.c **** 
+  56:Core/Src/mpu6050.c ****     /* 1. 检查 WHO_AM_I */
+  57:Core/Src/mpu6050.c ****     if (I2C_ReadReg(MPU6050_ADDR, MPU6050_REG_WHO_AM_I, &reg) != SOFT_I2C_OK)
+ 314              		.loc 1 57 5 view .LVU83
+ 315              		.loc 1 57 9 is_stmt 0 view .LVU84
  316 0004 0DF10702 		add	r2, sp, #7
  317 0008 7521     		movs	r1, #117
  318 000a 6820     		movs	r0, #104
  319 000c FFF7FEFF 		bl	I2C_ReadReg
  320              	.LVL36:
- 321              		.loc 1 56 8 discriminator 1 view .LVU85
- 322 0010 40BB     		cbnz	r0, .L25
-  57:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
-  58:Core/Src/mpu6050.c ****     if (reg != 0x68) return SOFT_I2C_ERROR;
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s 			page 8
+ 321              		.loc 1 57 8 discriminator 1 view .LVU85
+ 322 0010 C0BB     		cbnz	r0, .L25
+  58:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s 			page 8
 
 
- 323              		.loc 1 58 5 is_stmt 1 view .LVU86
- 324              		.loc 1 58 13 is_stmt 0 view .LVU87
+  59:Core/Src/mpu6050.c ****     if (reg != 0x68) return SOFT_I2C_ERROR;
+ 323              		.loc 1 59 5 is_stmt 1 view .LVU86
+ 324              		.loc 1 59 13 is_stmt 0 view .LVU87
  325 0012 9DF80730 		ldrb	r3, [sp, #7]	@ zero_extendqisi2
- 326              		.loc 1 58 8 view .LVU88
+ 326              		.loc 1 59 8 view .LVU88
  327 0016 682B     		cmp	r3, #104
- 328 0018 03D0     		beq	.L32
- 329              		.loc 1 58 29 discriminator 1 view .LVU89
+ 328 0018 03D0     		beq	.L34
+ 329              		.loc 1 59 29 discriminator 1 view .LVU89
  330 001a 0120     		movs	r0, #1
  331              	.L24:
-  59:Core/Src/mpu6050.c **** 
-  60:Core/Src/mpu6050.c ****     /* 2. 唤醒（清除 SLEEP 位） */
-  61:Core/Src/mpu6050.c ****     if (I2C_WriteReg(MPU6050_ADDR, MPU6050_REG_PWR_MGMT_1, 0x00) != SOFT_I2C_OK)
-  62:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
-  63:Core/Src/mpu6050.c **** 
-  64:Core/Src/mpu6050.c ****     /* 3. 采样率 = 1kHz / (1 + SMPRT_DIV) = 1kHz / 4 = 250Hz */
-  65:Core/Src/mpu6050.c ****     if (I2C_WriteReg(MPU6050_ADDR, MPU6050_REG_SMPRT_DIV, 3) != SOFT_I2C_OK)
-  66:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
-  67:Core/Src/mpu6050.c **** 
-  68:Core/Src/mpu6050.c ****     /* 4. 加速度计量程 ±2g */
-  69:Core/Src/mpu6050.c ****     if (I2C_WriteReg(MPU6050_ADDR, MPU6050_REG_ACCEL_CONFIG, 0x00) != SOFT_I2C_OK)
-  70:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
-  71:Core/Src/mpu6050.c **** 
-  72:Core/Src/mpu6050.c ****     /* 5. 陀螺仪量程 ±250°/s */
-  73:Core/Src/mpu6050.c ****     if (I2C_WriteReg(MPU6050_ADDR, MPU6050_REG_GYRO_CONFIG, 0x00) != SOFT_I2C_OK)
-  74:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
-  75:Core/Src/mpu6050.c **** 
-  76:Core/Src/mpu6050.c ****     return SOFT_I2C_OK;
-  77:Core/Src/mpu6050.c **** }
- 332              		.loc 1 77 1 view .LVU90
+  60:Core/Src/mpu6050.c **** 
+  61:Core/Src/mpu6050.c ****     /* 2. 唤醒（清除 SLEEP 位） */
+  62:Core/Src/mpu6050.c ****     if (I2C_WriteReg(MPU6050_ADDR, MPU6050_REG_PWR_MGMT_1, 0x00) != SOFT_I2C_OK)
+  63:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
+  64:Core/Src/mpu6050.c **** 
+  65:Core/Src/mpu6050.c ****     /* 3. 采样率 = 1kHz / (1 + SMPRT_DIV) = 1kHz / 4 = 250Hz */
+  66:Core/Src/mpu6050.c ****     if (I2C_WriteReg(MPU6050_ADDR, MPU6050_REG_SMPRT_DIV, 3) != SOFT_I2C_OK)
+  67:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
+  68:Core/Src/mpu6050.c **** 
+  69:Core/Src/mpu6050.c ****     /* 4. 加速度计量程 ±2g */
+  70:Core/Src/mpu6050.c ****     if (I2C_WriteReg(MPU6050_ADDR, MPU6050_REG_ACCEL_CONFIG, 0x00) != SOFT_I2C_OK)
+  71:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
+  72:Core/Src/mpu6050.c **** 
+  73:Core/Src/mpu6050.c ****     /* 5. 陀螺仪量程 ±250°/s */
+  74:Core/Src/mpu6050.c ****     if (I2C_WriteReg(MPU6050_ADDR, MPU6050_REG_GYRO_CONFIG, 0x00) != SOFT_I2C_OK)
+  75:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
+  76:Core/Src/mpu6050.c ****     if (I2C_WriteReg(MPU6050_ADDR, INT_PIN_CFG, 0x10) != SOFT_I2C_OK)
+  77:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
+  78:Core/Src/mpu6050.c ****     if (I2C_WriteReg(MPU6050_ADDR, INT_ENABLE, 0x01) != SOFT_I2C_OK)
+  79:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
+  80:Core/Src/mpu6050.c ****     return SOFT_I2C_OK;
+  81:Core/Src/mpu6050.c **** }
+ 332              		.loc 1 81 1 view .LVU90
  333 001c 03B0     		add	sp, sp, #12
  334              	.LCFI5:
  335              		.cfi_remember_state
  336              		.cfi_def_cfa_offset 4
  337              		@ sp needed
  338 001e 5DF804FB 		ldr	pc, [sp], #4
- 339              	.L32:
+ 339              	.L34:
  340              	.LCFI6:
  341              		.cfi_restore_state
-  61:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
- 342              		.loc 1 61 5 is_stmt 1 view .LVU91
-  61:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
- 343              		.loc 1 61 9 is_stmt 0 view .LVU92
+  62:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
+ 342              		.loc 1 62 5 is_stmt 1 view .LVU91
+  62:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
+ 343              		.loc 1 62 9 is_stmt 0 view .LVU92
  344 0022 0022     		movs	r2, #0
  345 0024 6B21     		movs	r1, #107
  346 0026 6820     		movs	r0, #104
  347 0028 FFF7FEFF 		bl	I2C_WriteReg
  348              	.LVL37:
-  61:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
- 349              		.loc 1 61 8 discriminator 1 view .LVU93
- 350 002c 08B1     		cbz	r0, .L33
-  62:Core/Src/mpu6050.c **** 
- 351              		.loc 1 62 16 view .LVU94
+  62:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
+ 349              		.loc 1 62 8 discriminator 1 view .LVU93
+ 350 002c 08B1     		cbz	r0, .L35
+  63:Core/Src/mpu6050.c **** 
+ 351              		.loc 1 63 16 view .LVU94
  352 002e 0120     		movs	r0, #1
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s 			page 9
+
+
  353 0030 F4E7     		b	.L24
- 354              	.L33:
-  65:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
- 355              		.loc 1 65 5 is_stmt 1 view .LVU95
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s 			page 9
-
-
-  65:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
- 356              		.loc 1 65 9 is_stmt 0 view .LVU96
+ 354              	.L35:
+  66:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
+ 355              		.loc 1 66 5 is_stmt 1 view .LVU95
+  66:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
+ 356              		.loc 1 66 9 is_stmt 0 view .LVU96
  357 0032 0322     		movs	r2, #3
  358 0034 1921     		movs	r1, #25
  359 0036 6820     		movs	r0, #104
  360 0038 FFF7FEFF 		bl	I2C_WriteReg
  361              	.LVL38:
-  65:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
- 362              		.loc 1 65 8 discriminator 1 view .LVU97
- 363 003c 08B1     		cbz	r0, .L34
-  66:Core/Src/mpu6050.c **** 
- 364              		.loc 1 66 16 view .LVU98
+  66:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
+ 362              		.loc 1 66 8 discriminator 1 view .LVU97
+ 363 003c 08B1     		cbz	r0, .L36
+  67:Core/Src/mpu6050.c **** 
+ 364              		.loc 1 67 16 view .LVU98
  365 003e 0120     		movs	r0, #1
  366 0040 ECE7     		b	.L24
- 367              	.L34:
-  69:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
- 368              		.loc 1 69 5 is_stmt 1 view .LVU99
-  69:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
- 369              		.loc 1 69 9 is_stmt 0 view .LVU100
+ 367              	.L36:
+  70:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
+ 368              		.loc 1 70 5 is_stmt 1 view .LVU99
+  70:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
+ 369              		.loc 1 70 9 is_stmt 0 view .LVU100
  370 0042 0022     		movs	r2, #0
  371 0044 1C21     		movs	r1, #28
  372 0046 6820     		movs	r0, #104
  373 0048 FFF7FEFF 		bl	I2C_WriteReg
  374              	.LVL39:
-  69:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
- 375              		.loc 1 69 8 discriminator 1 view .LVU101
- 376 004c 08B1     		cbz	r0, .L35
-  70:Core/Src/mpu6050.c **** 
- 377              		.loc 1 70 16 view .LVU102
+  70:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
+ 375              		.loc 1 70 8 discriminator 1 view .LVU101
+ 376 004c 08B1     		cbz	r0, .L37
+  71:Core/Src/mpu6050.c **** 
+ 377              		.loc 1 71 16 view .LVU102
  378 004e 0120     		movs	r0, #1
  379 0050 E4E7     		b	.L24
- 380              	.L35:
-  73:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
- 381              		.loc 1 73 5 is_stmt 1 view .LVU103
-  73:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
- 382              		.loc 1 73 9 is_stmt 0 view .LVU104
+ 380              	.L37:
+  74:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
+ 381              		.loc 1 74 5 is_stmt 1 view .LVU103
+  74:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
+ 382              		.loc 1 74 9 is_stmt 0 view .LVU104
  383 0052 0022     		movs	r2, #0
  384 0054 1B21     		movs	r1, #27
  385 0056 6820     		movs	r0, #104
  386 0058 FFF7FEFF 		bl	I2C_WriteReg
  387              	.LVL40:
-  73:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
- 388              		.loc 1 73 8 discriminator 1 view .LVU105
- 389 005c 0028     		cmp	r0, #0
- 390 005e DDD0     		beq	.L24
-  74:Core/Src/mpu6050.c **** 
- 391              		.loc 1 74 16 view .LVU106
- 392 0060 0120     		movs	r0, #1
- 393 0062 DBE7     		b	.L24
- 394              	.L25:
-  57:Core/Src/mpu6050.c ****     if (reg != 0x68) return SOFT_I2C_ERROR;
- 395              		.loc 1 57 16 view .LVU107
- 396 0064 0120     		movs	r0, #1
- 397 0066 D9E7     		b	.L24
- 398              		.cfi_endproc
- 399              	.LFE76:
- 401              		.section	.text.MPU6050_ReadWhoAmI,"ax",%progbits
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s 			page 10
+  74:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
+ 388              		.loc 1 74 8 discriminator 1 view .LVU105
+ 389 005c 08B1     		cbz	r0, .L38
+  75:Core/Src/mpu6050.c ****     if (I2C_WriteReg(MPU6050_ADDR, INT_PIN_CFG, 0x10) != SOFT_I2C_OK)
+ 390              		.loc 1 75 16 view .LVU106
+ 391 005e 0120     		movs	r0, #1
+ 392 0060 DCE7     		b	.L24
+ 393              	.L38:
+  76:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
+ 394              		.loc 1 76 5 is_stmt 1 view .LVU107
+  76:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
+ 395              		.loc 1 76 9 is_stmt 0 view .LVU108
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s 			page 10
 
 
- 402              		.align	1
- 403              		.global	MPU6050_ReadWhoAmI
- 404              		.syntax unified
- 405              		.thumb
- 406              		.thumb_func
- 408              	MPU6050_ReadWhoAmI:
- 409              	.LFB77:
-  78:Core/Src/mpu6050.c **** 
-  79:Core/Src/mpu6050.c **** /* ===== 读 WHO_AM_I ===== */
-  80:Core/Src/mpu6050.c **** uint8_t MPU6050_ReadWhoAmI(void)
-  81:Core/Src/mpu6050.c **** {
- 410              		.loc 1 81 1 is_stmt 1 view -0
- 411              		.cfi_startproc
- 412              		@ args = 0, pretend = 0, frame = 8
- 413              		@ frame_needed = 0, uses_anonymous_args = 0
- 414 0000 00B5     		push	{lr}
- 415              	.LCFI7:
- 416              		.cfi_def_cfa_offset 4
- 417              		.cfi_offset 14, -4
- 418 0002 83B0     		sub	sp, sp, #12
- 419              	.LCFI8:
- 420              		.cfi_def_cfa_offset 16
-  82:Core/Src/mpu6050.c ****     uint8_t reg;
- 421              		.loc 1 82 5 view .LVU109
-  83:Core/Src/mpu6050.c ****     if (I2C_ReadReg(MPU6050_ADDR, MPU6050_REG_WHO_AM_I, &reg) == SOFT_I2C_OK)
- 422              		.loc 1 83 5 view .LVU110
- 423              		.loc 1 83 9 is_stmt 0 view .LVU111
- 424 0004 0DF10702 		add	r2, sp, #7
- 425 0008 7521     		movs	r1, #117
- 426 000a 6820     		movs	r0, #104
- 427 000c FFF7FEFF 		bl	I2C_ReadReg
- 428              	.LVL41:
- 429              		.loc 1 83 8 discriminator 1 view .LVU112
- 430 0010 18B1     		cbz	r0, .L40
-  84:Core/Src/mpu6050.c ****         return reg;
-  85:Core/Src/mpu6050.c ****     return 0;
- 431              		.loc 1 85 12 view .LVU113
- 432 0012 0020     		movs	r0, #0
- 433              	.L37:
-  86:Core/Src/mpu6050.c **** }
- 434              		.loc 1 86 1 view .LVU114
- 435 0014 03B0     		add	sp, sp, #12
- 436              	.LCFI9:
- 437              		.cfi_remember_state
- 438              		.cfi_def_cfa_offset 4
- 439              		@ sp needed
- 440 0016 5DF804FB 		ldr	pc, [sp], #4
- 441              	.L40:
- 442              	.LCFI10:
- 443              		.cfi_restore_state
-  84:Core/Src/mpu6050.c ****         return reg;
- 444              		.loc 1 84 9 is_stmt 1 view .LVU115
-  84:Core/Src/mpu6050.c ****         return reg;
- 445              		.loc 1 84 16 is_stmt 0 view .LVU116
- 446 001a 9DF80700 		ldrb	r0, [sp, #7]	@ zero_extendqisi2
- 447 001e F9E7     		b	.L37
- 448              		.cfi_endproc
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s 			page 11
+ 396 0062 1022     		movs	r2, #16
+ 397 0064 3721     		movs	r1, #55
+ 398 0066 6820     		movs	r0, #104
+ 399 0068 FFF7FEFF 		bl	I2C_WriteReg
+ 400              	.LVL41:
+  76:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
+ 401              		.loc 1 76 8 discriminator 1 view .LVU109
+ 402 006c 08B1     		cbz	r0, .L39
+  77:Core/Src/mpu6050.c ****     if (I2C_WriteReg(MPU6050_ADDR, INT_ENABLE, 0x01) != SOFT_I2C_OK)
+ 403              		.loc 1 77 16 view .LVU110
+ 404 006e 0120     		movs	r0, #1
+ 405 0070 D4E7     		b	.L24
+ 406              	.L39:
+  78:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
+ 407              		.loc 1 78 5 is_stmt 1 view .LVU111
+  78:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
+ 408              		.loc 1 78 9 is_stmt 0 view .LVU112
+ 409 0072 0122     		movs	r2, #1
+ 410 0074 3821     		movs	r1, #56
+ 411 0076 6820     		movs	r0, #104
+ 412 0078 FFF7FEFF 		bl	I2C_WriteReg
+ 413              	.LVL42:
+  78:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
+ 414              		.loc 1 78 8 discriminator 1 view .LVU113
+ 415 007c 0028     		cmp	r0, #0
+ 416 007e CDD0     		beq	.L24
+  79:Core/Src/mpu6050.c ****     return SOFT_I2C_OK;
+ 417              		.loc 1 79 16 view .LVU114
+ 418 0080 0120     		movs	r0, #1
+ 419 0082 CBE7     		b	.L24
+ 420              	.L25:
+  58:Core/Src/mpu6050.c ****     if (reg != 0x68) return SOFT_I2C_ERROR;
+ 421              		.loc 1 58 16 view .LVU115
+ 422 0084 0120     		movs	r0, #1
+ 423 0086 C9E7     		b	.L24
+ 424              		.cfi_endproc
+ 425              	.LFE76:
+ 427              		.section	.text.MPU6050_ReadWhoAmI,"ax",%progbits
+ 428              		.align	1
+ 429              		.global	MPU6050_ReadWhoAmI
+ 430              		.syntax unified
+ 431              		.thumb
+ 432              		.thumb_func
+ 434              	MPU6050_ReadWhoAmI:
+ 435              	.LFB77:
+  82:Core/Src/mpu6050.c **** 
+  83:Core/Src/mpu6050.c **** /* ===== 读 WHO_AM_I ===== */
+  84:Core/Src/mpu6050.c **** uint8_t MPU6050_ReadWhoAmI(void)
+  85:Core/Src/mpu6050.c **** {
+ 436              		.loc 1 85 1 is_stmt 1 view -0
+ 437              		.cfi_startproc
+ 438              		@ args = 0, pretend = 0, frame = 8
+ 439              		@ frame_needed = 0, uses_anonymous_args = 0
+ 440 0000 00B5     		push	{lr}
+ 441              	.LCFI7:
+ 442              		.cfi_def_cfa_offset 4
+ 443              		.cfi_offset 14, -4
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s 			page 11
 
 
- 449              	.LFE77:
- 451              		.section	.text.MPU6050_ReadAll,"ax",%progbits
- 452              		.align	1
- 453              		.global	MPU6050_ReadAll
- 454              		.syntax unified
- 455              		.thumb
- 456              		.thumb_func
- 458              	MPU6050_ReadAll:
- 459              	.LVL42:
- 460              	.LFB78:
-  87:Core/Src/mpu6050.c **** 
-  88:Core/Src/mpu6050.c **** /* ===== 读全部传感器数据（加速度 + 温度 + 角速度，共 14 字节） ===== */
-  89:Core/Src/mpu6050.c **** SoftI2C_Status MPU6050_ReadAll(MPU6050_Data_t *data)
-  90:Core/Src/mpu6050.c **** {
- 461              		.loc 1 90 1 is_stmt 1 view -0
- 462              		.cfi_startproc
- 463              		@ args = 0, pretend = 0, frame = 16
- 464              		@ frame_needed = 0, uses_anonymous_args = 0
- 465              		.loc 1 90 1 is_stmt 0 view .LVU118
- 466 0000 10B5     		push	{r4, lr}
- 467              	.LCFI11:
- 468              		.cfi_def_cfa_offset 8
- 469              		.cfi_offset 4, -8
- 470              		.cfi_offset 14, -4
- 471 0002 84B0     		sub	sp, sp, #16
- 472              	.LCFI12:
- 473              		.cfi_def_cfa_offset 24
- 474 0004 0446     		mov	r4, r0
-  91:Core/Src/mpu6050.c ****     uint8_t buf[14];
- 475              		.loc 1 91 5 is_stmt 1 view .LVU119
-  92:Core/Src/mpu6050.c **** 
-  93:Core/Src/mpu6050.c ****     if (I2C_ReadRegs(MPU6050_ADDR, MPU6050_REG_ACCEL_XOUT_H, buf, 14) != SOFT_I2C_OK)
- 476              		.loc 1 93 5 view .LVU120
- 477              		.loc 1 93 9 is_stmt 0 view .LVU121
- 478 0006 0E23     		movs	r3, #14
- 479 0008 6A46     		mov	r2, sp
- 480 000a 3B21     		movs	r1, #59
- 481 000c 6820     		movs	r0, #104
- 482              	.LVL43:
- 483              		.loc 1 93 9 view .LVU122
- 484 000e FFF7FEFF 		bl	I2C_ReadRegs
+ 444 0002 83B0     		sub	sp, sp, #12
+ 445              	.LCFI8:
+ 446              		.cfi_def_cfa_offset 16
+  86:Core/Src/mpu6050.c ****     uint8_t reg;
+ 447              		.loc 1 86 5 view .LVU117
+  87:Core/Src/mpu6050.c ****     if (I2C_ReadReg(MPU6050_ADDR, MPU6050_REG_WHO_AM_I, &reg) == SOFT_I2C_OK)
+ 448              		.loc 1 87 5 view .LVU118
+ 449              		.loc 1 87 9 is_stmt 0 view .LVU119
+ 450 0004 0DF10702 		add	r2, sp, #7
+ 451 0008 7521     		movs	r1, #117
+ 452 000a 6820     		movs	r0, #104
+ 453 000c FFF7FEFF 		bl	I2C_ReadReg
+ 454              	.LVL43:
+ 455              		.loc 1 87 8 discriminator 1 view .LVU120
+ 456 0010 18B1     		cbz	r0, .L44
+  88:Core/Src/mpu6050.c ****         return reg;
+  89:Core/Src/mpu6050.c ****     return 0;
+ 457              		.loc 1 89 12 view .LVU121
+ 458 0012 0020     		movs	r0, #0
+ 459              	.L41:
+  90:Core/Src/mpu6050.c **** }
+ 460              		.loc 1 90 1 view .LVU122
+ 461 0014 03B0     		add	sp, sp, #12
+ 462              	.LCFI9:
+ 463              		.cfi_remember_state
+ 464              		.cfi_def_cfa_offset 4
+ 465              		@ sp needed
+ 466 0016 5DF804FB 		ldr	pc, [sp], #4
+ 467              	.L44:
+ 468              	.LCFI10:
+ 469              		.cfi_restore_state
+  88:Core/Src/mpu6050.c ****         return reg;
+ 470              		.loc 1 88 9 is_stmt 1 view .LVU123
+  88:Core/Src/mpu6050.c ****         return reg;
+ 471              		.loc 1 88 16 is_stmt 0 view .LVU124
+ 472 001a 9DF80700 		ldrb	r0, [sp, #7]	@ zero_extendqisi2
+ 473 001e F9E7     		b	.L41
+ 474              		.cfi_endproc
+ 475              	.LFE77:
+ 477              		.section	.text.MPU6050_ReadAll,"ax",%progbits
+ 478              		.align	1
+ 479              		.global	MPU6050_ReadAll
+ 480              		.syntax unified
+ 481              		.thumb
+ 482              		.thumb_func
+ 484              	MPU6050_ReadAll:
  485              	.LVL44:
- 486              		.loc 1 93 8 discriminator 1 view .LVU123
- 487 0012 90BB     		cbnz	r0, .L43
-  94:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
-  95:Core/Src/mpu6050.c **** 
-  96:Core/Src/mpu6050.c ****     /* 大端拼接 */
-  97:Core/Src/mpu6050.c ****     data->ax   = (int16_t)((buf[0]  << 8) | buf[1]);
- 488              		.loc 1 97 5 is_stmt 1 view .LVU124
- 489              		.loc 1 97 32 is_stmt 0 view .LVU125
- 490 0014 9DF80020 		ldrb	r2, [sp]	@ zero_extendqisi2
- 491              		.loc 1 97 48 view .LVU126
- 492 0018 9DF80130 		ldrb	r3, [sp, #1]	@ zero_extendqisi2
- 493              		.loc 1 97 18 view .LVU127
- 494 001c 43EA0223 		orr	r3, r3, r2, lsl #8
- 495              		.loc 1 97 16 view .LVU128
- 496 0020 2380     		strh	r3, [r4]	@ movhi
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s 			page 12
+ 486              	.LFB78:
+  91:Core/Src/mpu6050.c **** 
+  92:Core/Src/mpu6050.c **** /* ===== 读全部传感器数据（加速度 + 温度 + 角速度，共 14 字节） ===== */
+  93:Core/Src/mpu6050.c **** SoftI2C_Status MPU6050_ReadAll(MPU6050_Data_t *data)
+  94:Core/Src/mpu6050.c **** {
+ 487              		.loc 1 94 1 is_stmt 1 view -0
+ 488              		.cfi_startproc
+ 489              		@ args = 0, pretend = 0, frame = 16
+ 490              		@ frame_needed = 0, uses_anonymous_args = 0
+ 491              		.loc 1 94 1 is_stmt 0 view .LVU126
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s 			page 12
 
 
-  98:Core/Src/mpu6050.c ****     data->ay   = (int16_t)((buf[2]  << 8) | buf[3]);
- 497              		.loc 1 98 5 is_stmt 1 view .LVU129
- 498              		.loc 1 98 32 is_stmt 0 view .LVU130
- 499 0022 9DF80220 		ldrb	r2, [sp, #2]	@ zero_extendqisi2
- 500              		.loc 1 98 48 view .LVU131
- 501 0026 9DF80330 		ldrb	r3, [sp, #3]	@ zero_extendqisi2
- 502              		.loc 1 98 18 view .LVU132
- 503 002a 43EA0223 		orr	r3, r3, r2, lsl #8
- 504              		.loc 1 98 16 view .LVU133
- 505 002e 6380     		strh	r3, [r4, #2]	@ movhi
-  99:Core/Src/mpu6050.c ****     data->az   = (int16_t)((buf[4]  << 8) | buf[5]);
- 506              		.loc 1 99 5 is_stmt 1 view .LVU134
- 507              		.loc 1 99 32 is_stmt 0 view .LVU135
- 508 0030 9DF80420 		ldrb	r2, [sp, #4]	@ zero_extendqisi2
- 509              		.loc 1 99 48 view .LVU136
- 510 0034 9DF80530 		ldrb	r3, [sp, #5]	@ zero_extendqisi2
- 511              		.loc 1 99 18 view .LVU137
- 512 0038 43EA0223 		orr	r3, r3, r2, lsl #8
- 513              		.loc 1 99 16 view .LVU138
- 514 003c A380     		strh	r3, [r4, #4]	@ movhi
- 100:Core/Src/mpu6050.c ****     data->temp = (int16_t)((buf[6]  << 8) | buf[7]);
- 515              		.loc 1 100 5 is_stmt 1 view .LVU139
- 516              		.loc 1 100 32 is_stmt 0 view .LVU140
- 517 003e 9DF80620 		ldrb	r2, [sp, #6]	@ zero_extendqisi2
- 518              		.loc 1 100 48 view .LVU141
- 519 0042 9DF80730 		ldrb	r3, [sp, #7]	@ zero_extendqisi2
- 520              		.loc 1 100 18 view .LVU142
- 521 0046 43EA0223 		orr	r3, r3, r2, lsl #8
- 522              		.loc 1 100 16 view .LVU143
- 523 004a A381     		strh	r3, [r4, #12]	@ movhi
- 101:Core/Src/mpu6050.c ****     data->gx   = (int16_t)((buf[8]  << 8) | buf[9]);
- 524              		.loc 1 101 5 is_stmt 1 view .LVU144
- 525              		.loc 1 101 32 is_stmt 0 view .LVU145
- 526 004c 9DF80820 		ldrb	r2, [sp, #8]	@ zero_extendqisi2
- 527              		.loc 1 101 48 view .LVU146
- 528 0050 9DF80930 		ldrb	r3, [sp, #9]	@ zero_extendqisi2
- 529              		.loc 1 101 18 view .LVU147
- 530 0054 43EA0223 		orr	r3, r3, r2, lsl #8
- 531              		.loc 1 101 16 view .LVU148
- 532 0058 E380     		strh	r3, [r4, #6]	@ movhi
- 102:Core/Src/mpu6050.c ****     data->gy   = (int16_t)((buf[10] << 8) | buf[11]);
- 533              		.loc 1 102 5 is_stmt 1 view .LVU149
- 534              		.loc 1 102 32 is_stmt 0 view .LVU150
- 535 005a 9DF80A20 		ldrb	r2, [sp, #10]	@ zero_extendqisi2
- 536              		.loc 1 102 48 view .LVU151
- 537 005e 9DF80B30 		ldrb	r3, [sp, #11]	@ zero_extendqisi2
- 538              		.loc 1 102 18 view .LVU152
- 539 0062 43EA0223 		orr	r3, r3, r2, lsl #8
- 540              		.loc 1 102 16 view .LVU153
- 541 0066 2381     		strh	r3, [r4, #8]	@ movhi
- 103:Core/Src/mpu6050.c ****     data->gz   = (int16_t)((buf[12] << 8) | buf[13]);
- 542              		.loc 1 103 5 is_stmt 1 view .LVU154
- 543              		.loc 1 103 32 is_stmt 0 view .LVU155
- 544 0068 9DF80C20 		ldrb	r2, [sp, #12]	@ zero_extendqisi2
- 545              		.loc 1 103 48 view .LVU156
- 546 006c 9DF80D30 		ldrb	r3, [sp, #13]	@ zero_extendqisi2
- 547              		.loc 1 103 18 view .LVU157
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s 			page 13
+ 492 0000 10B5     		push	{r4, lr}
+ 493              	.LCFI11:
+ 494              		.cfi_def_cfa_offset 8
+ 495              		.cfi_offset 4, -8
+ 496              		.cfi_offset 14, -4
+ 497 0002 84B0     		sub	sp, sp, #16
+ 498              	.LCFI12:
+ 499              		.cfi_def_cfa_offset 24
+ 500 0004 0446     		mov	r4, r0
+  95:Core/Src/mpu6050.c ****     uint8_t buf[14];
+ 501              		.loc 1 95 5 is_stmt 1 view .LVU127
+  96:Core/Src/mpu6050.c **** 
+  97:Core/Src/mpu6050.c ****     if (I2C_ReadRegs(MPU6050_ADDR, MPU6050_REG_ACCEL_XOUT_H, buf, 14) != SOFT_I2C_OK)
+ 502              		.loc 1 97 5 view .LVU128
+ 503              		.loc 1 97 9 is_stmt 0 view .LVU129
+ 504 0006 0E23     		movs	r3, #14
+ 505 0008 6A46     		mov	r2, sp
+ 506 000a 3B21     		movs	r1, #59
+ 507 000c 6820     		movs	r0, #104
+ 508              	.LVL45:
+ 509              		.loc 1 97 9 view .LVU130
+ 510 000e FFF7FEFF 		bl	I2C_ReadRegs
+ 511              	.LVL46:
+ 512              		.loc 1 97 8 discriminator 1 view .LVU131
+ 513 0012 90BB     		cbnz	r0, .L47
+  98:Core/Src/mpu6050.c ****         return SOFT_I2C_ERROR;
+  99:Core/Src/mpu6050.c **** 
+ 100:Core/Src/mpu6050.c ****     /* 大端拼接 */
+ 101:Core/Src/mpu6050.c ****     data->ax   = (int16_t)((buf[0]  << 8) | buf[1]);
+ 514              		.loc 1 101 5 is_stmt 1 view .LVU132
+ 515              		.loc 1 101 32 is_stmt 0 view .LVU133
+ 516 0014 9DF80020 		ldrb	r2, [sp]	@ zero_extendqisi2
+ 517              		.loc 1 101 48 view .LVU134
+ 518 0018 9DF80130 		ldrb	r3, [sp, #1]	@ zero_extendqisi2
+ 519              		.loc 1 101 18 view .LVU135
+ 520 001c 43EA0223 		orr	r3, r3, r2, lsl #8
+ 521              		.loc 1 101 16 view .LVU136
+ 522 0020 2380     		strh	r3, [r4]	@ movhi
+ 102:Core/Src/mpu6050.c ****     data->ay   = (int16_t)((buf[2]  << 8) | buf[3]);
+ 523              		.loc 1 102 5 is_stmt 1 view .LVU137
+ 524              		.loc 1 102 32 is_stmt 0 view .LVU138
+ 525 0022 9DF80220 		ldrb	r2, [sp, #2]	@ zero_extendqisi2
+ 526              		.loc 1 102 48 view .LVU139
+ 527 0026 9DF80330 		ldrb	r3, [sp, #3]	@ zero_extendqisi2
+ 528              		.loc 1 102 18 view .LVU140
+ 529 002a 43EA0223 		orr	r3, r3, r2, lsl #8
+ 530              		.loc 1 102 16 view .LVU141
+ 531 002e 6380     		strh	r3, [r4, #2]	@ movhi
+ 103:Core/Src/mpu6050.c ****     data->az   = (int16_t)((buf[4]  << 8) | buf[5]);
+ 532              		.loc 1 103 5 is_stmt 1 view .LVU142
+ 533              		.loc 1 103 32 is_stmt 0 view .LVU143
+ 534 0030 9DF80420 		ldrb	r2, [sp, #4]	@ zero_extendqisi2
+ 535              		.loc 1 103 48 view .LVU144
+ 536 0034 9DF80530 		ldrb	r3, [sp, #5]	@ zero_extendqisi2
+ 537              		.loc 1 103 18 view .LVU145
+ 538 0038 43EA0223 		orr	r3, r3, r2, lsl #8
+ 539              		.loc 1 103 16 view .LVU146
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s 			page 13
 
 
- 548 0070 43EA0223 		orr	r3, r3, r2, lsl #8
- 549              		.loc 1 103 16 view .LVU158
- 550 0074 6381     		strh	r3, [r4, #10]	@ movhi
- 104:Core/Src/mpu6050.c **** 
- 105:Core/Src/mpu6050.c ****     return SOFT_I2C_OK;
- 551              		.loc 1 105 5 is_stmt 1 view .LVU159
- 552              	.L42:
- 106:Core/Src/mpu6050.c **** }
- 553              		.loc 1 106 1 is_stmt 0 view .LVU160
- 554 0076 04B0     		add	sp, sp, #16
- 555              	.LCFI13:
- 556              		.cfi_remember_state
- 557              		.cfi_def_cfa_offset 8
- 558              		@ sp needed
- 559 0078 10BD     		pop	{r4, pc}
- 560              	.LVL45:
- 561              	.L43:
- 562              	.LCFI14:
- 563              		.cfi_restore_state
-  94:Core/Src/mpu6050.c **** 
- 564              		.loc 1 94 16 view .LVU161
- 565 007a 0120     		movs	r0, #1
- 566 007c FBE7     		b	.L42
- 567              		.cfi_endproc
- 568              	.LFE78:
- 570              		.section	.rodata.MPU6050_Calibrate.str1.4,"aMS",%progbits,1
- 571              		.align	2
- 572              	.LC0:
- 573 0000 5B4D5055 		.ascii	"[MPU] Calibrating (keep sensor still)...\015\000"
- 573      5D204361 
- 573      6C696272 
- 573      6174696E 
- 573      6720286B 
- 574 002a 0000     		.align	2
- 575              	.LC1:
- 576 002c 5B4D5055 		.ascii	"[MPU] Calibration done: bias_ax=%d, bias_ay=%d, bia"
- 576      5D204361 
- 576      6C696272 
- 576      6174696F 
- 576      6E20646F 
- 577 005f 735F617A 		.ascii	"s_az=%d\015\012\000"
- 577      3D25640D 
- 577      0A00
- 578              		.section	.text.MPU6050_Calibrate,"ax",%progbits
- 579              		.align	1
- 580              		.global	MPU6050_Calibrate
- 581              		.syntax unified
- 582              		.thumb
- 583              		.thumb_func
- 585              	MPU6050_Calibrate:
- 586              	.LVL46:
- 587              	.LFB79:
- 107:Core/Src/mpu6050.c **** 
- 108:Core/Src/mpu6050.c **** /* ===== 零偏校准：采集 100 个样本取平均（必须在调度器启动前调用，使用 
- 109:Core/Src/mpu6050.c **** void MPU6050_Calibrate(int16_t *offset_ax, int16_t *offset_ay, int16_t *offset_az)
- 110:Core/Src/mpu6050.c **** {
- 588              		.loc 1 110 1 is_stmt 1 view -0
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s 			page 14
+ 540 003c A380     		strh	r3, [r4, #4]	@ movhi
+ 104:Core/Src/mpu6050.c ****     data->temp = (int16_t)((buf[6]  << 8) | buf[7]);
+ 541              		.loc 1 104 5 is_stmt 1 view .LVU147
+ 542              		.loc 1 104 32 is_stmt 0 view .LVU148
+ 543 003e 9DF80620 		ldrb	r2, [sp, #6]	@ zero_extendqisi2
+ 544              		.loc 1 104 48 view .LVU149
+ 545 0042 9DF80730 		ldrb	r3, [sp, #7]	@ zero_extendqisi2
+ 546              		.loc 1 104 18 view .LVU150
+ 547 0046 43EA0223 		orr	r3, r3, r2, lsl #8
+ 548              		.loc 1 104 16 view .LVU151
+ 549 004a A381     		strh	r3, [r4, #12]	@ movhi
+ 105:Core/Src/mpu6050.c ****     data->gx   = (int16_t)((buf[8]  << 8) | buf[9]);
+ 550              		.loc 1 105 5 is_stmt 1 view .LVU152
+ 551              		.loc 1 105 32 is_stmt 0 view .LVU153
+ 552 004c 9DF80820 		ldrb	r2, [sp, #8]	@ zero_extendqisi2
+ 553              		.loc 1 105 48 view .LVU154
+ 554 0050 9DF80930 		ldrb	r3, [sp, #9]	@ zero_extendqisi2
+ 555              		.loc 1 105 18 view .LVU155
+ 556 0054 43EA0223 		orr	r3, r3, r2, lsl #8
+ 557              		.loc 1 105 16 view .LVU156
+ 558 0058 E380     		strh	r3, [r4, #6]	@ movhi
+ 106:Core/Src/mpu6050.c ****     data->gy   = (int16_t)((buf[10] << 8) | buf[11]);
+ 559              		.loc 1 106 5 is_stmt 1 view .LVU157
+ 560              		.loc 1 106 32 is_stmt 0 view .LVU158
+ 561 005a 9DF80A20 		ldrb	r2, [sp, #10]	@ zero_extendqisi2
+ 562              		.loc 1 106 48 view .LVU159
+ 563 005e 9DF80B30 		ldrb	r3, [sp, #11]	@ zero_extendqisi2
+ 564              		.loc 1 106 18 view .LVU160
+ 565 0062 43EA0223 		orr	r3, r3, r2, lsl #8
+ 566              		.loc 1 106 16 view .LVU161
+ 567 0066 2381     		strh	r3, [r4, #8]	@ movhi
+ 107:Core/Src/mpu6050.c ****     data->gz   = (int16_t)((buf[12] << 8) | buf[13]);
+ 568              		.loc 1 107 5 is_stmt 1 view .LVU162
+ 569              		.loc 1 107 32 is_stmt 0 view .LVU163
+ 570 0068 9DF80C20 		ldrb	r2, [sp, #12]	@ zero_extendqisi2
+ 571              		.loc 1 107 48 view .LVU164
+ 572 006c 9DF80D30 		ldrb	r3, [sp, #13]	@ zero_extendqisi2
+ 573              		.loc 1 107 18 view .LVU165
+ 574 0070 43EA0223 		orr	r3, r3, r2, lsl #8
+ 575              		.loc 1 107 16 view .LVU166
+ 576 0074 6381     		strh	r3, [r4, #10]	@ movhi
+ 108:Core/Src/mpu6050.c **** 
+ 109:Core/Src/mpu6050.c ****     return SOFT_I2C_OK;
+ 577              		.loc 1 109 5 is_stmt 1 view .LVU167
+ 578              	.L46:
+ 110:Core/Src/mpu6050.c **** }
+ 579              		.loc 1 110 1 is_stmt 0 view .LVU168
+ 580 0076 04B0     		add	sp, sp, #16
+ 581              	.LCFI13:
+ 582              		.cfi_remember_state
+ 583              		.cfi_def_cfa_offset 8
+ 584              		@ sp needed
+ 585 0078 10BD     		pop	{r4, pc}
+ 586              	.LVL47:
+ 587              	.L47:
+ 588              	.LCFI14:
+ 589              		.cfi_restore_state
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s 			page 14
 
 
- 589              		.cfi_startproc
- 590              		@ args = 0, pretend = 0, frame = 16
- 591              		@ frame_needed = 0, uses_anonymous_args = 0
- 592              		.loc 1 110 1 is_stmt 0 view .LVU163
- 593 0000 2DE9F047 		push	{r4, r5, r6, r7, r8, r9, r10, lr}
- 594              	.LCFI15:
- 595              		.cfi_def_cfa_offset 32
- 596              		.cfi_offset 4, -32
- 597              		.cfi_offset 5, -28
- 598              		.cfi_offset 6, -24
- 599              		.cfi_offset 7, -20
- 600              		.cfi_offset 8, -16
- 601              		.cfi_offset 9, -12
- 602              		.cfi_offset 10, -8
- 603              		.cfi_offset 14, -4
- 604 0004 84B0     		sub	sp, sp, #16
- 605              	.LCFI16:
- 606              		.cfi_def_cfa_offset 48
- 607 0006 8046     		mov	r8, r0
- 608 0008 8946     		mov	r9, r1
- 609 000a 9246     		mov	r10, r2
- 111:Core/Src/mpu6050.c ****     MPU6050_Data_t raw;
- 610              		.loc 1 111 5 is_stmt 1 view .LVU164
- 112:Core/Src/mpu6050.c ****     int32_t sum_ax = 0, sum_ay = 0, sum_az = 0;
- 611              		.loc 1 112 5 view .LVU165
- 612              	.LVL47:
- 113:Core/Src/mpu6050.c **** 
- 114:Core/Src/mpu6050.c ****     printf("[MPU] Calibrating (keep sensor still)...\r\n");
- 613              		.loc 1 114 5 view .LVU166
- 614 000c 1F48     		ldr	r0, .L51
- 615              	.LVL48:
- 616              		.loc 1 114 5 is_stmt 0 view .LVU167
- 617 000e FFF7FEFF 		bl	puts
- 618              	.LVL49:
- 115:Core/Src/mpu6050.c ****     for (int i = 0; i < 100; i++) {
- 619              		.loc 1 115 5 is_stmt 1 view .LVU168
- 620              	.LBB4:
- 621              		.loc 1 115 10 view .LVU169
- 622              		.loc 1 115 14 is_stmt 0 view .LVU170
- 623 0012 0024     		movs	r4, #0
- 624              	.LBE4:
- 112:Core/Src/mpu6050.c ****     int32_t sum_ax = 0, sum_ay = 0, sum_az = 0;
- 625              		.loc 1 112 37 view .LVU171
- 626 0014 2546     		mov	r5, r4
- 112:Core/Src/mpu6050.c ****     int32_t sum_ax = 0, sum_ay = 0, sum_az = 0;
- 627              		.loc 1 112 25 view .LVU172
- 628 0016 2646     		mov	r6, r4
- 112:Core/Src/mpu6050.c ****     int32_t sum_ax = 0, sum_ay = 0, sum_az = 0;
- 629              		.loc 1 112 13 view .LVU173
- 630 0018 2746     		mov	r7, r4
- 631              	.LBB5:
- 632              		.loc 1 115 5 view .LVU174
- 633 001a 03E0     		b	.L46
- 634              	.LVL50:
- 635              	.L47:
- 116:Core/Src/mpu6050.c ****         if (MPU6050_ReadAll(&raw) == SOFT_I2C_OK) {
- 117:Core/Src/mpu6050.c ****             sum_ax += raw.ax;
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s 			page 15
+  98:Core/Src/mpu6050.c **** 
+ 590              		.loc 1 98 16 view .LVU169
+ 591 007a 0120     		movs	r0, #1
+ 592 007c FBE7     		b	.L46
+ 593              		.cfi_endproc
+ 594              	.LFE78:
+ 596              		.section	.rodata.MPU6050_Calibrate.str1.4,"aMS",%progbits,1
+ 597              		.align	2
+ 598              	.LC0:
+ 599 0000 5B4D5055 		.ascii	"[MPU] Calibrating (keep sensor still)...\015\000"
+ 599      5D204361 
+ 599      6C696272 
+ 599      6174696E 
+ 599      6720286B 
+ 600 002a 0000     		.align	2
+ 601              	.LC1:
+ 602 002c 5B4D5055 		.ascii	"[MPU] Calibration done: bias_ax=%d, bias_ay=%d, bia"
+ 602      5D204361 
+ 602      6C696272 
+ 602      6174696F 
+ 602      6E20646F 
+ 603 005f 735F617A 		.ascii	"s_az=%d\015\012\000"
+ 603      3D25640D 
+ 603      0A00
+ 604              		.section	.text.MPU6050_Calibrate,"ax",%progbits
+ 605              		.align	1
+ 606              		.global	MPU6050_Calibrate
+ 607              		.syntax unified
+ 608              		.thumb
+ 609              		.thumb_func
+ 611              	MPU6050_Calibrate:
+ 612              	.LVL48:
+ 613              	.LFB79:
+ 111:Core/Src/mpu6050.c **** 
+ 112:Core/Src/mpu6050.c **** /* ===== 零偏校准：采集 100 个样本取平均（必须在调度器启动前调用，使用 
+ 113:Core/Src/mpu6050.c **** void MPU6050_Calibrate(int16_t *offset_ax, int16_t *offset_ay, int16_t *offset_az)
+ 114:Core/Src/mpu6050.c **** {
+ 614              		.loc 1 114 1 is_stmt 1 view -0
+ 615              		.cfi_startproc
+ 616              		@ args = 0, pretend = 0, frame = 16
+ 617              		@ frame_needed = 0, uses_anonymous_args = 0
+ 618              		.loc 1 114 1 is_stmt 0 view .LVU171
+ 619 0000 2DE9F047 		push	{r4, r5, r6, r7, r8, r9, r10, lr}
+ 620              	.LCFI15:
+ 621              		.cfi_def_cfa_offset 32
+ 622              		.cfi_offset 4, -32
+ 623              		.cfi_offset 5, -28
+ 624              		.cfi_offset 6, -24
+ 625              		.cfi_offset 7, -20
+ 626              		.cfi_offset 8, -16
+ 627              		.cfi_offset 9, -12
+ 628              		.cfi_offset 10, -8
+ 629              		.cfi_offset 14, -4
+ 630 0004 84B0     		sub	sp, sp, #16
+ 631              	.LCFI16:
+ 632              		.cfi_def_cfa_offset 48
+ 633 0006 8046     		mov	r8, r0
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s 			page 15
 
 
- 118:Core/Src/mpu6050.c ****             sum_ay += raw.ay;
- 119:Core/Src/mpu6050.c ****             sum_az += raw.az - 16384;  /* 减去 1g 重力 */
- 120:Core/Src/mpu6050.c ****         }
- 121:Core/Src/mpu6050.c ****         HAL_Delay(10);  /* 使用 HAL_Delay（调度器启动前 vTaskDelay 不可用） */
- 636              		.loc 1 121 9 is_stmt 1 view .LVU175
- 637 001c 0A20     		movs	r0, #10
- 638 001e FFF7FEFF 		bl	HAL_Delay
- 639              	.LVL51:
- 115:Core/Src/mpu6050.c ****     for (int i = 0; i < 100; i++) {
- 640              		.loc 1 115 31 discriminator 2 view .LVU176
- 641 0022 0134     		adds	r4, r4, #1
- 642              	.LVL52:
- 643              	.L46:
- 115:Core/Src/mpu6050.c ****     for (int i = 0; i < 100; i++) {
- 644              		.loc 1 115 23 discriminator 1 view .LVU177
- 645 0024 632C     		cmp	r4, #99
- 646 0026 10DC     		bgt	.L50
- 116:Core/Src/mpu6050.c ****         if (MPU6050_ReadAll(&raw) == SOFT_I2C_OK) {
- 647              		.loc 1 116 9 view .LVU178
- 116:Core/Src/mpu6050.c ****         if (MPU6050_ReadAll(&raw) == SOFT_I2C_OK) {
- 648              		.loc 1 116 13 is_stmt 0 view .LVU179
- 649 0028 6846     		mov	r0, sp
- 650 002a FFF7FEFF 		bl	MPU6050_ReadAll
- 651              	.LVL53:
- 116:Core/Src/mpu6050.c ****         if (MPU6050_ReadAll(&raw) == SOFT_I2C_OK) {
- 652              		.loc 1 116 12 discriminator 1 view .LVU180
- 653 002e 0028     		cmp	r0, #0
- 654 0030 F4D1     		bne	.L47
- 117:Core/Src/mpu6050.c ****             sum_ay += raw.ay;
- 655              		.loc 1 117 13 is_stmt 1 view .LVU181
- 117:Core/Src/mpu6050.c ****             sum_ay += raw.ay;
- 656              		.loc 1 117 26 is_stmt 0 view .LVU182
- 657 0032 BDF90030 		ldrsh	r3, [sp]
- 117:Core/Src/mpu6050.c ****             sum_ay += raw.ay;
- 658              		.loc 1 117 20 view .LVU183
- 659 0036 1F44     		add	r7, r7, r3
- 660              	.LVL54:
- 118:Core/Src/mpu6050.c ****             sum_az += raw.az - 16384;  /* 减去 1g 重力 */
- 661              		.loc 1 118 13 is_stmt 1 view .LVU184
- 118:Core/Src/mpu6050.c ****             sum_az += raw.az - 16384;  /* 减去 1g 重力 */
- 662              		.loc 1 118 26 is_stmt 0 view .LVU185
- 663 0038 BDF90230 		ldrsh	r3, [sp, #2]
- 118:Core/Src/mpu6050.c ****             sum_az += raw.az - 16384;  /* 减去 1g 重力 */
- 664              		.loc 1 118 20 view .LVU186
- 665 003c 1E44     		add	r6, r6, r3
- 666              	.LVL55:
- 119:Core/Src/mpu6050.c ****         }
- 667              		.loc 1 119 13 is_stmt 1 view .LVU187
- 119:Core/Src/mpu6050.c ****         }
- 668              		.loc 1 119 26 is_stmt 0 view .LVU188
- 669 003e BDF90430 		ldrsh	r3, [sp, #4]
- 119:Core/Src/mpu6050.c ****         }
- 670              		.loc 1 119 30 view .LVU189
- 671 0042 A3F58043 		sub	r3, r3, #16384
- 119:Core/Src/mpu6050.c ****         }
- 672              		.loc 1 119 20 view .LVU190
- 673 0046 1D44     		add	r5, r5, r3
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s 			page 16
+ 634 0008 8946     		mov	r9, r1
+ 635 000a 9246     		mov	r10, r2
+ 115:Core/Src/mpu6050.c ****     MPU6050_Data_t raw;
+ 636              		.loc 1 115 5 is_stmt 1 view .LVU172
+ 116:Core/Src/mpu6050.c ****     int32_t sum_ax = 0, sum_ay = 0, sum_az = 0;
+ 637              		.loc 1 116 5 view .LVU173
+ 638              	.LVL49:
+ 117:Core/Src/mpu6050.c **** 
+ 118:Core/Src/mpu6050.c ****     printf("[MPU] Calibrating (keep sensor still)...\r\n");
+ 639              		.loc 1 118 5 view .LVU174
+ 640 000c 1F48     		ldr	r0, .L55
+ 641              	.LVL50:
+ 642              		.loc 1 118 5 is_stmt 0 view .LVU175
+ 643 000e FFF7FEFF 		bl	puts
+ 644              	.LVL51:
+ 119:Core/Src/mpu6050.c ****     for (int i = 0; i < 100; i++) {
+ 645              		.loc 1 119 5 is_stmt 1 view .LVU176
+ 646              	.LBB4:
+ 647              		.loc 1 119 10 view .LVU177
+ 648              		.loc 1 119 14 is_stmt 0 view .LVU178
+ 649 0012 0024     		movs	r4, #0
+ 650              	.LBE4:
+ 116:Core/Src/mpu6050.c ****     int32_t sum_ax = 0, sum_ay = 0, sum_az = 0;
+ 651              		.loc 1 116 37 view .LVU179
+ 652 0014 2546     		mov	r5, r4
+ 116:Core/Src/mpu6050.c ****     int32_t sum_ax = 0, sum_ay = 0, sum_az = 0;
+ 653              		.loc 1 116 25 view .LVU180
+ 654 0016 2646     		mov	r6, r4
+ 116:Core/Src/mpu6050.c ****     int32_t sum_ax = 0, sum_ay = 0, sum_az = 0;
+ 655              		.loc 1 116 13 view .LVU181
+ 656 0018 2746     		mov	r7, r4
+ 657              	.LBB5:
+ 658              		.loc 1 119 5 view .LVU182
+ 659 001a 03E0     		b	.L50
+ 660              	.LVL52:
+ 661              	.L51:
+ 120:Core/Src/mpu6050.c ****         if (MPU6050_ReadAll(&raw) == SOFT_I2C_OK) {
+ 121:Core/Src/mpu6050.c ****             sum_ax += raw.ax;
+ 122:Core/Src/mpu6050.c ****             sum_ay += raw.ay;
+ 123:Core/Src/mpu6050.c ****             sum_az += raw.az - 16384;  /* 减去 1g 重力 */
+ 124:Core/Src/mpu6050.c ****         }
+ 125:Core/Src/mpu6050.c ****         HAL_Delay(10);  /* 使用 HAL_Delay（调度器启动前 vTaskDelay 不可用） */
+ 662              		.loc 1 125 9 is_stmt 1 view .LVU183
+ 663 001c 0A20     		movs	r0, #10
+ 664 001e FFF7FEFF 		bl	HAL_Delay
+ 665              	.LVL53:
+ 119:Core/Src/mpu6050.c ****     for (int i = 0; i < 100; i++) {
+ 666              		.loc 1 119 31 discriminator 2 view .LVU184
+ 667 0022 0134     		adds	r4, r4, #1
+ 668              	.LVL54:
+ 669              	.L50:
+ 119:Core/Src/mpu6050.c ****     for (int i = 0; i < 100; i++) {
+ 670              		.loc 1 119 23 discriminator 1 view .LVU185
+ 671 0024 632C     		cmp	r4, #99
+ 672 0026 10DC     		bgt	.L54
+ 120:Core/Src/mpu6050.c ****         if (MPU6050_ReadAll(&raw) == SOFT_I2C_OK) {
+ 673              		.loc 1 120 9 view .LVU186
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s 			page 16
 
 
- 674              	.LVL56:
- 119:Core/Src/mpu6050.c ****         }
- 675              		.loc 1 119 20 view .LVU191
- 676 0048 E8E7     		b	.L47
- 677              	.LVL57:
- 678              	.L50:
- 119:Core/Src/mpu6050.c ****         }
- 679              		.loc 1 119 20 view .LVU192
- 680              	.LBE5:
- 122:Core/Src/mpu6050.c ****     }
- 123:Core/Src/mpu6050.c ****     *offset_ax = (int16_t)(sum_ax / 100);
- 681              		.loc 1 123 5 is_stmt 1 view .LVU193
- 682              		.loc 1 123 35 is_stmt 0 view .LVU194
- 683 004a 114A     		ldr	r2, .L51+4
- 684 004c 82FB0731 		smull	r3, r1, r2, r7
- 685 0050 FB17     		asrs	r3, r7, #31
- 686 0052 C3EB6113 		rsb	r3, r3, r1, asr #5
- 687              		.loc 1 123 16 view .LVU195
- 688 0056 A8F80030 		strh	r3, [r8]	@ movhi
- 124:Core/Src/mpu6050.c ****     *offset_ay = (int16_t)(sum_ay / 100);
- 689              		.loc 1 124 5 is_stmt 1 view .LVU196
- 690              		.loc 1 124 35 is_stmt 0 view .LVU197
- 691 005a 82FB0631 		smull	r3, r1, r2, r6
- 692 005e F317     		asrs	r3, r6, #31
- 693 0060 C3EB6113 		rsb	r3, r3, r1, asr #5
- 694              		.loc 1 124 16 view .LVU198
- 695 0064 A9F80030 		strh	r3, [r9]	@ movhi
- 125:Core/Src/mpu6050.c ****     *offset_az = (int16_t)(sum_az / 100);
- 696              		.loc 1 125 5 is_stmt 1 view .LVU199
- 697              		.loc 1 125 35 is_stmt 0 view .LVU200
- 698 0068 82FB0532 		smull	r3, r2, r2, r5
- 699 006c EB17     		asrs	r3, r5, #31
- 700 006e C3EB6213 		rsb	r3, r3, r2, asr #5
- 701              		.loc 1 125 18 view .LVU201
- 702 0072 1BB2     		sxth	r3, r3
- 703              		.loc 1 125 16 view .LVU202
- 704 0074 AAF80030 		strh	r3, [r10]	@ movhi
- 126:Core/Src/mpu6050.c ****     printf("[MPU] Calibration done: bias_ax=%d, bias_ay=%d, bias_az=%d\r\n",
- 705              		.loc 1 126 5 is_stmt 1 view .LVU203
- 706 0078 B9F90020 		ldrsh	r2, [r9]
- 707 007c B8F90010 		ldrsh	r1, [r8]
- 708 0080 0448     		ldr	r0, .L51+8
- 709 0082 FFF7FEFF 		bl	printf
- 710              	.LVL58:
- 127:Core/Src/mpu6050.c ****            *offset_ax, *offset_ay, *offset_az);
- 128:Core/Src/mpu6050.c **** }
- 711              		.loc 1 128 1 is_stmt 0 view .LVU204
- 712 0086 04B0     		add	sp, sp, #16
- 713              	.LCFI17:
- 714              		.cfi_def_cfa_offset 32
- 715              		@ sp needed
- 716 0088 BDE8F087 		pop	{r4, r5, r6, r7, r8, r9, r10, pc}
- 717              	.LVL59:
- 718              	.L52:
- 719              		.loc 1 128 1 view .LVU205
- 720              		.align	2
- 721              	.L51:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s 			page 17
+ 120:Core/Src/mpu6050.c ****         if (MPU6050_ReadAll(&raw) == SOFT_I2C_OK) {
+ 674              		.loc 1 120 13 is_stmt 0 view .LVU187
+ 675 0028 6846     		mov	r0, sp
+ 676 002a FFF7FEFF 		bl	MPU6050_ReadAll
+ 677              	.LVL55:
+ 120:Core/Src/mpu6050.c ****         if (MPU6050_ReadAll(&raw) == SOFT_I2C_OK) {
+ 678              		.loc 1 120 12 discriminator 1 view .LVU188
+ 679 002e 0028     		cmp	r0, #0
+ 680 0030 F4D1     		bne	.L51
+ 121:Core/Src/mpu6050.c ****             sum_ay += raw.ay;
+ 681              		.loc 1 121 13 is_stmt 1 view .LVU189
+ 121:Core/Src/mpu6050.c ****             sum_ay += raw.ay;
+ 682              		.loc 1 121 26 is_stmt 0 view .LVU190
+ 683 0032 BDF90030 		ldrsh	r3, [sp]
+ 121:Core/Src/mpu6050.c ****             sum_ay += raw.ay;
+ 684              		.loc 1 121 20 view .LVU191
+ 685 0036 1F44     		add	r7, r7, r3
+ 686              	.LVL56:
+ 122:Core/Src/mpu6050.c ****             sum_az += raw.az - 16384;  /* 减去 1g 重力 */
+ 687              		.loc 1 122 13 is_stmt 1 view .LVU192
+ 122:Core/Src/mpu6050.c ****             sum_az += raw.az - 16384;  /* 减去 1g 重力 */
+ 688              		.loc 1 122 26 is_stmt 0 view .LVU193
+ 689 0038 BDF90230 		ldrsh	r3, [sp, #2]
+ 122:Core/Src/mpu6050.c ****             sum_az += raw.az - 16384;  /* 减去 1g 重力 */
+ 690              		.loc 1 122 20 view .LVU194
+ 691 003c 1E44     		add	r6, r6, r3
+ 692              	.LVL57:
+ 123:Core/Src/mpu6050.c ****         }
+ 693              		.loc 1 123 13 is_stmt 1 view .LVU195
+ 123:Core/Src/mpu6050.c ****         }
+ 694              		.loc 1 123 26 is_stmt 0 view .LVU196
+ 695 003e BDF90430 		ldrsh	r3, [sp, #4]
+ 123:Core/Src/mpu6050.c ****         }
+ 696              		.loc 1 123 30 view .LVU197
+ 697 0042 A3F58043 		sub	r3, r3, #16384
+ 123:Core/Src/mpu6050.c ****         }
+ 698              		.loc 1 123 20 view .LVU198
+ 699 0046 1D44     		add	r5, r5, r3
+ 700              	.LVL58:
+ 123:Core/Src/mpu6050.c ****         }
+ 701              		.loc 1 123 20 view .LVU199
+ 702 0048 E8E7     		b	.L51
+ 703              	.LVL59:
+ 704              	.L54:
+ 123:Core/Src/mpu6050.c ****         }
+ 705              		.loc 1 123 20 view .LVU200
+ 706              	.LBE5:
+ 126:Core/Src/mpu6050.c ****     }
+ 127:Core/Src/mpu6050.c ****     *offset_ax = (int16_t)(sum_ax / 100);
+ 707              		.loc 1 127 5 is_stmt 1 view .LVU201
+ 708              		.loc 1 127 35 is_stmt 0 view .LVU202
+ 709 004a 114A     		ldr	r2, .L55+4
+ 710 004c 82FB0731 		smull	r3, r1, r2, r7
+ 711 0050 FB17     		asrs	r3, r7, #31
+ 712 0052 C3EB6113 		rsb	r3, r3, r1, asr #5
+ 713              		.loc 1 127 16 view .LVU203
+ 714 0056 A8F80030 		strh	r3, [r8]	@ movhi
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s 			page 17
 
 
- 722 008c 00000000 		.word	.LC0
- 723 0090 1F85EB51 		.word	1374389535
- 724 0094 2C000000 		.word	.LC1
- 725              		.cfi_endproc
- 726              	.LFE79:
- 728              		.text
- 729              	.Letext0:
- 730              		.file 2 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_defa
- 731              		.file 3 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h
- 732              		.file 4 "Core/Inc/soft_i2c.h"
- 733              		.file 5 "Core/Inc/mpu6050.h"
- 734              		.file 6 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/stdio.h"
- 735              		.file 7 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h"
- 736              		.file 8 "<built-in>"
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s 			page 18
+ 128:Core/Src/mpu6050.c ****     *offset_ay = (int16_t)(sum_ay / 100);
+ 715              		.loc 1 128 5 is_stmt 1 view .LVU204
+ 716              		.loc 1 128 35 is_stmt 0 view .LVU205
+ 717 005a 82FB0631 		smull	r3, r1, r2, r6
+ 718 005e F317     		asrs	r3, r6, #31
+ 719 0060 C3EB6113 		rsb	r3, r3, r1, asr #5
+ 720              		.loc 1 128 16 view .LVU206
+ 721 0064 A9F80030 		strh	r3, [r9]	@ movhi
+ 129:Core/Src/mpu6050.c ****     *offset_az = (int16_t)(sum_az / 100);
+ 722              		.loc 1 129 5 is_stmt 1 view .LVU207
+ 723              		.loc 1 129 35 is_stmt 0 view .LVU208
+ 724 0068 82FB0532 		smull	r3, r2, r2, r5
+ 725 006c EB17     		asrs	r3, r5, #31
+ 726 006e C3EB6213 		rsb	r3, r3, r2, asr #5
+ 727              		.loc 1 129 18 view .LVU209
+ 728 0072 1BB2     		sxth	r3, r3
+ 729              		.loc 1 129 16 view .LVU210
+ 730 0074 AAF80030 		strh	r3, [r10]	@ movhi
+ 130:Core/Src/mpu6050.c ****     printf("[MPU] Calibration done: bias_ax=%d, bias_ay=%d, bias_az=%d\r\n",
+ 731              		.loc 1 130 5 is_stmt 1 view .LVU211
+ 732 0078 B9F90020 		ldrsh	r2, [r9]
+ 733 007c B8F90010 		ldrsh	r1, [r8]
+ 734 0080 0448     		ldr	r0, .L55+8
+ 735 0082 FFF7FEFF 		bl	printf
+ 736              	.LVL60:
+ 131:Core/Src/mpu6050.c ****            *offset_ax, *offset_ay, *offset_az);
+ 132:Core/Src/mpu6050.c **** }
+ 737              		.loc 1 132 1 is_stmt 0 view .LVU212
+ 738 0086 04B0     		add	sp, sp, #16
+ 739              	.LCFI17:
+ 740              		.cfi_def_cfa_offset 32
+ 741              		@ sp needed
+ 742 0088 BDE8F087 		pop	{r4, r5, r6, r7, r8, r9, r10, pc}
+ 743              	.LVL61:
+ 744              	.L56:
+ 745              		.loc 1 132 1 view .LVU213
+ 746              		.align	2
+ 747              	.L55:
+ 748 008c 00000000 		.word	.LC0
+ 749 0090 1F85EB51 		.word	1374389535
+ 750 0094 2C000000 		.word	.LC1
+ 751              		.cfi_endproc
+ 752              	.LFE79:
+ 754              		.section	.text.HAL_GPIO_EXTI_Callback,"ax",%progbits
+ 755              		.align	1
+ 756              		.global	HAL_GPIO_EXTI_Callback
+ 757              		.syntax unified
+ 758              		.thumb
+ 759              		.thumb_func
+ 761              	HAL_GPIO_EXTI_Callback:
+ 762              	.LVL62:
+ 763              	.LFB80:
+ 133:Core/Src/mpu6050.c **** void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+ 134:Core/Src/mpu6050.c **** {
+ 764              		.loc 1 134 1 is_stmt 1 view -0
+ 765              		.cfi_startproc
+ 766              		@ args = 0, pretend = 0, frame = 8
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s 			page 18
+
+
+ 767              		@ frame_needed = 0, uses_anonymous_args = 0
+ 135:Core/Src/mpu6050.c ****   if (GPIO_Pin == GPIO_PIN_0) {
+ 768              		.loc 1 135 3 view .LVU215
+ 769              		.loc 1 135 6 is_stmt 0 view .LVU216
+ 770 0000 0128     		cmp	r0, #1
+ 771 0002 00D0     		beq	.L64
+ 772 0004 7047     		bx	lr
+ 773              	.L64:
+ 134:Core/Src/mpu6050.c ****   if (GPIO_Pin == GPIO_PIN_0) {
+ 774              		.loc 1 134 1 view .LVU217
+ 775 0006 00B5     		push	{lr}
+ 776              	.LCFI18:
+ 777              		.cfi_def_cfa_offset 4
+ 778              		.cfi_offset 14, -4
+ 779 0008 83B0     		sub	sp, sp, #12
+ 780              	.LCFI19:
+ 781              		.cfi_def_cfa_offset 16
+ 782              	.LBB6:
+ 136:Core/Src/mpu6050.c ****     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+ 783              		.loc 1 136 5 is_stmt 1 view .LVU218
+ 784              		.loc 1 136 16 is_stmt 0 view .LVU219
+ 785 000a 0023     		movs	r3, #0
+ 786 000c 0193     		str	r3, [sp, #4]
+ 137:Core/Src/mpu6050.c ****     xSemaphoreGiveFromISR(MPU_Sem, &xHigherPriorityTaskWoken);
+ 787              		.loc 1 137 5 is_stmt 1 view .LVU220
+ 788 000e 01A9     		add	r1, sp, #4
+ 789 0010 0B4B     		ldr	r3, .L65
+ 790 0012 1868     		ldr	r0, [r3]
+ 791              	.LVL63:
+ 792              		.loc 1 137 5 is_stmt 0 view .LVU221
+ 793 0014 FFF7FEFF 		bl	xQueueGiveFromISR
+ 794              	.LVL64:
+ 138:Core/Src/mpu6050.c ****     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+ 795              		.loc 1 138 5 is_stmt 1 view .LVU222
+ 796              		.loc 1 138 5 view .LVU223
+ 797 0018 019B     		ldr	r3, [sp, #4]
+ 798 001a 4BB1     		cbz	r3, .L59
+ 799              		.loc 1 138 5 discriminator 1 view .LVU224
+ 800 001c 4FF0E023 		mov	r3, #-536813568
+ 801 0020 4FF08052 		mov	r2, #268435456
+ 802 0024 C3F8042D 		str	r2, [r3, #3332]
+ 803              		.loc 1 138 5 view .LVU225
+ 804              		.loc 1 138 5 is_stmt 0 discriminator 1 view .LVU226
+ 805              		.syntax unified
+ 806              	@ 138 "Core/Src/mpu6050.c" 1
+ 807 0028 BFF34F8F 		dsb
+ 808              	@ 0 "" 2
+ 809              		.loc 1 138 5 is_stmt 1 view .LVU227
+ 810              		.loc 1 138 5 is_stmt 0 discriminator 1 view .LVU228
+ 811              	@ 138 "Core/Src/mpu6050.c" 1
+ 812 002c BFF36F8F 		isb
+ 813              	@ 0 "" 2
+ 814              		.thumb
+ 815              		.syntax unified
+ 816              	.L59:
+ 817              		.loc 1 138 5 is_stmt 1 discriminator 3 view .LVU229
+ 818              		.loc 1 138 5 discriminator 3 view .LVU230
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s 			page 19
+
+
+ 139:Core/Src/mpu6050.c ****     HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_14);
+ 819              		.loc 1 139 5 view .LVU231
+ 820 0030 4FF48041 		mov	r1, #16384
+ 821 0034 0348     		ldr	r0, .L65+4
+ 822 0036 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 823              	.LVL65:
+ 824              	.LBE6:
+ 140:Core/Src/mpu6050.c ****     
+ 141:Core/Src/mpu6050.c ****   }
+ 142:Core/Src/mpu6050.c **** }...
+ 825              		.loc 1 142 1 is_stmt 0 view .LVU232
+ 826 003a 03B0     		add	sp, sp, #12
+ 827              	.LCFI20:
+ 828              		.cfi_def_cfa_offset 4
+ 829              		@ sp needed
+ 830 003c 5DF804FB 		ldr	pc, [sp], #4
+ 831              	.L66:
+ 832              		.align	2
+ 833              	.L65:
+ 834 0040 00000000 		.word	MPU_Sem
+ 835 0044 00100140 		.word	1073811456
+ 836              		.cfi_endproc
+ 837              	.LFE80:
+ 839              		.text
+ 840              	.Letext0:
+ 841              		.file 2 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_defa
+ 842              		.file 3 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h
+ 843              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h"
+ 844              		.file 5 "Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h"
+ 845              		.file 6 "Middlewares/FreeRTOS/Source/include/queue.h"
+ 846              		.file 7 "Middlewares/FreeRTOS/Source/include/semphr.h"
+ 847              		.file 8 "Core/Inc/soft_i2c.h"
+ 848              		.file 9 "Core/Inc/mpu6050.h"
+ 849              		.file 10 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/stdio.h"
+ 850              		.file 11 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio.h"
+ 851              		.file 12 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h"
+ 852              		.file 13 "<built-in>"
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s 			page 20
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 mpu6050.c
-C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s:19     .text.I2C_WriteReg:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s:24     .text.I2C_WriteReg:00000000 I2C_WriteReg
-C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s:119    .text.I2C_ReadRegs:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s:124    .text.I2C_ReadRegs:00000000 I2C_ReadRegs
-C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s:265    .text.I2C_ReadReg:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s:270    .text.I2C_ReadReg:00000000 I2C_ReadReg
-C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s:294    .text.MPU6050_Init:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s:300    .text.MPU6050_Init:00000000 MPU6050_Init
-C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s:402    .text.MPU6050_ReadWhoAmI:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s:408    .text.MPU6050_ReadWhoAmI:00000000 MPU6050_ReadWhoAmI
-C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s:452    .text.MPU6050_ReadAll:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s:458    .text.MPU6050_ReadAll:00000000 MPU6050_ReadAll
-C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s:571    .rodata.MPU6050_Calibrate.str1.4:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s:579    .text.MPU6050_Calibrate:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s:585    .text.MPU6050_Calibrate:00000000 MPU6050_Calibrate
-C:\Users\airforce\AppData\Local\Temp\cc2IKDt9.s:722    .text.MPU6050_Calibrate:0000008c $d
+C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s:19     .text.I2C_WriteReg:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s:24     .text.I2C_WriteReg:00000000 I2C_WriteReg
+C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s:119    .text.I2C_ReadRegs:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s:124    .text.I2C_ReadRegs:00000000 I2C_ReadRegs
+C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s:265    .text.I2C_ReadReg:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s:270    .text.I2C_ReadReg:00000000 I2C_ReadReg
+C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s:294    .text.MPU6050_Init:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s:300    .text.MPU6050_Init:00000000 MPU6050_Init
+C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s:428    .text.MPU6050_ReadWhoAmI:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s:434    .text.MPU6050_ReadWhoAmI:00000000 MPU6050_ReadWhoAmI
+C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s:478    .text.MPU6050_ReadAll:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s:484    .text.MPU6050_ReadAll:00000000 MPU6050_ReadAll
+C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s:597    .rodata.MPU6050_Calibrate.str1.4:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s:605    .text.MPU6050_Calibrate:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s:611    .text.MPU6050_Calibrate:00000000 MPU6050_Calibrate
+C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s:748    .text.MPU6050_Calibrate:0000008c $d
+C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s:755    .text.HAL_GPIO_EXTI_Callback:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s:761    .text.HAL_GPIO_EXTI_Callback:00000000 HAL_GPIO_EXTI_Callback
+C:\Users\airforce\AppData\Local\Temp\cc2EB1Uf.s:834    .text.HAL_GPIO_EXTI_Callback:00000040 $d
 
 UNDEFINED SYMBOLS
 MyI2C_Start
@@ -1006,3 +1152,6 @@ MyI2C_RecvByte
 puts
 HAL_Delay
 printf
+xQueueGiveFromISR
+HAL_GPIO_TogglePin
+MPU_Sem

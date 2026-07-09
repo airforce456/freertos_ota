@@ -25,7 +25,10 @@ typedef enum {
 
 uint8_t MyI2C_R_SDA(void); 
 
-#define I2C_Delay_US()  { for (volatile int i = 0; i < 80; i++); }  /* 简单延时，约 8~10us (确保 > 标准模式 4.7us) */
+/* I2C 半周期延时，目标 ~5us（100kHz I2C 标准模式半周期 5us） */
+/* HSI 8MHz + -Og: volatile for 循环每轮约 1.25us，15 轮 ≈ 19us */
+/* 若不稳定可微调: 12~18 之间，宁大勿小 */
+#define I2C_Delay_US()  { for (volatile int i = 0; i < 15; i++); }
 void MyI2C_Init(void);
 
 
