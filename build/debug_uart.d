@@ -1,4 +1,4 @@
-build/debug_uart.o: Core/Src/debug_uart.c \
+build/debug_uart.o: Core/Src/device/debug_uart.c \
  Middlewares/FreeRTOS/Source/include/FreeRTOS.h Core/Inc/FreeRTOSConfig.h \
  Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h \
  Core/Inc/stm32f1xx_hal_conf.h \
@@ -35,7 +35,7 @@ build/debug_uart.o: Core/Src/debug_uart.c \
  Middlewares/FreeRTOS/Source/include/task.h \
  Middlewares/FreeRTOS/Source/include/semphr.h \
  Middlewares/FreeRTOS/Source/include/queue.h Core/Inc/usart.h \
- Core/Inc/main.h Core/Inc/debug_uart.h
+ Core/Inc/main.h Core/Inc/device/debug_uart.h
 Middlewares/FreeRTOS/Source/include/FreeRTOS.h:
 Core/Inc/FreeRTOSConfig.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
@@ -77,4 +77,4 @@ Middlewares/FreeRTOS/Source/include/semphr.h:
 Middlewares/FreeRTOS/Source/include/queue.h:
 Core/Inc/usart.h:
 Core/Inc/main.h:
-Core/Inc/debug_uart.h:
+Core/Inc/device/debug_uart.h:

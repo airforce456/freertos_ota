@@ -62,8 +62,8 @@ SoftI2C_Status MPU6050_Init(void)
     if (I2C_WriteReg(MPU6050_ADDR, MPU6050_REG_PWR_MGMT_1, 0x00) != SOFT_I2C_OK)
         return SOFT_I2C_ERROR;
 
-    /* 3. 采样率 = 1kHz / (1 + SMPRT_DIV) = 1kHz / 4 = 250Hz */
-    if (I2C_WriteReg(MPU6050_ADDR, MPU6050_REG_SMPRT_DIV, 3) != SOFT_I2C_OK)
+    /* 3. 采样率 = 1kHz / (1 + SMPRT_DIV) = 1kHz / 20 = 50Hz */
+    if (I2C_WriteReg(MPU6050_ADDR, MPU6050_REG_SMPRT_DIV, 49) != SOFT_I2C_OK)
         return SOFT_I2C_ERROR;
 
     /* 4. 加速度计量程 ±2g */

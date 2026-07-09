@@ -1,0 +1,64 @@
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccx3Lpc2.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.arch armv7-m
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"bsp_init.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.file 1 "Core/Src/bsp/bsp_init.c"
+  18              		.section	.text.BSP_Init,"ax",%progbits
+  19              		.align	1
+  20              		.global	BSP_Init
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  25              	BSP_Init:
+  26              	.LFB70:
+   1:Core/Src/bsp/bsp_init.c **** #include "bsp_init.h"
+   2:Core/Src/bsp/bsp_init.c **** #include "bsp_i2c.h"
+   3:Core/Src/bsp/bsp_init.c **** 
+   4:Core/Src/bsp/bsp_init.c **** void BSP_Init(void)
+   5:Core/Src/bsp/bsp_init.c **** {
+  27              		.loc 1 5 1 view -0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31 0000 08B5     		push	{r3, lr}
+  32              	.LCFI0:
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 3, -8
+  35              		.cfi_offset 14, -4
+   6:Core/Src/bsp/bsp_init.c ****     MyI2C_Init();  /* 接管 PB6/PB7，释放硬件 I2C1 */
+  36              		.loc 1 6 5 view .LVU1
+  37 0002 FFF7FEFF 		bl	MyI2C_Init
+  38              	.LVL0:
+   7:Core/Src/bsp/bsp_init.c **** }
+  39              		.loc 1 7 1 is_stmt 0 view .LVU2
+  40 0006 08BD     		pop	{r3, pc}
+  41              		.cfi_endproc
+  42              	.LFE70:
+  44              		.text
+  45              	.Letext0:
+  46              		.file 2 "Core/Inc/bsp/bsp_i2c.h"
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccx3Lpc2.s 			page 2
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 bsp_init.c
+C:\Users\airforce\AppData\Local\Temp\ccx3Lpc2.s:19     .text.BSP_Init:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccx3Lpc2.s:25     .text.BSP_Init:00000000 BSP_Init
+
+UNDEFINED SYMBOLS
+MyI2C_Init

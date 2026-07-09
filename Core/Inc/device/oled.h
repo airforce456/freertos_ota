@@ -2,7 +2,7 @@
 #define __OLED_H__
 
 #include "main.h"
-#include "soft_i2c.h"
+#include "bsp_i2c.h"
 
 /* SSD1306 I2C 地址 (7位: 0x3C) */
 #define OLED_ADDR   0x3C

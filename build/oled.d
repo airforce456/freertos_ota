@@ -1,5 +1,5 @@
-build/oled.o: Core/Src/oled.c Core/Inc/oled.h Core/Inc/main.h \
- Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h \
+build/oled.o: Core/Src/device/oled.c Core/Inc/device/oled.h \
+ Core/Inc/main.h Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h \
  Core/Inc/stm32f1xx_hal_conf.h \
  Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h \
  Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h \
@@ -23,7 +23,7 @@ build/oled.o: Core/Src/oled.c Core/Inc/oled.h Core/Inc/main.h \
  Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h \
  Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h \
  Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h \
- Core/Inc/soft_i2c.h Middlewares/FreeRTOS/Source/include/FreeRTOS.h \
+ Core/Inc/bsp/bsp_i2c.h Middlewares/FreeRTOS/Source/include/FreeRTOS.h \
  Core/Inc/FreeRTOSConfig.h Middlewares/FreeRTOS/Source/include/projdefs.h \
  Middlewares/FreeRTOS/Source/include/portable.h \
  Middlewares/FreeRTOS/Source/include/deprecated_definitions.h \
@@ -33,7 +33,7 @@ build/oled.o: Core/Src/oled.c Core/Inc/oled.h Core/Inc/main.h \
  Middlewares/FreeRTOS/Source/include/queue.h \
  Middlewares/FreeRTOS/Source/include/task.h \
  Middlewares/FreeRTOS/Source/include/list.h
-Core/Inc/oled.h:
+Core/Inc/device/oled.h:
 Core/Inc/main.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 Core/Inc/stm32f1xx_hal_conf.h:
@@ -61,7 +61,7 @@ Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h:
-Core/Inc/soft_i2c.h:
+Core/Inc/bsp/bsp_i2c.h:
 Middlewares/FreeRTOS/Source/include/FreeRTOS.h:
 Core/Inc/FreeRTOSConfig.h:
 Middlewares/FreeRTOS/Source/include/projdefs.h:

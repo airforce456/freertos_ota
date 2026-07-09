@@ -1,0 +1,1876 @@
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.arch armv7-m
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"esp8266.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.file 1 "Core/Src/device/esp8266.c"
+  18              		.section	.rodata.ESP_ParseLine.str1.4,"aMS",%progbits,1
+  19              		.align	2
+  20              	.LC0:
+  21 0000 4F4B00   		.ascii	"OK\000"
+  22 0003 00       		.align	2
+  23              	.LC1:
+  24 0004 53454E44 		.ascii	"SEND OK\000"
+  24      204F4B00 
+  25              		.align	2
+  26              	.LC2:
+  27 000c 4552524F 		.ascii	"ERROR\000"
+  27      5200
+  28 0012 0000     		.align	2
+  29              	.LC3:
+  30 0014 62757379 		.ascii	"busy\000"
+  30      00
+  31 0019 000000   		.align	2
+  32              	.LC4:
+  33 001c 4641494C 		.ascii	"FAIL\000"
+  33      00
+  34 0021 000000   		.align	2
+  35              	.LC5:
+  36 0024 72656164 		.ascii	"ready\000"
+  36      7900
+  37 002a 0000     		.align	2
+  38              	.LC6:
+  39 002c 434F4E4E 		.ascii	"CONNECT\000"
+  39      45435400 
+  40              		.align	2
+  41              	.LC7:
+  42 0034 434C4F53 		.ascii	"CLOSED\000"
+  42      454400
+  43 003b 00       		.align	2
+  44              	.LC8:
+  45 003c 2B495044 		.ascii	"+IPD,\000"
+  45      2C00
+  46              		.section	.text.ESP_ParseLine,"ax",%progbits
+  47              		.align	1
+  48              		.global	ESP_ParseLine
+  49              		.syntax unified
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 2
+
+
+  50              		.thumb
+  51              		.thumb_func
+  53              	ESP_ParseLine:
+  54              	.LVL0:
+  55              	.LFB68:
+   1:Core/Src/device/esp8266.c **** #include "esp8266.h"
+   2:Core/Src/device/esp8266.c **** #include "usart.h"
+   3:Core/Src/device/esp8266.c **** #include <stdio.h>
+   4:Core/Src/device/esp8266.c **** #include <string.h>
+   5:Core/Src/device/esp8266.c **** #include <stdbool.h>
+   6:Core/Src/device/esp8266.c **** 
+   7:Core/Src/device/esp8266.c **** /* ==================================================================
+   8:Core/Src/device/esp8266.c ****  *  Parser — 纯函数，不依赖句柄
+   9:Core/Src/device/esp8266.c ****  * ================================================================== */
+  10:Core/Src/device/esp8266.c **** 
+  11:Core/Src/device/esp8266.c **** ESP_RespType_t ESP_ParseLine(const char *line, uint16_t len,
+  12:Core/Src/device/esp8266.c ****                              uint8_t **outData, uint16_t *outLen)
+  13:Core/Src/device/esp8266.c **** {
+  56              		.loc 1 13 1 view -0
+  57              		.cfi_startproc
+  58              		@ args = 0, pretend = 0, frame = 0
+  59              		@ frame_needed = 0, uses_anonymous_args = 0
+  60              		.loc 1 13 1 is_stmt 0 view .LVU1
+  61 0000 70B5     		push	{r4, r5, r6, lr}
+  62              	.LCFI0:
+  63              		.cfi_def_cfa_offset 16
+  64              		.cfi_offset 4, -16
+  65              		.cfi_offset 5, -12
+  66              		.cfi_offset 6, -8
+  67              		.cfi_offset 14, -4
+  68 0002 0446     		mov	r4, r0
+  69 0004 1646     		mov	r6, r2
+  70 0006 1D46     		mov	r5, r3
+  14:Core/Src/device/esp8266.c ****     (void)len;
+  71              		.loc 1 14 5 is_stmt 1 view .LVU2
+  15:Core/Src/device/esp8266.c **** 
+  16:Core/Src/device/esp8266.c ****     /* "OK\r\n" — 排除 "SEND OK" */
+  17:Core/Src/device/esp8266.c ****     if (strstr(line, "OK") && !strstr(line, "SEND OK"))  return ESP_RESP_OK;
+  72              		.loc 1 17 5 view .LVU3
+  73              		.loc 1 17 9 is_stmt 0 view .LVU4
+  74 0008 3449     		ldr	r1, .L22
+  75              	.LVL1:
+  76              		.loc 1 17 9 view .LVU5
+  77 000a FFF7FEFF 		bl	strstr
+  78              	.LVL2:
+  79              		.loc 1 17 8 discriminator 1 view .LVU6
+  80 000e 28B1     		cbz	r0, .L2
+  81              		.loc 1 17 32 discriminator 1 view .LVU7
+  82 0010 3349     		ldr	r1, .L22+4
+  83 0012 2046     		mov	r0, r4
+  84 0014 FFF7FEFF 		bl	strstr
+  85              	.LVL3:
+  86              		.loc 1 17 28 discriminator 1 view .LVU8
+  87 0018 0028     		cmp	r0, #0
+  88 001a 4CD0     		beq	.L9
+  89              	.L2:
+  18:Core/Src/device/esp8266.c ****     if (strstr(line, "SEND OK"))                         return ESP_RESP_SEND_OK;
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 3
+
+
+  90              		.loc 1 18 5 is_stmt 1 view .LVU9
+  91              		.loc 1 18 9 is_stmt 0 view .LVU10
+  92 001c 3049     		ldr	r1, .L22+4
+  93 001e 2046     		mov	r0, r4
+  94 0020 FFF7FEFF 		bl	strstr
+  95              	.LVL4:
+  96              		.loc 1 18 8 discriminator 1 view .LVU11
+  97 0024 0028     		cmp	r0, #0
+  98 0026 48D1     		bne	.L10
+  19:Core/Src/device/esp8266.c ****     if (strstr(line, "ERROR"))                           return ESP_RESP_ERROR;
+  99              		.loc 1 19 5 is_stmt 1 view .LVU12
+ 100              		.loc 1 19 9 is_stmt 0 view .LVU13
+ 101 0028 2E49     		ldr	r1, .L22+8
+ 102 002a 2046     		mov	r0, r4
+ 103 002c FFF7FEFF 		bl	strstr
+ 104              	.LVL5:
+ 105              		.loc 1 19 8 discriminator 1 view .LVU14
+ 106 0030 0028     		cmp	r0, #0
+ 107 0032 44D1     		bne	.L11
+  20:Core/Src/device/esp8266.c ****     if (strchr(line, '>'))                               return ESP_RESP_SEND_PROMPT;
+ 108              		.loc 1 20 5 is_stmt 1 view .LVU15
+ 109              		.loc 1 20 9 is_stmt 0 view .LVU16
+ 110 0034 3E21     		movs	r1, #62
+ 111 0036 2046     		mov	r0, r4
+ 112 0038 FFF7FEFF 		bl	strchr
+ 113              	.LVL6:
+ 114              		.loc 1 20 8 discriminator 1 view .LVU17
+ 115 003c 0028     		cmp	r0, #0
+ 116 003e 40D1     		bne	.L12
+  21:Core/Src/device/esp8266.c ****     if (strstr(line, "busy"))                            return ESP_RESP_BUSY;
+ 117              		.loc 1 21 5 is_stmt 1 view .LVU18
+ 118              		.loc 1 21 9 is_stmt 0 view .LVU19
+ 119 0040 2949     		ldr	r1, .L22+12
+ 120 0042 2046     		mov	r0, r4
+ 121 0044 FFF7FEFF 		bl	strstr
+ 122              	.LVL7:
+ 123              		.loc 1 21 8 discriminator 1 view .LVU20
+ 124 0048 0028     		cmp	r0, #0
+ 125 004a 3CD1     		bne	.L13
+  22:Core/Src/device/esp8266.c ****     if (strstr(line, "FAIL"))                            return ESP_RESP_FAIL;
+ 126              		.loc 1 22 5 is_stmt 1 view .LVU21
+ 127              		.loc 1 22 9 is_stmt 0 view .LVU22
+ 128 004c 2749     		ldr	r1, .L22+16
+ 129 004e 2046     		mov	r0, r4
+ 130 0050 FFF7FEFF 		bl	strstr
+ 131              	.LVL8:
+ 132              		.loc 1 22 8 discriminator 1 view .LVU23
+ 133 0054 0028     		cmp	r0, #0
+ 134 0056 38D1     		bne	.L14
+  23:Core/Src/device/esp8266.c ****     if (strstr(line, "ready"))                           return ESP_RESP_READY;
+ 135              		.loc 1 23 5 is_stmt 1 view .LVU24
+ 136              		.loc 1 23 9 is_stmt 0 view .LVU25
+ 137 0058 2549     		ldr	r1, .L22+20
+ 138 005a 2046     		mov	r0, r4
+ 139 005c FFF7FEFF 		bl	strstr
+ 140              	.LVL9:
+ 141              		.loc 1 23 8 discriminator 1 view .LVU26
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 4
+
+
+ 142 0060 A8BB     		cbnz	r0, .L15
+  24:Core/Src/device/esp8266.c ****     if (strstr(line, "CONNECT") && !strstr(line, "FAIL")) return ESP_RESP_CONNECT;
+ 143              		.loc 1 24 5 is_stmt 1 view .LVU27
+ 144              		.loc 1 24 9 is_stmt 0 view .LVU28
+ 145 0062 2449     		ldr	r1, .L22+24
+ 146 0064 2046     		mov	r0, r4
+ 147 0066 FFF7FEFF 		bl	strstr
+ 148              	.LVL10:
+ 149              		.loc 1 24 8 discriminator 1 view .LVU29
+ 150 006a 90BB     		cbnz	r0, .L16
+  25:Core/Src/device/esp8266.c ****     if (strstr(line, "CLOSED"))                          return ESP_RESP_CLOSED;
+ 151              		.loc 1 25 5 is_stmt 1 view .LVU30
+ 152              		.loc 1 25 9 is_stmt 0 view .LVU31
+ 153 006c 2249     		ldr	r1, .L22+28
+ 154 006e 2046     		mov	r0, r4
+ 155 0070 FFF7FEFF 		bl	strstr
+ 156              	.LVL11:
+ 157              		.loc 1 25 8 discriminator 1 view .LVU32
+ 158 0074 78BB     		cbnz	r0, .L17
+  26:Core/Src/device/esp8266.c **** 
+  27:Core/Src/device/esp8266.c ****     /* "+IPD,<len>:<data>" — 提取 TCP 数据指针和长度 */
+  28:Core/Src/device/esp8266.c ****     if (strstr(line, "+IPD,")) {
+ 159              		.loc 1 28 5 is_stmt 1 view .LVU33
+ 160              		.loc 1 28 9 is_stmt 0 view .LVU34
+ 161 0076 2149     		ldr	r1, .L22+32
+ 162 0078 2046     		mov	r0, r4
+ 163 007a FFF7FEFF 		bl	strstr
+ 164              	.LVL12:
+ 165              		.loc 1 28 8 discriminator 1 view .LVU35
+ 166 007e 08B9     		cbnz	r0, .L20
+  29:Core/Src/device/esp8266.c ****         const char *p = strstr(line, "+IPD,") + 5;
+  30:Core/Src/device/esp8266.c ****         int dataLen = 0;
+  31:Core/Src/device/esp8266.c ****         while (*p >= '0' && *p <= '9') { dataLen = dataLen * 10 + (*p - '0'); p++; }
+  32:Core/Src/device/esp8266.c ****         if (*p == ':') p++;
+  33:Core/Src/device/esp8266.c ****         if (outData) *outData = (uint8_t *)p;
+  34:Core/Src/device/esp8266.c ****         if (outLen)  *outLen  = (uint16_t)dataLen;
+  35:Core/Src/device/esp8266.c ****         return ESP_RESP_IPD;
+  36:Core/Src/device/esp8266.c ****     }
+  37:Core/Src/device/esp8266.c ****     return ESP_RESP_NONE;
+ 167              		.loc 1 37 12 view .LVU36
+ 168 0080 0020     		movs	r0, #0
+ 169 0082 1BE0     		b	.L3
+ 170              	.L20:
+ 171              	.LBB2:
+  29:Core/Src/device/esp8266.c ****         const char *p = strstr(line, "+IPD,") + 5;
+ 172              		.loc 1 29 9 is_stmt 1 view .LVU37
+  29:Core/Src/device/esp8266.c ****         const char *p = strstr(line, "+IPD,") + 5;
+ 173              		.loc 1 29 21 is_stmt 0 discriminator 1 view .LVU38
+ 174 0084 0530     		adds	r0, r0, #5
+ 175              	.LVL13:
+  30:Core/Src/device/esp8266.c ****         while (*p >= '0' && *p <= '9') { dataLen = dataLen * 10 + (*p - '0'); p++; }
+ 176              		.loc 1 30 9 is_stmt 1 view .LVU39
+  31:Core/Src/device/esp8266.c ****         if (*p == ':') p++;
+ 177              		.loc 1 31 9 view .LVU40
+  30:Core/Src/device/esp8266.c ****         while (*p >= '0' && *p <= '9') { dataLen = dataLen * 10 + (*p - '0'); p++; }
+ 178              		.loc 1 30 13 is_stmt 0 view .LVU41
+ 179 0086 0022     		movs	r2, #0
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 5
+
+
+  31:Core/Src/device/esp8266.c ****         if (*p == ':') p++;
+ 180              		.loc 1 31 15 view .LVU42
+ 181 0088 05E0     		b	.L4
+ 182              	.LVL14:
+ 183              	.L5:
+  31:Core/Src/device/esp8266.c ****         if (*p == ':') p++;
+ 184              		.loc 1 31 42 is_stmt 1 discriminator 2 view .LVU43
+  31:Core/Src/device/esp8266.c ****         if (*p == ':') p++;
+ 185              		.loc 1 31 60 is_stmt 0 discriminator 2 view .LVU44
+ 186 008a 02EB8202 		add	r2, r2, r2, lsl #2
+ 187              	.LVL15:
+  31:Core/Src/device/esp8266.c ****         if (*p == ':') p++;
+ 188              		.loc 1 31 71 discriminator 2 view .LVU45
+ 189 008e 303B     		subs	r3, r3, #48
+  31:Core/Src/device/esp8266.c ****         if (*p == ':') p++;
+ 190              		.loc 1 31 50 discriminator 2 view .LVU46
+ 191 0090 03EB4202 		add	r2, r3, r2, lsl #1
+ 192              	.LVL16:
+  31:Core/Src/device/esp8266.c ****         if (*p == ':') p++;
+ 193              		.loc 1 31 79 is_stmt 1 discriminator 2 view .LVU47
+  31:Core/Src/device/esp8266.c ****         if (*p == ':') p++;
+ 194              		.loc 1 31 80 is_stmt 0 discriminator 2 view .LVU48
+ 195 0094 0130     		adds	r0, r0, #1
+ 196              	.LVL17:
+ 197              	.L4:
+  31:Core/Src/device/esp8266.c ****         if (*p == ':') p++;
+ 198              		.loc 1 31 26 is_stmt 1 discriminator 1 view .LVU49
+  31:Core/Src/device/esp8266.c ****         if (*p == ':') p++;
+ 199              		.loc 1 31 16 is_stmt 0 discriminator 1 view .LVU50
+ 200 0096 0378     		ldrb	r3, [r0]	@ zero_extendqisi2
+  31:Core/Src/device/esp8266.c ****         if (*p == ':') p++;
+ 201              		.loc 1 31 26 discriminator 1 view .LVU51
+ 202 0098 A3F13001 		sub	r1, r3, #48
+ 203 009c C9B2     		uxtb	r1, r1
+ 204 009e 0929     		cmp	r1, #9
+ 205 00a0 F3D9     		bls	.L5
+  32:Core/Src/device/esp8266.c ****         if (outData) *outData = (uint8_t *)p;
+ 206              		.loc 1 32 9 is_stmt 1 view .LVU52
+  32:Core/Src/device/esp8266.c ****         if (outData) *outData = (uint8_t *)p;
+ 207              		.loc 1 32 12 is_stmt 0 view .LVU53
+ 208 00a2 3A2B     		cmp	r3, #58
+ 209 00a4 05D0     		beq	.L21
+ 210              	.LVL18:
+ 211              	.L6:
+  33:Core/Src/device/esp8266.c ****         if (outLen)  *outLen  = (uint16_t)dataLen;
+ 212              		.loc 1 33 9 is_stmt 1 view .LVU54
+  33:Core/Src/device/esp8266.c ****         if (outLen)  *outLen  = (uint16_t)dataLen;
+ 213              		.loc 1 33 12 is_stmt 0 view .LVU55
+ 214 00a6 06B1     		cbz	r6, .L7
+  33:Core/Src/device/esp8266.c ****         if (outLen)  *outLen  = (uint16_t)dataLen;
+ 215              		.loc 1 33 22 is_stmt 1 discriminator 1 view .LVU56
+  33:Core/Src/device/esp8266.c ****         if (outLen)  *outLen  = (uint16_t)dataLen;
+ 216              		.loc 1 33 31 is_stmt 0 discriminator 1 view .LVU57
+ 217 00a8 3060     		str	r0, [r6]
+ 218              	.L7:
+  34:Core/Src/device/esp8266.c ****         return ESP_RESP_IPD;
+ 219              		.loc 1 34 9 is_stmt 1 view .LVU58
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 6
+
+
+  34:Core/Src/device/esp8266.c ****         return ESP_RESP_IPD;
+ 220              		.loc 1 34 12 is_stmt 0 view .LVU59
+ 221 00aa 05B1     		cbz	r5, .L8
+  34:Core/Src/device/esp8266.c ****         return ESP_RESP_IPD;
+ 222              		.loc 1 34 22 is_stmt 1 discriminator 1 view .LVU60
+  34:Core/Src/device/esp8266.c ****         return ESP_RESP_IPD;
+ 223              		.loc 1 34 31 is_stmt 0 discriminator 1 view .LVU61
+ 224 00ac 2A80     		strh	r2, [r5]	@ movhi
+ 225              	.L8:
+  35:Core/Src/device/esp8266.c ****     }
+ 226              		.loc 1 35 9 is_stmt 1 view .LVU62
+  35:Core/Src/device/esp8266.c ****     }
+ 227              		.loc 1 35 16 is_stmt 0 view .LVU63
+ 228 00ae 0820     		movs	r0, #8
+ 229              	.LVL19:
+  35:Core/Src/device/esp8266.c ****     }
+ 230              		.loc 1 35 16 view .LVU64
+ 231 00b0 04E0     		b	.L3
+ 232              	.LVL20:
+ 233              	.L21:
+  32:Core/Src/device/esp8266.c ****         if (outData) *outData = (uint8_t *)p;
+ 234              		.loc 1 32 24 is_stmt 1 discriminator 1 view .LVU65
+  32:Core/Src/device/esp8266.c ****         if (outData) *outData = (uint8_t *)p;
+ 235              		.loc 1 32 25 is_stmt 0 discriminator 1 view .LVU66
+ 236 00b2 0130     		adds	r0, r0, #1
+ 237              	.LVL21:
+  32:Core/Src/device/esp8266.c ****         if (outData) *outData = (uint8_t *)p;
+ 238              		.loc 1 32 25 discriminator 1 view .LVU67
+ 239 00b4 F7E7     		b	.L6
+ 240              	.LVL22:
+ 241              	.L9:
+  32:Core/Src/device/esp8266.c ****         if (outData) *outData = (uint8_t *)p;
+ 242              		.loc 1 32 25 discriminator 1 view .LVU68
+ 243              	.LBE2:
+  17:Core/Src/device/esp8266.c ****     if (strstr(line, "SEND OK"))                         return ESP_RESP_SEND_OK;
+ 244              		.loc 1 17 65 discriminator 2 view .LVU69
+ 245 00b6 0120     		movs	r0, #1
+ 246 00b8 00E0     		b	.L3
+ 247              	.L10:
+  18:Core/Src/device/esp8266.c ****     if (strstr(line, "ERROR"))                           return ESP_RESP_ERROR;
+ 248              		.loc 1 18 65 discriminator 1 view .LVU70
+ 249 00ba 0320     		movs	r0, #3
+ 250              	.L3:
+  38:Core/Src/device/esp8266.c **** }
+ 251              		.loc 1 38 1 view .LVU71
+ 252 00bc 70BD     		pop	{r4, r5, r6, pc}
+ 253              	.LVL23:
+ 254              	.L11:
+  19:Core/Src/device/esp8266.c ****     if (strchr(line, '>'))                               return ESP_RESP_SEND_PROMPT;
+ 255              		.loc 1 19 65 discriminator 1 view .LVU72
+ 256 00be 0220     		movs	r0, #2
+ 257 00c0 FCE7     		b	.L3
+ 258              	.L12:
+  20:Core/Src/device/esp8266.c ****     if (strstr(line, "busy"))                            return ESP_RESP_BUSY;
+ 259              		.loc 1 20 65 discriminator 1 view .LVU73
+ 260 00c2 0420     		movs	r0, #4
+ 261 00c4 FAE7     		b	.L3
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 7
+
+
+ 262              	.L13:
+  21:Core/Src/device/esp8266.c ****     if (strstr(line, "FAIL"))                            return ESP_RESP_FAIL;
+ 263              		.loc 1 21 65 discriminator 1 view .LVU74
+ 264 00c6 0520     		movs	r0, #5
+ 265 00c8 F8E7     		b	.L3
+ 266              	.L14:
+  22:Core/Src/device/esp8266.c ****     if (strstr(line, "ready"))                           return ESP_RESP_READY;
+ 267              		.loc 1 22 65 discriminator 1 view .LVU75
+ 268 00ca 0A20     		movs	r0, #10
+ 269 00cc F6E7     		b	.L3
+ 270              	.L15:
+  23:Core/Src/device/esp8266.c ****     if (strstr(line, "CONNECT") && !strstr(line, "FAIL")) return ESP_RESP_CONNECT;
+ 271              		.loc 1 23 65 discriminator 1 view .LVU76
+ 272 00ce 0920     		movs	r0, #9
+ 273 00d0 F4E7     		b	.L3
+ 274              	.L16:
+  24:Core/Src/device/esp8266.c ****     if (strstr(line, "CLOSED"))                          return ESP_RESP_CLOSED;
+ 275              		.loc 1 24 66 discriminator 2 view .LVU77
+ 276 00d2 0620     		movs	r0, #6
+ 277 00d4 F2E7     		b	.L3
+ 278              	.L17:
+  25:Core/Src/device/esp8266.c **** 
+ 279              		.loc 1 25 65 discriminator 1 view .LVU78
+ 280 00d6 0720     		movs	r0, #7
+ 281 00d8 F0E7     		b	.L3
+ 282              	.L23:
+ 283 00da 00BF     		.align	2
+ 284              	.L22:
+ 285 00dc 00000000 		.word	.LC0
+ 286 00e0 04000000 		.word	.LC1
+ 287 00e4 0C000000 		.word	.LC2
+ 288 00e8 14000000 		.word	.LC3
+ 289 00ec 1C000000 		.word	.LC4
+ 290 00f0 24000000 		.word	.LC5
+ 291 00f4 2C000000 		.word	.LC6
+ 292 00f8 34000000 		.word	.LC7
+ 293 00fc 3C000000 		.word	.LC8
+ 294              		.cfi_endproc
+ 295              	.LFE68:
+ 297              		.section	.rodata.ESP_UART_RxISR.str1.4,"aMS",%progbits,1
+ 298              		.align	2
+ 299              	.LC9:
+ 300 0000 0D0A00   		.ascii	"\015\012\000"
+ 301              		.section	.text.ESP_UART_RxISR,"ax",%progbits
+ 302              		.align	1
+ 303              		.syntax unified
+ 304              		.thumb
+ 305              		.thumb_func
+ 307              	ESP_UART_RxISR:
+ 308              	.LVL24:
+ 309              	.LFB69:
+  39:Core/Src/device/esp8266.c **** 
+  40:Core/Src/device/esp8266.c **** /* ==================================================================
+  41:Core/Src/device/esp8266.c ****  *  ISR 回调 — 只搬运字节，行边界识别，通知句柄
+  42:Core/Src/device/esp8266.c ****  *  注意：本函数在 USART IDLE 中断上下文中执行！
+  43:Core/Src/device/esp8266.c ****  * ================================================================== */
+  44:Core/Src/device/esp8266.c **** 
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 8
+
+
+  45:Core/Src/device/esp8266.c **** static void ESP_UART_RxISR(UART_HandleTypeDef *huart, uint16_t len)
+  46:Core/Src/device/esp8266.c **** {
+ 310              		.loc 1 46 1 is_stmt 1 view -0
+ 311              		.cfi_startproc
+ 312              		@ args = 0, pretend = 0, frame = 0
+ 313              		@ frame_needed = 0, uses_anonymous_args = 0
+  47:Core/Src/device/esp8266.c ****     extern ESP_HandleTypeDef espWifi;  /* App 层全局句柄 */
+ 314              		.loc 1 47 5 view .LVU80
+  48:Core/Src/device/esp8266.c ****     ESP_HandleTypeDef *h = &espWifi;
+ 315              		.loc 1 48 5 view .LVU81
+  49:Core/Src/device/esp8266.c **** 
+  50:Core/Src/device/esp8266.c ****     if (huart != h->huart) return;
+ 316              		.loc 1 50 5 view .LVU82
+ 317              		.loc 1 50 19 is_stmt 0 view .LVU83
+ 318 0000 3D4B     		ldr	r3, .L45
+ 319 0002 1B68     		ldr	r3, [r3]
+ 320              		.loc 1 50 8 view .LVU84
+ 321 0004 8342     		cmp	r3, r0
+ 322 0006 00D0     		beq	.L39
+ 323 0008 7047     		bx	lr
+ 324              	.L39:
+  46:Core/Src/device/esp8266.c ****     extern ESP_HandleTypeDef espWifi;  /* App 层全局句柄 */
+ 325              		.loc 1 46 1 view .LVU85
+ 326 000a 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 327              	.LCFI1:
+ 328              		.cfi_def_cfa_offset 24
+ 329              		.cfi_offset 4, -24
+ 330              		.cfi_offset 5, -20
+ 331              		.cfi_offset 6, -16
+ 332              		.cfi_offset 7, -12
+ 333              		.cfi_offset 8, -8
+ 334              		.cfi_offset 14, -4
+ 335 000e 0D46     		mov	r5, r1
+  51:Core/Src/device/esp8266.c ****     if (len > sizeof(h->rxDmaBuf)) len = sizeof(h->rxDmaBuf);
+ 336              		.loc 1 51 5 is_stmt 1 view .LVU86
+ 337              		.loc 1 51 8 is_stmt 0 view .LVU87
+ 338 0010 B1F5807F 		cmp	r1, #256
+ 339 0014 01D9     		bls	.L26
+ 340              		.loc 1 51 40 discriminator 1 view .LVU88
+ 341 0016 4FF48075 		mov	r5, #256
+ 342              	.L26:
+ 343              	.LVL25:
+  52:Core/Src/device/esp8266.c **** 
+  53:Core/Src/device/esp8266.c ****     for (uint16_t i = 0; i < len; i++) {
+ 344              		.loc 1 53 5 is_stmt 1 view .LVU89
+ 345              	.LBB3:
+ 346              		.loc 1 53 10 view .LVU90
+ 347              		.loc 1 53 19 is_stmt 0 view .LVU91
+ 348 001a 0024     		movs	r4, #0
+ 349              		.loc 1 53 5 view .LVU92
+ 350 001c 35E0     		b	.L27
+ 351              	.LVL26:
+ 352              	.L44:
+ 353              	.LBB4:
+ 354              	.LBB5:
+  54:Core/Src/device/esp8266.c ****         uint8_t ch = h->rxDmaBuf[i];
+  55:Core/Src/device/esp8266.c **** 
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 9
+
+
+  56:Core/Src/device/esp8266.c ****         if (ch == '\n') {
+  57:Core/Src/device/esp8266.c ****             h->rxLineBuf[h->rxLinePos] = '\0';
+ 355              		.loc 1 57 13 is_stmt 1 view .LVU93
+ 356              		.loc 1 57 27 is_stmt 0 view .LVU94
+ 357 001e 364E     		ldr	r6, .L45
+ 358 0020 B6F88411 		ldrh	r1, [r6, #388]
+ 359              		.loc 1 57 40 view .LVU95
+ 360 0024 7318     		adds	r3, r6, r1
+ 361              	.LVL27:
+ 362              		.loc 1 57 40 view .LVU96
+ 363 0026 4FF00008 		mov	r8, #0
+ 364 002a 83F80481 		strb	r8, [r3, #260]
+  58:Core/Src/device/esp8266.c ****             ESP_RespType_t r = ESP_ParseLine((const char *)h->rxLineBuf,
+ 365              		.loc 1 58 13 is_stmt 1 view .LVU97
+ 366              		.loc 1 58 32 is_stmt 0 view .LVU98
+ 367 002e 4346     		mov	r3, r8
+ 368 0030 4246     		mov	r2, r8
+ 369 0032 06F58270 		add	r0, r6, #260
+ 370 0036 FFF7FEFF 		bl	ESP_ParseLine
+ 371              	.LVL28:
+ 372              		.loc 1 58 32 view .LVU99
+ 373 003a 0746     		mov	r7, r0
+ 374              	.LVL29:
+  59:Core/Src/device/esp8266.c ****                                              h->rxLinePos, NULL, NULL);
+  60:Core/Src/device/esp8266.c ****             h->rxLinePos = 0;
+ 375              		.loc 1 60 13 is_stmt 1 view .LVU100
+ 376              		.loc 1 60 26 is_stmt 0 view .LVU101
+ 377 003c A6F88481 		strh	r8, [r6, #388]	@ movhi
+  61:Core/Src/device/esp8266.c **** 
+  62:Core/Src/device/esp8266.c ****             /* 匹配目标 → 标记命令完成 */
+  63:Core/Src/device/esp8266.c ****             if (!h->cmdDone && r != ESP_RESP_NONE) {
+ 378              		.loc 1 63 13 is_stmt 1 view .LVU102
+ 379              		.loc 1 63 19 is_stmt 0 view .LVU103
+ 380 0040 96F88631 		ldrb	r3, [r6, #390]	@ zero_extendqisi2
+ 381              		.loc 1 63 16 view .LVU104
+ 382 0044 2BB9     		cbnz	r3, .L29
+ 383              		.loc 1 63 29 discriminator 1 view .LVU105
+ 384 0046 20B1     		cbz	r0, .L29
+  64:Core/Src/device/esp8266.c ****                 h->cmdResult = r;
+ 385              		.loc 1 64 17 is_stmt 1 view .LVU106
+ 386              		.loc 1 64 30 is_stmt 0 view .LVU107
+ 387 0048 86F88701 		strb	r0, [r6, #391]
+  65:Core/Src/device/esp8266.c ****                 h->cmdDone   = true;
+ 388              		.loc 1 65 17 is_stmt 1 view .LVU108
+ 389              		.loc 1 65 30 is_stmt 0 view .LVU109
+ 390 004c 0122     		movs	r2, #1
+ 391 004e 86F88621 		strb	r2, [r6, #390]
+ 392              	.L29:
+  66:Core/Src/device/esp8266.c ****             }
+  67:Core/Src/device/esp8266.c **** 
+  68:Core/Src/device/esp8266.c ****             /* 用户要了响应缓冲 → 保存本条原始行 */
+  69:Core/Src/device/esp8266.c ****             if (h->cmdRespBuf && h->cmdRespSize > 0 && r != ESP_RESP_NONE) {
+ 393              		.loc 1 69 13 is_stmt 1 view .LVU110
+ 394              		.loc 1 69 18 is_stmt 0 view .LVU111
+ 395 0052 294B     		ldr	r3, .L45
+ 396 0054 D3F88881 		ldr	r8, [r3, #392]
+ 397              		.loc 1 69 16 view .LVU112
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 10
+
+
+ 398 0058 B8F1000F 		cmp	r8, #0
+ 399 005c 0BD0     		beq	.L30
+ 400              		.loc 1 69 35 discriminator 1 view .LVU113
+ 401 005e B3F88C61 		ldrh	r6, [r3, #396]
+ 402              		.loc 1 69 31 discriminator 1 view .LVU114
+ 403 0062 46B1     		cbz	r6, .L30
+ 404              		.loc 1 69 53 discriminator 2 view .LVU115
+ 405 0064 3FB1     		cbz	r7, .L30
+ 406              	.LBB6:
+  70:Core/Src/device/esp8266.c ****                 uint16_t remain = h->cmdRespSize - strlen(h->cmdRespBuf) - 1;
+ 407              		.loc 1 70 17 is_stmt 1 view .LVU116
+ 408              		.loc 1 70 52 is_stmt 0 view .LVU117
+ 409 0066 4046     		mov	r0, r8
+ 410              	.LVL30:
+ 411              		.loc 1 70 52 view .LVU118
+ 412 0068 FFF7FEFF 		bl	strlen
+ 413              	.LVL31:
+ 414              		.loc 1 70 50 discriminator 1 view .LVU119
+ 415 006c 321A     		subs	r2, r6, r0
+ 416 006e 92B2     		uxth	r2, r2
+ 417              		.loc 1 70 26 discriminator 1 view .LVU120
+ 418 0070 013A     		subs	r2, r2, #1
+ 419 0072 92B2     		uxth	r2, r2
+ 420              	.LVL32:
+  71:Core/Src/device/esp8266.c ****                 if (remain > 0) {
+ 421              		.loc 1 71 17 is_stmt 1 view .LVU121
+ 422              		.loc 1 71 20 is_stmt 0 view .LVU122
+ 423 0074 FAB9     		cbnz	r2, .L40
+ 424              	.LVL33:
+ 425              	.L30:
+ 426              		.loc 1 71 20 view .LVU123
+ 427              	.LBE6:
+  72:Core/Src/device/esp8266.c ****                     strncat(h->cmdRespBuf, (const char *)h->rxLineBuf, remain);
+  73:Core/Src/device/esp8266.c ****                     strncat(h->cmdRespBuf, "\r\n",
+  74:Core/Src/device/esp8266.c ****                             h->cmdRespSize - strlen(h->cmdRespBuf) - 1);
+  75:Core/Src/device/esp8266.c ****                 }
+  76:Core/Src/device/esp8266.c ****             }
+  77:Core/Src/device/esp8266.c **** 
+  78:Core/Src/device/esp8266.c ****             /* 上层的网络事件回调 */
+  79:Core/Src/device/esp8266.c ****             if (h->onEventCallback) {
+ 428              		.loc 1 79 13 is_stmt 1 view .LVU124
+ 429              		.loc 1 79 18 is_stmt 0 view .LVU125
+ 430 0076 204B     		ldr	r3, .L45
+ 431 0078 D3F89031 		ldr	r3, [r3, #400]
+ 432              		.loc 1 79 16 view .LVU126
+ 433 007c 1BB1     		cbz	r3, .L31
+  80:Core/Src/device/esp8266.c ****                 if (r == ESP_RESP_OK)      h->onEventCallback(h, 0);
+ 434              		.loc 1 80 17 is_stmt 1 view .LVU127
+ 435              		.loc 1 80 20 is_stmt 0 view .LVU128
+ 436 007e 012F     		cmp	r7, #1
+ 437 0080 2ED0     		beq	.L41
+ 438              	.L32:
+  81:Core/Src/device/esp8266.c ****                 if (r == ESP_RESP_CLOSED)  h->onEventCallback(h, ESP_EVENT_TCP_CLOSED);
+ 439              		.loc 1 81 17 is_stmt 1 view .LVU129
+ 440              		.loc 1 81 20 is_stmt 0 view .LVU130
+ 441 0082 072F     		cmp	r7, #7
+ 442 0084 30D0     		beq	.L42
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 11
+
+
+ 443              	.LVL34:
+ 444              	.L31:
+ 445              		.loc 1 81 20 view .LVU131
+ 446              	.LBE5:
+ 447              	.LBE4:
+  53:Core/Src/device/esp8266.c ****         uint8_t ch = h->rxDmaBuf[i];
+ 448              		.loc 1 53 36 is_stmt 1 discriminator 2 view .LVU132
+ 449 0086 0134     		adds	r4, r4, #1
+ 450              	.LVL35:
+  53:Core/Src/device/esp8266.c ****         uint8_t ch = h->rxDmaBuf[i];
+ 451              		.loc 1 53 36 is_stmt 0 discriminator 2 view .LVU133
+ 452 0088 A4B2     		uxth	r4, r4
+ 453              	.LVL36:
+ 454              	.L27:
+  53:Core/Src/device/esp8266.c ****         uint8_t ch = h->rxDmaBuf[i];
+ 455              		.loc 1 53 28 is_stmt 1 discriminator 1 view .LVU134
+ 456 008a A542     		cmp	r5, r4
+ 457 008c 32D9     		bls	.L43
+ 458              	.LBB9:
+  54:Core/Src/device/esp8266.c **** 
+ 459              		.loc 1 54 9 view .LVU135
+  54:Core/Src/device/esp8266.c **** 
+ 460              		.loc 1 54 17 is_stmt 0 view .LVU136
+ 461 008e 1A4B     		ldr	r3, .L45
+ 462 0090 2344     		add	r3, r3, r4
+ 463 0092 1B79     		ldrb	r3, [r3, #4]	@ zero_extendqisi2
+ 464              	.LVL37:
+  56:Core/Src/device/esp8266.c ****             h->rxLineBuf[h->rxLinePos] = '\0';
+ 465              		.loc 1 56 9 is_stmt 1 view .LVU137
+  56:Core/Src/device/esp8266.c ****             h->rxLineBuf[h->rxLinePos] = '\0';
+ 466              		.loc 1 56 12 is_stmt 0 view .LVU138
+ 467 0094 0A2B     		cmp	r3, #10
+ 468 0096 C2D0     		beq	.L44
+  82:Core/Src/device/esp8266.c ****             }
+  83:Core/Src/device/esp8266.c ****         } else if (ch != '\r' && h->rxLinePos < sizeof(h->rxLineBuf) - 1) {
+ 469              		.loc 1 83 16 is_stmt 1 view .LVU139
+ 470              		.loc 1 83 19 is_stmt 0 view .LVU140
+ 471 0098 0D2B     		cmp	r3, #13
+ 472 009a F4D0     		beq	.L31
+ 473              		.loc 1 83 35 discriminator 1 view .LVU141
+ 474 009c 164A     		ldr	r2, .L45
+ 475 009e B2F88421 		ldrh	r2, [r2, #388]
+ 476              		.loc 1 83 31 discriminator 1 view .LVU142
+ 477 00a2 7E2A     		cmp	r2, #126
+ 478 00a4 EFD8     		bhi	.L31
+  84:Core/Src/device/esp8266.c ****             h->rxLineBuf[h->rxLinePos++] = ch;
+ 479              		.loc 1 84 13 is_stmt 1 view .LVU143
+ 480              		.loc 1 84 38 is_stmt 0 view .LVU144
+ 481 00a6 1449     		ldr	r1, .L45
+ 482 00a8 501C     		adds	r0, r2, #1
+ 483 00aa A1F88401 		strh	r0, [r1, #388]	@ movhi
+ 484              		.loc 1 84 42 view .LVU145
+ 485 00ae 1144     		add	r1, r1, r2
+ 486 00b0 81F80431 		strb	r3, [r1, #260]
+ 487 00b4 E7E7     		b	.L31
+ 488              	.LVL38:
+ 489              	.L40:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 12
+
+
+ 490              	.LBB8:
+ 491              	.LBB7:
+  72:Core/Src/device/esp8266.c ****                     strncat(h->cmdRespBuf, "\r\n",
+ 492              		.loc 1 72 21 is_stmt 1 view .LVU146
+ 493 00b6 114E     		ldr	r6, .L45+4
+ 494 00b8 3146     		mov	r1, r6
+ 495 00ba 4046     		mov	r0, r8
+ 496 00bc FFF7FEFF 		bl	strncat
+ 497              	.LVL39:
+  73:Core/Src/device/esp8266.c ****                             h->cmdRespSize - strlen(h->cmdRespBuf) - 1);
+ 498              		.loc 1 73 21 view .LVU147
+ 499 00c0 D6F88480 		ldr	r8, [r6, #132]
+ 500 00c4 A6F58276 		sub	r6, r6, #260
+  74:Core/Src/device/esp8266.c ****                 }
+ 501              		.loc 1 74 30 is_stmt 0 view .LVU148
+ 502 00c8 B6F88C61 		ldrh	r6, [r6, #396]
+  74:Core/Src/device/esp8266.c ****                 }
+ 503              		.loc 1 74 46 view .LVU149
+ 504 00cc 4046     		mov	r0, r8
+ 505 00ce FFF7FEFF 		bl	strlen
+ 506              	.LVL40:
+  74:Core/Src/device/esp8266.c ****                 }
+ 507              		.loc 1 74 44 discriminator 1 view .LVU150
+ 508 00d2 321A     		subs	r2, r6, r0
+  73:Core/Src/device/esp8266.c ****                             h->cmdRespSize - strlen(h->cmdRespBuf) - 1);
+ 509              		.loc 1 73 21 view .LVU151
+ 510 00d4 013A     		subs	r2, r2, #1
+ 511 00d6 0A49     		ldr	r1, .L45+8
+ 512 00d8 4046     		mov	r0, r8
+ 513 00da FFF7FEFF 		bl	strncat
+ 514              	.LVL41:
+ 515 00de CAE7     		b	.L30
+ 516              	.LVL42:
+ 517              	.L41:
+  73:Core/Src/device/esp8266.c ****                             h->cmdRespSize - strlen(h->cmdRespBuf) - 1);
+ 518              		.loc 1 73 21 view .LVU152
+ 519              	.LBE7:
+  80:Core/Src/device/esp8266.c ****                 if (r == ESP_RESP_CLOSED)  h->onEventCallback(h, ESP_EVENT_TCP_CLOSED);
+ 520              		.loc 1 80 44 is_stmt 1 discriminator 1 view .LVU153
+ 521 00e0 0021     		movs	r1, #0
+ 522 00e2 0548     		ldr	r0, .L45
+ 523 00e4 9847     		blx	r3
+ 524              	.LVL43:
+ 525 00e6 CCE7     		b	.L32
+ 526              	.L42:
+  81:Core/Src/device/esp8266.c ****             }
+ 527              		.loc 1 81 44 discriminator 1 view .LVU154
+  81:Core/Src/device/esp8266.c ****             }
+ 528              		.loc 1 81 45 is_stmt 0 discriminator 1 view .LVU155
+ 529 00e8 0348     		ldr	r0, .L45
+ 530 00ea D0F89031 		ldr	r3, [r0, #400]
+  81:Core/Src/device/esp8266.c ****             }
+ 531              		.loc 1 81 44 discriminator 1 view .LVU156
+ 532 00ee 0821     		movs	r1, #8
+ 533 00f0 9847     		blx	r3
+ 534              	.LVL44:
+ 535 00f2 C8E7     		b	.L31
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 13
+
+
+ 536              	.LVL45:
+ 537              	.L43:
+  81:Core/Src/device/esp8266.c ****             }
+ 538              		.loc 1 81 44 discriminator 1 view .LVU157
+ 539              	.LBE8:
+ 540              	.LBE9:
+ 541              	.LBE3:
+  85:Core/Src/device/esp8266.c ****         }
+  86:Core/Src/device/esp8266.c ****     }
+  87:Core/Src/device/esp8266.c **** }
+ 542              		.loc 1 87 1 view .LVU158
+ 543 00f4 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 544              	.LVL46:
+ 545              	.L46:
+ 546              		.loc 1 87 1 view .LVU159
+ 547              		.align	2
+ 548              	.L45:
+ 549 00f8 00000000 		.word	espWifi
+ 550 00fc 04010000 		.word	espWifi+260
+ 551 0100 00000000 		.word	.LC9
+ 552              		.cfi_endproc
+ 553              	.LFE69:
+ 555              		.section	.text.ESP_Init,"ax",%progbits
+ 556              		.align	1
+ 557              		.global	ESP_Init
+ 558              		.syntax unified
+ 559              		.thumb
+ 560              		.thumb_func
+ 562              	ESP_Init:
+ 563              	.LVL47:
+ 564              	.LFB70:
+  88:Core/Src/device/esp8266.c **** 
+  89:Core/Src/device/esp8266.c **** /* ==================================================================
+  90:Core/Src/device/esp8266.c ****  *  初始化句柄 + 注册回调 + 启动 DMA
+  91:Core/Src/device/esp8266.c ****  * ================================================================== */
+  92:Core/Src/device/esp8266.c **** 
+  93:Core/Src/device/esp8266.c **** void ESP_Init(ESP_HandleTypeDef *h, UART_HandleTypeDef *huart)
+  94:Core/Src/device/esp8266.c **** {
+ 565              		.loc 1 94 1 is_stmt 1 view -0
+ 566              		.cfi_startproc
+ 567              		@ args = 0, pretend = 0, frame = 0
+ 568              		@ frame_needed = 0, uses_anonymous_args = 0
+ 569              		.loc 1 94 1 is_stmt 0 view .LVU161
+ 570 0000 38B5     		push	{r3, r4, r5, lr}
+ 571              	.LCFI2:
+ 572              		.cfi_def_cfa_offset 16
+ 573              		.cfi_offset 3, -16
+ 574              		.cfi_offset 4, -12
+ 575              		.cfi_offset 5, -8
+ 576              		.cfi_offset 14, -4
+ 577 0002 0446     		mov	r4, r0
+ 578 0004 0D46     		mov	r5, r1
+  95:Core/Src/device/esp8266.c ****     memset(h, 0, sizeof(*h));
+ 579              		.loc 1 95 5 is_stmt 1 view .LVU162
+ 580 0006 4FF4CA72 		mov	r2, #404
+ 581 000a 0021     		movs	r1, #0
+ 582              	.LVL48:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 14
+
+
+ 583              		.loc 1 95 5 is_stmt 0 view .LVU163
+ 584 000c FFF7FEFF 		bl	memset
+ 585              	.LVL49:
+  96:Core/Src/device/esp8266.c ****     h->huart     = huart;
+ 586              		.loc 1 96 5 is_stmt 1 view .LVU164
+ 587              		.loc 1 96 18 is_stmt 0 view .LVU165
+ 588 0010 44F8045B 		str	r5, [r4], #4
+ 589              	.LVL50:
+  97:Core/Src/device/esp8266.c ****     h->initState = ESP_STATE_RESET;
+ 590              		.loc 1 97 5 is_stmt 1 view .LVU166
+  98:Core/Src/device/esp8266.c **** 
+  99:Core/Src/device/esp8266.c ****     BSP_UART_RegisterRxCallback(huart, ESP_UART_RxISR);
+ 591              		.loc 1 99 5 view .LVU167
+ 592 0014 0549     		ldr	r1, .L49
+ 593 0016 2846     		mov	r0, r5
+ 594 0018 FFF7FEFF 		bl	BSP_UART_RegisterRxCallback
+ 595              	.LVL51:
+ 100:Core/Src/device/esp8266.c ****     BSP_UART_StartRx_DMA(huart, h->rxDmaBuf, sizeof(h->rxDmaBuf));
+ 596              		.loc 1 100 5 view .LVU168
+ 597 001c 4FF48072 		mov	r2, #256
+ 598 0020 2146     		mov	r1, r4
+ 599 0022 2846     		mov	r0, r5
+ 600 0024 FFF7FEFF 		bl	BSP_UART_StartRx_DMA
+ 601              	.LVL52:
+ 101:Core/Src/device/esp8266.c **** }
+ 602              		.loc 1 101 1 is_stmt 0 view .LVU169
+ 603 0028 38BD     		pop	{r3, r4, r5, pc}
+ 604              	.LVL53:
+ 605              	.L50:
+ 606              		.loc 1 101 1 view .LVU170
+ 607 002a 00BF     		.align	2
+ 608              	.L49:
+ 609 002c 00000000 		.word	ESP_UART_RxISR
+ 610              		.cfi_endproc
+ 611              	.LFE70:
+ 613              		.section	.text.ESP_SendCmd,"ax",%progbits
+ 614              		.align	1
+ 615              		.global	ESP_SendCmd
+ 616              		.syntax unified
+ 617              		.thumb
+ 618              		.thumb_func
+ 620              	ESP_SendCmd:
+ 621              	.LVL54:
+ 622              	.LFB71:
+ 102:Core/Src/device/esp8266.c **** 
+ 103:Core/Src/device/esp8266.c **** /* ==================================================================
+ 104:Core/Src/device/esp8266.c ****  *  发送 AT 命令并阻塞等待结果
+ 105:Core/Src/device/esp8266.c ****  *  FreeRTOS 环境下应改用 TaskNotify，当前为兼容裸机使用轮询
+ 106:Core/Src/device/esp8266.c ****  * ================================================================== */
+ 107:Core/Src/device/esp8266.c **** 
+ 108:Core/Src/device/esp8266.c **** ESP_RespType_t ESP_SendCmd(ESP_HandleTypeDef *h, const char *cmd,
+ 109:Core/Src/device/esp8266.c ****                            char *response, uint16_t respSize,
+ 110:Core/Src/device/esp8266.c ****                            uint32_t timeout_ms)
+ 111:Core/Src/device/esp8266.c **** {
+ 623              		.loc 1 111 1 is_stmt 1 view -0
+ 624              		.cfi_startproc
+ 625              		@ args = 4, pretend = 0, frame = 0
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 15
+
+
+ 626              		@ frame_needed = 0, uses_anonymous_args = 0
+ 627              		.loc 1 111 1 is_stmt 0 view .LVU172
+ 628 0000 70B5     		push	{r4, r5, r6, lr}
+ 629              	.LCFI3:
+ 630              		.cfi_def_cfa_offset 16
+ 631              		.cfi_offset 4, -16
+ 632              		.cfi_offset 5, -12
+ 633              		.cfi_offset 6, -8
+ 634              		.cfi_offset 14, -4
+ 635 0002 0446     		mov	r4, r0
+ 636 0004 0D46     		mov	r5, r1
+ 637 0006 049E     		ldr	r6, [sp, #16]
+ 112:Core/Src/device/esp8266.c ****     h->cmdDone     = false;
+ 638              		.loc 1 112 5 is_stmt 1 view .LVU173
+ 639              		.loc 1 112 20 is_stmt 0 view .LVU174
+ 640 0008 0021     		movs	r1, #0
+ 641              	.LVL55:
+ 642              		.loc 1 112 20 view .LVU175
+ 643 000a 80F88611 		strb	r1, [r0, #390]
+ 113:Core/Src/device/esp8266.c ****     h->cmdResult   = ESP_RESP_NONE;
+ 644              		.loc 1 113 5 is_stmt 1 view .LVU176
+ 645              		.loc 1 113 20 is_stmt 0 view .LVU177
+ 646 000e 80F88711 		strb	r1, [r0, #391]
+ 114:Core/Src/device/esp8266.c ****     h->cmdRespBuf  = response;
+ 647              		.loc 1 114 5 is_stmt 1 view .LVU178
+ 648              		.loc 1 114 20 is_stmt 0 view .LVU179
+ 649 0012 C0F88821 		str	r2, [r0, #392]
+ 115:Core/Src/device/esp8266.c ****     h->cmdRespSize = respSize;
+ 650              		.loc 1 115 5 is_stmt 1 view .LVU180
+ 651              		.loc 1 115 20 is_stmt 0 view .LVU181
+ 652 0016 A0F88C31 		strh	r3, [r0, #396]	@ movhi
+ 116:Core/Src/device/esp8266.c ****     if (response && respSize > 0) response[0] = '\0';
+ 653              		.loc 1 116 5 is_stmt 1 view .LVU182
+ 654              		.loc 1 116 8 is_stmt 0 view .LVU183
+ 655 001a 0AB1     		cbz	r2, .L52
+ 656              		.loc 1 116 18 discriminator 1 view .LVU184
+ 657 001c 03B1     		cbz	r3, .L52
+ 658              		.loc 1 116 35 is_stmt 1 discriminator 2 view .LVU185
+ 659              		.loc 1 116 47 is_stmt 0 discriminator 2 view .LVU186
+ 660 001e 1170     		strb	r1, [r2]
+ 661              	.L52:
+ 117:Core/Src/device/esp8266.c **** 
+ 118:Core/Src/device/esp8266.c ****     /* 发送命令 */
+ 119:Core/Src/device/esp8266.c ****     if (cmd != NULL) {
+ 662              		.loc 1 119 5 is_stmt 1 view .LVU187
+ 663              		.loc 1 119 8 is_stmt 0 view .LVU188
+ 664 0020 3DB1     		cbz	r5, .L53
+ 120:Core/Src/device/esp8266.c ****         BSP_UART_Send(h->huart, (const uint8_t *)cmd, strlen(cmd));
+ 665              		.loc 1 120 9 is_stmt 1 view .LVU189
+ 666              		.loc 1 120 55 is_stmt 0 view .LVU190
+ 667 0022 2846     		mov	r0, r5
+ 668              	.LVL56:
+ 669              		.loc 1 120 55 view .LVU191
+ 670 0024 FFF7FEFF 		bl	strlen
+ 671              	.LVL57:
+ 672              		.loc 1 120 9 discriminator 1 view .LVU192
+ 673 0028 82B2     		uxth	r2, r0
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 16
+
+
+ 674 002a 2946     		mov	r1, r5
+ 675 002c 2068     		ldr	r0, [r4]
+ 676 002e FFF7FEFF 		bl	BSP_UART_Send
+ 677              	.LVL58:
+ 678              	.L53:
+ 121:Core/Src/device/esp8266.c ****     }
+ 122:Core/Src/device/esp8266.c **** 
+ 123:Core/Src/device/esp8266.c ****     /* 等待 ISR 回调填充 cmdDone */
+ 124:Core/Src/device/esp8266.c ****     uint32_t t0 = HAL_GetTick();
+ 679              		.loc 1 124 5 is_stmt 1 view .LVU193
+ 680              		.loc 1 124 19 is_stmt 0 view .LVU194
+ 681 0032 FFF7FEFF 		bl	HAL_GetTick
+ 682              	.LVL59:
+ 683 0036 0546     		mov	r5, r0
+ 684              	.LVL60:
+ 125:Core/Src/device/esp8266.c ****     while (!h->cmdDone) {
+ 685              		.loc 1 125 5 is_stmt 1 view .LVU195
+ 686              	.L54:
+ 687              		.loc 1 125 12 view .LVU196
+ 688              		.loc 1 125 14 is_stmt 0 view .LVU197
+ 689 0038 94F88631 		ldrb	r3, [r4, #390]	@ zero_extendqisi2
+ 690              		.loc 1 125 12 view .LVU198
+ 691 003c 33B9     		cbnz	r3, .L59
+ 126:Core/Src/device/esp8266.c ****         if (HAL_GetTick() - t0 > timeout_ms) {
+ 692              		.loc 1 126 9 is_stmt 1 view .LVU199
+ 693              		.loc 1 126 13 is_stmt 0 view .LVU200
+ 694 003e FFF7FEFF 		bl	HAL_GetTick
+ 695              	.LVL61:
+ 696              		.loc 1 126 27 discriminator 1 view .LVU201
+ 697 0042 401B     		subs	r0, r0, r5
+ 698              		.loc 1 126 12 discriminator 1 view .LVU202
+ 699 0044 B042     		cmp	r0, r6
+ 700 0046 F7D9     		bls	.L54
+ 127:Core/Src/device/esp8266.c ****             return ESP_RESP_NONE;
+ 701              		.loc 1 127 20 view .LVU203
+ 702 0048 0020     		movs	r0, #0
+ 703 004a 02E0     		b	.L55
+ 704              	.L59:
+ 128:Core/Src/device/esp8266.c ****         }
+ 129:Core/Src/device/esp8266.c ****     }
+ 130:Core/Src/device/esp8266.c ****     return h->cmdResult;
+ 705              		.loc 1 130 5 is_stmt 1 view .LVU204
+ 706              		.loc 1 130 13 is_stmt 0 view .LVU205
+ 707 004c 94F88701 		ldrb	r0, [r4, #391]	@ zero_extendqisi2
+ 708 0050 C0B2     		uxtb	r0, r0
+ 709              	.L55:
+ 131:Core/Src/device/esp8266.c **** }
+ 710              		.loc 1 131 1 view .LVU206
+ 711 0052 70BD     		pop	{r4, r5, r6, pc}
+ 712              		.loc 1 131 1 view .LVU207
+ 713              		.cfi_endproc
+ 714              	.LFE71:
+ 716              		.section	.rodata.ESP_RunInitStateMachine.str1.4,"aMS",%progbits,1
+ 717              		.align	2
+ 718              	.LC10:
+ 719 0000 41540D0A 		.ascii	"AT\015\012\000"
+ 719      00
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 17
+
+
+ 720 0005 000000   		.align	2
+ 721              	.LC11:
+ 722 0008 41544530 		.ascii	"ATE0\015\012\000"
+ 722      0D0A00
+ 723 000f 00       		.align	2
+ 724              	.LC12:
+ 725 0010 41542B43 		.ascii	"AT+CWMODE=1\015\012\000"
+ 725      574D4F44 
+ 725      453D310D 
+ 725      0A00
+ 726              		.section	.text.ESP_RunInitStateMachine,"ax",%progbits
+ 727              		.align	1
+ 728              		.global	ESP_RunInitStateMachine
+ 729              		.syntax unified
+ 730              		.thumb
+ 731              		.thumb_func
+ 733              	ESP_RunInitStateMachine:
+ 734              	.LVL62:
+ 735              	.LFB72:
+ 132:Core/Src/device/esp8266.c **** 
+ 133:Core/Src/device/esp8266.c **** /* ==================================================================
+ 134:Core/Src/device/esp8266.c ****  *  初始化状态机 — App 层循环调用直至返回 true
+ 135:Core/Src/device/esp8266.c ****  * ================================================================== */
+ 136:Core/Src/device/esp8266.c **** 
+ 137:Core/Src/device/esp8266.c **** bool ESP_RunInitStateMachine(ESP_HandleTypeDef *h)
+ 138:Core/Src/device/esp8266.c **** {
+ 736              		.loc 1 138 1 is_stmt 1 view -0
+ 737              		.cfi_startproc
+ 738              		@ args = 0, pretend = 0, frame = 0
+ 739              		@ frame_needed = 0, uses_anonymous_args = 0
+ 740              		.loc 1 138 1 is_stmt 0 view .LVU209
+ 741 0000 10B5     		push	{r4, lr}
+ 742              	.LCFI4:
+ 743              		.cfi_def_cfa_offset 8
+ 744              		.cfi_offset 4, -8
+ 745              		.cfi_offset 14, -4
+ 746 0002 82B0     		sub	sp, sp, #8
+ 747              	.LCFI5:
+ 748              		.cfi_def_cfa_offset 16
+ 749 0004 0446     		mov	r4, r0
+ 139:Core/Src/device/esp8266.c ****     ESP_RespType_t r;
+ 750              		.loc 1 139 5 is_stmt 1 view .LVU210
+ 140:Core/Src/device/esp8266.c **** 
+ 141:Core/Src/device/esp8266.c ****     switch (h->initState) {
+ 751              		.loc 1 141 5 view .LVU211
+ 752              		.loc 1 141 14 is_stmt 0 view .LVU212
+ 753 0006 90F88E31 		ldrb	r3, [r0, #398]	@ zero_extendqisi2
+ 754              		.loc 1 141 5 view .LVU213
+ 755 000a 062B     		cmp	r3, #6
+ 756 000c 47D8     		bhi	.L70
+ 757 000e DFE803F0 		tbb	[pc, r3]
+ 758              	.L63:
+ 759 0012 06       		.byte	(.L66-.L63)/2
+ 760 0013 46       		.byte	(.L70-.L63)/2
+ 761 0014 24       		.byte	(.L65-.L63)/2
+ 762 0015 35       		.byte	(.L64-.L63)/2
+ 763 0016 46       		.byte	(.L70-.L63)/2
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 18
+
+
+ 764 0017 46       		.byte	(.L70-.L63)/2
+ 765 0018 04       		.byte	(.L62-.L63)/2
+ 766 0019 00       		.p2align 1
+ 767              	.L62:
+ 768 001a 0120     		movs	r0, #1
+ 769              	.LVL63:
+ 770              		.loc 1 141 5 view .LVU214
+ 771 001c 40E0     		b	.L61
+ 772              	.LVL64:
+ 773              	.L66:
+ 142:Core/Src/device/esp8266.c ****     case ESP_STATE_RESET:
+ 143:Core/Src/device/esp8266.c ****         r = ESP_SendCmd(h, "AT\r\n", NULL, 0, 3000);
+ 774              		.loc 1 143 9 is_stmt 1 view .LVU215
+ 775              		.loc 1 143 13 is_stmt 0 view .LVU216
+ 776 001e 40F6B833 		movw	r3, #3000
+ 777 0022 0093     		str	r3, [sp]
+ 778 0024 0023     		movs	r3, #0
+ 779 0026 1A46     		mov	r2, r3
+ 780 0028 1F49     		ldr	r1, .L78
+ 781 002a FFF7FEFF 		bl	ESP_SendCmd
+ 782              	.LVL65:
+ 144:Core/Src/device/esp8266.c ****         if (r == ESP_RESP_OK) {
+ 783              		.loc 1 144 9 is_stmt 1 view .LVU217
+ 784              		.loc 1 144 12 is_stmt 0 view .LVU218
+ 785 002e 0128     		cmp	r0, #1
+ 786 0030 0CD0     		beq	.L75
+ 145:Core/Src/device/esp8266.c ****             h->initState = ESP_STATE_ECHO_OFF;
+ 146:Core/Src/device/esp8266.c ****             h->initRetry = 0;
+ 147:Core/Src/device/esp8266.c ****         } else if (++h->initRetry > 3) {
+ 787              		.loc 1 147 16 is_stmt 1 view .LVU219
+ 788              		.loc 1 147 23 is_stmt 0 view .LVU220
+ 789 0032 94F88F31 		ldrb	r3, [r4, #399]	@ zero_extendqisi2
+ 790              		.loc 1 147 20 view .LVU221
+ 791 0036 0133     		adds	r3, r3, #1
+ 792 0038 DBB2     		uxtb	r3, r3
+ 793              		.loc 1 147 19 view .LVU222
+ 794 003a 84F88F31 		strb	r3, [r4, #399]
+ 795 003e 032B     		cmp	r3, #3
+ 796 0040 30D9     		bls	.L71
+ 148:Core/Src/device/esp8266.c ****             h->initState = ESP_STATE_ERROR;
+ 797              		.loc 1 148 13 is_stmt 1 view .LVU223
+ 798              		.loc 1 148 26 is_stmt 0 view .LVU224
+ 799 0042 0723     		movs	r3, #7
+ 800 0044 84F88E31 		strb	r3, [r4, #398]
+ 149:Core/Src/device/esp8266.c ****         }
+ 150:Core/Src/device/esp8266.c ****         break;
+ 151:Core/Src/device/esp8266.c **** 
+ 152:Core/Src/device/esp8266.c ****     case ESP_STATE_ECHO_OFF:
+ 153:Core/Src/device/esp8266.c ****         r = ESP_SendCmd(h, "ATE0\r\n", NULL, 0, 2000);
+ 154:Core/Src/device/esp8266.c ****         h->initState = (r == ESP_RESP_OK) ? ESP_STATE_STA_MODE : ESP_STATE_ERROR;
+ 155:Core/Src/device/esp8266.c ****         break;
+ 156:Core/Src/device/esp8266.c **** 
+ 157:Core/Src/device/esp8266.c ****     case ESP_STATE_STA_MODE:
+ 158:Core/Src/device/esp8266.c ****         r = ESP_SendCmd(h, "AT+CWMODE=1\r\n", NULL, 0, 2000);
+ 159:Core/Src/device/esp8266.c ****         h->initState = (r == ESP_RESP_OK) ? ESP_STATE_READY : ESP_STATE_ERROR;
+ 160:Core/Src/device/esp8266.c ****         break;
+ 161:Core/Src/device/esp8266.c **** 
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 19
+
+
+ 162:Core/Src/device/esp8266.c ****     case ESP_STATE_READY:
+ 163:Core/Src/device/esp8266.c ****         return true;
+ 164:Core/Src/device/esp8266.c **** 
+ 165:Core/Src/device/esp8266.c ****     case ESP_STATE_ERROR:
+ 166:Core/Src/device/esp8266.c ****     default:
+ 167:Core/Src/device/esp8266.c ****         break;
+ 168:Core/Src/device/esp8266.c ****     }
+ 169:Core/Src/device/esp8266.c ****     return false;
+ 801              		.loc 1 169 12 view .LVU225
+ 802 0048 0020     		movs	r0, #0
+ 803              	.LVL66:
+ 804              		.loc 1 169 12 view .LVU226
+ 805 004a 29E0     		b	.L61
+ 806              	.LVL67:
+ 807              	.L75:
+ 145:Core/Src/device/esp8266.c ****             h->initRetry = 0;
+ 808              		.loc 1 145 13 is_stmt 1 view .LVU227
+ 145:Core/Src/device/esp8266.c ****             h->initRetry = 0;
+ 809              		.loc 1 145 26 is_stmt 0 view .LVU228
+ 810 004c 0223     		movs	r3, #2
+ 811 004e 84F88E31 		strb	r3, [r4, #398]
+ 146:Core/Src/device/esp8266.c ****         } else if (++h->initRetry > 3) {
+ 812              		.loc 1 146 13 is_stmt 1 view .LVU229
+ 146:Core/Src/device/esp8266.c ****         } else if (++h->initRetry > 3) {
+ 813              		.loc 1 146 26 is_stmt 0 view .LVU230
+ 814 0052 0020     		movs	r0, #0
+ 815              	.LVL68:
+ 146:Core/Src/device/esp8266.c ****         } else if (++h->initRetry > 3) {
+ 816              		.loc 1 146 26 view .LVU231
+ 817 0054 84F88F01 		strb	r0, [r4, #399]
+ 818 0058 22E0     		b	.L61
+ 819              	.LVL69:
+ 820              	.L65:
+ 153:Core/Src/device/esp8266.c ****         h->initState = (r == ESP_RESP_OK) ? ESP_STATE_STA_MODE : ESP_STATE_ERROR;
+ 821              		.loc 1 153 9 is_stmt 1 view .LVU232
+ 153:Core/Src/device/esp8266.c ****         h->initState = (r == ESP_RESP_OK) ? ESP_STATE_STA_MODE : ESP_STATE_ERROR;
+ 822              		.loc 1 153 13 is_stmt 0 view .LVU233
+ 823 005a 4FF4FA63 		mov	r3, #2000
+ 824 005e 0093     		str	r3, [sp]
+ 825 0060 0023     		movs	r3, #0
+ 826 0062 1A46     		mov	r2, r3
+ 827 0064 1149     		ldr	r1, .L78+4
+ 828 0066 FFF7FEFF 		bl	ESP_SendCmd
+ 829              	.LVL70:
+ 154:Core/Src/device/esp8266.c ****         break;
+ 830              		.loc 1 154 9 is_stmt 1 view .LVU234
+ 154:Core/Src/device/esp8266.c ****         break;
+ 831              		.loc 1 154 64 is_stmt 0 view .LVU235
+ 832 006a 0128     		cmp	r0, #1
+ 833 006c 04D0     		beq	.L76
+ 154:Core/Src/device/esp8266.c ****         break;
+ 834              		.loc 1 154 64 discriminator 2 view .LVU236
+ 835 006e 0723     		movs	r3, #7
+ 836              	.L68:
+ 154:Core/Src/device/esp8266.c ****         break;
+ 837              		.loc 1 154 22 discriminator 4 view .LVU237
+ 838 0070 84F88E31 		strb	r3, [r4, #398]
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 20
+
+
+ 155:Core/Src/device/esp8266.c **** 
+ 839              		.loc 1 155 9 is_stmt 1 view .LVU238
+ 840              		.loc 1 169 12 is_stmt 0 view .LVU239
+ 841 0074 0020     		movs	r0, #0
+ 842              	.LVL71:
+ 155:Core/Src/device/esp8266.c **** 
+ 843              		.loc 1 155 9 view .LVU240
+ 844 0076 13E0     		b	.L61
+ 845              	.LVL72:
+ 846              	.L76:
+ 154:Core/Src/device/esp8266.c ****         break;
+ 847              		.loc 1 154 64 discriminator 1 view .LVU241
+ 848 0078 0323     		movs	r3, #3
+ 849 007a F9E7     		b	.L68
+ 850              	.LVL73:
+ 851              	.L64:
+ 158:Core/Src/device/esp8266.c ****         h->initState = (r == ESP_RESP_OK) ? ESP_STATE_READY : ESP_STATE_ERROR;
+ 852              		.loc 1 158 9 is_stmt 1 view .LVU242
+ 158:Core/Src/device/esp8266.c ****         h->initState = (r == ESP_RESP_OK) ? ESP_STATE_READY : ESP_STATE_ERROR;
+ 853              		.loc 1 158 13 is_stmt 0 view .LVU243
+ 854 007c 4FF4FA63 		mov	r3, #2000
+ 855 0080 0093     		str	r3, [sp]
+ 856 0082 0023     		movs	r3, #0
+ 857 0084 1A46     		mov	r2, r3
+ 858 0086 0A49     		ldr	r1, .L78+8
+ 859 0088 FFF7FEFF 		bl	ESP_SendCmd
+ 860              	.LVL74:
+ 159:Core/Src/device/esp8266.c ****         break;
+ 861              		.loc 1 159 9 is_stmt 1 view .LVU244
+ 159:Core/Src/device/esp8266.c ****         break;
+ 862              		.loc 1 159 61 is_stmt 0 view .LVU245
+ 863 008c 0128     		cmp	r0, #1
+ 864 008e 04D0     		beq	.L77
+ 159:Core/Src/device/esp8266.c ****         break;
+ 865              		.loc 1 159 61 discriminator 2 view .LVU246
+ 866 0090 0723     		movs	r3, #7
+ 867              	.L69:
+ 159:Core/Src/device/esp8266.c ****         break;
+ 868              		.loc 1 159 22 discriminator 4 view .LVU247
+ 869 0092 84F88E31 		strb	r3, [r4, #398]
+ 160:Core/Src/device/esp8266.c **** 
+ 870              		.loc 1 160 9 is_stmt 1 view .LVU248
+ 871              		.loc 1 169 12 is_stmt 0 view .LVU249
+ 872 0096 0020     		movs	r0, #0
+ 873              	.LVL75:
+ 160:Core/Src/device/esp8266.c **** 
+ 874              		.loc 1 160 9 view .LVU250
+ 875 0098 02E0     		b	.L61
+ 876              	.LVL76:
+ 877              	.L77:
+ 159:Core/Src/device/esp8266.c ****         break;
+ 878              		.loc 1 159 61 discriminator 1 view .LVU251
+ 879 009a 0623     		movs	r3, #6
+ 880 009c F9E7     		b	.L69
+ 881              	.LVL77:
+ 882              	.L70:
+ 883              		.loc 1 169 12 view .LVU252
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 21
+
+
+ 884 009e 0020     		movs	r0, #0
+ 885              	.LVL78:
+ 886              	.L61:
+ 170:Core/Src/device/esp8266.c **** }
+ 887              		.loc 1 170 1 view .LVU253
+ 888 00a0 02B0     		add	sp, sp, #8
+ 889              	.LCFI6:
+ 890              		.cfi_remember_state
+ 891              		.cfi_def_cfa_offset 8
+ 892              		@ sp needed
+ 893 00a2 10BD     		pop	{r4, pc}
+ 894              	.LVL79:
+ 895              	.L71:
+ 896              	.LCFI7:
+ 897              		.cfi_restore_state
+ 169:Core/Src/device/esp8266.c **** }
+ 898              		.loc 1 169 12 view .LVU254
+ 899 00a4 0020     		movs	r0, #0
+ 900              	.LVL80:
+ 169:Core/Src/device/esp8266.c **** }
+ 901              		.loc 1 169 12 view .LVU255
+ 902 00a6 FBE7     		b	.L61
+ 903              	.L79:
+ 904              		.align	2
+ 905              	.L78:
+ 906 00a8 00000000 		.word	.LC10
+ 907 00ac 08000000 		.word	.LC11
+ 908 00b0 10000000 		.word	.LC12
+ 909              		.cfi_endproc
+ 910              	.LFE72:
+ 912              		.section	.rodata.ESP_ConnectWiFi.str1.4,"aMS",%progbits,1
+ 913              		.align	2
+ 914              	.LC13:
+ 915 0000 41542B43 		.ascii	"AT+CWJAP=\"%s\",\"%s\"\015\012\000"
+ 915      574A4150 
+ 915      3D222573 
+ 915      222C2225 
+ 915      73220D0A 
+ 916              		.section	.text.ESP_ConnectWiFi,"ax",%progbits
+ 917              		.align	1
+ 918              		.global	ESP_ConnectWiFi
+ 919              		.syntax unified
+ 920              		.thumb
+ 921              		.thumb_func
+ 923              	ESP_ConnectWiFi:
+ 924              	.LVL81:
+ 925              	.LFB73:
+ 171:Core/Src/device/esp8266.c **** 
+ 172:Core/Src/device/esp8266.c **** /* ==================================================================
+ 173:Core/Src/device/esp8266.c ****  *  便捷封装
+ 174:Core/Src/device/esp8266.c ****  * ================================================================== */
+ 175:Core/Src/device/esp8266.c **** 
+ 176:Core/Src/device/esp8266.c **** bool ESP_ConnectWiFi(ESP_HandleTypeDef *h, const char *ssid, const char *pwd)
+ 177:Core/Src/device/esp8266.c **** {
+ 926              		.loc 1 177 1 is_stmt 1 view -0
+ 927              		.cfi_startproc
+ 928              		@ args = 0, pretend = 0, frame = 128
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 22
+
+
+ 929              		@ frame_needed = 0, uses_anonymous_args = 0
+ 930              		.loc 1 177 1 is_stmt 0 view .LVU257
+ 931 0000 30B5     		push	{r4, r5, lr}
+ 932              	.LCFI8:
+ 933              		.cfi_def_cfa_offset 12
+ 934              		.cfi_offset 4, -12
+ 935              		.cfi_offset 5, -8
+ 936              		.cfi_offset 14, -4
+ 937 0002 A3B0     		sub	sp, sp, #140
+ 938              	.LCFI9:
+ 939              		.cfi_def_cfa_offset 152
+ 940 0004 0546     		mov	r5, r0
+ 941 0006 0B46     		mov	r3, r1
+ 178:Core/Src/device/esp8266.c ****     char cmd[128];
+ 942              		.loc 1 178 5 is_stmt 1 view .LVU258
+ 179:Core/Src/device/esp8266.c ****     snprintf(cmd, sizeof(cmd), "AT+CWJAP=\"%s\",\"%s\"\r\n", ssid, pwd);
+ 943              		.loc 1 179 5 view .LVU259
+ 944 0008 02AC     		add	r4, sp, #8
+ 945 000a 0092     		str	r2, [sp]
+ 946 000c 0F4A     		ldr	r2, .L84
+ 947              	.LVL82:
+ 948              		.loc 1 179 5 is_stmt 0 view .LVU260
+ 949 000e 8021     		movs	r1, #128
+ 950              	.LVL83:
+ 951              		.loc 1 179 5 view .LVU261
+ 952 0010 2046     		mov	r0, r4
+ 953              	.LVL84:
+ 954              		.loc 1 179 5 view .LVU262
+ 955 0012 FFF7FEFF 		bl	snprintf
+ 956              	.LVL85:
+ 180:Core/Src/device/esp8266.c ****     ESP_RespType_t r = ESP_SendCmd(h, cmd, NULL, 0, 15000);
+ 957              		.loc 1 180 5 is_stmt 1 view .LVU263
+ 958              		.loc 1 180 24 is_stmt 0 view .LVU264
+ 959 0016 43F69823 		movw	r3, #15000
+ 960 001a 0093     		str	r3, [sp]
+ 961 001c 0023     		movs	r3, #0
+ 962 001e 1A46     		mov	r2, r3
+ 963 0020 2146     		mov	r1, r4
+ 964 0022 2846     		mov	r0, r5
+ 965 0024 FFF7FEFF 		bl	ESP_SendCmd
+ 966              	.LVL86:
+ 967 0028 0446     		mov	r4, r0
+ 968              	.LVL87:
+ 181:Core/Src/device/esp8266.c ****     if (r == ESP_RESP_OK && h->onEventCallback) {
+ 969              		.loc 1 181 5 is_stmt 1 view .LVU265
+ 970              		.loc 1 181 8 is_stmt 0 view .LVU266
+ 971 002a 0128     		cmp	r0, #1
+ 972 002c 05D0     		beq	.L83
+ 973              	.LVL88:
+ 974              	.L81:
+ 182:Core/Src/device/esp8266.c ****         h->onEventCallback(h, ESP_EVENT_WIFI_CONNECTED);
+ 183:Core/Src/device/esp8266.c ****     }
+ 184:Core/Src/device/esp8266.c ****     return (r == ESP_RESP_OK);
+ 975              		.loc 1 184 5 is_stmt 1 view .LVU267
+ 185:Core/Src/device/esp8266.c **** }
+ 976              		.loc 1 185 1 is_stmt 0 view .LVU268
+ 977 002e 012C     		cmp	r4, #1
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 23
+
+
+ 978 0030 14BF     		ite	ne
+ 979 0032 0020     		movne	r0, #0
+ 980 0034 0120     		moveq	r0, #1
+ 981 0036 23B0     		add	sp, sp, #140
+ 982              	.LCFI10:
+ 983              		.cfi_remember_state
+ 984              		.cfi_def_cfa_offset 12
+ 985              		@ sp needed
+ 986 0038 30BD     		pop	{r4, r5, pc}
+ 987              	.LVL89:
+ 988              	.L83:
+ 989              	.LCFI11:
+ 990              		.cfi_restore_state
+ 181:Core/Src/device/esp8266.c ****     if (r == ESP_RESP_OK && h->onEventCallback) {
+ 991              		.loc 1 181 30 discriminator 1 view .LVU269
+ 992 003a D5F89031 		ldr	r3, [r5, #400]
+ 181:Core/Src/device/esp8266.c ****     if (r == ESP_RESP_OK && h->onEventCallback) {
+ 993              		.loc 1 181 26 discriminator 1 view .LVU270
+ 994 003e 002B     		cmp	r3, #0
+ 995 0040 F5D0     		beq	.L81
+ 182:Core/Src/device/esp8266.c ****         h->onEventCallback(h, ESP_EVENT_WIFI_CONNECTED);
+ 996              		.loc 1 182 9 is_stmt 1 view .LVU271
+ 997 0042 0121     		movs	r1, #1
+ 998 0044 2846     		mov	r0, r5
+ 999              	.LVL90:
+ 182:Core/Src/device/esp8266.c ****         h->onEventCallback(h, ESP_EVENT_WIFI_CONNECTED);
+ 1000              		.loc 1 182 9 is_stmt 0 view .LVU272
+ 1001 0046 9847     		blx	r3
+ 1002              	.LVL91:
+ 1003 0048 F1E7     		b	.L81
+ 1004              	.L85:
+ 1005 004a 00BF     		.align	2
+ 1006              	.L84:
+ 1007 004c 00000000 		.word	.LC13
+ 1008              		.cfi_endproc
+ 1009              	.LFE73:
+ 1011              		.section	.rodata.ESP_GetIP.str1.4,"aMS",%progbits,1
+ 1012              		.align	2
+ 1013              	.LC14:
+ 1014 0000 41542B43 		.ascii	"AT+CIFSR\015\012\000"
+ 1014      49465352 
+ 1014      0D0A00
+ 1015              		.section	.text.ESP_GetIP,"ax",%progbits
+ 1016              		.align	1
+ 1017              		.global	ESP_GetIP
+ 1018              		.syntax unified
+ 1019              		.thumb
+ 1020              		.thumb_func
+ 1022              	ESP_GetIP:
+ 1023              	.LVL92:
+ 1024              	.LFB74:
+ 186:Core/Src/device/esp8266.c **** 
+ 187:Core/Src/device/esp8266.c **** bool ESP_GetIP(ESP_HandleTypeDef *h, char *ipBuf, uint16_t bufSize)
+ 188:Core/Src/device/esp8266.c **** {
+ 1025              		.loc 1 188 1 is_stmt 1 view -0
+ 1026              		.cfi_startproc
+ 1027              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 24
+
+
+ 1028              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1029              		.loc 1 188 1 is_stmt 0 view .LVU274
+ 1030 0000 30B5     		push	{r4, r5, lr}
+ 1031              	.LCFI12:
+ 1032              		.cfi_def_cfa_offset 12
+ 1033              		.cfi_offset 4, -12
+ 1034              		.cfi_offset 5, -8
+ 1035              		.cfi_offset 14, -4
+ 1036 0002 83B0     		sub	sp, sp, #12
+ 1037              	.LCFI13:
+ 1038              		.cfi_def_cfa_offset 24
+ 1039 0004 0546     		mov	r5, r0
+ 1040 0006 1346     		mov	r3, r2
+ 189:Core/Src/device/esp8266.c ****     ESP_RespType_t r = ESP_SendCmd(h, "AT+CIFSR\r\n", ipBuf, bufSize, 5000);
+ 1041              		.loc 1 189 5 is_stmt 1 view .LVU275
+ 1042              		.loc 1 189 24 is_stmt 0 view .LVU276
+ 1043 0008 41F28832 		movw	r2, #5000
+ 1044              	.LVL93:
+ 1045              		.loc 1 189 24 view .LVU277
+ 1046 000c 0092     		str	r2, [sp]
+ 1047 000e 0A46     		mov	r2, r1
+ 1048 0010 0949     		ldr	r1, .L90
+ 1049              	.LVL94:
+ 1050              		.loc 1 189 24 view .LVU278
+ 1051 0012 FFF7FEFF 		bl	ESP_SendCmd
+ 1052              	.LVL95:
+ 1053              		.loc 1 189 24 view .LVU279
+ 1054 0016 0446     		mov	r4, r0
+ 1055              	.LVL96:
+ 190:Core/Src/device/esp8266.c ****     if (r == ESP_RESP_OK && h->onEventCallback) {
+ 1056              		.loc 1 190 5 is_stmt 1 view .LVU280
+ 1057              		.loc 1 190 8 is_stmt 0 view .LVU281
+ 1058 0018 0128     		cmp	r0, #1
+ 1059 001a 05D0     		beq	.L89
+ 1060              	.LVL97:
+ 1061              	.L87:
+ 191:Core/Src/device/esp8266.c ****         h->onEventCallback(h, ESP_EVENT_GOT_IP);
+ 192:Core/Src/device/esp8266.c ****     }
+ 193:Core/Src/device/esp8266.c ****     return (r == ESP_RESP_OK);
+ 1062              		.loc 1 193 5 is_stmt 1 view .LVU282
+ 194:Core/Src/device/esp8266.c **** }
+ 1063              		.loc 1 194 1 is_stmt 0 view .LVU283
+ 1064 001c 012C     		cmp	r4, #1
+ 1065 001e 14BF     		ite	ne
+ 1066 0020 0020     		movne	r0, #0
+ 1067 0022 0120     		moveq	r0, #1
+ 1068 0024 03B0     		add	sp, sp, #12
+ 1069              	.LCFI14:
+ 1070              		.cfi_remember_state
+ 1071              		.cfi_def_cfa_offset 12
+ 1072              		@ sp needed
+ 1073 0026 30BD     		pop	{r4, r5, pc}
+ 1074              	.LVL98:
+ 1075              	.L89:
+ 1076              	.LCFI15:
+ 1077              		.cfi_restore_state
+ 190:Core/Src/device/esp8266.c ****     if (r == ESP_RESP_OK && h->onEventCallback) {
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 25
+
+
+ 1078              		.loc 1 190 30 discriminator 1 view .LVU284
+ 1079 0028 D5F89031 		ldr	r3, [r5, #400]
+ 190:Core/Src/device/esp8266.c ****     if (r == ESP_RESP_OK && h->onEventCallback) {
+ 1080              		.loc 1 190 26 discriminator 1 view .LVU285
+ 1081 002c 002B     		cmp	r3, #0
+ 1082 002e F5D0     		beq	.L87
+ 191:Core/Src/device/esp8266.c ****         h->onEventCallback(h, ESP_EVENT_GOT_IP);
+ 1083              		.loc 1 191 9 is_stmt 1 view .LVU286
+ 1084 0030 0221     		movs	r1, #2
+ 1085 0032 2846     		mov	r0, r5
+ 1086              	.LVL99:
+ 191:Core/Src/device/esp8266.c ****         h->onEventCallback(h, ESP_EVENT_GOT_IP);
+ 1087              		.loc 1 191 9 is_stmt 0 view .LVU287
+ 1088 0034 9847     		blx	r3
+ 1089              	.LVL100:
+ 1090 0036 F1E7     		b	.L87
+ 1091              	.L91:
+ 1092              		.align	2
+ 1093              	.L90:
+ 1094 0038 00000000 		.word	.LC14
+ 1095              		.cfi_endproc
+ 1096              	.LFE74:
+ 1098              		.section	.rodata.ESP_TCPConnect.str1.4,"aMS",%progbits,1
+ 1099              		.align	2
+ 1100              	.LC15:
+ 1101 0000 41542B43 		.ascii	"AT+CIPSTART=\"TCP\",\"%s\",%u\015\012\000"
+ 1101      49505354 
+ 1101      4152543D 
+ 1101      22544350 
+ 1101      222C2225 
+ 1102              		.section	.text.ESP_TCPConnect,"ax",%progbits
+ 1103              		.align	1
+ 1104              		.global	ESP_TCPConnect
+ 1105              		.syntax unified
+ 1106              		.thumb
+ 1107              		.thumb_func
+ 1109              	ESP_TCPConnect:
+ 1110              	.LVL101:
+ 1111              	.LFB75:
+ 195:Core/Src/device/esp8266.c **** 
+ 196:Core/Src/device/esp8266.c **** bool ESP_TCPConnect(ESP_HandleTypeDef *h, const char *host, uint16_t port)
+ 197:Core/Src/device/esp8266.c **** {
+ 1112              		.loc 1 197 1 is_stmt 1 view -0
+ 1113              		.cfi_startproc
+ 1114              		@ args = 0, pretend = 0, frame = 128
+ 1115              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1116              		.loc 1 197 1 is_stmt 0 view .LVU289
+ 1117 0000 30B5     		push	{r4, r5, lr}
+ 1118              	.LCFI16:
+ 1119              		.cfi_def_cfa_offset 12
+ 1120              		.cfi_offset 4, -12
+ 1121              		.cfi_offset 5, -8
+ 1122              		.cfi_offset 14, -4
+ 1123 0002 A3B0     		sub	sp, sp, #140
+ 1124              	.LCFI17:
+ 1125              		.cfi_def_cfa_offset 152
+ 1126 0004 0446     		mov	r4, r0
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 26
+
+
+ 1127 0006 0B46     		mov	r3, r1
+ 198:Core/Src/device/esp8266.c ****     char cmd[128];
+ 1128              		.loc 1 198 5 is_stmt 1 view .LVU290
+ 199:Core/Src/device/esp8266.c ****     snprintf(cmd, sizeof(cmd), "AT+CIPSTART=\"TCP\",\"%s\",%u\r\n", host, port);
+ 1129              		.loc 1 199 5 view .LVU291
+ 1130 0008 02AD     		add	r5, sp, #8
+ 1131 000a 0092     		str	r2, [sp]
+ 1132 000c 144A     		ldr	r2, .L100
+ 1133              	.LVL102:
+ 1134              		.loc 1 199 5 is_stmt 0 view .LVU292
+ 1135 000e 8021     		movs	r1, #128
+ 1136              	.LVL103:
+ 1137              		.loc 1 199 5 view .LVU293
+ 1138 0010 2846     		mov	r0, r5
+ 1139              	.LVL104:
+ 1140              		.loc 1 199 5 view .LVU294
+ 1141 0012 FFF7FEFF 		bl	snprintf
+ 1142              	.LVL105:
+ 200:Core/Src/device/esp8266.c **** 
+ 201:Core/Src/device/esp8266.c ****     /* 第一步：发命令，等 OK（命令语法正确） */
+ 202:Core/Src/device/esp8266.c ****     ESP_RespType_t r = ESP_SendCmd(h, cmd, NULL, 0, 10000);
+ 1143              		.loc 1 202 5 is_stmt 1 view .LVU295
+ 1144              		.loc 1 202 24 is_stmt 0 view .LVU296
+ 1145 0016 42F21073 		movw	r3, #10000
+ 1146 001a 0093     		str	r3, [sp]
+ 1147 001c 0023     		movs	r3, #0
+ 1148 001e 1A46     		mov	r2, r3
+ 1149 0020 2946     		mov	r1, r5
+ 1150 0022 2046     		mov	r0, r4
+ 1151 0024 FFF7FEFF 		bl	ESP_SendCmd
+ 1152              	.LVL106:
+ 203:Core/Src/device/esp8266.c ****     if (r != ESP_RESP_OK) return false;
+ 1153              		.loc 1 203 5 is_stmt 1 view .LVU297
+ 1154              		.loc 1 203 8 is_stmt 0 view .LVU298
+ 1155 0028 0128     		cmp	r0, #1
+ 1156 002a 02D0     		beq	.L99
+ 1157              		.loc 1 203 34 discriminator 1 view .LVU299
+ 1158 002c 0020     		movs	r0, #0
+ 1159              	.LVL107:
+ 1160              	.L93:
+ 204:Core/Src/device/esp8266.c **** 
+ 205:Core/Src/device/esp8266.c ****     /* 第二步：等实际的 CONNECT 或 ERROR/CLOSED（ESP 异步返回） */
+ 206:Core/Src/device/esp8266.c ****     r = ESP_SendCmd(h, NULL, NULL, 0, 15000);
+ 207:Core/Src/device/esp8266.c ****     if (r == ESP_RESP_CONNECT || r == ESP_RESP_OK) {
+ 208:Core/Src/device/esp8266.c ****         if (h->onEventCallback) h->onEventCallback(h, ESP_EVENT_TCP_CONNECTED);
+ 209:Core/Src/device/esp8266.c ****         return true;
+ 210:Core/Src/device/esp8266.c ****     }
+ 211:Core/Src/device/esp8266.c ****     return false;
+ 212:Core/Src/device/esp8266.c **** }
+ 1161              		.loc 1 212 1 view .LVU300
+ 1162 002e 23B0     		add	sp, sp, #140
+ 1163              	.LCFI18:
+ 1164              		.cfi_remember_state
+ 1165              		.cfi_def_cfa_offset 12
+ 1166              		@ sp needed
+ 1167 0030 30BD     		pop	{r4, r5, pc}
+ 1168              	.LVL108:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 27
+
+
+ 1169              	.L99:
+ 1170              	.LCFI19:
+ 1171              		.cfi_restore_state
+ 206:Core/Src/device/esp8266.c ****     if (r == ESP_RESP_CONNECT || r == ESP_RESP_OK) {
+ 1172              		.loc 1 206 5 is_stmt 1 view .LVU301
+ 206:Core/Src/device/esp8266.c ****     if (r == ESP_RESP_CONNECT || r == ESP_RESP_OK) {
+ 1173              		.loc 1 206 9 is_stmt 0 view .LVU302
+ 1174 0032 43F69823 		movw	r3, #15000
+ 1175 0036 0093     		str	r3, [sp]
+ 1176 0038 0023     		movs	r3, #0
+ 1177 003a 1A46     		mov	r2, r3
+ 1178 003c 1946     		mov	r1, r3
+ 1179 003e 2046     		mov	r0, r4
+ 1180              	.LVL109:
+ 206:Core/Src/device/esp8266.c ****     if (r == ESP_RESP_CONNECT || r == ESP_RESP_OK) {
+ 1181              		.loc 1 206 9 view .LVU303
+ 1182 0040 FFF7FEFF 		bl	ESP_SendCmd
+ 1183              	.LVL110:
+ 207:Core/Src/device/esp8266.c ****         if (h->onEventCallback) h->onEventCallback(h, ESP_EVENT_TCP_CONNECTED);
+ 1184              		.loc 1 207 5 is_stmt 1 view .LVU304
+ 207:Core/Src/device/esp8266.c ****         if (h->onEventCallback) h->onEventCallback(h, ESP_EVENT_TCP_CONNECTED);
+ 1185              		.loc 1 207 8 is_stmt 0 view .LVU305
+ 1186 0044 0628     		cmp	r0, #6
+ 1187 0046 03D0     		beq	.L94
+ 207:Core/Src/device/esp8266.c ****         if (h->onEventCallback) h->onEventCallback(h, ESP_EVENT_TCP_CONNECTED);
+ 1188              		.loc 1 207 31 discriminator 1 view .LVU306
+ 1189 0048 0128     		cmp	r0, #1
+ 1190 004a 01D0     		beq	.L94
+ 211:Core/Src/device/esp8266.c **** }
+ 1191              		.loc 1 211 12 view .LVU307
+ 1192 004c 0020     		movs	r0, #0
+ 1193              	.LVL111:
+ 211:Core/Src/device/esp8266.c **** }
+ 1194              		.loc 1 211 12 view .LVU308
+ 1195 004e EEE7     		b	.L93
+ 1196              	.LVL112:
+ 1197              	.L94:
+ 208:Core/Src/device/esp8266.c ****         return true;
+ 1198              		.loc 1 208 9 is_stmt 1 view .LVU309
+ 208:Core/Src/device/esp8266.c ****         return true;
+ 1199              		.loc 1 208 14 is_stmt 0 view .LVU310
+ 1200 0050 D4F89031 		ldr	r3, [r4, #400]
+ 208:Core/Src/device/esp8266.c ****         return true;
+ 1201              		.loc 1 208 12 view .LVU311
+ 1202 0054 13B1     		cbz	r3, .L95
+ 208:Core/Src/device/esp8266.c ****         return true;
+ 1203              		.loc 1 208 33 is_stmt 1 discriminator 1 view .LVU312
+ 1204 0056 0421     		movs	r1, #4
+ 1205 0058 2046     		mov	r0, r4
+ 1206              	.LVL113:
+ 208:Core/Src/device/esp8266.c ****         return true;
+ 1207              		.loc 1 208 33 is_stmt 0 discriminator 1 view .LVU313
+ 1208 005a 9847     		blx	r3
+ 1209              	.LVL114:
+ 1210              	.L95:
+ 209:Core/Src/device/esp8266.c ****     }
+ 1211              		.loc 1 209 9 is_stmt 1 view .LVU314
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 28
+
+
+ 209:Core/Src/device/esp8266.c ****     }
+ 1212              		.loc 1 209 16 is_stmt 0 view .LVU315
+ 1213 005c 0120     		movs	r0, #1
+ 1214 005e E6E7     		b	.L93
+ 1215              	.L101:
+ 1216              		.align	2
+ 1217              	.L100:
+ 1218 0060 00000000 		.word	.LC15
+ 1219              		.cfi_endproc
+ 1220              	.LFE75:
+ 1222              		.section	.rodata.ESP_TCPSend.str1.4,"aMS",%progbits,1
+ 1223              		.align	2
+ 1224              	.LC16:
+ 1225 0000 41542B43 		.ascii	"AT+CIPSEND=%u\015\012\000"
+ 1225      49505345 
+ 1225      4E443D25 
+ 1225      750D0A00 
+ 1226              		.section	.text.ESP_TCPSend,"ax",%progbits
+ 1227              		.align	1
+ 1228              		.global	ESP_TCPSend
+ 1229              		.syntax unified
+ 1230              		.thumb
+ 1231              		.thumb_func
+ 1233              	ESP_TCPSend:
+ 1234              	.LVL115:
+ 1235              	.LFB76:
+ 213:Core/Src/device/esp8266.c **** 
+ 214:Core/Src/device/esp8266.c **** bool ESP_TCPSend(ESP_HandleTypeDef *h, const uint8_t *data, uint16_t len)
+ 215:Core/Src/device/esp8266.c **** {
+ 1236              		.loc 1 215 1 is_stmt 1 view -0
+ 1237              		.cfi_startproc
+ 1238              		@ args = 0, pretend = 0, frame = 32
+ 1239              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1240              		.loc 1 215 1 is_stmt 0 view .LVU317
+ 1241 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 1242              	.LCFI20:
+ 1243              		.cfi_def_cfa_offset 20
+ 1244              		.cfi_offset 4, -20
+ 1245              		.cfi_offset 5, -16
+ 1246              		.cfi_offset 6, -12
+ 1247              		.cfi_offset 7, -8
+ 1248              		.cfi_offset 14, -4
+ 1249 0002 8BB0     		sub	sp, sp, #44
+ 1250              	.LCFI21:
+ 1251              		.cfi_def_cfa_offset 64
+ 1252 0004 0446     		mov	r4, r0
+ 1253 0006 0E46     		mov	r6, r1
+ 1254 0008 1546     		mov	r5, r2
+ 216:Core/Src/device/esp8266.c ****     char cmd[32];
+ 1255              		.loc 1 216 5 is_stmt 1 view .LVU318
+ 217:Core/Src/device/esp8266.c ****     snprintf(cmd, sizeof(cmd), "AT+CIPSEND=%u\r\n", len);
+ 1256              		.loc 1 217 5 view .LVU319
+ 1257 000a 02AF     		add	r7, sp, #8
+ 1258 000c 1346     		mov	r3, r2
+ 1259 000e 134A     		ldr	r2, .L107
+ 1260              	.LVL116:
+ 1261              		.loc 1 217 5 is_stmt 0 view .LVU320
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 29
+
+
+ 1262 0010 2021     		movs	r1, #32
+ 1263              	.LVL117:
+ 1264              		.loc 1 217 5 view .LVU321
+ 1265 0012 3846     		mov	r0, r7
+ 1266              	.LVL118:
+ 1267              		.loc 1 217 5 view .LVU322
+ 1268 0014 FFF7FEFF 		bl	snprintf
+ 1269              	.LVL119:
+ 218:Core/Src/device/esp8266.c **** 
+ 219:Core/Src/device/esp8266.c ****     /* 等 > 提示符 */
+ 220:Core/Src/device/esp8266.c ****     ESP_RespType_t r = ESP_SendCmd(h, cmd, NULL, 0, 5000);
+ 1270              		.loc 1 220 5 is_stmt 1 view .LVU323
+ 1271              		.loc 1 220 24 is_stmt 0 view .LVU324
+ 1272 0018 41F28833 		movw	r3, #5000
+ 1273 001c 0093     		str	r3, [sp]
+ 1274 001e 0023     		movs	r3, #0
+ 1275 0020 1A46     		mov	r2, r3
+ 1276 0022 3946     		mov	r1, r7
+ 1277 0024 2046     		mov	r0, r4
+ 1278 0026 FFF7FEFF 		bl	ESP_SendCmd
+ 1279              	.LVL120:
+ 221:Core/Src/device/esp8266.c ****     if (r != ESP_RESP_SEND_PROMPT) return false;
+ 1280              		.loc 1 221 5 is_stmt 1 view .LVU325
+ 1281              		.loc 1 221 8 is_stmt 0 view .LVU326
+ 1282 002a 0428     		cmp	r0, #4
+ 1283 002c 02D0     		beq	.L106
+ 1284              		.loc 1 221 43 discriminator 1 view .LVU327
+ 1285 002e 0020     		movs	r0, #0
+ 1286              	.LVL121:
+ 1287              	.L103:
+ 222:Core/Src/device/esp8266.c **** 
+ 223:Core/Src/device/esp8266.c ****     /* 发实际数据 */
+ 224:Core/Src/device/esp8266.c ****     BSP_UART_Send(h->huart, data, len);
+ 225:Core/Src/device/esp8266.c **** 
+ 226:Core/Src/device/esp8266.c ****     /* 等 SEND OK */
+ 227:Core/Src/device/esp8266.c ****     r = ESP_SendCmd(h, NULL, NULL, 0, 10000);
+ 228:Core/Src/device/esp8266.c ****     return (r == ESP_RESP_SEND_OK);
+ 229:Core/Src/device/esp8266.c **** }
+ 1288              		.loc 1 229 1 view .LVU328
+ 1289 0030 0BB0     		add	sp, sp, #44
+ 1290              	.LCFI22:
+ 1291              		.cfi_remember_state
+ 1292              		.cfi_def_cfa_offset 20
+ 1293              		@ sp needed
+ 1294 0032 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 1295              	.LVL122:
+ 1296              	.L106:
+ 1297              	.LCFI23:
+ 1298              		.cfi_restore_state
+ 224:Core/Src/device/esp8266.c **** 
+ 1299              		.loc 1 224 5 is_stmt 1 view .LVU329
+ 1300 0034 2A46     		mov	r2, r5
+ 1301 0036 3146     		mov	r1, r6
+ 1302 0038 2068     		ldr	r0, [r4]
+ 1303              	.LVL123:
+ 224:Core/Src/device/esp8266.c **** 
+ 1304              		.loc 1 224 5 is_stmt 0 view .LVU330
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 30
+
+
+ 1305 003a FFF7FEFF 		bl	BSP_UART_Send
+ 1306              	.LVL124:
+ 227:Core/Src/device/esp8266.c ****     return (r == ESP_RESP_SEND_OK);
+ 1307              		.loc 1 227 5 is_stmt 1 view .LVU331
+ 227:Core/Src/device/esp8266.c ****     return (r == ESP_RESP_SEND_OK);
+ 1308              		.loc 1 227 9 is_stmt 0 view .LVU332
+ 1309 003e 42F21073 		movw	r3, #10000
+ 1310 0042 0093     		str	r3, [sp]
+ 1311 0044 0023     		movs	r3, #0
+ 1312 0046 1A46     		mov	r2, r3
+ 1313 0048 1946     		mov	r1, r3
+ 1314 004a 2046     		mov	r0, r4
+ 1315 004c FFF7FEFF 		bl	ESP_SendCmd
+ 1316              	.LVL125:
+ 228:Core/Src/device/esp8266.c **** }
+ 1317              		.loc 1 228 5 is_stmt 1 view .LVU333
+ 228:Core/Src/device/esp8266.c **** }
+ 1318              		.loc 1 228 15 is_stmt 0 view .LVU334
+ 1319 0050 0328     		cmp	r0, #3
+ 1320 0052 14BF     		ite	ne
+ 1321 0054 0020     		movne	r0, #0
+ 1322              	.LVL126:
+ 228:Core/Src/device/esp8266.c **** }
+ 1323              		.loc 1 228 15 view .LVU335
+ 1324 0056 0120     		moveq	r0, #1
+ 1325 0058 EAE7     		b	.L103
+ 1326              	.L108:
+ 1327 005a 00BF     		.align	2
+ 1328              	.L107:
+ 1329 005c 00000000 		.word	.LC16
+ 1330              		.cfi_endproc
+ 1331              	.LFE76:
+ 1333              		.section	.text.ESP_RegisterEventCallback,"ax",%progbits
+ 1334              		.align	1
+ 1335              		.global	ESP_RegisterEventCallback
+ 1336              		.syntax unified
+ 1337              		.thumb
+ 1338              		.thumb_func
+ 1340              	ESP_RegisterEventCallback:
+ 1341              	.LVL127:
+ 1342              	.LFB77:
+ 230:Core/Src/device/esp8266.c **** 
+ 231:Core/Src/device/esp8266.c **** void ESP_RegisterEventCallback(ESP_HandleTypeDef *h,
+ 232:Core/Src/device/esp8266.c ****                                void (*cb)(ESP_HandleTypeDef *h, uint32_t event))
+ 233:Core/Src/device/esp8266.c **** {
+ 1343              		.loc 1 233 1 is_stmt 1 view -0
+ 1344              		.cfi_startproc
+ 1345              		@ args = 0, pretend = 0, frame = 0
+ 1346              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1347              		@ link register save eliminated.
+ 234:Core/Src/device/esp8266.c ****     h->onEventCallback = cb;
+ 1348              		.loc 1 234 5 view .LVU337
+ 1349              		.loc 1 234 24 is_stmt 0 view .LVU338
+ 1350 0000 C0F89011 		str	r1, [r0, #400]
+ 235:Core/Src/device/esp8266.c **** }
+ 1351              		.loc 1 235 1 view .LVU339
+ 1352 0004 7047     		bx	lr
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 31
+
+
+ 1353              		.cfi_endproc
+ 1354              	.LFE77:
+ 1356              		.text
+ 1357              	.Letext0:
+ 1358              		.file 2 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_defa
+ 1359              		.file 3 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h
+ 1360              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h"
+ 1361              		.file 5 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/lib/gcc/arm-none-eabi/14.2.1/includ
+ 1362              		.file 6 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h"
+ 1363              		.file 7 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h"
+ 1364              		.file 8 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h"
+ 1365              		.file 9 "Core/Inc/bsp/bsp_uart.h"
+ 1366              		.file 10 "Core/Inc/device/esp8266.h"
+ 1367              		.file 11 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/stdio.h"
+ 1368              		.file 12 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/string.h"
+ 1369              		.file 13 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h"
+ 1370              		.file 14 "<built-in>"
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s 			page 32
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 esp8266.c
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:19     .rodata.ESP_ParseLine.str1.4:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:47     .text.ESP_ParseLine:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:53     .text.ESP_ParseLine:00000000 ESP_ParseLine
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:285    .text.ESP_ParseLine:000000dc $d
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:298    .rodata.ESP_UART_RxISR.str1.4:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:302    .text.ESP_UART_RxISR:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:307    .text.ESP_UART_RxISR:00000000 ESP_UART_RxISR
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:549    .text.ESP_UART_RxISR:000000f8 $d
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:556    .text.ESP_Init:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:562    .text.ESP_Init:00000000 ESP_Init
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:609    .text.ESP_Init:0000002c $d
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:614    .text.ESP_SendCmd:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:620    .text.ESP_SendCmd:00000000 ESP_SendCmd
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:717    .rodata.ESP_RunInitStateMachine.str1.4:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:727    .text.ESP_RunInitStateMachine:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:733    .text.ESP_RunInitStateMachine:00000000 ESP_RunInitStateMachine
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:759    .text.ESP_RunInitStateMachine:00000012 $d
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:906    .text.ESP_RunInitStateMachine:000000a8 $d
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:913    .rodata.ESP_ConnectWiFi.str1.4:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:917    .text.ESP_ConnectWiFi:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:923    .text.ESP_ConnectWiFi:00000000 ESP_ConnectWiFi
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:1007   .text.ESP_ConnectWiFi:0000004c $d
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:1012   .rodata.ESP_GetIP.str1.4:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:1016   .text.ESP_GetIP:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:1022   .text.ESP_GetIP:00000000 ESP_GetIP
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:1094   .text.ESP_GetIP:00000038 $d
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:1099   .rodata.ESP_TCPConnect.str1.4:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:1103   .text.ESP_TCPConnect:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:1109   .text.ESP_TCPConnect:00000000 ESP_TCPConnect
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:1218   .text.ESP_TCPConnect:00000060 $d
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:1223   .rodata.ESP_TCPSend.str1.4:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:1227   .text.ESP_TCPSend:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:1233   .text.ESP_TCPSend:00000000 ESP_TCPSend
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:1329   .text.ESP_TCPSend:0000005c $d
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:1334   .text.ESP_RegisterEventCallback:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:1340   .text.ESP_RegisterEventCallback:00000000 ESP_RegisterEventCallback
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:766    .text.ESP_RunInitStateMachine:00000019 $d
+C:\Users\airforce\AppData\Local\Temp\ccDuI3ya.s:766    .text.ESP_RunInitStateMachine:0000001a $t
+
+UNDEFINED SYMBOLS
+strstr
+strchr
+strlen
+strncat
+espWifi
+memset
+BSP_UART_RegisterRxCallback
+BSP_UART_StartRx_DMA
+BSP_UART_Send
+HAL_GetTick
+snprintf

@@ -1,4 +1,5 @@
-build/soft_i2c.o: Core/Src/soft_i2c.c Core/Inc/soft_i2c.h Core/Inc/main.h \
+build/bsp_init.o: Core/Src/bsp/bsp_init.c Core/Inc/bsp/bsp_init.h \
+ Core/Inc/bsp/bsp_i2c.h Core/Inc/main.h \
  Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h \
  Core/Inc/stm32f1xx_hal_conf.h \
  Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h \
@@ -32,8 +33,9 @@ build/soft_i2c.o: Core/Src/soft_i2c.c Core/Inc/soft_i2c.h Core/Inc/main.h \
  Middlewares/FreeRTOS/Source/include/semphr.h \
  Middlewares/FreeRTOS/Source/include/queue.h \
  Middlewares/FreeRTOS/Source/include/task.h \
- Middlewares/FreeRTOS/Source/include/list.h Core/Inc/main.h
-Core/Inc/soft_i2c.h:
+ Middlewares/FreeRTOS/Source/include/list.h
+Core/Inc/bsp/bsp_init.h:
+Core/Inc/bsp/bsp_i2c.h:
 Core/Inc/main.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 Core/Inc/stm32f1xx_hal_conf.h:
@@ -72,4 +74,3 @@ Middlewares/FreeRTOS/Source/include/semphr.h:
 Middlewares/FreeRTOS/Source/include/queue.h:
 Middlewares/FreeRTOS/Source/include/task.h:
 Middlewares/FreeRTOS/Source/include/list.h:
-Core/Inc/main.h:

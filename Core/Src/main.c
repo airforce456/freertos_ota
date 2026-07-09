@@ -22,8 +22,12 @@
 #include <string.h>
 #include "debug_uart.h"
 #include "mpu6050.h"
-#include "soft_i2c.h"
+#include "bsp_i2c.h"
+#include "bsp_init.h"
 #include "oled.h"
+#include "event_groups.h"
+#include <stdbool.h>
+#include "esp8266.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -41,11 +45,17 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-QueueHandle_t xSensorQueue = NULL;   /* MPU6050_Data_t: 生产者→消费�? */
-QueueHandle_t xCookedQueue = NULL;   /* Cooked_Data_t: 消费者→消费�? */
-SemaphoreHandle_t xI2CMutex = NULL;  /* 保护�? I2C 总线 (MPU6050 & OLED 共享) */
-
+#define EVENT_ACCEL_READY    (1 << 0)
+#define EVENT_GYRO_READY     (1 << 1)
+QueueHandle_t xSensorQueue = NULL;   /* MPU6050_Data_t: 生产者→消费�?? */
+QueueHandle_t xCookedQueue = NULL;   /* Cooked_Data_t: 消费者→消费�?? */
+SemaphoreHandle_t xI2CMutex = NULL;  /* 保护�?? I2C 总线 (MPU6050 & OLED 共享) */
+EventGroupHandle_t xSensorEvent;
 SemaphoreHandle_t MPU_Sem;
+#define ssid "Xiaomi 13"
+#define pwd "123456789"
+
+ESP_HandleTypeDef espWifi;
 typedef struct
 {
     QueueHandle_t xSensorQueue;
@@ -63,6 +73,7 @@ void SystemClock_Config(void);
 void Task_MPU6050_Read(void *argument);
 void Task_OLED_Display(void *argument);
 void Task_DataProcess(void *argument);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -77,7 +88,7 @@ uint8_t rebyte = 0;
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  /* 此处可放少量初始化代码（CubeMX 会在 HAL_Init() 之前执行�? */
+  /* 此处可放少量初始化代码（CubeMX 会在 HAL_Init() 之前执行�?? */
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -92,46 +103,47 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-  /* 提前创建 MPU_Sem，防止 MX_GPIO_Init 使能 EXTI0 后浮空 PA0 触发中断导致空指针崩溃 */
+  /* 提前创建 MPU_Sem，防�? MX_GPIO_Init 使能 EXTI0 后浮�? PA0 触发中断导致空指针崩�? */
   MPU_Sem = xSemaphoreCreateBinary();
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_DMA_Init();
   MX_USART1_UART_Init();
+  MX_DMA_Init();
   // MX_I2C1_Init();
+  DebugUART_Init() ;
+  MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   /* ============================================================
-   *  以下为用户自定义初始化代�? �? CubeMX 生成时不会被覆盖
+   *  以下为用户自定义初始化代�?? �?? CubeMX 生成时不会被覆盖
    * ============================================================ */
 
-  /* ---- �? I2C 初始化（接管 PB6/PB7，释放硬�? I2C1�? ---- */
-  MyI2C_Init();
-
-  /* ---- OLED 初始�? ---- */
-  OLED_Init();
-  /* ---- MPU6050 初始�? ---- */
+  /* ---- �?? I2C 初始化（接管 PB6/PB7，释放硬�?? I2C1�?? ---- */
+  BSP_Init();
+  /* ---- OLED 初始?? ---- */
+  // OLED_Init();
+  /* ---- MPU6050 初始�?? ---- */
   if (MPU6050_Init() != SOFT_I2C_OK) {
       printf("[ERR] MPU6050 init failed! Check wiring.\r\n");
       while (1) {}
   }
   printf("[OK] MPU6050 WHO_AM_I = 0x%02X\r\n", MPU6050_ReadWhoAmI());
 
-  /* ---- 零偏校准（校准时传感器需保持静止�? ---- */
+  /* ---- 零偏校准（校准时传感器需保持静止�?? ---- */
   int16_t offset_ax = 0, offset_ay = 0, offset_az = 0;
   MPU6050_Calibrate(&offset_ax, &offset_ay, &offset_az);
 
-  /* ---- 创建 I2C 总线互斥锁（MPU6050 & OLED 共享�? I2C�? ---- */
+  /* ---- 创建 I2C 总线互斥锁（MPU6050 & OLED 共享�?? I2C�?? ---- */
   xI2CMutex = xSemaphoreCreateMutex();
   if (xI2CMutex == NULL) {
       printf("[ERR] Failed to create I2C mutex!\r\n");
       while (1) {}
   }
 
-  /* ---- 创建传感器数据管道队�? ---- */
-  xSensorQueue = xQueueCreate(8, sizeof(MPU6050_Data_t));     /* 原始数据: 8 �? */
-  xCookedQueue = xQueueCreate(4, sizeof(SensorCooked_t));     /* 处理后数�?: 4 �? */
+  /* ---- 创建传感器数据管道队�?? ---- */
+  xSensorQueue = xQueueCreate(8, sizeof(MPU6050_Data_t));     /* 原始数据: 8 �?? */
+  xCookedQueue = xQueueCreate(4, sizeof(SensorCooked_t));     /* 处理后数�??: 4 �?? */
   if (xSensorQueue == NULL || xCookedQueue == NULL) {
       printf("[ERR] Failed to create queues!\r\n");
       while (1) {}
@@ -145,15 +157,15 @@ int main(void)
   ProcessTaskParam.az_offset = offset_az;
 
   /* ---- 创建 3 级流水线任务 ---- */
-  /* MPU6050 读取任务（生产�?�，Prio=2�? */
+  /* MPU6050 读取任务（生产�?�，Prio=2�?? */
   xTaskCreate(Task_MPU6050_Read, "MPU_Read", 256,
               (void *)xSensorQueue, 2, NULL);
 
-  /* 数据处理任务（处理层，Prio=2�? */
+  /* 数据处理任务（处理层，Prio=2�?? */
   xTaskCreate(Task_DataProcess, "DataProc", 256,
               (void *)&ProcessTaskParam, 2, NULL);
 
-  /* OLED 显示任务（消费�?�，Prio=1�? */
+  /* OLED 显示任务（消费�?�，Prio=1�?? */
   xTaskCreate(Task_OLED_Display, "OLED_Disp", 256,
               (void *)xCookedQueue, 3, NULL);
 
@@ -162,10 +174,38 @@ int main(void)
   printf("\r\n========== FreeRTOS + MPU6050 + OLED Data Pipeline ==========\r\n");
   printf("Tasks: MPU_Read(2) -> Queue[8] -> DataProc(2) -> Queue[4] -> OLED_Disp(1)\r\n\r\n");
 
+  /* ---- ESP8266 初始化（等模块上电完成后再操作） ---- */
+  printf("[ESP] Waiting for module boot (2s)...\r\n");
+  HAL_Delay(2000);
+  ESP_Init(&espWifi, &huart2);
+  printf("[ESP] Initializing...\r\n");
+  int espRetry = 0;
+  while (!ESP_RunInitStateMachine(&espWifi)) {
+      if (++espRetry > 20) break;
+      printf("[ESP] State=%d retry=%d\r\n", espWifi.initState, espRetry);
+  }
+  if (espRetry > 20) {
+      printf("[ESP] Init FAILED (timeout, state=%d)\r\n", espWifi.initState);
+  } else {
+      printf("[ESP] Init OK, connecting WiFi...\r\n");
+      if (ESP_ConnectWiFi(&espWifi, ssid, pwd)) {
+          printf("[ESP] WiFi Connected!\r\n");
+          HAL_Delay(2000);
+          /* 直接尝试 TCP，不等了 */
+          if (ESP_TCPConnect(&espWifi, "192.168.203.36", 8080)) {
+              printf("[ESP] TCP Connected!\r\n");
+              ESP_TCPSend(&espWifi, (const uint8_t *)"hello from STM32\r\n", 18);
+          } else {
+              printf("[ESP] TCP Connect FAILED\r\n");
+          }
+      } else {
+          printf("[ESP] WiFi FAILED\r\n");
+      }
+  }
   /* ---- 启动 FreeRTOS 调度器（此调用永不返回） ---- */
   vTaskStartScheduler();
 
-  /* 调度器永远不会返�? */
+  /* 调度器永远不会返�?? */
 
   /* USER CODE END 2 */
 
@@ -176,7 +216,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    /* 用户循环代码 �? 调度器启动后不会到达此处 */
+    /* 用户循环代码 �?? 调度器启动后不会到达此处 */
   /* USER CODE END 3 */
 }
 }
@@ -251,7 +291,7 @@ void Task_MPU6050_Read(void *argument)
     uint32_t count = 0;
 
     while (1) {
-        /* 获取 I2C 总线锁 */
+        /* 获取 I2C 总线�? */
          if(xSemaphoreTake(MPU_Sem, portMAX_DELAY) == pdTRUE)
         {
           if (xSemaphoreTake(xI2CMutex, pdMS_TO_TICKS(200)) == pdPASS) {
@@ -276,14 +316,14 @@ void Task_OLED_Display(void *argument)
     QueueHandle_t q = (QueueHandle_t)argument;
     SensorCooked_t data;
     uint32_t count = 0;
-    /* 清屏后显�? hello */
+    /* 清屏后显�?? hello */
     OLED_Fill(0x00);
     OLED_ShowString(0, 0, "hello");
     printf("[OLED] Task started, q=%p\r\n", (void *)q);
     while (1) {
         if (xQueueReceive(q, &data, portMAX_DELAY) == pdPASS) {
             count++;
-            /* 获取 I2C 总线锁，保护 OLED 写操�? */
+            /* 获取 I2C 总线锁，保护 OLED 写操�?? */
             if (xSemaphoreTake(xI2CMutex, pdMS_TO_TICKS(100)) == pdPASS) {
                 OLED_ShowNum(2, 1, data.ax_g);
                 OLED_ShowNum(3, 1, data.ay_g);

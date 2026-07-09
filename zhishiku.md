@@ -661,6 +661,74 @@ MPU6050_ReadTask
 - [ ] 对比轮询 vs 信号量通知的 CPU 占用差异
 - [ ] 验证 `xSemaphoreGiveFromISR` 的 `pxHigherPriorityTaskWoken` 机制
 
+### 2.2 实战踩坑：优先级、中断与初始化顺序
+
+以下是在 2.2 INT 信号量实验中暴露的三个关键问题及其解决思路。
+
+#### 踩坑 1：多任务优先级分配不当导致死锁
+
+**现象**：OLED_Disp 置 Prio=1 时数据停在队列里不显示；提到 Prio=2 后串口完全不打印。
+
+**根因**：UartTX（Prio=1）、MPU_Read（Prio=2）、DataProc（Prio=2）、OLED_Disp 四者优先级层次混乱。三个 Prio=2 任务同时竞争 CPU + I2C 互斥量，ISR 给信号量后谁先运行不确定。
+
+**解决**：IO 通路型任务提升优先级，计算型任务降低。最终分配：
+
+| 任务 | 优先级 | 理由 |
+|------|--------|------|
+| OLED_Disp | 3 | 屏幕刷新必须实时，每次拿到 I2C 锁后快速写屏释放 |
+| UartTX / UartRX | 2 | 串口 IO 通路，DMA 中断需要及时响应 |
+| MPU_Read | 2 | 传感器读取，依赖 ISR 信号量 |
+| DataProc | 1 | 纯计算，不碰硬件，等前级数据就行 |
+
+**核心原则**：谁碰硬件 IO 谁优先级高，纯计算任务靠后。IO 任务拿锁后应立即完成操作释放，不能被同级计算任务抢占。
+
+#### 踩坑 2：软件 I2C 延时对初始化时间的影响
+
+**现象**：`OLED_Init` 内 23 条命令 + `MPU6050_Calibrate` 内 100 次采样，初始化耗时过长。
+
+**根因**：`I2C_Delay_US()` 的循环次数远大于实际 5µs 所需值。每条 I2C 命令涉及多个 Start/Stop/字节传输，累计延时被放大。
+
+**解决**：用 `HAL_GetTick()` 跑 10000 次延时反推精确值，将循环次数从 50 校准到 15-18，接近 5µs 半周期。初始化和校准时间大幅缩短。
+
+#### 踩坑 3：中断初始化顺序——信号量创建必须在 GPIO 初始化之前
+
+**现象**：系统上电后直接跑飞，调试器停在 `HardFault_Handler`。
+
+**根因链路**：
+
+```
+MX_GPIO_Init() → PA0 配为 EXTI0，上升沿触发
+     │
+     ├─ PA0 物理状态可能为高（MPU6050 INT 引脚上电默认状态不确定）
+     │
+     ├─ NVIC 使能后立即触发 EXTI0_IRQHandler
+     │    └─ HAL_GPIO_EXTI_Callback(GPIO_PIN_0)
+     │         └─ xSemaphoreGiveFromISR(MPU_Sem, &xWoken)
+     │              ↑
+     │         MPU_Sem 还未创建！值为野指针/0x00
+     │
+     └─ 对随机内存地址调用 FreeRTOS ISR API → HardFault
+```
+
+**时序图**：
+
+```
+错误顺序：                             正确顺序：
+  MX_GPIO_Init()  ← PA0 EXTI 使能       xSemaphoreCreateBinary(MPU_Sem)  ← 先
+  ... 可能在此触发 ISR ...               MX_GPIO_Init()  ← 再 GPIO
+  xSemaphoreCreateBinary(MPU_Sem)  ← 晚了！ISR 已经踩了野指针
+```
+
+**解决**：`MPU_Sem = xSemaphoreCreateBinary()` 放在 `MX_GPIO_Init()` **之前**。同时 `HAL_GPIO_EXTI_Callback` 内部加 NULL 防护，双保险：
+
+```c
+if (MPU_Sem != NULL) {
+    xSemaphoreGiveFromISR(MPU_Sem, &xWoken);
+}
+```
+
+> **通用原则**：任何可能在 ISR 中访问的 FreeRTOS 对象（信号量、队列、任务通知句柄），必须在 NVIC 使能之前完成创建。CubeMX 生成的 `MX_GPIO_Init()` 会同时配置 EXTI 并开启 NVIC，所以初始化顺序必须是：创建 FreeRTOS 对象 → 再调用外设 Init 函数。
+
 ### 2.3 互斥量（Mutex）— I2C 总线共享
 
 **学习目标**：理解 I2C 总线作为共享资源需要互斥保护，优先级反转与继承。
@@ -707,253 +775,416 @@ if (xSemaphoreTake(xI2CMutex, pdMS_TO_TICKS(100)) == pdTRUE) {
 >
 > **特别注意**：`xSemaphoreCreateMutex()` 实际上是宏，展开为 `xQueueCreateMutex()`，该函数在 `queue.c` 中被 `#if configUSE_MUTEXES == 1` 条件编译。如果忘记开启这个宏，链接器报 `undefined reference to xQueueCreateMutex`。
 
-### 2.4 事件组（Event Group）— 多传感器同步
+### 2.4 事件组（Event Group）— WiFi 连接状态机
 
-**学习目标**：多事件组合等待（AND/OR 逻辑）。
+**学习目标**：事件组的真正价值是多独立事件 AND 等待。加速度和角速度是同一笔 I2C 读出来的——不需要事件组。但 ESP8266 WiFi 连接需要三个独立步骤全部就绪才能开始业务。
 
-**硬件映射**：MPU6050 加速度 + 角速度数据都就绪后，OLED 才刷新显示。
+**硬件映射**：ESP8266-01S 通过 USART2（PA2/PA3, 115200bps）与 STM32 通信。
+
+```
+WiFi 连接三阶段（AND，缺一不可）：
+  BIT_WIFI_CONNECTED  — 加入 AP、获取 MAC
+  BIT_GOT_IP          — DHCP 分配 IP
+  BIT_TCP_CONNECTED   — 连上云服务器
+
+DataUpload_Task:
+  WaitBits(WIFI | IP | TCP, AND) → 开始定期上传
+  任何一位未就绪 → 永久阻塞
+```
 
 ```c
-#define BIT_ACCEL_READY  (1 << 0)
-#define BIT_GYRO_READY   (1 << 1)
+#define BIT_WIFI_CONNECTED  (1 << 0)
+#define BIT_GOT_IP          (1 << 1)
+#define BIT_TCP_CONNECTED   (1 << 2)
 
-EventGroupHandle_t xSensorEventGroup = xEventGroupCreate();
+EventGroupHandle_t xWifiEventGroup = xEventGroupCreate();
 
-// 等待两组数据都就绪后才显示
+// 等待全部就绪
 EventBits_t bits = xEventGroupWaitBits(
-    xSensorEventGroup,
-    BIT_ACCEL_READY | BIT_GYRO_READY,  // 等待这些位
+    xWifiEventGroup,
+    BIT_WIFI_CONNECTED | BIT_GOT_IP | BIT_TCP_CONNECTED,
     pdTRUE,   // 等待后清除
-    pdTRUE,   // AND 逻辑（全部就绪）
-    pdMS_TO_TICKS(100)
+    pdTRUE,   // AND
+    portMAX_DELAY
 );
+
+// 中途掉线 → ClearBits(BIT_TCP_CONNECTED) → 重连 → SetBits
 ```
 
 **实验清单**：
 
-- [ ] 加速度/角速度各自就绪后设事件位，OLED 任务等待全部就绪后刷新
-- [ ] 用事件组实现：命令 1 收到 + 命令 2 收到 → 执行特殊操作（AND）
-- [ ] 用事件组实现：任一 LED 任务完成一个周期 → 计数器 +1（OR）
-- [ ] 用 `xEventGroupSync()` 实现 3 个任务的栅栏同步点
+- [ ] ESP8266 驱动框架：`ESP8266_SendCmd()` + 超时重试
+- [ ] WiFi 连接任务按阶段 SetBits：AT+CWJAP → AT+CIFSR → AT+CIPSTART
+- [ ] DataUpload 任务 WaitBits(AND) 阻塞等待，全部就绪后开始周期上传
+- [ ] 模拟断网：主动 ClearBits 观察 DataUpload 重新阻塞
+- [ ] 用 OR 逻辑实现：WiFi 连接失败 **或** TCP 断开 → 触发重连
 
-### 2.5 任务通知（Task Notification）— 轻量级
+### 2.4 实战踩坑：ESP8266 初始化超时
 
-**学习目标**：在 1 对 1 场景用任务通知替代信号量/队列，更省 RAM、更快。
+#### 现象
+
+上电后 `[ESP] Init FAILED (timeout)`，ESP8266 AT 命令永远无响应，USART2 的 IDLE 中断 LED（PC14）不闪烁。
+
+#### 根因链
+
+```
+FreeRTOS BASEPRI 机制:
+  xSemaphoreGiveFromISR(MPU_Sem) 被调用
+    → portDISABLE_INTERRUPTS()
+    → BASEPRI = configMAX_SYSCALL_INTERRUPT_PRIORITY << (8-PRIO_BITS)
+    → BASEPRI = 5 << 4 = 0x50
+
+  BASEPRI = 0x50 含义:
+    优先级(数值) ≥ 5 的中断全部屏蔽
+    USART2 优先级 = 5 → 被 BASEPRI 屏蔽！
+    DMA 把 ESP 回复收进缓冲区，但 IDLE 中断进不来
+    h->cmdDone 永远 false → ESP_SendCmd 超时
+```
+
+MPU6050 的 EXTI0 中断每 4ms 触发一次（250Hz 采样率），每次 `xSemaphoreGiveFromISR` 拉高 BASEPRI。USART2 IDLE 中断恰好踩在同优先级的屏蔽门槛上——ESP 回复数据到了 DMA，但 ISR 被反复延迟排队，`ESP_SendCmd` 轮询超时。
+
+#### 修复（3 处）
+
+| 文件 | 改动 | 原因 |
+|------|------|------|
+| `usart.c` USART2 IRQ 优先级 | `5` → `4` | 使 USART2 不受 FreeRTOS BASEPRI 屏蔽，ISR 在任何时候都能触发 |
+| `bsp_uart.c` `BSP_UART_HandleIdle` | 回调前 `huart->RxState = HAL_UART_STATE_READY` | `HAL_UARTEx_ReceiveToIdle_DMA` 释放半满/全满中断后 RxState 变为 BUSY，下一次 Restart 前必须手动恢复 READY |
+| `mpu6050.c` `SMPRT_DIV` | `3`(250Hz) → `19`(50Hz) | 降低 EXTI0 触发频率，减少无关中断负载 |
+
+#### 调试过程
+
+1. **轮询收发测试** → 确认 ESP8266 硬件、接线、波特率正常（115200bps）
+2. **DMA 寄存器检查** → CNDTR 变化说明 DMA 在搬数据，但 ISR 没处理（缓冲区未被重置）
+3. **ISR 入口 GPIO 翻转** → 发现 ISR 在 busy-wait 超时后才集中触发——被延迟了
+4. **FreeRTOS BASEPRI 分析** → 定位优先级屏蔽机制
+5. **中断优先级表梳理** → 发现 USART2=5 恰好踩线
+
+#### 最终中断优先级布局
+
+```
+USART1  = 0   （调试串口，最高优先级）
+USART2  = 4   （ESP8266 DMA+IDLE，不受 BASEPRI 影响）
+EXTI0   = 5   （MPU6050 INT，受 BASEPRI 保护，可调 FromISR API）
+PendSV  = 15  （FreeRTOS 内核）
+SysTick = 15  （FreeRTOS 心跳）
+```
+
+> **核心教训**：使用 FreeRTOS FromISR API 的 ISR，其优先级必须 ≥ `configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY`(5)。**不需要调 FreeRTOS API 但需要实时响应的 ISR**，优先级必须 < 5 才能不受 BASEPRI 影响。USART2 的 IDLE 中断只搬运字节 + 调 BSP 回调，不走 FromISR API，所以放到优先级 4 是正确的。
+
+### 2.5 任务通知（Task Notification）— ESP8266 UART ISR → 任务
+
+**学习目标**：ESP8266 响应的 UART 中断通知解析任务是典型 1 对 1 场景，用任务通知替代信号量更轻量。
+
+**硬件映射**：USART2_RX 空闲中断 → 任务通知 → ESP8266 解析任务取出 Stream Buffer 数据。
+
+```
+USART2_RX IDLE ISR:
+  → xTaskNotifyGiveFromISR(hESPParseTask, &xWoken)
+  → portYIELD_FROM_ISR(xWoken)
+
+ESP8266_ParseTask:
+  → ulTaskNotifyTake(pdTRUE, portMAX_DELAY)
+  → 从 Stream Buffer 读数据
+  → 解析 "OK" / "ERROR" / "+IPD,xxx"
+```
 
 ```c
-// ISR → 任务（替代二值信号量）
-xTaskNotifyGiveFromISR(hTask, &xWoken);   // ISR 通知
-ulTaskNotifyTake(pdTRUE, portMAX_DELAY);   // 任务等待
+// ISR（USART2 IRQHandler）
+void USART2_IRQHandler(void) {
+    if (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_IDLE)) {
+        __HAL_UART_CLEAR_IDLEFLAG(&huart2);
+        BaseType_t xWoken = pdFALSE;
+        xTaskNotifyGiveFromISR(hESPParseTask, &xWoken);
+        portYIELD_FROM_ISR(xWoken);
+    }
+}
 
-// 任务 → 任务（替代队列，传 32 位值）
-xTaskNotify(hTask, value, eSetValueWithOverwrite);
-xTaskNotifyWait(0, 0xFFFFFFFF, &value, portMAX_DELAY);
+// 任务
+void ESP_ParseTask(void *arg) {
+    while (1) {
+        ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+        ProcessESPResponse();
+    }
+}
 ```
 
 **实验清单**：
 
-- [ ] 用任务通知替代二值信号量，重写 MPU6050 中断通知（对比代码量）
-- [ ] 用任务通知直接传一个 `uint32_t` 传感器值，替代单元素队列
-- [ ] 对比：发送 1000 次通知 vs 发送 1000 次队列的时间差异
+- [ ] 用任务通知替代信号量，重写 USART2 IDLE 中断 → 解析任务的通知
+- [ ] 对比：`xTaskNotifyGiveFromISR` vs `xSemaphoreGiveFromISR` 的代码量和执行速度
+- [ ] 任务通知传 32 位值：ISR 直接传 UART 收到的字节数（`xTaskNotifyFromISR(hTask, rxLen, eSetValueWithoutOverwrite, &xWoken)`）
 
-**阶段测验**：用 MPU6050 中断 + 队列 + 互斥量（I2C）+ OLED 显示，实现一个完整的"运动数据实时显示"系统。
+**阶段测验**：ESP8266 基本 AT 通信 + WiFi 连接 + 事件组驱动 DataUpload + 任务通知驱动 UART 接收，形成完整的"WiFi 连接管理"子系统。
 
 ---
 
-## 第3阶段：SPI 存储 + 进阶机制
+## 第3阶段：WiFi 数据管道 + 云端对接（3 周）
 
-**本阶段硬件**：W25Q64 (SPI) + AT24C02 (EEPROM) + 已有 I2C 外设
-
-> **CubeMX 准备**：启用 SPI1 (PA5=SCK, PA6=MISO, PA7=MOSI, PA4=NSS)，Mode=Full-Duplex Master，NSS 软件管理。
-
-### 3.1 软件定时器（Software Timer）
-
-**学习目标**：理解定时器回调机制和 Daemon Task，区分"周期任务"和"定时回调"。
-
-**硬件映射**：软件定时器触发周期传感器采样，结果写入 W25Q64。
-
-```c
-// 周期定时器：每 1 秒触发一次
-TimerHandle_t xSampleTimer = xTimerCreate(
-    "Sample", pdMS_TO_TICKS(1000), pdTRUE,  // pdTRUE=自动重载
-    (void*)0, vSampleTimerCallback
-);
-xTimerStart(xSampleTimer, 0);
-
-// ⚠️ 回调在 Daemon Task 中执行，绝对不能阻塞
-void vSampleTimerCallback(TimerHandle_t xTimer) {
-    // 给采样任务发通知，让它在自己上下文里做 I2C 读取
-    xTaskNotifyGive(hSampleTask);
-}
-```
-
-**实验清单**：
-
-- [ ] 创建 3 个软件定时器，以不同周期采样 MPU6050，OLED 显示采样频率
-- [ ] 单次定时器：串口发 "log 5s" → 5 秒内持续记录传感器数据到 W25Q64
-- [ ] 对比软件定时器和 `vTaskDelayUntil()` 的适用场景
-- [ ] 查看 Daemon Task 栈水位：`uxTaskGetStackHighWaterMark(xTimerTask)`
-
-**配置要点**：
-
-```c
-#define configUSE_TIMERS              1
-#define configTIMER_TASK_PRIORITY     2
-#define configTIMER_QUEUE_LENGTH      10
-#define configTIMER_TASK_STACK_DEPTH  256
-```
-
-### 3.2 内存管理 — W25Q64 缓冲区池
-
-**学习目标**：掌握 heap_4 特性，设计固定大小的缓冲区池供 Flash 页写入。
-
-**硬件映射**：W25Q64 按 256 字节 Page 写入，需要对齐的缓冲区。
-
-```c
-// W25Q64 Page Write 需要 256 字节对齐缓冲区
-#define FLASH_PAGE_SIZE  256
-#define BUFFER_POOL_SIZE 4
-
-typedef struct {
-    uint8_t data[FLASH_PAGE_SIZE];
-    SemaphoreHandle_t sem;  // 缓冲区空闲信号量
-} PageBuffer_t;
-
-static PageBuffer_t pageBuffers[BUFFER_POOL_SIZE];
-static SemaphoreHandle_t xBufferPoolSem;  // 计数信号量，初值 = BUFFER_POOL_SIZE
-```
-
-**实验清单**：
-
-- [ ] 用 `xPortGetFreeHeapSize()` 追踪各阶段堆变化
-- [ ] 创建/销毁 50 个小任务，观察 heap_4 是否能回收碎片
-- [ ] 对比：堆上动态分配 W25Q64 页缓冲区 vs 静态 BSS 分配
-- [ ] 打印 Idle Task 栈水位线
-
-### 3.3 中断管理 — SPI DMA 传输
-
-**学习目标**：掌握 SPI DMA 中断 + FromISR API，实现高速 Flash 读写。
-
-**硬件映射**：W25Q64 的页读取/写入通过 SPI DMA 实现，CPU 不参与逐字节搬运。
+**本阶段硬件**：ESP8266-01S + MPU6050 + OLED + W25Q64
 
 ```
-W25Q64_WriteTask
+                   STM32F103
+                       │
+    ┌──────────────────┼──────────────────┐
+    │ I2C1             │ USART2           │ SPI1
+    ├── MPU6050        │ ←→ ESP8266       └── W25Q64
+    └── OLED           │     │
+                       │    WiFi
+                       │     │
+                       │    云端服务器
+```
+
+### 3.1 ESP8266 AT 驱动 + 软件定时器做超时
+
+**学习目标**：ESP8266 不像 I2C 外设那样有寄存器——它通过 UART AT 命令控制。每发一条指令，必须等"OK"或"ERROR"响应。**软件定时器**在这里用于超时管理。
+
+**硬件映射**：ESP8266 AT 命令的超时和重试机制。
+
+```
+ATCmd_Send("AT+CWJAP=\"SSID\",\"PWD\"\r\n")
       │
-      ├─ SPI 发 Write Enable 命令（轮询）
-      ├─ SPI 发 Page Program 命令（轮询）
-      ├─ SPI DMA 发 256 字节页数据
-      │     │
-      │     └─ DMA 完成中断 → xSemaphoreGiveFromISR → 任务继续
-      ├─ 等 W25Q64 BUSY 位清除
-      └─ 完成
+      ├─ xTimerStart(xTimeoutTimer, 10s)     ← 启动超时定时器
+      ├─ xEventGroupWaitBits(xRespEvent, BIT_OK | BIT_ERROR, OR, ...)
+      │       │
+      │       ├─ 收到 "OK"    → xTimerStop → 继续
+      │       ├─ 收到 "ERROR" → xTimerStop → 重试逻辑
+      │       └─ 定时器溢出   → TimerCallback
+      │                              │
+      │                         xTaskNotifyGive(hATCmdTask)
+      │                              │
+      │                         重试 3 次 → 失败上报
+      └─
 ```
 
 **实验清单**：
 
-- [ ] W25Q64 整页读取（SPI DMA，256 字节一次性读完）
-- [ ] W25Q64 页写入（SPI DMA，256 字节一次性写完）
-- [ ] 验证 W25Q64 写入前后数据一致性（读回比对）
-- [ ] 测量 SPI DMA vs SPI 轮询 传输 4KB 的时间差异
+- [ ] `ESP8266_SendCmd(cmd, timeout_ms)` 封装：发命令 + 等响应 + 超时重试
+- [ ] 软件定时器做超时：`configUSE_TIMERS = 1`，`configTIMER_TASK_PRIORITY = 2`
+- [ ] 验证基本 AT：`AT` → `OK`、`AT+GMR` → 版本号
+- [ ] 连接 WiFi：`AT+CWJAP` → DHCP 拿 IP、`AT+CIFSR` → 打印 IP
 
-### 3.4 流缓冲区（Stream Buffer）— 传感器流式记录
+### 3.2 Stream Buffer — ESP8266 UART 数据管道
 
-**学习目标**：掌握 Stream Buffer 处理连续数据流。
+**学习目标**：ESP8266 返回的 TCP 数据长度不定（几十到几千字节），固定长度 Queue 不适合。Stream Buffer 专门处理不定长流式数据。
 
-**硬件映射**：MPU6050 连续采样 → Stream Buffer → W25Q64 批量写入。
+**硬件映射**：USART2 DMA 接收 → Stream Buffer → ESP8266 解析任务。
 
-```c
-// 创建流缓冲区（1KB）
-StreamBufferHandle_t xSensorStream = xStreamBufferCreate(1024, 16);
-
-// 传感器任务：写入流
-xStreamBufferSend(xSensorStream, &sensorData, sizeof(SensorData_t), 0);
-
-// 存储任务：攒够 256 字节就写 Flash
-size_t len = xStreamBufferReceive(xSensorStream, buf, 256, pdMS_TO_TICKS(1000));
-if (len >= 256) {
-    W25Q64_WritePage(buf, len);
-}
+```
+USART2_RX DMA (256B半满中断)
+      │
+      ▼
+  Stream Buffer (4KB)
+      │  xStreamBufferSendFromISR()
+      ▼
+  ESP_ParseTask
+      │  xStreamBufferReceive()
+      ├─ "OK" / "ERROR" → 给 ATCmd_Task 发通知
+      └─ "+IPD,len:data" → 提取应用数据
 ```
 
 **实验清单**：
 
-- [ ] MPU6050 100Hz 采样 → Stream Buffer → 每攒 256 字节写 W25Q64 一页
-- [ ] 对比 Stream Buffer 和 Queue 的区别（Stream Buffer 任意长度，Queue 定长）
+- [ ] USART2 DMA + IDLE 中断 → Stream Buffer 流式写入
+- [ ] 对比 Queue 和 Stream Buffer 在 ESP8266 数据接收下的差异
 - [ ] 用 `xStreamBufferBytesAvailable()` 监控缓冲区水位
 
----
+### 3.3 内存管理 — WiFi 接收缓冲区池
 
-## 第4阶段：综合项目
+**学习目标**：ESP8266 TCP 单包最长 2048 字节。堆上多次 `pvPortMalloc` 会导致碎片。用静态分配的缓冲区池 + 计数信号量管理。
 
-### 4.1 CLI 命令控制台
+**硬件映射**：4 个 512B 静态缓冲区，供 WiFi 数据接收用。
 
-**目标**：通过串口交互控制所有外设。涉及队列、互斥量、任务挂起/恢复。
+```c
+#define WIFI_BUF_SIZE  512
+#define WIFI_BUF_COUNT 4
+
+typedef struct {
+    uint8_t data[WIFI_BUF_SIZE];
+    uint16_t len;
+} WifiBuf_t;
+
+static WifiBuf_t wifiBufs[WIFI_BUF_COUNT];        // BSS 段，不占堆
+static SemaphoreHandle_t xWifiBufSem;              // 计数信号量，初值 4
+```
+
+**实验清单**：
+
+- [ ] 静态分配 4×512B = 2KB 缓冲区池，用计数信号量管理获取/归还
+- [ ] 对比：堆动态分配 vs 静态池的内存碎片和分配耗时
+- [ ] 打印 Idle Task 栈水位线
+
+### 3.4 WiFi 数据上传 — JSON + TCP 客户端
+
+**学习目标**：MPU6050 数据以 JSON 格式通过 ESP8266 TCP 上传到 PC 服务器。
+
+**硬件映射**：STM32→ESP8266→WiFi→PC(Python `nc -l 8080`)。
 
 ```
-架构：
-  UART_RX_ISR → xUartRxQueue → vUartRxTask (命令解析)
-                                      │
-                    ┌─────────────────┼─────────────────┐
-                    ▼                 ▼                  ▼
-              led on/off        sensor read         flash erase
-              led blink <ms>    sensor log <n>      flash dump <addr>
-              task suspend <name>   heap              eeprom write/read
-              task list             oled on/off
+Task_SensorRead (Prio=3, INT 驱动)
+      │
+      ▼
+  Task_DataProcess (Prio=2)
+      │  原始→物理量
+      ▼
+  Task_WifiUpload (Prio=1, 事件组 AND 等待后启动)
+      │  每 30s 一次
+      ▼
+  JSON 封包 → AT+CIPSEND → ESP8266 TCP → PC 服务器
+```
+
+**实验清单**：
+
+- [ ] STM32 端 `snprintf` 封装 JSON：`{"ax":0.01,"ay":0.02,"az":1.00}`
+- [ ] TCP 连接 PC 端 `nc -l 8080`，STM32 定时 30s 上传一组传感器数据
+- [ ] PC 端 Python 脚本记录到 `.csv` 文件，做后续分析
+- [ ] 从 TCP 接收远程命令 → 控制 LED / 触发传感器采样
+
+---
+
+## 第4阶段：IoT 生产级项目（2 周）
+
+### 4.1 WiFi CLI 远程控制台
+
+**目标**：ESP8266 TCP Server 模式，PC telnet 后获得完整设备控制能力。
+
+```
+PC (telnet 192.168.1.x 8080) ──WiFi── ESP8266 ──USART2── STM32
+                                                           │
+                                                     CLI_Handler
+                                                     (Prio=2)
 ```
 
 **命令列表**：
 | 命令 | 功能 |
 |------|------|
-| `help` | 列出所有命令 |
-| `led <n> on/off/blink <ms>` | 控制 LED |
-| `task list` | 打印所有任务状态 |
-| `task suspend <name>` | 挂起指定任务 |
-| `heap` | 打印剩余堆空间 |
-| `sensor` | 读取一次 MPU6050 |
-| `sensor log <n>` | 记录 n 次数据到 W25Q64 |
-| `oled on/off` | 开关 OLED 显示 |
-| `flash info` | 读取 W25Q64 ID |
-| `flash dump <addr> <len>` | 十六进制 dump Flash 内容 |
-| `eeprom write <addr> <byte>` | 写 EEPROM |
-| `eeprom read <addr>` | 读 EEPROM |
+| `help` | 所有命令 |
+| `led <n> on/off` | 远程控制 LED |
+| `sensor` | 读取一次 MPU6050，JSON 返回 |
+| `task list` | `vTaskList()` 输出 |
+| `heap` | 剩余堆空间 |
+| `wifi status` | WiFi 信号强度、IP、连接时长 |
+| `wifi reconnect` | 强制 WiFi 重连 |
+| `flash info` | W25Q64 容量和 ID |
+| `reboot` | 软件复位 |
 
-### 4.2 运动数据记录器
+### 4.2 云端数据记录器
 
-**目标**：MPU6050 连续采样 → 环形缓冲 → W25Q64 存储 → CLI 导出。
+**目标**：MPU6050 定时采样 → JSON → ESP8266 → WiFi → 云服务器（HTTP POST / MQTT）。
 
 ```
-MPU6050_ReadTask (Prio=3, vTaskDelayUntil 10ms)
+MPU6050 (INT 驱动, 100Hz)
       │
       ▼
-  Stream Buffer (4KB 环形)
+  Ring Buffer (100 采样点)
       │
       ▼
-  LogWriterTask (Prio=2)
-      │  攒够 256 字节 → W25Q64_WritePage
+  Task_WifiUpload (30s 周期)
+      │  批量打包 100 条 JSON
       ▼
-  W25Q64 (8MB, 可存 ~200 万条记录)
+  ESP8266 TCP → HTTP POST → 云端接收 → 时序数据库
+```
+
+**涉及知识点**：事件组、Stream Buffer、`vTaskDelayUntil`、JSON序列化、HTTP POST。
+
+### 4.3 WiFi OTA 固件升级（核心项目）
+
+**目标**：ESP8266 从服务器 HTTP GET 下载 `.bin` 固件 → STM32 校验并写入内部 Flash → 软复位后运行新版本。这是整个学习路线的集大成——**FreeRTOS 所有机制 + 全部外设**统一协作。
+
+**为什么 OTA 是终极考核**：
+- 事件组：下载阶段状态机（连接中→下载中→校验中→就绪）
+- 队列：TCP 数据帧从网络任务传到 Flash 写任务
+- 信号量：DMA 传输完成中断通知
+- 互斥量：Flash 页擦写是独占操作，一次只能一个任务操作
+- 软件定时器：HTTP 下载超时、看门狗心跳
+- Stream Buffer：ESP8266 TCP 帧流式接收
+- 内存管理：W25Q64 页缓冲区池（Flash 按 256B 页擦除，需要对齐的缓冲）
+
+#### OTA 完整数据流
+
+```
+云端 HTTP 服务器
+  firmware.bin (64KB)
+      │
+      ▼ WiFi
+  ESP8266 TCP Client
+      │
+      ▼ USART2 (115200bps)
+  Stream Buffer (4KB)
       │
       ▼
-  CLI `flash dump` 命令导出 .csv
+  Task_OTA_Receiver (Prio=3)
+      │  解析 HTTP 头 → 跳过 → 提取固件字节流
+      │  每攒 256B → xQueueSend(xFlashWriteQueue)
+      ▼
+  [FlashWriteQueue] (8 slots × 256B)
+      │
+      ▼
+  Task_FlashWriter (Prio=2)
+      │  xSemaphoreTake(xFlashMutex) → 擦除页 → DMA 写入 → 校验
+      │  xSemaphoreGive(xFlashMutex)
+      ▼
+  STM32 内部 Flash (64KB, Bank2 存放新固件)
+      │
+      ▼
+  CRC32 校验通过 → 写 OTA 标志位到备份寄存器 → NVIC_SystemReset()
+      │
+      ▼
+  Bootloader（复位后运行）
+      │  读 OTA 标志 → 复制新固件到 Bank1 → 跳转
+      ▼
+  新固件启动
 ```
 
-**涉及知识点**：`vTaskDelayUntil` 精确周期、Stream Buffer、SPI DMA、互斥量保护 Flash 写。
+#### OTA 任务体系
 
-### 4.3 OLED 仪表盘
+| 任务 | 优先级 | 职责 |
+|------|--------|------|
+| OTA_Receiver | 3 | ESP8266 数据流 → 解析 HTTP → 提取固件字节 → 发队列 |
+| FlashWriter | 2 | 从队列取 256B → 互斥量锁 Flash → 页擦除 → DMA 写入 → 校验 → 释放锁 |
+| OTA_Watchdog | 1 | 软件定时器 2 分钟超时 → 下载卡住时中止 OTA、标记失败 |
+| OTA_Monitor | 1 | 打印下载进度百分比到 OLED 和串口 |
 
-**目标**：OLED 实时显示系统状态。
+#### 实验清单
+
+- [ ] ESP8266 `AT+CIPSTART` TCP 连接 HTTP 服务器
+- [ ] `AT+CIPSEND` 发 HTTP GET 请求（Host + Range 头，支持断点续传）
+- [ ] Stream Buffer 接收 TCP 响应 → OTA_Receiver 解析 HTTP 头（`Content-Length:`），跳过 `\r\n\r\n` 后提取固件字节
+- [ ] FlashWriter 互斥量保护 Flash 擦写，队列 8×256B 做流水线缓冲
+- [ ] Flash 页擦除 + 32 位字写入（STM32F103 Flash 按 16bit 半字编程）
+- [ ] 软件定时器 120s 超时 → OTA_Watchdog 回调中止下载
+- [ ] 全文件 CRC32 校验 → 写备份寄存器 OTA 标志 → `NVIC_SystemReset()`
+- [ ] Bootloader：启动后检查 OTA 标志、复制 Bank2→Bank1（可选：检查 Bank1 是否完整，失败回滚到上一个版本）
+
+#### OTA CLI 命令
+
+| 命令 | 功能 |
+|------|------|
+| `ota check` | 向服务器查询最新固件版本号 |
+| `ota start <url>` | 开始 OTA 下载 |
+| `ota status` | 查看进度百分比和剩余时间 |
+| `ota abort` | 中止下载 |
+| `ota rollback` | 回滚到上一个固件版本 |
+
+### 4.4 手机仪表盘（TCP Server + JSON Stream）
+
+**目标**：ESP8266 TCP Server 持续推送 JSON 数据流，手机端 TCP 客户端实时渲染仪表盘。
 
 ```
-OLED 四行布局：
-┌──────────────────┐
-│ MPU: ax  ay  az  │  ← MPU6050 实时数据
-│ Gyro:gx  gy  gz  │  ← 角速度数据
-│ Heap: xxxx free   │  ← 堆剩余
-│ Tasks: 8 running  │  ← 任务数量
-└──────────────────┘
+Task_Dashboard (Prio=2, 1s 周期)
+      │
+      ├─ MPU6050 ax/ay/az/gx/gy/gz (最新值)
+      ├─ WiFi RSSI（信号强度）
+      ├─ Heap free（内存水位）
+      └─ Task count（运行中任务数）
+      │
+      ▼
+  JSON 流 → ESP8266 TCP Server → WiFi → 手机 TCP 客户端
 ```
 
-**涉及知识点**：互斥量保护 I2C、队列传递传感器数据、`vTaskList` 获取任务信息。
+**数据格式**（每秒一次）：
+```json
+{"t":12345,"ax":0.01,"ay":-0.02,"az":1.00,"heap":3456,"rssi":-45,"tasks":9}
+```
 
 ---
 

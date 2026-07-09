@@ -2,7 +2,7 @@
 #define __MPU6050_H__
 
 #include "main.h"
-#include "soft_i2c.h"
+#include "bsp_i2c.h"
 
 /* MPU6050 I2C 地址 (7位: 0x68, AD0 接 GND) */
 #define MPU6050_ADDR           0x68

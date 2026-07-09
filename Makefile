@@ -65,12 +65,15 @@ Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c \
 Core/Src/stm32f1xx_hal_timebase_tim.c \
 Core/Src/gpio.c \
 Core/Src/usart.c \
-Core/Src/debug_uart.c \
 Core/Src/dma.c \
 Core/Src/i2c.c \
-Core/Src/mpu6050.c \
-Core/Src/soft_i2c.c \
-Core/Src/oled.c \
+Core/Src/bsp/bsp_init.c \
+Core/Src/bsp/bsp_i2c.c \
+Core/Src/bsp/bsp_uart.c \
+Core/Src/device/mpu6050.c \
+Core/Src/device/oled.c \
+Core/Src/device/debug_uart.c \
+Core/Src/device/esp8266.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c
 # ASM sources
 ASM_SOURCES =  \
@@ -128,6 +131,8 @@ AS_INCLUDES =
 # C includes
 C_INCLUDES =  \
 -ICore/Inc \
+-ICore/Inc/bsp \
+-ICore/Inc/device \
 -IDrivers/STM32F1xx_HAL_Driver/Inc \
 -IDrivers/STM32F1xx_HAL_Driver/Inc/Legacy \
 -IDrivers/CMSIS/Device/ST/STM32F1xx/Include \
