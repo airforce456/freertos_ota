@@ -74,6 +74,11 @@ Core/Src/device/mpu6050.c \
 Core/Src/device/oled.c \
 Core/Src/device/debug_uart.c \
 Core/Src/device/esp8266.c \
+Core/Src/device/onenet.c \
+Core/Src/device/base64.c \
+Core/Src/device/hmac_sha1.c \
+Core/Src/device/mqttkit.c \
+Core/Src/device/cjson.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c
 # ASM sources
 ASM_SOURCES =  \

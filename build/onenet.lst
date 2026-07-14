@@ -1,0 +1,2960 @@
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.arch armv7-m
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"onenet.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.file 1 "Core/Src/device/onenet.c"
+  18              		.section	.text.DelayXms,"ax",%progbits
+  19              		.align	1
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	DelayXms:
+  25              	.LVL0:
+  26              	.LFB73:
+   1:Core/Src/device/onenet.c **** /**
+   2:Core/Src/device/onenet.c ****  * 文件名： onenet.c
+   3:Core/Src/device/onenet.c ****  * 说明：   OneNET MQTT 云平台数据交互（HAL 移植版）
+   4:Core/Src/device/onenet.c ****  *         原 NET 包作者：张继瑞，适配 HAL + FreeRTOS
+   5:Core/Src/device/onenet.c ****  */
+   6:Core/Src/device/onenet.c **** #include "main.h"
+   7:Core/Src/device/onenet.c **** #include "FreeRTOS.h"
+   8:Core/Src/device/onenet.c **** #include "usart.h"
+   9:Core/Src/device/onenet.c **** #include "esp8266.h"
+  10:Core/Src/device/onenet.c **** #include "onenet.h"
+  11:Core/Src/device/onenet.c **** #include "mqttkit.h"
+  12:Core/Src/device/onenet.c **** #include "base64.h"
+  13:Core/Src/device/onenet.c **** #include "hmac_sha1.h"
+  14:Core/Src/device/onenet.c **** #include "cJSON.h"
+  15:Core/Src/device/onenet.c **** #include <string.h>
+  16:Core/Src/device/onenet.c **** #include <stdio.h>
+  17:Core/Src/device/onenet.c **** #include <stdlib.h>
+  18:Core/Src/device/onenet.c **** 
+  19:Core/Src/device/onenet.c **** /* MQTT malloc/free → FreeRTOS 堆 */
+  20:Core/Src/device/onenet.c **** #define malloc  pvPortMalloc
+  21:Core/Src/device/onenet.c **** #define free    vPortFree
+  22:Core/Src/device/onenet.c **** 
+  23:Core/Src/device/onenet.c **** char onenet_devid[16];
+  24:Core/Src/device/onenet.c **** char onenet_key[48];
+  25:Core/Src/device/onenet.c **** 
+  26:Core/Src/device/onenet.c **** /* ---- 内部延时 ---- */
+  27:Core/Src/device/onenet.c **** static void DelayXms(unsigned short ms) { HAL_Delay(ms); }
+  27              		.loc 1 27 41 view -0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              		.loc 1 27 41 is_stmt 0 view .LVU1
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 2
+
+
+  32 0000 08B5     		push	{r3, lr}
+  33              	.LCFI0:
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 3, -8
+  36              		.cfi_offset 14, -4
+  37              		.loc 1 27 43 is_stmt 1 view .LVU2
+  38 0002 FFF7FEFF 		bl	HAL_Delay
+  39              	.LVL1:
+  40              		.loc 1 27 58 is_stmt 0 view .LVU3
+  41 0006 08BD     		pop	{r3, pc}
+  42              		.cfi_endproc
+  43              	.LFE73:
+  45              		.section	.rodata.OTA_UrlEncode.str1.4,"aMS",%progbits,1
+  46              		.align	2
+  47              	.LC0:
+  48 0000 25324200 		.ascii	"%2B\000"
+  49              		.align	2
+  50              	.LC1:
+  51 0004 25323000 		.ascii	"%20\000"
+  52              		.align	2
+  53              	.LC2:
+  54 0008 25324600 		.ascii	"%2F\000"
+  55              		.align	2
+  56              	.LC3:
+  57 000c 25334600 		.ascii	"%3F\000"
+  58              		.align	2
+  59              	.LC4:
+  60 0010 25323500 		.ascii	"%25\000"
+  61              		.align	2
+  62              	.LC5:
+  63 0014 25323300 		.ascii	"%23\000"
+  64              		.align	2
+  65              	.LC6:
+  66 0018 25323600 		.ascii	"%26\000"
+  67              		.align	2
+  68              	.LC7:
+  69 001c 25334400 		.ascii	"%3D\000"
+  70              		.section	.text.OTA_UrlEncode,"ax",%progbits
+  71              		.align	1
+  72              		.syntax unified
+  73              		.thumb
+  74              		.thumb_func
+  76              	OTA_UrlEncode:
+  77              	.LVL2:
+  78              	.LFB74:
+  28:Core/Src/device/onenet.c **** 
+  29:Core/Src/device/onenet.c **** /* ==================================================================
+  30:Core/Src/device/onenet.c ****  *  OTA_UrlEncode — sign 的 URL 编码
+  31:Core/Src/device/onenet.c ****  * ================================================================== */
+  32:Core/Src/device/onenet.c **** static unsigned char OTA_UrlEncode(char *sign)
+  33:Core/Src/device/onenet.c **** {
+  79              		.loc 1 33 1 is_stmt 1 view -0
+  80              		.cfi_startproc
+  81              		@ args = 0, pretend = 0, frame = 40
+  82              		@ frame_needed = 0, uses_anonymous_args = 0
+  83              		.loc 1 33 1 is_stmt 0 view .LVU5
+  84 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 3
+
+
+  85              	.LCFI1:
+  86              		.cfi_def_cfa_offset 24
+  87              		.cfi_offset 4, -24
+  88              		.cfi_offset 5, -20
+  89              		.cfi_offset 6, -16
+  90              		.cfi_offset 7, -12
+  91              		.cfi_offset 8, -8
+  92              		.cfi_offset 14, -4
+  93 0004 8AB0     		sub	sp, sp, #40
+  94              	.LCFI2:
+  95              		.cfi_def_cfa_offset 64
+  96 0006 0646     		mov	r6, r0
+  34:Core/Src/device/onenet.c ****     char sign_t[40];
+  97              		.loc 1 34 5 is_stmt 1 view .LVU6
+  35:Core/Src/device/onenet.c ****     unsigned char i = 0, j = 0;
+  98              		.loc 1 35 5 view .LVU7
+  99              	.LVL3:
+  36:Core/Src/device/onenet.c ****     unsigned char sign_len = strlen(sign);
+ 100              		.loc 1 36 5 view .LVU8
+ 101              		.loc 1 36 30 is_stmt 0 view .LVU9
+ 102 0008 FFF7FEFF 		bl	strlen
+ 103              	.LVL4:
+  37:Core/Src/device/onenet.c **** 
+  38:Core/Src/device/onenet.c ****     if (sign == NULL || sign_len < 28) return 1;
+ 104              		.loc 1 38 5 is_stmt 1 view .LVU10
+ 105              		.loc 1 38 8 is_stmt 0 view .LVU11
+ 106 000c 002E     		cmp	r6, #0
+ 107 000e 00F0DA80 		beq	.L20
+ 108 0012 C7B2     		uxtb	r7, r0
+ 109              		.loc 1 38 22 discriminator 2 view .LVU12
+ 110 0014 1B2F     		cmp	r7, #27
+ 111 0016 40F2D880 		bls	.L21
+  35:Core/Src/device/onenet.c ****     unsigned char sign_len = strlen(sign);
+ 112              		.loc 1 35 19 view .LVU13
+ 113 001a 0023     		movs	r3, #0
+ 114              	.LVL5:
+ 115              	.L5:
+  39:Core/Src/device/onenet.c **** 
+  40:Core/Src/device/onenet.c ****     for (; i < sign_len; i++) { sign_t[i] = sign[i]; sign[i] = 0; }
+ 116              		.loc 1 40 14 is_stmt 1 discriminator 1 view .LVU14
+ 117 001c BB42     		cmp	r3, r7
+ 118 001e 0AD2     		bcs	.L23
+ 119              		.loc 1 40 33 discriminator 2 view .LVU15
+ 120              		.loc 1 40 49 is_stmt 0 discriminator 2 view .LVU16
+ 121 0020 F15C     		ldrb	r1, [r6, r3]	@ zero_extendqisi2
+ 122              		.loc 1 40 43 discriminator 2 view .LVU17
+ 123 0022 03F12802 		add	r2, r3, #40
+ 124 0026 6A44     		add	r2, sp, r2
+ 125 0028 02F8281C 		strb	r1, [r2, #-40]
+ 126              		.loc 1 40 54 is_stmt 1 discriminator 2 view .LVU18
+ 127              		.loc 1 40 62 is_stmt 0 discriminator 2 view .LVU19
+ 128 002c 0022     		movs	r2, #0
+ 129 002e F254     		strb	r2, [r6, r3]
+ 130              		.loc 1 40 27 is_stmt 1 discriminator 2 view .LVU20
+ 131 0030 0133     		adds	r3, r3, #1
+ 132              	.LVL6:
+ 133              		.loc 1 40 27 is_stmt 0 discriminator 2 view .LVU21
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 4
+
+
+ 134 0032 DBB2     		uxtb	r3, r3
+ 135              	.LVL7:
+ 136              		.loc 1 40 27 discriminator 2 view .LVU22
+ 137 0034 F2E7     		b	.L5
+ 138              	.LVL8:
+ 139              	.L23:
+  41:Core/Src/device/onenet.c ****     sign_t[i] = 0;
+ 140              		.loc 1 41 5 is_stmt 1 view .LVU23
+ 141              		.loc 1 41 15 is_stmt 0 view .LVU24
+ 142 0036 2833     		adds	r3, r3, #40
+ 143              	.LVL9:
+ 144              		.loc 1 41 15 view .LVU25
+ 145 0038 6B44     		add	r3, sp, r3
+ 146              	.LVL10:
+ 147              		.loc 1 41 15 view .LVU26
+ 148 003a 0024     		movs	r4, #0
+ 149 003c 03F8284C 		strb	r4, [r3, #-40]
+  42:Core/Src/device/onenet.c **** 
+  43:Core/Src/device/onenet.c ****     for (i = 0, j = 0; i < sign_len; i++) {
+ 150              		.loc 1 43 5 is_stmt 1 view .LVU27
+ 151              	.LVL11:
+ 152              		.loc 1 43 19 is_stmt 0 view .LVU28
+ 153 0040 2546     		mov	r5, r4
+ 154              		.loc 1 43 5 view .LVU29
+ 155 0042 6CE0     		b	.L7
+ 156              	.LVL12:
+ 157              	.L13:
+  44:Core/Src/device/onenet.c ****         switch (sign_t[i]) {
+  45:Core/Src/device/onenet.c ****             case '+': strcat(sign + j, "%2B"); j += 3; break;
+ 158              		.loc 1 45 23 is_stmt 1 view .LVU30
+ 159 0044 06EB0508 		add	r8, r6, r5
+ 160 0048 4046     		mov	r0, r8
+ 161 004a FFF7FEFF 		bl	strlen
+ 162              	.LVL13:
+ 163 004e 0346     		mov	r3, r0
+ 164              		.loc 1 45 23 is_stmt 0 discriminator 1 view .LVU31
+ 165 0050 5F4A     		ldr	r2, .L25
+ 166 0052 1068     		ldr	r0, [r2]
+ 167 0054 48F80300 		str	r0, [r8, r3]	@ unaligned
+ 168              		.loc 1 45 48 is_stmt 1 discriminator 2 view .LVU32
+ 169              		.loc 1 45 50 is_stmt 0 discriminator 2 view .LVU33
+ 170 0058 0335     		adds	r5, r5, #3
+ 171              	.LVL14:
+ 172              		.loc 1 45 50 discriminator 2 view .LVU34
+ 173 005a EDB2     		uxtb	r5, r5
+ 174              	.LVL15:
+ 175              		.loc 1 45 56 is_stmt 1 discriminator 2 view .LVU35
+ 176              		.loc 1 45 56 is_stmt 0 view .LVU36
+ 177 005c 5DE0     		b	.L18
+ 178              	.L17:
+  46:Core/Src/device/onenet.c ****             case ' ': strcat(sign + j, "%20"); j += 3; break;
+ 179              		.loc 1 46 23 is_stmt 1 view .LVU37
+ 180 005e 06EB0508 		add	r8, r6, r5
+ 181 0062 4046     		mov	r0, r8
+ 182 0064 FFF7FEFF 		bl	strlen
+ 183              	.LVL16:
+ 184 0068 0346     		mov	r3, r0
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 5
+
+
+ 185              		.loc 1 46 23 is_stmt 0 discriminator 1 view .LVU38
+ 186 006a 5A4A     		ldr	r2, .L25+4
+ 187 006c 1068     		ldr	r0, [r2]
+ 188 006e 48F80300 		str	r0, [r8, r3]	@ unaligned
+ 189              		.loc 1 46 48 is_stmt 1 discriminator 2 view .LVU39
+ 190              		.loc 1 46 50 is_stmt 0 discriminator 2 view .LVU40
+ 191 0072 0335     		adds	r5, r5, #3
+ 192              	.LVL17:
+ 193              		.loc 1 46 50 discriminator 2 view .LVU41
+ 194 0074 EDB2     		uxtb	r5, r5
+ 195              	.LVL18:
+ 196              		.loc 1 46 56 is_stmt 1 discriminator 2 view .LVU42
+ 197              		.loc 1 46 56 is_stmt 0 view .LVU43
+ 198 0076 50E0     		b	.L18
+ 199              	.L12:
+  47:Core/Src/device/onenet.c ****             case '/': strcat(sign + j, "%2F"); j += 3; break;
+ 200              		.loc 1 47 23 is_stmt 1 view .LVU44
+ 201 0078 06EB0508 		add	r8, r6, r5
+ 202 007c 4046     		mov	r0, r8
+ 203 007e FFF7FEFF 		bl	strlen
+ 204              	.LVL19:
+ 205 0082 0346     		mov	r3, r0
+ 206              		.loc 1 47 23 is_stmt 0 discriminator 1 view .LVU45
+ 207 0084 544A     		ldr	r2, .L25+8
+ 208 0086 1068     		ldr	r0, [r2]
+ 209 0088 48F80300 		str	r0, [r8, r3]	@ unaligned
+ 210              		.loc 1 47 48 is_stmt 1 discriminator 2 view .LVU46
+ 211              		.loc 1 47 50 is_stmt 0 discriminator 2 view .LVU47
+ 212 008c 0335     		adds	r5, r5, #3
+ 213              	.LVL20:
+ 214              		.loc 1 47 50 discriminator 2 view .LVU48
+ 215 008e EDB2     		uxtb	r5, r5
+ 216              	.LVL21:
+ 217              		.loc 1 47 56 is_stmt 1 discriminator 2 view .LVU49
+ 218              		.loc 1 47 56 is_stmt 0 view .LVU50
+ 219 0090 43E0     		b	.L18
+ 220              	.L9:
+  48:Core/Src/device/onenet.c ****             case '?': strcat(sign + j, "%3F"); j += 3; break;
+ 221              		.loc 1 48 23 is_stmt 1 view .LVU51
+ 222 0092 06EB0508 		add	r8, r6, r5
+ 223 0096 4046     		mov	r0, r8
+ 224 0098 FFF7FEFF 		bl	strlen
+ 225              	.LVL22:
+ 226 009c 0346     		mov	r3, r0
+ 227              		.loc 1 48 23 is_stmt 0 discriminator 1 view .LVU52
+ 228 009e 4F4A     		ldr	r2, .L25+12
+ 229 00a0 1068     		ldr	r0, [r2]
+ 230 00a2 48F80300 		str	r0, [r8, r3]	@ unaligned
+ 231              		.loc 1 48 48 is_stmt 1 discriminator 2 view .LVU53
+ 232              		.loc 1 48 50 is_stmt 0 discriminator 2 view .LVU54
+ 233 00a6 0335     		adds	r5, r5, #3
+ 234              	.LVL23:
+ 235              		.loc 1 48 50 discriminator 2 view .LVU55
+ 236 00a8 EDB2     		uxtb	r5, r5
+ 237              	.LVL24:
+ 238              		.loc 1 48 56 is_stmt 1 discriminator 2 view .LVU56
+ 239              		.loc 1 48 56 is_stmt 0 view .LVU57
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 6
+
+
+ 240 00aa 36E0     		b	.L18
+ 241              	.L15:
+  49:Core/Src/device/onenet.c ****             case '%': strcat(sign + j, "%25"); j += 3; break;
+ 242              		.loc 1 49 23 is_stmt 1 view .LVU58
+ 243 00ac 06EB0508 		add	r8, r6, r5
+ 244 00b0 4046     		mov	r0, r8
+ 245 00b2 FFF7FEFF 		bl	strlen
+ 246              	.LVL25:
+ 247 00b6 0346     		mov	r3, r0
+ 248              		.loc 1 49 23 is_stmt 0 discriminator 1 view .LVU59
+ 249 00b8 494A     		ldr	r2, .L25+16
+ 250 00ba 1068     		ldr	r0, [r2]
+ 251 00bc 48F80300 		str	r0, [r8, r3]	@ unaligned
+ 252              		.loc 1 49 48 is_stmt 1 discriminator 2 view .LVU60
+ 253              		.loc 1 49 50 is_stmt 0 discriminator 2 view .LVU61
+ 254 00c0 0335     		adds	r5, r5, #3
+ 255              	.LVL26:
+ 256              		.loc 1 49 50 discriminator 2 view .LVU62
+ 257 00c2 EDB2     		uxtb	r5, r5
+ 258              	.LVL27:
+ 259              		.loc 1 49 56 is_stmt 1 discriminator 2 view .LVU63
+ 260              		.loc 1 49 56 is_stmt 0 view .LVU64
+ 261 00c4 29E0     		b	.L18
+ 262              	.L16:
+  50:Core/Src/device/onenet.c ****             case '#': strcat(sign + j, "%23"); j += 3; break;
+ 263              		.loc 1 50 23 is_stmt 1 view .LVU65
+ 264 00c6 06EB0508 		add	r8, r6, r5
+ 265 00ca 4046     		mov	r0, r8
+ 266 00cc FFF7FEFF 		bl	strlen
+ 267              	.LVL28:
+ 268 00d0 0346     		mov	r3, r0
+ 269              		.loc 1 50 23 is_stmt 0 discriminator 1 view .LVU66
+ 270 00d2 444A     		ldr	r2, .L25+20
+ 271 00d4 1068     		ldr	r0, [r2]
+ 272 00d6 48F80300 		str	r0, [r8, r3]	@ unaligned
+ 273              		.loc 1 50 48 is_stmt 1 discriminator 2 view .LVU67
+ 274              		.loc 1 50 50 is_stmt 0 discriminator 2 view .LVU68
+ 275 00da 0335     		adds	r5, r5, #3
+ 276              	.LVL29:
+ 277              		.loc 1 50 50 discriminator 2 view .LVU69
+ 278 00dc EDB2     		uxtb	r5, r5
+ 279              	.LVL30:
+ 280              		.loc 1 50 56 is_stmt 1 discriminator 2 view .LVU70
+ 281              		.loc 1 50 56 is_stmt 0 view .LVU71
+ 282 00de 1CE0     		b	.L18
+ 283              	.L14:
+  51:Core/Src/device/onenet.c ****             case '&': strcat(sign + j, "%26"); j += 3; break;
+ 284              		.loc 1 51 23 is_stmt 1 view .LVU72
+ 285 00e0 06EB0508 		add	r8, r6, r5
+ 286 00e4 4046     		mov	r0, r8
+ 287 00e6 FFF7FEFF 		bl	strlen
+ 288              	.LVL31:
+ 289 00ea 0346     		mov	r3, r0
+ 290              		.loc 1 51 23 is_stmt 0 discriminator 1 view .LVU73
+ 291 00ec 3E4A     		ldr	r2, .L25+24
+ 292 00ee 1068     		ldr	r0, [r2]
+ 293 00f0 48F80300 		str	r0, [r8, r3]	@ unaligned
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 7
+
+
+ 294              		.loc 1 51 48 is_stmt 1 discriminator 2 view .LVU74
+ 295              		.loc 1 51 50 is_stmt 0 discriminator 2 view .LVU75
+ 296 00f4 0335     		adds	r5, r5, #3
+ 297              	.LVL32:
+ 298              		.loc 1 51 50 discriminator 2 view .LVU76
+ 299 00f6 EDB2     		uxtb	r5, r5
+ 300              	.LVL33:
+ 301              		.loc 1 51 56 is_stmt 1 discriminator 2 view .LVU77
+ 302              		.loc 1 51 56 is_stmt 0 view .LVU78
+ 303 00f8 0FE0     		b	.L18
+ 304              	.L11:
+  52:Core/Src/device/onenet.c ****             case '=': strcat(sign + j, "%3D"); j += 3; break;
+ 305              		.loc 1 52 23 is_stmt 1 view .LVU79
+ 306 00fa 06EB0508 		add	r8, r6, r5
+ 307 00fe 4046     		mov	r0, r8
+ 308 0100 FFF7FEFF 		bl	strlen
+ 309              	.LVL34:
+ 310 0104 0346     		mov	r3, r0
+ 311              		.loc 1 52 23 is_stmt 0 discriminator 1 view .LVU80
+ 312 0106 394A     		ldr	r2, .L25+28
+ 313 0108 1068     		ldr	r0, [r2]
+ 314 010a 48F80300 		str	r0, [r8, r3]	@ unaligned
+ 315              		.loc 1 52 48 is_stmt 1 discriminator 2 view .LVU81
+ 316              		.loc 1 52 50 is_stmt 0 discriminator 2 view .LVU82
+ 317 010e 0335     		adds	r5, r5, #3
+ 318              	.LVL35:
+ 319              		.loc 1 52 50 discriminator 2 view .LVU83
+ 320 0110 EDB2     		uxtb	r5, r5
+ 321              	.LVL36:
+ 322              		.loc 1 52 56 is_stmt 1 discriminator 2 view .LVU84
+ 323              		.loc 1 52 56 is_stmt 0 view .LVU85
+ 324 0112 02E0     		b	.L18
+ 325              	.L8:
+  53:Core/Src/device/onenet.c ****             default:  sign[j] = sign_t[i];    j++;     break;
+ 326              		.loc 1 53 23 is_stmt 1 view .LVU86
+ 327              		.loc 1 53 31 is_stmt 0 view .LVU87
+ 328 0114 7255     		strb	r2, [r6, r5]
+ 329              		.loc 1 53 47 is_stmt 1 view .LVU88
+ 330              		.loc 1 53 48 is_stmt 0 view .LVU89
+ 331 0116 0135     		adds	r5, r5, #1
+ 332              	.LVL37:
+ 333              		.loc 1 53 48 view .LVU90
+ 334 0118 EDB2     		uxtb	r5, r5
+ 335              	.LVL38:
+ 336              		.loc 1 53 56 is_stmt 1 view .LVU91
+ 337              	.L18:
+  43:Core/Src/device/onenet.c ****         switch (sign_t[i]) {
+ 338              		.loc 1 43 39 discriminator 2 view .LVU92
+ 339 011a 0134     		adds	r4, r4, #1
+ 340              	.LVL39:
+  43:Core/Src/device/onenet.c ****         switch (sign_t[i]) {
+ 341              		.loc 1 43 39 is_stmt 0 discriminator 2 view .LVU93
+ 342 011c E4B2     		uxtb	r4, r4
+ 343              	.LVL40:
+ 344              	.L7:
+  43:Core/Src/device/onenet.c ****         switch (sign_t[i]) {
+ 345              		.loc 1 43 26 is_stmt 1 discriminator 1 view .LVU94
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 8
+
+
+ 346 011e BC42     		cmp	r4, r7
+ 347 0120 4CD2     		bcs	.L24
+  44:Core/Src/device/onenet.c ****             case '+': strcat(sign + j, "%2B"); j += 3; break;
+ 348              		.loc 1 44 9 view .LVU95
+  44:Core/Src/device/onenet.c ****             case '+': strcat(sign + j, "%2B"); j += 3; break;
+ 349              		.loc 1 44 23 is_stmt 0 view .LVU96
+ 350 0122 04F12803 		add	r3, r4, #40
+ 351 0126 6B44     		add	r3, sp, r3
+ 352 0128 13F8282C 		ldrb	r2, [r3, #-40]	@ zero_extendqisi2
+  44:Core/Src/device/onenet.c ****             case '+': strcat(sign + j, "%2B"); j += 3; break;
+ 353              		.loc 1 44 9 view .LVU97
+ 354 012c A2F12003 		sub	r3, r2, #32
+ 355 0130 1F2B     		cmp	r3, #31
+ 356 0132 EFD8     		bhi	.L8
+ 357 0134 01A1     		adr	r1, .L10
+ 358 0136 51F823F0 		ldr	pc, [r1, r3, lsl #2]
+ 359 013a 00BF     		.p2align 2
+ 360              	.L10:
+ 361 013c 5F000000 		.word	.L17+1
+ 362 0140 15010000 		.word	.L8+1
+ 363 0144 15010000 		.word	.L8+1
+ 364 0148 C7000000 		.word	.L16+1
+ 365 014c 15010000 		.word	.L8+1
+ 366 0150 AD000000 		.word	.L15+1
+ 367 0154 E1000000 		.word	.L14+1
+ 368 0158 15010000 		.word	.L8+1
+ 369 015c 15010000 		.word	.L8+1
+ 370 0160 15010000 		.word	.L8+1
+ 371 0164 15010000 		.word	.L8+1
+ 372 0168 45000000 		.word	.L13+1
+ 373 016c 15010000 		.word	.L8+1
+ 374 0170 15010000 		.word	.L8+1
+ 375 0174 15010000 		.word	.L8+1
+ 376 0178 79000000 		.word	.L12+1
+ 377 017c 15010000 		.word	.L8+1
+ 378 0180 15010000 		.word	.L8+1
+ 379 0184 15010000 		.word	.L8+1
+ 380 0188 15010000 		.word	.L8+1
+ 381 018c 15010000 		.word	.L8+1
+ 382 0190 15010000 		.word	.L8+1
+ 383 0194 15010000 		.word	.L8+1
+ 384 0198 15010000 		.word	.L8+1
+ 385 019c 15010000 		.word	.L8+1
+ 386 01a0 15010000 		.word	.L8+1
+ 387 01a4 15010000 		.word	.L8+1
+ 388 01a8 15010000 		.word	.L8+1
+ 389 01ac 15010000 		.word	.L8+1
+ 390 01b0 FB000000 		.word	.L11+1
+ 391 01b4 15010000 		.word	.L8+1
+ 392 01b8 93000000 		.word	.L9+1
+ 393              		.p2align 1
+ 394              	.L24:
+  54:Core/Src/device/onenet.c ****         }
+  55:Core/Src/device/onenet.c ****     }
+  56:Core/Src/device/onenet.c ****     sign[j] = 0;
+ 395              		.loc 1 56 5 is_stmt 1 view .LVU98
+ 396              		.loc 1 56 13 is_stmt 0 view .LVU99
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 9
+
+
+ 397 01bc 0020     		movs	r0, #0
+ 398 01be 7055     		strb	r0, [r6, r5]
+  57:Core/Src/device/onenet.c ****     return 0;
+ 399              		.loc 1 57 5 is_stmt 1 view .LVU100
+ 400              	.LVL41:
+ 401              	.L4:
+  58:Core/Src/device/onenet.c **** }
+ 402              		.loc 1 58 1 is_stmt 0 view .LVU101
+ 403 01c0 0AB0     		add	sp, sp, #40
+ 404              	.LCFI3:
+ 405              		.cfi_remember_state
+ 406              		.cfi_def_cfa_offset 24
+ 407              		@ sp needed
+ 408 01c2 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 409              	.LVL42:
+ 410              	.L20:
+ 411              	.LCFI4:
+ 412              		.cfi_restore_state
+  38:Core/Src/device/onenet.c **** 
+ 413              		.loc 1 38 47 discriminator 3 view .LVU102
+ 414 01c6 0120     		movs	r0, #1
+ 415              	.LVL43:
+  38:Core/Src/device/onenet.c **** 
+ 416              		.loc 1 38 47 discriminator 3 view .LVU103
+ 417 01c8 FAE7     		b	.L4
+ 418              	.LVL44:
+ 419              	.L21:
+  38:Core/Src/device/onenet.c **** 
+ 420              		.loc 1 38 47 discriminator 3 view .LVU104
+ 421 01ca 0120     		movs	r0, #1
+ 422              	.LVL45:
+  38:Core/Src/device/onenet.c **** 
+ 423              		.loc 1 38 47 discriminator 3 view .LVU105
+ 424 01cc F8E7     		b	.L4
+ 425              	.L26:
+ 426 01ce 00BF     		.align	2
+ 427              	.L25:
+ 428 01d0 00000000 		.word	.LC0
+ 429 01d4 04000000 		.word	.LC1
+ 430 01d8 08000000 		.word	.LC2
+ 431 01dc 0C000000 		.word	.LC3
+ 432 01e0 10000000 		.word	.LC4
+ 433 01e4 14000000 		.word	.LC5
+ 434 01e8 18000000 		.word	.LC6
+ 435 01ec 1C000000 		.word	.LC7
+ 436              		.cfi_endproc
+ 437              	.LFE74:
+ 439              		.section	.rodata.OneNET_Authorization.str1.4,"aMS",%progbits,1
+ 440              		.align	2
+ 441              	.LC8:
+ 442 0000 25640A25 		.ascii	"%d\012%s\012products/%s\012%s\000"
+ 442      730A7072 
+ 442      6F647563 
+ 442      74732F25 
+ 442      730A2573 
+ 443 0015 000000   		.align	2
+ 444              	.LC9:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 10
+
+
+ 445 0018 73686131 		.ascii	"sha1\000"
+ 445      00
+ 446 001d 000000   		.align	2
+ 447              	.LC10:
+ 448 0020 25640A25 		.ascii	"%d\012%s\012products/%s/devices/%s\012%s\000"
+ 448      730A7072 
+ 448      6F647563 
+ 448      74732F25 
+ 448      732F6465 
+ 449              		.align	2
+ 450              	.LC11:
+ 451 0040 76657273 		.ascii	"version=%s&res=products%%2F%s&et=%d&method=%s&sign="
+ 451      696F6E3D 
+ 451      25732672 
+ 451      65733D70 
+ 451      726F6475 
+ 452 0073 257300   		.ascii	"%s\000"
+ 453 0076 0000     		.align	2
+ 454              	.LC12:
+ 455 0078 76657273 		.ascii	"version=%s&res=products%%2F%s%%2Fdevices%%2F%s&et=%"
+ 455      696F6E3D 
+ 455      25732672 
+ 455      65733D70 
+ 455      726F6475 
+ 456 00ab 64266D65 		.ascii	"d&method=%s&sign=%s\000"
+ 456      74686F64 
+ 456      3D257326 
+ 456      7369676E 
+ 456      3D257300 
+ 457              		.section	.text.OneNET_Authorization,"ax",%progbits
+ 458              		.align	1
+ 459              		.syntax unified
+ 460              		.thumb
+ 461              		.thumb_func
+ 463              	OneNET_Authorization:
+ 464              	.LVL46:
+ 465              	.LFB75:
+  59:Core/Src/device/onenet.c **** 
+  60:Core/Src/device/onenet.c **** /* ==================================================================
+  61:Core/Src/device/onenet.c ****  *  OneNET_Authorization — 计算 MQTT 鉴权 Token
+  62:Core/Src/device/onenet.c ****  * ================================================================== */
+  63:Core/Src/device/onenet.c **** #define METHOD "sha1"
+  64:Core/Src/device/onenet.c **** 
+  65:Core/Src/device/onenet.c **** static unsigned char OneNET_Authorization(char *ver, char *res, unsigned int et,
+  66:Core/Src/device/onenet.c ****     char *access_key, char *dev_name, char *auth_buf, unsigned short auth_len, bool flag)
+  67:Core/Src/device/onenet.c **** {
+ 466              		.loc 1 67 1 is_stmt 1 view -0
+ 467              		.cfi_startproc
+ 468              		@ args = 16, pretend = 0, frame = 280
+ 469              		@ frame_needed = 0, uses_anonymous_args = 0
+ 470              		.loc 1 67 1 is_stmt 0 view .LVU107
+ 471 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+ 472              	.LCFI5:
+ 473              		.cfi_def_cfa_offset 36
+ 474              		.cfi_offset 4, -36
+ 475              		.cfi_offset 5, -32
+ 476              		.cfi_offset 6, -28
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 11
+
+
+ 477              		.cfi_offset 7, -24
+ 478              		.cfi_offset 8, -20
+ 479              		.cfi_offset 9, -16
+ 480              		.cfi_offset 10, -12
+ 481              		.cfi_offset 11, -8
+ 482              		.cfi_offset 14, -4
+ 483 0004 CDB0     		sub	sp, sp, #308
+ 484              	.LCFI6:
+ 485              		.cfi_def_cfa_offset 344
+ 486 0006 1546     		mov	r5, r2
+ 487 0008 BDF86061 		ldrh	r6, [sp, #352]
+ 488 000c 9DF86471 		ldrb	r7, [sp, #356]	@ zero_extendqisi2
+  68:Core/Src/device/onenet.c ****     size_t olen = 0;
+ 489              		.loc 1 68 5 is_stmt 1 view .LVU108
+ 490              		.loc 1 68 12 is_stmt 0 view .LVU109
+ 491 0010 0022     		movs	r2, #0
+ 492              	.LVL47:
+ 493              		.loc 1 68 12 view .LVU110
+ 494 0012 4B92     		str	r2, [sp, #300]
+  69:Core/Src/device/onenet.c ****     char sign_buf[64], hmac_buf[64], acc_base64[64], str_sig[72];
+ 495              		.loc 1 69 5 is_stmt 1 view .LVU111
+  70:Core/Src/device/onenet.c **** 
+  71:Core/Src/device/onenet.c ****     if (!ver || !res || et < 1564562581 || !access_key || !auth_buf || auth_len < 120)
+ 496              		.loc 1 71 5 view .LVU112
+ 497              		.loc 1 71 8 is_stmt 0 view .LVU113
+ 498 0014 0690     		str	r0, [sp, #24]
+ 499 0016 0028     		cmp	r0, #0
+ 500 0018 00F09980 		beq	.L32
+ 501 001c 0C46     		mov	r4, r1
+ 502 001e 9846     		mov	r8, r3
+ 503 0020 8346     		mov	fp, r0
+ 504              		.loc 1 71 14 discriminator 1 view .LVU114
+ 505 0022 0029     		cmp	r1, #0
+ 506 0024 00F09580 		beq	.L33
+ 507              		.loc 1 71 22 discriminator 2 view .LVU115
+ 508 0028 4F4B     		ldr	r3, .L40
+ 509              	.LVL48:
+ 510              		.loc 1 71 22 discriminator 2 view .LVU116
+ 511 002a 9D42     		cmp	r5, r3
+ 512 002c 40F29380 		bls	.L34
+ 513              		.loc 1 71 41 discriminator 3 view .LVU117
+ 514 0030 B8F1000F 		cmp	r8, #0
+ 515 0034 00F09380 		beq	.L35
+ 516              		.loc 1 71 56 discriminator 4 view .LVU118
+ 517 0038 579B     		ldr	r3, [sp, #348]
+ 518 003a 002B     		cmp	r3, #0
+ 519 003c 00F09180 		beq	.L36
+ 520              		.loc 1 71 69 discriminator 5 view .LVU119
+ 521 0040 772E     		cmp	r6, #119
+ 522 0042 01D8     		bhi	.L39
+  72:Core/Src/device/onenet.c ****         return 1;
+ 523              		.loc 1 72 16 view .LVU120
+ 524 0044 0120     		movs	r0, #1
+ 525              	.LVL49:
+ 526              		.loc 1 72 16 view .LVU121
+ 527 0046 87E0     		b	.L28
+ 528              	.LVL50:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 12
+
+
+ 529              	.L39:
+  73:Core/Src/device/onenet.c **** 
+  74:Core/Src/device/onenet.c ****     memset(acc_base64, 0, sizeof(acc_base64));
+ 530              		.loc 1 74 5 is_stmt 1 view .LVU122
+ 531 0048 0DF16C09 		add	r9, sp, #108
+ 532 004c 4FF0400A 		mov	r10, #64
+ 533 0050 5246     		mov	r2, r10
+ 534 0052 0021     		movs	r1, #0
+ 535              	.LVL51:
+ 536              		.loc 1 74 5 is_stmt 0 view .LVU123
+ 537 0054 4846     		mov	r0, r9
+ 538              	.LVL52:
+ 539              		.loc 1 74 5 view .LVU124
+ 540 0056 FFF7FEFF 		bl	memset
+ 541              	.LVL53:
+  75:Core/Src/device/onenet.c ****     BASE64_Decode((unsigned char *)acc_base64, sizeof(acc_base64), &olen,
+ 542              		.loc 1 75 5 is_stmt 1 view .LVU125
+ 543 005a 4046     		mov	r0, r8
+ 544 005c FFF7FEFF 		bl	strlen
+ 545              	.LVL54:
+ 546              		.loc 1 75 5 is_stmt 0 discriminator 1 view .LVU126
+ 547 0060 0090     		str	r0, [sp]
+ 548 0062 4346     		mov	r3, r8
+ 549 0064 4BAA     		add	r2, sp, #300
+ 550 0066 5146     		mov	r1, r10
+ 551 0068 4846     		mov	r0, r9
+ 552 006a FFF7FEFF 		bl	BASE64_Decode
+ 553              	.LVL55:
+  76:Core/Src/device/onenet.c ****                   (unsigned char *)access_key, strlen(access_key));
+  77:Core/Src/device/onenet.c **** 
+  78:Core/Src/device/onenet.c ****     memset(str_sig, 0, sizeof(str_sig));
+ 554              		.loc 1 78 5 is_stmt 1 view .LVU127
+ 555 006e 4822     		movs	r2, #72
+ 556 0070 0021     		movs	r1, #0
+ 557 0072 09A8     		add	r0, sp, #36
+ 558 0074 FFF7FEFF 		bl	memset
+ 559              	.LVL56:
+  79:Core/Src/device/onenet.c ****     if (flag)
+ 560              		.loc 1 79 5 view .LVU128
+ 561              		.loc 1 79 8 is_stmt 0 view .LVU129
+ 562 0078 002F     		cmp	r7, #0
+ 563 007a 4AD0     		beq	.L29
+  80:Core/Src/device/onenet.c ****         snprintf(str_sig, sizeof(str_sig), "%d\n%s\nproducts/%s\n%s", et, METHOD, res, ver);
+ 564              		.loc 1 80 9 is_stmt 1 view .LVU130
+ 565 007c CDF808B0 		str	fp, [sp, #8]
+ 566 0080 0194     		str	r4, [sp, #4]
+ 567 0082 3A4B     		ldr	r3, .L40+4
+ 568 0084 0093     		str	r3, [sp]
+ 569 0086 2B46     		mov	r3, r5
+ 570 0088 394A     		ldr	r2, .L40+8
+ 571 008a 4821     		movs	r1, #72
+ 572 008c 09A8     		add	r0, sp, #36
+ 573 008e FFF7FEFF 		bl	snprintf
+ 574              	.LVL57:
+ 575              	.L30:
+  81:Core/Src/device/onenet.c ****     else
+  82:Core/Src/device/onenet.c ****         snprintf(str_sig, sizeof(str_sig), "%d\n%s\nproducts/%s/devices/%s\n%s",
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 13
+
+
+  83:Core/Src/device/onenet.c ****                  et, METHOD, res, dev_name, ver);
+  84:Core/Src/device/onenet.c **** 
+  85:Core/Src/device/onenet.c ****     memset(hmac_buf, 0, sizeof(hmac_buf));
+ 576              		.loc 1 85 5 view .LVU131
+ 577 0092 0DF1AC08 		add	r8, sp, #172
+ 578              	.LVL58:
+ 579              		.loc 1 85 5 is_stmt 0 view .LVU132
+ 580 0096 4FF04009 		mov	r9, #64
+ 581 009a 4A46     		mov	r2, r9
+ 582 009c 0021     		movs	r1, #0
+ 583 009e 4046     		mov	r0, r8
+ 584 00a0 FFF7FEFF 		bl	memset
+ 585              	.LVL59:
+  86:Core/Src/device/onenet.c ****     hmac_sha1((unsigned char *)acc_base64, strlen(acc_base64),
+ 586              		.loc 1 86 5 is_stmt 1 view .LVU133
+ 587              		.loc 1 86 44 is_stmt 0 view .LVU134
+ 588 00a4 0DF16C0A 		add	r10, sp, #108
+ 589 00a8 5046     		mov	r0, r10
+ 590 00aa FFF7FEFF 		bl	strlen
+ 591              	.LVL60:
+ 592 00ae 0790     		str	r0, [sp, #28]
+  87:Core/Src/device/onenet.c ****               (unsigned char *)str_sig, strlen(str_sig), (unsigned char *)hmac_buf);
+ 593              		.loc 1 87 41 view .LVU135
+ 594 00b0 0DF1240B 		add	fp, sp, #36
+ 595              	.LVL61:
+ 596              		.loc 1 87 41 view .LVU136
+ 597 00b4 5846     		mov	r0, fp
+ 598 00b6 FFF7FEFF 		bl	strlen
+ 599              	.LVL62:
+ 600 00ba 0346     		mov	r3, r0
+  86:Core/Src/device/onenet.c ****     hmac_sha1((unsigned char *)acc_base64, strlen(acc_base64),
+ 601              		.loc 1 86 5 view .LVU137
+ 602 00bc CDF80080 		str	r8, [sp]
+ 603 00c0 5A46     		mov	r2, fp
+ 604 00c2 0799     		ldr	r1, [sp, #28]
+ 605 00c4 5046     		mov	r0, r10
+ 606 00c6 FFF7FEFF 		bl	hmac_sha1
+ 607              	.LVL63:
+  88:Core/Src/device/onenet.c **** 
+  89:Core/Src/device/onenet.c ****     olen = 0;
+ 608              		.loc 1 89 5 is_stmt 1 view .LVU138
+ 609              		.loc 1 89 10 is_stmt 0 view .LVU139
+ 610 00ca 0021     		movs	r1, #0
+ 611 00cc 4B91     		str	r1, [sp, #300]
+  90:Core/Src/device/onenet.c ****     memset(sign_buf, 0, sizeof(sign_buf));
+ 612              		.loc 1 90 5 is_stmt 1 view .LVU140
+ 613 00ce 0DF1EC0A 		add	r10, sp, #236
+ 614 00d2 4A46     		mov	r2, r9
+ 615 00d4 5046     		mov	r0, r10
+ 616 00d6 FFF7FEFF 		bl	memset
+ 617              	.LVL64:
+  91:Core/Src/device/onenet.c ****     BASE64_Encode((unsigned char *)sign_buf, sizeof(sign_buf), &olen,
+ 618              		.loc 1 91 5 view .LVU141
+ 619 00da 4046     		mov	r0, r8
+ 620 00dc FFF7FEFF 		bl	strlen
+ 621              	.LVL65:
+ 622              		.loc 1 91 5 is_stmt 0 discriminator 1 view .LVU142
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 14
+
+
+ 623 00e0 0090     		str	r0, [sp]
+ 624 00e2 4346     		mov	r3, r8
+ 625 00e4 4BAA     		add	r2, sp, #300
+ 626 00e6 4946     		mov	r1, r9
+ 627 00e8 5046     		mov	r0, r10
+ 628 00ea FFF7FEFF 		bl	BASE64_Encode
+ 629              	.LVL66:
+  92:Core/Src/device/onenet.c ****                   (unsigned char *)hmac_buf, strlen(hmac_buf));
+  93:Core/Src/device/onenet.c **** 
+  94:Core/Src/device/onenet.c ****     OTA_UrlEncode(sign_buf);
+ 630              		.loc 1 94 5 is_stmt 1 view .LVU143
+ 631 00ee 5046     		mov	r0, r10
+ 632 00f0 FFF7FEFF 		bl	OTA_UrlEncode
+ 633              	.LVL67:
+  95:Core/Src/device/onenet.c **** 
+  96:Core/Src/device/onenet.c ****     if (flag)
+ 634              		.loc 1 96 5 view .LVU144
+ 635              		.loc 1 96 8 is_stmt 0 view .LVU145
+ 636 00f4 DFB1     		cbz	r7, .L31
+  97:Core/Src/device/onenet.c ****         snprintf(auth_buf, auth_len, "version=%s&res=products%%2F%s&et=%d&method=%s&sign=%s",
+ 637              		.loc 1 97 9 is_stmt 1 view .LVU146
+ 638 00f6 CDF80CA0 		str	r10, [sp, #12]
+ 639 00fa 1C4B     		ldr	r3, .L40+4
+ 640 00fc 0293     		str	r3, [sp, #8]
+ 641 00fe 0195     		str	r5, [sp, #4]
+ 642 0100 0094     		str	r4, [sp]
+ 643 0102 069B     		ldr	r3, [sp, #24]
+ 644 0104 1B4A     		ldr	r2, .L40+12
+ 645 0106 3146     		mov	r1, r6
+ 646 0108 5798     		ldr	r0, [sp, #348]
+ 647 010a FFF7FEFF 		bl	snprintf
+ 648              	.LVL68:
+  98:Core/Src/device/onenet.c ****                  ver, res, et, METHOD, sign_buf);
+  99:Core/Src/device/onenet.c ****     else
+ 100:Core/Src/device/onenet.c ****         snprintf(auth_buf, auth_len,
+ 101:Core/Src/device/onenet.c ****                  "version=%s&res=products%%2F%s%%2Fdevices%%2F%s&et=%d&method=%s&sign=%s",
+ 102:Core/Src/device/onenet.c ****                  ver, res, dev_name, et, METHOD, sign_buf);
+ 103:Core/Src/device/onenet.c ****     return 0;
+ 649              		.loc 1 103 12 is_stmt 0 view .LVU147
+ 650 010e 0020     		movs	r0, #0
+ 651 0110 22E0     		b	.L28
+ 652              	.LVL69:
+ 653              	.L29:
+  82:Core/Src/device/onenet.c ****                  et, METHOD, res, dev_name, ver);
+ 654              		.loc 1 82 9 is_stmt 1 view .LVU148
+ 655 0112 069B     		ldr	r3, [sp, #24]
+ 656 0114 0393     		str	r3, [sp, #12]
+ 657 0116 569B     		ldr	r3, [sp, #344]
+ 658 0118 0293     		str	r3, [sp, #8]
+ 659 011a 0194     		str	r4, [sp, #4]
+ 660 011c 134B     		ldr	r3, .L40+4
+ 661 011e 0093     		str	r3, [sp]
+ 662 0120 2B46     		mov	r3, r5
+ 663 0122 154A     		ldr	r2, .L40+16
+ 664 0124 4821     		movs	r1, #72
+ 665 0126 09A8     		add	r0, sp, #36
+ 666 0128 FFF7FEFF 		bl	snprintf
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 15
+
+
+ 667              	.LVL70:
+ 668 012c B1E7     		b	.L30
+ 669              	.LVL71:
+ 670              	.L31:
+ 100:Core/Src/device/onenet.c ****                  "version=%s&res=products%%2F%s%%2Fdevices%%2F%s&et=%d&method=%s&sign=%s",
+ 671              		.loc 1 100 9 view .LVU149
+ 672 012e 3BAB     		add	r3, sp, #236
+ 673 0130 0493     		str	r3, [sp, #16]
+ 674 0132 0E4B     		ldr	r3, .L40+4
+ 675 0134 0393     		str	r3, [sp, #12]
+ 676 0136 0295     		str	r5, [sp, #8]
+ 677 0138 569B     		ldr	r3, [sp, #344]
+ 678 013a 0193     		str	r3, [sp, #4]
+ 679 013c 0094     		str	r4, [sp]
+ 680 013e 069B     		ldr	r3, [sp, #24]
+ 681 0140 0E4A     		ldr	r2, .L40+20
+ 682 0142 3146     		mov	r1, r6
+ 683 0144 5798     		ldr	r0, [sp, #348]
+ 684 0146 FFF7FEFF 		bl	snprintf
+ 685              	.LVL72:
+ 686              		.loc 1 103 12 is_stmt 0 view .LVU150
+ 687 014a 0020     		movs	r0, #0
+ 688 014c 04E0     		b	.L28
+ 689              	.LVL73:
+ 690              	.L32:
+  72:Core/Src/device/onenet.c **** 
+ 691              		.loc 1 72 16 view .LVU151
+ 692 014e 0120     		movs	r0, #1
+ 693              	.LVL74:
+  72:Core/Src/device/onenet.c **** 
+ 694              		.loc 1 72 16 view .LVU152
+ 695 0150 02E0     		b	.L28
+ 696              	.LVL75:
+ 697              	.L33:
+  72:Core/Src/device/onenet.c **** 
+ 698              		.loc 1 72 16 view .LVU153
+ 699 0152 0120     		movs	r0, #1
+ 700              	.LVL76:
+  72:Core/Src/device/onenet.c **** 
+ 701              		.loc 1 72 16 view .LVU154
+ 702 0154 00E0     		b	.L28
+ 703              	.LVL77:
+ 704              	.L34:
+  72:Core/Src/device/onenet.c **** 
+ 705              		.loc 1 72 16 view .LVU155
+ 706 0156 0120     		movs	r0, #1
+ 707              	.LVL78:
+ 708              	.L28:
+ 104:Core/Src/device/onenet.c **** }
+ 709              		.loc 1 104 1 view .LVU156
+ 710 0158 4DB0     		add	sp, sp, #308
+ 711              	.LCFI7:
+ 712              		.cfi_remember_state
+ 713              		.cfi_def_cfa_offset 36
+ 714              		@ sp needed
+ 715 015a BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 716              	.LVL79:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 16
+
+
+ 717              	.L35:
+ 718              	.LCFI8:
+ 719              		.cfi_restore_state
+  72:Core/Src/device/onenet.c **** 
+ 720              		.loc 1 72 16 view .LVU157
+ 721 015e 0120     		movs	r0, #1
+ 722              	.LVL80:
+  72:Core/Src/device/onenet.c **** 
+ 723              		.loc 1 72 16 view .LVU158
+ 724 0160 FAE7     		b	.L28
+ 725              	.LVL81:
+ 726              	.L36:
+  72:Core/Src/device/onenet.c **** 
+ 727              		.loc 1 72 16 view .LVU159
+ 728 0162 0120     		movs	r0, #1
+ 729              	.LVL82:
+  72:Core/Src/device/onenet.c **** 
+ 730              		.loc 1 72 16 view .LVU160
+ 731 0164 F8E7     		b	.L28
+ 732              	.L41:
+ 733 0166 00BF     		.align	2
+ 734              	.L40:
+ 735 0168 9454415D 		.word	1564562580
+ 736 016c 18000000 		.word	.LC9
+ 737 0170 00000000 		.word	.LC8
+ 738 0174 40000000 		.word	.LC11
+ 739 0178 20000000 		.word	.LC10
+ 740 017c 78000000 		.word	.LC12
+ 741              		.cfi_endproc
+ 742              	.LFE75:
+ 744              		.section	.rodata.OneNet_FillBuf.str1.4,"aMS",%progbits,1
+ 745              		.align	2
+ 746              	.LC13:
+ 747 0000 7B226964 		.ascii	"{\"id\":\"123\",\"params\":{\000"
+ 747      223A2231 
+ 747      3233222C 
+ 747      22706172 
+ 747      616D7322 
+ 748 0017 00       		.align	2
+ 749              	.LC14:
+ 750 0018 66616C73 		.ascii	"false\000"
+ 750      6500
+ 751 001e 0000     		.align	2
+ 752              	.LC15:
+ 753 0020 226C6564 		.ascii	"\"led\":{\"value\":%s},\000"
+ 753      223A7B22 
+ 753      76616C75 
+ 753      65223A25 
+ 753      737D2C00 
+ 754              		.align	2
+ 755              	.LC16:
+ 756 0034 22546172 		.ascii	"\"Target\":{\"value\":%d},\000"
+ 756      67657422 
+ 756      3A7B2276 
+ 756      616C7565 
+ 756      223A2564 
+ 757 004b 00       		.align	2
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 17
+
+
+ 758              	.LC17:
+ 759 004c 2274656D 		.ascii	"\"temp1\":{\"value\":%d},\000"
+ 759      7031223A 
+ 759      7B227661 
+ 759      6C756522 
+ 759      3A25647D 
+ 760 0062 0000     		.align	2
+ 761              	.LC18:
+ 762 0064 2274656D 		.ascii	"\"temp2\":{\"value\":%d},\000"
+ 762      7032223A 
+ 762      7B227661 
+ 762      6C756522 
+ 762      3A25647D 
+ 763 007a 0000     		.align	2
+ 764              	.LC19:
+ 765 007c 2274656D 		.ascii	"\"temp3\":{\"value\":%d}\000"
+ 765      7033223A 
+ 765      7B227661 
+ 765      6C756522 
+ 765      3A25647D 
+ 766 0091 000000   		.align	2
+ 767              	.LC20:
+ 768 0094 7D7D00   		.ascii	"}}\000"
+ 769              		.section	.text.OneNet_FillBuf,"ax",%progbits
+ 770              		.align	1
+ 771              		.syntax unified
+ 772              		.thumb
+ 773              		.thumb_func
+ 775              	OneNet_FillBuf:
+ 776              	.LVL83:
+ 777              	.LFB78:
+ 105:Core/Src/device/onenet.c **** 
+ 106:Core/Src/device/onenet.c **** /* ==================================================================
+ 107:Core/Src/device/onenet.c ****  *  OneNET_RegisterDevice — 在 OneNET 平台注册设备
+ 108:Core/Src/device/onenet.c ****  * ================================================================== */
+ 109:Core/Src/device/onenet.c **** bool OneNET_RegisterDevice(void)
+ 110:Core/Src/device/onenet.c **** {
+ 111:Core/Src/device/onenet.c ****     bool result = true;
+ 112:Core/Src/device/onenet.c ****     unsigned short send_len = 11 + strlen(ONENET_DEV_NAME);
+ 113:Core/Src/device/onenet.c ****     char auth_buf[144], *data_ptr = NULL;
+ 114:Core/Src/device/onenet.c ****     static char send_buf[512];
+ 115:Core/Src/device/onenet.c **** 
+ 116:Core/Src/device/onenet.c ****     {
+ 117:Core/Src/device/onenet.c ****         int retry = 0;
+ 118:Core/Src/device/onenet.c ****         while (ESP8266_SendCmd("AT+CIPSTART=\"TCP\",\"mqtts.heclouds.com\",1883\r\n", "CONNECT")) {
+ 119:Core/Src/device/onenet.c ****             if (++retry > 10) {
+ 120:Core/Src/device/onenet.c ****                 printf("[ONENET] Register TCP timeout\r\n");
+ 121:Core/Src/device/onenet.c ****                 return 1;
+ 122:Core/Src/device/onenet.c ****             }
+ 123:Core/Src/device/onenet.c ****             DelayXms(500);
+ 124:Core/Src/device/onenet.c ****         }
+ 125:Core/Src/device/onenet.c ****     }
+ 126:Core/Src/device/onenet.c **** 
+ 127:Core/Src/device/onenet.c ****     OneNET_Authorization("2018-10-31", ONENET_PROID, 1956499200,
+ 128:Core/Src/device/onenet.c ****                          ONENET_AUTH_KEY, NULL, auth_buf, sizeof(auth_buf), 1);
+ 129:Core/Src/device/onenet.c **** 
+ 130:Core/Src/device/onenet.c ****     snprintf(send_buf, sizeof(send_buf),
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 18
+
+
+ 131:Core/Src/device/onenet.c ****         "POST /mqtt/v1/devices/reg HTTP/1.1\r\n"
+ 132:Core/Src/device/onenet.c ****         "Authorization:%s\r\n"
+ 133:Core/Src/device/onenet.c ****         "Host:ota.heclouds.com\r\n"
+ 134:Core/Src/device/onenet.c ****         "Content-Type:application/json\r\n"
+ 135:Core/Src/device/onenet.c ****         "Content-Length:%d\r\n\r\n"
+ 136:Core/Src/device/onenet.c ****         "{\"name\":\"%s\"}",
+ 137:Core/Src/device/onenet.c ****         auth_buf, send_len, ONENET_DEV_NAME);
+ 138:Core/Src/device/onenet.c **** 
+ 139:Core/Src/device/onenet.c ****     ESP8266_SendData((unsigned char *)send_buf, strlen(send_buf));
+ 140:Core/Src/device/onenet.c ****     data_ptr = (char *)ESP8266_GetIPD(250);
+ 141:Core/Src/device/onenet.c **** 
+ 142:Core/Src/device/onenet.c ****     if (data_ptr) data_ptr = strstr(data_ptr, "device_id");
+ 143:Core/Src/device/onenet.c **** 
+ 144:Core/Src/device/onenet.c ****     if (data_ptr) {
+ 145:Core/Src/device/onenet.c ****         char name[16]; int pid = 0;
+ 146:Core/Src/device/onenet.c ****         if (sscanf(data_ptr,
+ 147:Core/Src/device/onenet.c ****             "device_id\" : \"%[^\"]\",\r\n\"name\" : \"%[^\"]\",\r\n\r\n\"pid\" : %d,\r\n\"key\" : 
+ 148:Core/Src/device/onenet.c ****             onenet_devid, name, &pid, onenet_key) == 4) {
+ 149:Core/Src/device/onenet.c ****             printf("[ONENET] Registered: %s, %s, %d, %s\r\n", onenet_devid, name, pid, onenet_key);
+ 150:Core/Src/device/onenet.c ****             result = false;
+ 151:Core/Src/device/onenet.c ****         }
+ 152:Core/Src/device/onenet.c ****     }
+ 153:Core/Src/device/onenet.c **** 
+ 154:Core/Src/device/onenet.c ****     ESP8266_SendCmd("AT+CIPCLOSE\r\n", "OK");
+ 155:Core/Src/device/onenet.c ****     return result;
+ 156:Core/Src/device/onenet.c **** }
+ 157:Core/Src/device/onenet.c **** 
+ 158:Core/Src/device/onenet.c **** /* ==================================================================
+ 159:Core/Src/device/onenet.c ****  *  OneNet_DevLink — 建立 MQTT 连接
+ 160:Core/Src/device/onenet.c ****  * ================================================================== */
+ 161:Core/Src/device/onenet.c **** bool OneNet_DevLink(void)
+ 162:Core/Src/device/onenet.c **** {
+ 163:Core/Src/device/onenet.c ****     MQTT_PACKET_STRUCTURE mqttPacket = {NULL, 0, 0, 0};
+ 164:Core/Src/device/onenet.c ****     unsigned char *dataPtr;
+ 165:Core/Src/device/onenet.c ****     char auth_buf[160];
+ 166:Core/Src/device/onenet.c ****     bool status = 1;
+ 167:Core/Src/device/onenet.c **** 
+ 168:Core/Src/device/onenet.c ****     OneNET_Authorization("2018-10-31", ONENET_PROID, 1956499200,
+ 169:Core/Src/device/onenet.c ****                          ONENET_AUTH_KEY, ONENET_DEV_NAME, auth_buf, sizeof(auth_buf), 0);
+ 170:Core/Src/device/onenet.c **** 
+ 171:Core/Src/device/onenet.c ****     printf("[ONENET] DevLink: %s, %s\r\n", ONENET_DEV_NAME, ONENET_PROID);
+ 172:Core/Src/device/onenet.c **** 
+ 173:Core/Src/device/onenet.c ****     {
+ 174:Core/Src/device/onenet.c ****         int retry = 0;
+ 175:Core/Src/device/onenet.c ****         while (ESP8266_SendCmd("AT+CIPSTART=\"TCP\",\"mqtts.heclouds.com\",1883\r\n", "CONNECT")) {
+ 176:Core/Src/device/onenet.c ****             if (++retry > 10) {
+ 177:Core/Src/device/onenet.c ****                 printf("[ONENET] TCP connect timeout (retried %d times)\r\n", retry);
+ 178:Core/Src/device/onenet.c ****                 return 1;
+ 179:Core/Src/device/onenet.c ****             }
+ 180:Core/Src/device/onenet.c ****             printf("[ONENET] TCP retry %d...\r\n", retry);
+ 181:Core/Src/device/onenet.c ****             DelayXms(500);
+ 182:Core/Src/device/onenet.c ****         }
+ 183:Core/Src/device/onenet.c ****     }
+ 184:Core/Src/device/onenet.c **** 
+ 185:Core/Src/device/onenet.c ****     if (MQTT_PacketConnect(ONENET_PROID, auth_buf, ONENET_DEV_NAME,
+ 186:Core/Src/device/onenet.c ****                            256, 1, MQTT_QOS_LEVEL0, NULL, NULL, 0, &mqttPacket) == 0) {
+ 187:Core/Src/device/onenet.c ****         ESP8266_SendData(mqttPacket._data, mqttPacket._len);
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 19
+
+
+ 188:Core/Src/device/onenet.c ****         dataPtr = ESP8266_GetIPD(250);
+ 189:Core/Src/device/onenet.c **** 
+ 190:Core/Src/device/onenet.c ****         if (dataPtr && MQTT_UnPacketRecv(dataPtr) == MQTT_PKT_CONNACK) {
+ 191:Core/Src/device/onenet.c ****             switch (MQTT_UnPacketConnectAck(dataPtr)) {
+ 192:Core/Src/device/onenet.c ****                 case 0: printf("[ONENET] MQTT Connected!\r\n"); status = 0; break;
+ 193:Core/Src/device/onenet.c ****                 case 1: printf("[ONENET] MQTT: protocol error\r\n"); break;
+ 194:Core/Src/device/onenet.c ****                 case 2: printf("[ONENET] MQTT: bad clientid\r\n"); break;
+ 195:Core/Src/device/onenet.c ****                 case 3: printf("[ONENET] MQTT: server error\r\n"); break;
+ 196:Core/Src/device/onenet.c ****                 case 4: printf("[ONENET] MQTT: bad user/pass\r\n"); break;
+ 197:Core/Src/device/onenet.c ****                 case 5: printf("[ONENET] MQTT: bad token\r\n"); break;
+ 198:Core/Src/device/onenet.c ****                 default:printf("[ONENET] MQTT: unknown error\r\n"); break;
+ 199:Core/Src/device/onenet.c ****             }
+ 200:Core/Src/device/onenet.c ****         }
+ 201:Core/Src/device/onenet.c ****         MQTT_DeleteBuffer(&mqttPacket);
+ 202:Core/Src/device/onenet.c ****     } else {
+ 203:Core/Src/device/onenet.c ****         printf("[ONENET] MQTT_PacketConnect failed\r\n");
+ 204:Core/Src/device/onenet.c ****     }
+ 205:Core/Src/device/onenet.c ****     return status;
+ 206:Core/Src/device/onenet.c **** }
+ 207:Core/Src/device/onenet.c **** 
+ 208:Core/Src/device/onenet.c **** /* ---- 传感器数据（由 main.c 在上传前更新） ---- */
+ 209:Core/Src/device/onenet.c **** extern float onenet_ax_g, onenet_ay_g, onenet_az_g;
+ 210:Core/Src/device/onenet.c **** extern uint32_t onenet_count;
+ 211:Core/Src/device/onenet.c **** 
+ 212:Core/Src/device/onenet.c **** /* ==================================================================
+ 213:Core/Src/device/onenet.c ****  *  OneNet_FillBuf — 构建 JSON 数据包（上报 MPU6050 加速度）
+ 214:Core/Src/device/onenet.c ****  * ================================================================== */
+ 215:Core/Src/device/onenet.c **** static unsigned char OneNet_FillBuf(char *buf)
+ 216:Core/Src/device/onenet.c **** {
+ 778              		.loc 1 216 1 is_stmt 1 view -0
+ 779              		.cfi_startproc
+ 780              		@ args = 0, pretend = 0, frame = 48
+ 781              		@ frame_needed = 0, uses_anonymous_args = 0
+ 782              		.loc 1 216 1 is_stmt 0 view .LVU162
+ 783 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 784              	.LCFI9:
+ 785              		.cfi_def_cfa_offset 20
+ 786              		.cfi_offset 4, -20
+ 787              		.cfi_offset 5, -16
+ 788              		.cfi_offset 6, -12
+ 789              		.cfi_offset 7, -8
+ 790              		.cfi_offset 14, -4
+ 791 0002 8DB0     		sub	sp, sp, #52
+ 792              	.LCFI10:
+ 793              		.cfi_def_cfa_offset 72
+ 794 0004 0446     		mov	r4, r0
+ 217:Core/Src/device/onenet.c ****     char text[48];
+ 795              		.loc 1 217 5 is_stmt 1 view .LVU163
+ 218:Core/Src/device/onenet.c ****     int ax = (int)(onenet_ax_g * 1000);
+ 796              		.loc 1 218 5 view .LVU164
+ 797              	.LVL84:
+ 219:Core/Src/device/onenet.c ****     int ay = (int)(onenet_ay_g * 1000);
+ 798              		.loc 1 219 5 view .LVU165
+ 220:Core/Src/device/onenet.c ****     int az = (int)(onenet_az_g * 1000);
+ 799              		.loc 1 220 5 view .LVU166
+ 800              		.loc 1 220 32 is_stmt 0 view .LVU167
+ 801 0006 3549     		ldr	r1, .L44
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 20
+
+
+ 802 0008 354B     		ldr	r3, .L44+4
+ 803 000a 1868     		ldr	r0, [r3]	@ float
+ 804              	.LVL85:
+ 805              		.loc 1 220 32 view .LVU168
+ 806 000c FFF7FEFF 		bl	__aeabi_fmul
+ 807              	.LVL86:
+ 808              		.loc 1 220 9 view .LVU169
+ 809 0010 FFF7FEFF 		bl	__aeabi_f2iz
+ 810              	.LVL87:
+ 811 0014 0746     		mov	r7, r0
+ 812              	.LVL88:
+ 221:Core/Src/device/onenet.c **** 
+ 222:Core/Src/device/onenet.c ****     strcpy(buf, "{\"id\":\"123\",\"params\":{");
+ 813              		.loc 1 222 5 is_stmt 1 view .LVU170
+ 814 0016 334D     		ldr	r5, .L44+8
+ 815 0018 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
+ 816              	.LVL89:
+ 817              		.loc 1 222 5 is_stmt 0 view .LVU171
+ 818 001a 2060     		str	r0, [r4]	@ unaligned
+ 819 001c 6160     		str	r1, [r4, #4]	@ unaligned
+ 820 001e A260     		str	r2, [r4, #8]	@ unaligned
+ 821 0020 E360     		str	r3, [r4, #12]	@ unaligned
+ 822 0022 2868     		ldr	r0, [r5]
+ 823 0024 2061     		str	r0, [r4, #16]	@ unaligned
+ 824 0026 AA88     		ldrh	r2, [r5, #4]	@ unaligned
+ 825 0028 AB79     		ldrb	r3, [r5, #6]	@ zero_extendqisi2
+ 826 002a A282     		strh	r2, [r4, #20]	@ unaligned
+ 827 002c A375     		strb	r3, [r4, #22]
+ 223:Core/Src/device/onenet.c **** 	
+ 224:Core/Src/device/onenet.c **** 	memset(text, 0, sizeof(text));
+ 828              		.loc 1 224 2 is_stmt 1 view .LVU172
+ 829 002e 3026     		movs	r6, #48
+ 830 0030 3246     		mov	r2, r6
+ 831 0032 0021     		movs	r1, #0
+ 832 0034 6846     		mov	r0, sp
+ 833 0036 FFF7FEFF 		bl	memset
+ 834              	.LVL90:
+ 225:Core/Src/device/onenet.c **** 	sprintf(text, "\"led\":{\"value\":%s},",  "false");
+ 835              		.loc 1 225 2 view .LVU173
+ 836 003a 2B4A     		ldr	r2, .L44+12
+ 837 003c 2B49     		ldr	r1, .L44+16
+ 838 003e 6846     		mov	r0, sp
+ 839 0040 FFF7FEFF 		bl	sprintf
+ 840              	.LVL91:
+ 226:Core/Src/device/onenet.c **** 	strcat(buf, text);
+ 841              		.loc 1 226 2 view .LVU174
+ 842 0044 6946     		mov	r1, sp
+ 843 0046 2046     		mov	r0, r4
+ 844 0048 FFF7FEFF 		bl	strcat
+ 845              	.LVL92:
+ 227:Core/Src/device/onenet.c **** 	
+ 228:Core/Src/device/onenet.c **** 	memset(text, 0, sizeof(text));
+ 846              		.loc 1 228 2 view .LVU175
+ 847 004c 3246     		mov	r2, r6
+ 848 004e 0021     		movs	r1, #0
+ 849 0050 6846     		mov	r0, sp
+ 850 0052 FFF7FEFF 		bl	memset
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 21
+
+
+ 851              	.LVL93:
+ 229:Core/Src/device/onenet.c **** 	sprintf(text, "\"Target\":{\"value\":%d},", 2);
+ 852              		.loc 1 229 2 view .LVU176
+ 853 0056 0222     		movs	r2, #2
+ 854 0058 2549     		ldr	r1, .L44+20
+ 855 005a 6846     		mov	r0, sp
+ 856 005c FFF7FEFF 		bl	sprintf
+ 857              	.LVL94:
+ 230:Core/Src/device/onenet.c **** 	strcat(buf, text);
+ 858              		.loc 1 230 2 view .LVU177
+ 859 0060 6946     		mov	r1, sp
+ 860 0062 2046     		mov	r0, r4
+ 861 0064 FFF7FEFF 		bl	strcat
+ 862              	.LVL95:
+ 231:Core/Src/device/onenet.c **** 		
+ 232:Core/Src/device/onenet.c **** 	memset(text, 0, sizeof(text));
+ 863              		.loc 1 232 2 view .LVU178
+ 864 0068 3246     		mov	r2, r6
+ 865 006a 0021     		movs	r1, #0
+ 866 006c 6846     		mov	r0, sp
+ 867 006e FFF7FEFF 		bl	memset
+ 868              	.LVL96:
+ 233:Core/Src/device/onenet.c **** 	sprintf(text, "\"temp1\":{\"value\":%d},", az);
+ 869              		.loc 1 233 2 view .LVU179
+ 870 0072 3A46     		mov	r2, r7
+ 871 0074 1F49     		ldr	r1, .L44+24
+ 872 0076 6846     		mov	r0, sp
+ 873 0078 FFF7FEFF 		bl	sprintf
+ 874              	.LVL97:
+ 234:Core/Src/device/onenet.c **** 	strcat(buf, text);
+ 875              		.loc 1 234 2 view .LVU180
+ 876 007c 6946     		mov	r1, sp
+ 877 007e 2046     		mov	r0, r4
+ 878 0080 FFF7FEFF 		bl	strcat
+ 879              	.LVL98:
+ 235:Core/Src/device/onenet.c **** 	
+ 236:Core/Src/device/onenet.c **** 	memset(text, 0, sizeof(text));
+ 880              		.loc 1 236 2 view .LVU181
+ 881 0084 3246     		mov	r2, r6
+ 882 0086 0021     		movs	r1, #0
+ 883 0088 6846     		mov	r0, sp
+ 884 008a FFF7FEFF 		bl	memset
+ 885              	.LVL99:
+ 237:Core/Src/device/onenet.c **** 	sprintf(text, "\"temp2\":{\"value\":%d},", 3);
+ 886              		.loc 1 237 2 view .LVU182
+ 887 008e 0322     		movs	r2, #3
+ 888 0090 1949     		ldr	r1, .L44+28
+ 889 0092 6846     		mov	r0, sp
+ 890 0094 FFF7FEFF 		bl	sprintf
+ 891              	.LVL100:
+ 238:Core/Src/device/onenet.c **** 	strcat(buf, text);
+ 892              		.loc 1 238 2 view .LVU183
+ 893 0098 6946     		mov	r1, sp
+ 894 009a 2046     		mov	r0, r4
+ 895 009c FFF7FEFF 		bl	strcat
+ 896              	.LVL101:
+ 239:Core/Src/device/onenet.c **** 	
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 22
+
+
+ 240:Core/Src/device/onenet.c **** 	memset(text, 0, sizeof(text));
+ 897              		.loc 1 240 2 view .LVU184
+ 898 00a0 3246     		mov	r2, r6
+ 899 00a2 0021     		movs	r1, #0
+ 900 00a4 6846     		mov	r0, sp
+ 901 00a6 FFF7FEFF 		bl	memset
+ 902              	.LVL102:
+ 241:Core/Src/device/onenet.c **** 	sprintf(text, "\"temp3\":{\"value\":%d}", 100);
+ 903              		.loc 1 241 2 view .LVU185
+ 904 00aa 6422     		movs	r2, #100
+ 905 00ac 1349     		ldr	r1, .L44+32
+ 906 00ae 6846     		mov	r0, sp
+ 907 00b0 FFF7FEFF 		bl	sprintf
+ 908              	.LVL103:
+ 242:Core/Src/device/onenet.c **** 	strcat(buf, text);
+ 909              		.loc 1 242 2 view .LVU186
+ 910 00b4 6946     		mov	r1, sp
+ 911 00b6 2046     		mov	r0, r4
+ 912 00b8 FFF7FEFF 		bl	strcat
+ 913              	.LVL104:
+ 243:Core/Src/device/onenet.c **** 	
+ 244:Core/Src/device/onenet.c **** 	strcat(buf, "}}");
+ 914              		.loc 1 244 2 view .LVU187
+ 915 00bc 2046     		mov	r0, r4
+ 916 00be FFF7FEFF 		bl	strlen
+ 917              	.LVL105:
+ 918              		.loc 1 244 2 is_stmt 0 discriminator 1 view .LVU188
+ 919 00c2 2218     		adds	r2, r4, r0
+ 920 00c4 0E4B     		ldr	r3, .L44+36
+ 921 00c6 1988     		ldrh	r1, [r3]	@ unaligned
+ 922 00c8 9B78     		ldrb	r3, [r3, #2]	@ zero_extendqisi2
+ 923 00ca 2152     		strh	r1, [r4, r0]	@ unaligned
+ 924 00cc 9370     		strb	r3, [r2, #2]
+ 245:Core/Src/device/onenet.c ****     return strlen(buf);
+ 925              		.loc 1 245 5 is_stmt 1 view .LVU189
+ 926              		.loc 1 245 12 is_stmt 0 view .LVU190
+ 927 00ce 2046     		mov	r0, r4
+ 928 00d0 FFF7FEFF 		bl	strlen
+ 929              	.LVL106:
+ 246:Core/Src/device/onenet.c **** }
+ 930              		.loc 1 246 1 view .LVU191
+ 931 00d4 C0B2     		uxtb	r0, r0
+ 932 00d6 0DB0     		add	sp, sp, #52
+ 933              	.LCFI11:
+ 934              		.cfi_def_cfa_offset 20
+ 935              		@ sp needed
+ 936 00d8 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 937              	.LVL107:
+ 938              	.L45:
+ 939              		.loc 1 246 1 view .LVU192
+ 940 00da 00BF     		.align	2
+ 941              	.L44:
+ 942 00dc 00007A44 		.word	1148846080
+ 943 00e0 00000000 		.word	onenet_az_g
+ 944 00e4 00000000 		.word	.LC13
+ 945 00e8 18000000 		.word	.LC14
+ 946 00ec 20000000 		.word	.LC15
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 23
+
+
+ 947 00f0 34000000 		.word	.LC16
+ 948 00f4 4C000000 		.word	.LC17
+ 949 00f8 64000000 		.word	.LC18
+ 950 00fc 7C000000 		.word	.LC19
+ 951 0100 94000000 		.word	.LC20
+ 952              		.cfi_endproc
+ 953              	.LFE78:
+ 955              		.section	.rodata.OneNET_RegisterDevice.str1.4,"aMS",%progbits,1
+ 956              		.align	2
+ 957              	.LC21:
+ 958 0000 5B4F4E45 		.ascii	"[ONENET] Register TCP timeout\015\000"
+ 958      4E45545D 
+ 958      20526567 
+ 958      69737465 
+ 958      72205443 
+ 959 001f 00       		.align	2
+ 960              	.LC22:
+ 961 0020 434F4E4E 		.ascii	"CONNECT\000"
+ 961      45435400 
+ 962              		.align	2
+ 963              	.LC23:
+ 964 0028 41542B43 		.ascii	"AT+CIPSTART=\"TCP\",\"mqtts.heclouds.com\",1883\015"
+ 964      49505354 
+ 964      4152543D 
+ 964      22544350 
+ 964      222C226D 
+ 965 0054 0A00     		.ascii	"\012\000"
+ 966 0056 0000     		.align	2
+ 967              	.LC24:
+ 968 0058 526A4E71 		.ascii	"RjNqbFNqSHBaRnA5UmlyRENsMDBYM3FMYTlYMk9Dck8=\000"
+ 968      62464E71 
+ 968      53484261 
+ 968      526E4135 
+ 968      556D6C79 
+ 969 0085 000000   		.align	2
+ 970              	.LC25:
+ 971 0088 39646339 		.ascii	"9dc95AKVYS\000"
+ 971      35414B56 
+ 971      595300
+ 972 0093 00       		.align	2
+ 973              	.LC26:
+ 974 0094 32303138 		.ascii	"2018-10-31\000"
+ 974      2D31302D 
+ 974      333100
+ 975 009f 00       		.align	2
+ 976              	.LC27:
+ 977 00a0 504F5354 		.ascii	"POST /mqtt/v1/devices/reg HTTP/1.1\015\012Authoriza"
+ 977      202F6D71 
+ 977      74742F76 
+ 977      312F6465 
+ 977      76696365 
+ 978 00cd 74696F6E 		.ascii	"tion:%s\015\012Host:ota.heclouds.com\015\012Content"
+ 978      3A25730D 
+ 978      0A486F73 
+ 978      743A6F74 
+ 978      612E6865 
+ 979 00f4 2D547970 		.ascii	"-Type:application/json\015\012Content-Length:%d\015"
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 24
+
+
+ 979      653A6170 
+ 979      706C6963 
+ 979      6174696F 
+ 979      6E2F6A73 
+ 980 011e 0A0D0A7B 		.ascii	"\012\015\012{\"name\":\"%s\"}\000"
+ 980      226E616D 
+ 980      65223A22 
+ 980      2573227D 
+ 980      00
+ 981 012f 00       		.align	2
+ 982              	.LC28:
+ 983 0130 643100   		.ascii	"d1\000"
+ 984 0133 00       		.align	2
+ 985              	.LC29:
+ 986 0134 64657669 		.ascii	"device_id\000"
+ 986      63655F69 
+ 986      6400
+ 987 013e 0000     		.align	2
+ 988              	.LC30:
+ 989 0140 64657669 		.ascii	"device_id\" : \"%[^\"]\",\015\012\"name\" : \"%[^\""
+ 989      63655F69 
+ 989      6422203A 
+ 989      2022255B 
+ 989      5E225D22 
+ 990 0165 5D222C0D 		.ascii	"]\",\015\012\015\012\"pid\" : %d,\015\012\"key\" : "
+ 990      0A0D0A22 
+ 990      70696422 
+ 990      203A2025 
+ 990      642C0D0A 
+ 991 0181 22255B5E 		.ascii	"\"%[^\"]\"\000"
+ 991      225D2200 
+ 992 0189 000000   		.align	2
+ 993              	.LC31:
+ 994 018c 5B4F4E45 		.ascii	"[ONENET] Registered: %s, %s, %d, %s\015\012\000"
+ 994      4E45545D 
+ 994      20526567 
+ 994      69737465 
+ 994      7265643A 
+ 995 01b2 0000     		.align	2
+ 996              	.LC32:
+ 997 01b4 4F4B00   		.ascii	"OK\000"
+ 998 01b7 00       		.align	2
+ 999              	.LC33:
+ 1000 01b8 41542B43 		.ascii	"AT+CIPCLOSE\015\012\000"
+ 1000      4950434C 
+ 1000      4F53450D 
+ 1000      0A00
+ 1001              		.section	.text.OneNET_RegisterDevice,"ax",%progbits
+ 1002              		.align	1
+ 1003              		.global	OneNET_RegisterDevice
+ 1004              		.syntax unified
+ 1005              		.thumb
+ 1006              		.thumb_func
+ 1008              	OneNET_RegisterDevice:
+ 1009              	.LFB76:
+ 110:Core/Src/device/onenet.c ****     bool result = true;
+ 1010              		.loc 1 110 1 is_stmt 1 view -0
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 25
+
+
+ 1011              		.cfi_startproc
+ 1012              		@ args = 0, pretend = 0, frame = 168
+ 1013              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1014 0000 70B5     		push	{r4, r5, r6, lr}
+ 1015              	.LCFI12:
+ 1016              		.cfi_def_cfa_offset 16
+ 1017              		.cfi_offset 4, -16
+ 1018              		.cfi_offset 5, -12
+ 1019              		.cfi_offset 6, -8
+ 1020              		.cfi_offset 14, -4
+ 1021 0002 AEB0     		sub	sp, sp, #184
+ 1022              	.LCFI13:
+ 1023              		.cfi_def_cfa_offset 200
+ 111:Core/Src/device/onenet.c ****     unsigned short send_len = 11 + strlen(ONENET_DEV_NAME);
+ 1024              		.loc 1 111 5 view .LVU194
+ 1025              	.LVL108:
+ 112:Core/Src/device/onenet.c ****     char auth_buf[144], *data_ptr = NULL;
+ 1026              		.loc 1 112 5 view .LVU195
+ 113:Core/Src/device/onenet.c ****     static char send_buf[512];
+ 1027              		.loc 1 113 5 view .LVU196
+ 114:Core/Src/device/onenet.c **** 
+ 1028              		.loc 1 114 5 view .LVU197
+ 1029              	.LBB2:
+ 117:Core/Src/device/onenet.c ****         while (ESP8266_SendCmd("AT+CIPSTART=\"TCP\",\"mqtts.heclouds.com\",1883\r\n", "CONNECT")) {
+ 1030              		.loc 1 117 9 view .LVU198
+ 118:Core/Src/device/onenet.c ****             if (++retry > 10) {
+ 1031              		.loc 1 118 9 view .LVU199
+ 117:Core/Src/device/onenet.c ****         while (ESP8266_SendCmd("AT+CIPSTART=\"TCP\",\"mqtts.heclouds.com\",1883\r\n", "CONNECT")) {
+ 1032              		.loc 1 117 13 is_stmt 0 view .LVU200
+ 1033 0004 0024     		movs	r4, #0
+ 1034              	.LVL109:
+ 1035              	.L47:
+ 118:Core/Src/device/onenet.c ****             if (++retry > 10) {
+ 1036              		.loc 1 118 16 is_stmt 1 view .LVU201
+ 1037 0006 2E49     		ldr	r1, .L60
+ 1038 0008 2E48     		ldr	r0, .L60+4
+ 1039 000a FFF7FEFF 		bl	ESP8266_SendCmd
+ 1040              	.LVL110:
+ 118:Core/Src/device/onenet.c ****             if (++retry > 10) {
+ 1041              		.loc 1 118 16 is_stmt 0 discriminator 1 view .LVU202
+ 1042 000e 0546     		mov	r5, r0
+ 1043 0010 68B1     		cbz	r0, .L57
+ 119:Core/Src/device/onenet.c ****                 printf("[ONENET] Register TCP timeout\r\n");
+ 1044              		.loc 1 119 13 is_stmt 1 view .LVU203
+ 119:Core/Src/device/onenet.c ****                 printf("[ONENET] Register TCP timeout\r\n");
+ 1045              		.loc 1 119 16 is_stmt 0 view .LVU204
+ 1046 0012 0134     		adds	r4, r4, #1
+ 1047              	.LVL111:
+ 119:Core/Src/device/onenet.c ****                 printf("[ONENET] Register TCP timeout\r\n");
+ 1048              		.loc 1 119 16 view .LVU205
+ 1049 0014 0A2C     		cmp	r4, #10
+ 1050 0016 04DC     		bgt	.L58
+ 123:Core/Src/device/onenet.c ****         }
+ 1051              		.loc 1 123 13 is_stmt 1 view .LVU206
+ 1052 0018 4FF4FA70 		mov	r0, #500
+ 1053 001c FFF7FEFF 		bl	DelayXms
+ 1054              	.LVL112:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 26
+
+
+ 1055 0020 F1E7     		b	.L47
+ 1056              	.L58:
+ 120:Core/Src/device/onenet.c ****                 return 1;
+ 1057              		.loc 1 120 17 view .LVU207
+ 1058 0022 2948     		ldr	r0, .L60+8
+ 1059 0024 FFF7FEFF 		bl	puts
+ 1060              	.LVL113:
+ 121:Core/Src/device/onenet.c ****             }
+ 1061              		.loc 1 121 17 view .LVU208
+ 1062              	.L49:
+ 121:Core/Src/device/onenet.c ****             }
+ 1063              		.loc 1 121 17 is_stmt 0 view .LVU209
+ 1064              	.LBE2:
+ 156:Core/Src/device/onenet.c **** 
+ 1065              		.loc 1 156 1 view .LVU210
+ 1066 0028 2846     		mov	r0, r5
+ 1067 002a 2EB0     		add	sp, sp, #184
+ 1068              	.LCFI14:
+ 1069              		.cfi_remember_state
+ 1070              		.cfi_def_cfa_offset 16
+ 1071              		@ sp needed
+ 1072 002c 70BD     		pop	{r4, r5, r6, pc}
+ 1073              	.LVL114:
+ 1074              	.L57:
+ 1075              	.LCFI15:
+ 1076              		.cfi_restore_state
+ 127:Core/Src/device/onenet.c ****                          ONENET_AUTH_KEY, NULL, auth_buf, sizeof(auth_buf), 1);
+ 1077              		.loc 1 127 5 is_stmt 1 view .LVU211
+ 1078 002e 0123     		movs	r3, #1
+ 1079 0030 0393     		str	r3, [sp, #12]
+ 1080 0032 9023     		movs	r3, #144
+ 1081 0034 0293     		str	r3, [sp, #8]
+ 1082 0036 0AAE     		add	r6, sp, #40
+ 1083 0038 0196     		str	r6, [sp, #4]
+ 1084 003a 0023     		movs	r3, #0
+ 1085 003c 0093     		str	r3, [sp]
+ 1086 003e 234B     		ldr	r3, .L60+12
+ 1087 0040 234A     		ldr	r2, .L60+16
+ 1088 0042 2449     		ldr	r1, .L60+20
+ 1089 0044 2448     		ldr	r0, .L60+24
+ 1090 0046 FFF7FEFF 		bl	OneNET_Authorization
+ 1091              	.LVL115:
+ 130:Core/Src/device/onenet.c ****         "POST /mqtt/v1/devices/reg HTTP/1.1\r\n"
+ 1092              		.loc 1 130 5 view .LVU212
+ 1093 004a 244C     		ldr	r4, .L60+28
+ 1094              	.LVL116:
+ 130:Core/Src/device/onenet.c ****         "POST /mqtt/v1/devices/reg HTTP/1.1\r\n"
+ 1095              		.loc 1 130 5 is_stmt 0 view .LVU213
+ 1096 004c 244B     		ldr	r3, .L60+32
+ 1097 004e 0193     		str	r3, [sp, #4]
+ 1098 0050 0D23     		movs	r3, #13
+ 1099 0052 0093     		str	r3, [sp]
+ 1100 0054 3346     		mov	r3, r6
+ 1101 0056 234A     		ldr	r2, .L60+36
+ 1102 0058 4FF40071 		mov	r1, #512
+ 1103 005c 2046     		mov	r0, r4
+ 1104 005e FFF7FEFF 		bl	snprintf
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 27
+
+
+ 1105              	.LVL117:
+ 139:Core/Src/device/onenet.c ****     data_ptr = (char *)ESP8266_GetIPD(250);
+ 1106              		.loc 1 139 5 is_stmt 1 view .LVU214
+ 139:Core/Src/device/onenet.c ****     data_ptr = (char *)ESP8266_GetIPD(250);
+ 1107              		.loc 1 139 49 is_stmt 0 view .LVU215
+ 1108 0062 2046     		mov	r0, r4
+ 1109 0064 FFF7FEFF 		bl	strlen
+ 1110              	.LVL118:
+ 139:Core/Src/device/onenet.c ****     data_ptr = (char *)ESP8266_GetIPD(250);
+ 1111              		.loc 1 139 5 discriminator 1 view .LVU216
+ 1112 0068 81B2     		uxth	r1, r0
+ 1113 006a 2046     		mov	r0, r4
+ 1114 006c FFF7FEFF 		bl	ESP8266_SendData
+ 1115              	.LVL119:
+ 140:Core/Src/device/onenet.c **** 
+ 1116              		.loc 1 140 5 is_stmt 1 view .LVU217
+ 140:Core/Src/device/onenet.c **** 
+ 1117              		.loc 1 140 24 is_stmt 0 view .LVU218
+ 1118 0070 FA20     		movs	r0, #250
+ 1119 0072 FFF7FEFF 		bl	ESP8266_GetIPD
+ 1120              	.LVL120:
+ 142:Core/Src/device/onenet.c **** 
+ 1121              		.loc 1 142 5 is_stmt 1 view .LVU219
+ 142:Core/Src/device/onenet.c **** 
+ 1122              		.loc 1 142 8 is_stmt 0 view .LVU220
+ 1123 0076 D8B1     		cbz	r0, .L53
+ 142:Core/Src/device/onenet.c **** 
+ 1124              		.loc 1 142 19 is_stmt 1 discriminator 1 view .LVU221
+ 142:Core/Src/device/onenet.c **** 
+ 1125              		.loc 1 142 30 is_stmt 0 discriminator 1 view .LVU222
+ 1126 0078 1B49     		ldr	r1, .L60+40
+ 1127 007a FFF7FEFF 		bl	strstr
+ 1128              	.LVL121:
+ 144:Core/Src/device/onenet.c ****         char name[16]; int pid = 0;
+ 1129              		.loc 1 144 5 is_stmt 1 view .LVU223
+ 144:Core/Src/device/onenet.c ****         char name[16]; int pid = 0;
+ 1130              		.loc 1 144 8 is_stmt 0 view .LVU224
+ 1131 007e C8B1     		cbz	r0, .L54
+ 1132              	.LBB3:
+ 145:Core/Src/device/onenet.c ****         if (sscanf(data_ptr,
+ 1133              		.loc 1 145 9 is_stmt 1 view .LVU225
+ 145:Core/Src/device/onenet.c ****         if (sscanf(data_ptr,
+ 1134              		.loc 1 145 24 view .LVU226
+ 145:Core/Src/device/onenet.c ****         if (sscanf(data_ptr,
+ 1135              		.loc 1 145 28 is_stmt 0 view .LVU227
+ 1136 0080 0023     		movs	r3, #0
+ 1137 0082 0593     		str	r3, [sp, #20]
+ 146:Core/Src/device/onenet.c ****             "device_id\" : \"%[^\"]\",\r\n\"name\" : \"%[^\"]\",\r\n\r\n\"pid\" : %d,\r\n\"key\" : 
+ 1138              		.loc 1 146 9 is_stmt 1 view .LVU228
+ 146:Core/Src/device/onenet.c ****             "device_id\" : \"%[^\"]\",\r\n\"name\" : \"%[^\"]\",\r\n\r\n\"pid\" : %d,\r\n\"key\" : 
+ 1139              		.loc 1 146 13 is_stmt 0 view .LVU229
+ 1140 0084 194B     		ldr	r3, .L60+44
+ 1141 0086 0193     		str	r3, [sp, #4]
+ 1142 0088 05AB     		add	r3, sp, #20
+ 1143 008a 0093     		str	r3, [sp]
+ 1144 008c 06AB     		add	r3, sp, #24
+ 1145 008e 184A     		ldr	r2, .L60+48
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 28
+
+
+ 1146 0090 1849     		ldr	r1, .L60+52
+ 1147 0092 FFF7FEFF 		bl	sscanf
+ 1148              	.LVL122:
+ 146:Core/Src/device/onenet.c ****             "device_id\" : \"%[^\"]\",\r\n\"name\" : \"%[^\"]\",\r\n\r\n\"pid\" : %d,\r\n\"key\" : 
+ 1149              		.loc 1 146 12 discriminator 1 view .LVU230
+ 1150 0096 0428     		cmp	r0, #4
+ 1151 0098 01D0     		beq	.L59
+ 1152              	.LBE3:
+ 111:Core/Src/device/onenet.c ****     unsigned short send_len = 11 + strlen(ONENET_DEV_NAME);
+ 1153              		.loc 1 111 10 view .LVU231
+ 1154 009a 0125     		movs	r5, #1
+ 111:Core/Src/device/onenet.c ****     unsigned short send_len = 11 + strlen(ONENET_DEV_NAME);
+ 1155              		.loc 1 111 10 view .LVU232
+ 1156 009c 0BE0     		b	.L51
+ 1157              	.L59:
+ 1158              	.LBB4:
+ 149:Core/Src/device/onenet.c ****             result = false;
+ 1159              		.loc 1 149 13 is_stmt 1 view .LVU233
+ 1160 009e 134B     		ldr	r3, .L60+44
+ 1161 00a0 0093     		str	r3, [sp]
+ 1162 00a2 059B     		ldr	r3, [sp, #20]
+ 1163 00a4 06AA     		add	r2, sp, #24
+ 1164 00a6 1249     		ldr	r1, .L60+48
+ 1165 00a8 1348     		ldr	r0, .L60+56
+ 1166 00aa FFF7FEFF 		bl	printf
+ 1167              	.LVL123:
+ 150:Core/Src/device/onenet.c ****         }
+ 1168              		.loc 1 150 13 view .LVU234
+ 150:Core/Src/device/onenet.c ****         }
+ 1169              		.loc 1 150 13 is_stmt 0 view .LVU235
+ 1170 00ae 02E0     		b	.L51
+ 1171              	.LVL124:
+ 1172              	.L53:
+ 150:Core/Src/device/onenet.c ****         }
+ 1173              		.loc 1 150 13 view .LVU236
+ 1174              	.LBE4:
+ 111:Core/Src/device/onenet.c ****     unsigned short send_len = 11 + strlen(ONENET_DEV_NAME);
+ 1175              		.loc 1 111 10 view .LVU237
+ 1176 00b0 0125     		movs	r5, #1
+ 1177 00b2 00E0     		b	.L51
+ 1178              	.L54:
+ 111:Core/Src/device/onenet.c ****     unsigned short send_len = 11 + strlen(ONENET_DEV_NAME);
+ 1179              		.loc 1 111 10 view .LVU238
+ 1180 00b4 0125     		movs	r5, #1
+ 1181              	.LVL125:
+ 1182              	.L51:
+ 154:Core/Src/device/onenet.c ****     return result;
+ 1183              		.loc 1 154 5 is_stmt 1 view .LVU239
+ 1184 00b6 1149     		ldr	r1, .L60+60
+ 1185 00b8 1148     		ldr	r0, .L60+64
+ 1186 00ba FFF7FEFF 		bl	ESP8266_SendCmd
+ 1187              	.LVL126:
+ 155:Core/Src/device/onenet.c **** }
+ 1188              		.loc 1 155 5 view .LVU240
+ 155:Core/Src/device/onenet.c **** }
+ 1189              		.loc 1 155 12 is_stmt 0 view .LVU241
+ 1190 00be B3E7     		b	.L49
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 29
+
+
+ 1191              	.L61:
+ 1192              		.align	2
+ 1193              	.L60:
+ 1194 00c0 20000000 		.word	.LC22
+ 1195 00c4 28000000 		.word	.LC23
+ 1196 00c8 00000000 		.word	.LC21
+ 1197 00cc 58000000 		.word	.LC24
+ 1198 00d0 00CF9D74 		.word	1956499200
+ 1199 00d4 88000000 		.word	.LC25
+ 1200 00d8 94000000 		.word	.LC26
+ 1201 00dc 00000000 		.word	send_buf.1
+ 1202 00e0 30010000 		.word	.LC28
+ 1203 00e4 A0000000 		.word	.LC27
+ 1204 00e8 34010000 		.word	.LC29
+ 1205 00ec 00000000 		.word	onenet_key
+ 1206 00f0 00000000 		.word	onenet_devid
+ 1207 00f4 40010000 		.word	.LC30
+ 1208 00f8 8C010000 		.word	.LC31
+ 1209 00fc B4010000 		.word	.LC32
+ 1210 0100 B8010000 		.word	.LC33
+ 1211              		.cfi_endproc
+ 1212              	.LFE76:
+ 1214              		.section	.rodata.OneNet_DevLink.str1.4,"aMS",%progbits,1
+ 1215              		.align	2
+ 1216              	.LC34:
+ 1217 0000 5B4F4E45 		.ascii	"[ONENET] DevLink: %s, %s\015\012\000"
+ 1217      4E45545D 
+ 1217      20446576 
+ 1217      4C696E6B 
+ 1217      3A202573 
+ 1218 001b 00       		.align	2
+ 1219              	.LC35:
+ 1220 001c 5B4F4E45 		.ascii	"[ONENET] TCP connect timeout (retried %d times)\015"
+ 1220      4E45545D 
+ 1220      20544350 
+ 1220      20636F6E 
+ 1220      6E656374 
+ 1221 004c 0A00     		.ascii	"\012\000"
+ 1222 004e 0000     		.align	2
+ 1223              	.LC36:
+ 1224 0050 5B4F4E45 		.ascii	"[ONENET] TCP retry %d...\015\012\000"
+ 1224      4E45545D 
+ 1224      20544350 
+ 1224      20726574 
+ 1224      72792025 
+ 1225 006b 00       		.align	2
+ 1226              	.LC37:
+ 1227 006c 5B4F4E45 		.ascii	"[ONENET] MQTT Connected!\015\000"
+ 1227      4E45545D 
+ 1227      204D5154 
+ 1227      5420436F 
+ 1227      6E6E6563 
+ 1228 0086 0000     		.align	2
+ 1229              	.LC38:
+ 1230 0088 5B4F4E45 		.ascii	"[ONENET] MQTT: protocol error\015\000"
+ 1230      4E45545D 
+ 1230      204D5154 
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 30
+
+
+ 1230      543A2070 
+ 1230      726F746F 
+ 1231 00a7 00       		.align	2
+ 1232              	.LC39:
+ 1233 00a8 5B4F4E45 		.ascii	"[ONENET] MQTT: bad clientid\015\000"
+ 1233      4E45545D 
+ 1233      204D5154 
+ 1233      543A2062 
+ 1233      61642063 
+ 1234 00c5 000000   		.align	2
+ 1235              	.LC40:
+ 1236 00c8 5B4F4E45 		.ascii	"[ONENET] MQTT: server error\015\000"
+ 1236      4E45545D 
+ 1236      204D5154 
+ 1236      543A2073 
+ 1236      65727665 
+ 1237 00e5 000000   		.align	2
+ 1238              	.LC41:
+ 1239 00e8 5B4F4E45 		.ascii	"[ONENET] MQTT: bad user/pass\015\000"
+ 1239      4E45545D 
+ 1239      204D5154 
+ 1239      543A2062 
+ 1239      61642075 
+ 1240 0106 0000     		.align	2
+ 1241              	.LC42:
+ 1242 0108 5B4F4E45 		.ascii	"[ONENET] MQTT: bad token\015\000"
+ 1242      4E45545D 
+ 1242      204D5154 
+ 1242      543A2062 
+ 1242      61642074 
+ 1243 0122 0000     		.align	2
+ 1244              	.LC43:
+ 1245 0124 5B4F4E45 		.ascii	"[ONENET] MQTT: unknown error\015\000"
+ 1245      4E45545D 
+ 1245      204D5154 
+ 1245      543A2075 
+ 1245      6E6B6E6F 
+ 1246 0142 0000     		.align	2
+ 1247              	.LC44:
+ 1248 0144 5B4F4E45 		.ascii	"[ONENET] MQTT_PacketConnect failed\015\000"
+ 1248      4E45545D 
+ 1248      204D5154 
+ 1248      545F5061 
+ 1248      636B6574 
+ 1249              		.section	.text.OneNet_DevLink,"ax",%progbits
+ 1250              		.align	1
+ 1251              		.global	OneNet_DevLink
+ 1252              		.syntax unified
+ 1253              		.thumb
+ 1254              		.thumb_func
+ 1256              	OneNet_DevLink:
+ 1257              	.LFB77:
+ 162:Core/Src/device/onenet.c ****     MQTT_PACKET_STRUCTURE mqttPacket = {NULL, 0, 0, 0};
+ 1258              		.loc 1 162 1 is_stmt 1 view -0
+ 1259              		.cfi_startproc
+ 1260              		@ args = 0, pretend = 0, frame = 176
+ 1261              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 31
+
+
+ 1262 0000 70B5     		push	{r4, r5, r6, lr}
+ 1263              	.LCFI16:
+ 1264              		.cfi_def_cfa_offset 16
+ 1265              		.cfi_offset 4, -16
+ 1266              		.cfi_offset 5, -12
+ 1267              		.cfi_offset 6, -8
+ 1268              		.cfi_offset 14, -4
+ 1269 0002 B2B0     		sub	sp, sp, #200
+ 1270              	.LCFI17:
+ 1271              		.cfi_def_cfa_offset 216
+ 163:Core/Src/device/onenet.c ****     unsigned char *dataPtr;
+ 1272              		.loc 1 163 5 view .LVU243
+ 163:Core/Src/device/onenet.c ****     unsigned char *dataPtr;
+ 1273              		.loc 1 163 27 is_stmt 0 view .LVU244
+ 1274 0004 0024     		movs	r4, #0
+ 1275 0006 2E94     		str	r4, [sp, #184]
+ 1276 0008 2F94     		str	r4, [sp, #188]
+ 1277 000a 3094     		str	r4, [sp, #192]
+ 1278 000c 3194     		str	r4, [sp, #196]
+ 164:Core/Src/device/onenet.c ****     char auth_buf[160];
+ 1279              		.loc 1 164 5 is_stmt 1 view .LVU245
+ 165:Core/Src/device/onenet.c ****     bool status = 1;
+ 1280              		.loc 1 165 5 view .LVU246
+ 166:Core/Src/device/onenet.c **** 
+ 1281              		.loc 1 166 5 view .LVU247
+ 1282              	.LVL127:
+ 168:Core/Src/device/onenet.c ****                          ONENET_AUTH_KEY, ONENET_DEV_NAME, auth_buf, sizeof(auth_buf), 0);
+ 1283              		.loc 1 168 5 view .LVU248
+ 1284 000e 424E     		ldr	r6, .L83
+ 1285 0010 0394     		str	r4, [sp, #12]
+ 1286 0012 A023     		movs	r3, #160
+ 1287 0014 0293     		str	r3, [sp, #8]
+ 1288 0016 06AB     		add	r3, sp, #24
+ 1289 0018 0193     		str	r3, [sp, #4]
+ 1290 001a 404D     		ldr	r5, .L83+4
+ 1291 001c 0095     		str	r5, [sp]
+ 1292 001e 404B     		ldr	r3, .L83+8
+ 1293 0020 404A     		ldr	r2, .L83+12
+ 1294 0022 3146     		mov	r1, r6
+ 1295 0024 4048     		ldr	r0, .L83+16
+ 1296 0026 FFF7FEFF 		bl	OneNET_Authorization
+ 1297              	.LVL128:
+ 171:Core/Src/device/onenet.c **** 
+ 1298              		.loc 1 171 5 view .LVU249
+ 1299 002a 3246     		mov	r2, r6
+ 1300 002c 2946     		mov	r1, r5
+ 1301 002e 3F48     		ldr	r0, .L83+20
+ 1302 0030 FFF7FEFF 		bl	printf
+ 1303              	.LVL129:
+ 1304              	.LBB5:
+ 174:Core/Src/device/onenet.c ****         while (ESP8266_SendCmd("AT+CIPSTART=\"TCP\",\"mqtts.heclouds.com\",1883\r\n", "CONNECT")) {
+ 1305              		.loc 1 174 9 view .LVU250
+ 175:Core/Src/device/onenet.c ****             if (++retry > 10) {
+ 1306              		.loc 1 175 9 view .LVU251
+ 1307              	.L63:
+ 175:Core/Src/device/onenet.c ****             if (++retry > 10) {
+ 1308              		.loc 1 175 16 view .LVU252
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 32
+
+
+ 1309 0034 3E49     		ldr	r1, .L83+24
+ 1310 0036 3F48     		ldr	r0, .L83+28
+ 1311 0038 FFF7FEFF 		bl	ESP8266_SendCmd
+ 1312              	.LVL130:
+ 175:Core/Src/device/onenet.c ****             if (++retry > 10) {
+ 1313              		.loc 1 175 16 is_stmt 0 discriminator 1 view .LVU253
+ 1314 003c 0546     		mov	r5, r0
+ 1315 003e 90B1     		cbz	r0, .L80
+ 176:Core/Src/device/onenet.c ****                 printf("[ONENET] TCP connect timeout (retried %d times)\r\n", retry);
+ 1316              		.loc 1 176 13 is_stmt 1 view .LVU254
+ 176:Core/Src/device/onenet.c ****                 printf("[ONENET] TCP connect timeout (retried %d times)\r\n", retry);
+ 1317              		.loc 1 176 16 is_stmt 0 view .LVU255
+ 1318 0040 0134     		adds	r4, r4, #1
+ 1319              	.LVL131:
+ 176:Core/Src/device/onenet.c ****                 printf("[ONENET] TCP connect timeout (retried %d times)\r\n", retry);
+ 1320              		.loc 1 176 16 view .LVU256
+ 1321 0042 0A2C     		cmp	r4, #10
+ 1322 0044 08DC     		bgt	.L81
+ 180:Core/Src/device/onenet.c ****             DelayXms(500);
+ 1323              		.loc 1 180 13 is_stmt 1 view .LVU257
+ 1324 0046 2146     		mov	r1, r4
+ 1325 0048 3B48     		ldr	r0, .L83+32
+ 1326 004a FFF7FEFF 		bl	printf
+ 1327              	.LVL132:
+ 181:Core/Src/device/onenet.c ****         }
+ 1328              		.loc 1 181 13 view .LVU258
+ 1329 004e 4FF4FA70 		mov	r0, #500
+ 1330 0052 FFF7FEFF 		bl	DelayXms
+ 1331              	.LVL133:
+ 1332 0056 EDE7     		b	.L63
+ 1333              	.L81:
+ 177:Core/Src/device/onenet.c ****                 return 1;
+ 1334              		.loc 1 177 17 view .LVU259
+ 1335 0058 2146     		mov	r1, r4
+ 1336 005a 3848     		ldr	r0, .L83+36
+ 1337 005c FFF7FEFF 		bl	printf
+ 1338              	.LVL134:
+ 178:Core/Src/device/onenet.c ****             }
+ 1339              		.loc 1 178 17 view .LVU260
+ 1340              	.L65:
+ 178:Core/Src/device/onenet.c ****             }
+ 1341              		.loc 1 178 17 is_stmt 0 view .LVU261
+ 1342              	.LBE5:
+ 206:Core/Src/device/onenet.c **** 
+ 1343              		.loc 1 206 1 view .LVU262
+ 1344 0060 2846     		mov	r0, r5
+ 1345 0062 32B0     		add	sp, sp, #200
+ 1346              	.LCFI18:
+ 1347              		.cfi_remember_state
+ 1348              		.cfi_def_cfa_offset 16
+ 1349              		@ sp needed
+ 1350 0064 70BD     		pop	{r4, r5, r6, pc}
+ 1351              	.LVL135:
+ 1352              	.L80:
+ 1353              	.LCFI19:
+ 1354              		.cfi_restore_state
+ 185:Core/Src/device/onenet.c ****                            256, 1, MQTT_QOS_LEVEL0, NULL, NULL, 0, &mqttPacket) == 0) {
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 33
+
+
+ 1355              		.loc 1 185 5 is_stmt 1 view .LVU263
+ 185:Core/Src/device/onenet.c ****                            256, 1, MQTT_QOS_LEVEL0, NULL, NULL, 0, &mqttPacket) == 0) {
+ 1356              		.loc 1 185 9 is_stmt 0 view .LVU264
+ 1357 0066 2EAB     		add	r3, sp, #184
+ 1358 0068 0593     		str	r3, [sp, #20]
+ 1359 006a 0023     		movs	r3, #0
+ 1360 006c 0493     		str	r3, [sp, #16]
+ 1361 006e 0393     		str	r3, [sp, #12]
+ 1362 0070 0293     		str	r3, [sp, #8]
+ 1363 0072 0193     		str	r3, [sp, #4]
+ 1364 0074 0123     		movs	r3, #1
+ 1365 0076 0093     		str	r3, [sp]
+ 1366 0078 4FF48073 		mov	r3, #256
+ 1367 007c 274A     		ldr	r2, .L83+4
+ 1368 007e 06A9     		add	r1, sp, #24
+ 1369 0080 2548     		ldr	r0, .L83
+ 1370 0082 FFF7FEFF 		bl	MQTT_PacketConnect
+ 1371              	.LVL136:
+ 185:Core/Src/device/onenet.c ****                            256, 1, MQTT_QOS_LEVEL0, NULL, NULL, 0, &mqttPacket) == 0) {
+ 1372              		.loc 1 185 8 discriminator 1 view .LVU265
+ 1373 0086 0028     		cmp	r0, #0
+ 1374 0088 40D1     		bne	.L67
+ 187:Core/Src/device/onenet.c ****         dataPtr = ESP8266_GetIPD(250);
+ 1375              		.loc 1 187 9 is_stmt 1 view .LVU266
+ 1376 008a BDF8BC10 		ldrh	r1, [sp, #188]
+ 1377 008e 2E98     		ldr	r0, [sp, #184]
+ 1378 0090 FFF7FEFF 		bl	ESP8266_SendData
+ 1379              	.LVL137:
+ 188:Core/Src/device/onenet.c **** 
+ 1380              		.loc 1 188 9 view .LVU267
+ 188:Core/Src/device/onenet.c **** 
+ 1381              		.loc 1 188 19 is_stmt 0 view .LVU268
+ 1382 0094 FA20     		movs	r0, #250
+ 1383 0096 FFF7FEFF 		bl	ESP8266_GetIPD
+ 1384              	.LVL138:
+ 190:Core/Src/device/onenet.c ****             switch (MQTT_UnPacketConnectAck(dataPtr)) {
+ 1385              		.loc 1 190 9 is_stmt 1 view .LVU269
+ 190:Core/Src/device/onenet.c ****             switch (MQTT_UnPacketConnectAck(dataPtr)) {
+ 1386              		.loc 1 190 12 is_stmt 0 view .LVU270
+ 1387 009a 0446     		mov	r4, r0
+ 1388              	.LVL139:
+ 190:Core/Src/device/onenet.c ****             switch (MQTT_UnPacketConnectAck(dataPtr)) {
+ 1389              		.loc 1 190 12 view .LVU271
+ 1390 009c 88B3     		cbz	r0, .L77
+ 190:Core/Src/device/onenet.c ****             switch (MQTT_UnPacketConnectAck(dataPtr)) {
+ 1391              		.loc 1 190 24 discriminator 1 view .LVU272
+ 1392 009e FFF7FEFF 		bl	MQTT_UnPacketRecv
+ 1393              	.LVL140:
+ 190:Core/Src/device/onenet.c ****             switch (MQTT_UnPacketConnectAck(dataPtr)) {
+ 1394              		.loc 1 190 21 discriminator 1 view .LVU273
+ 1395 00a2 0228     		cmp	r0, #2
+ 1396 00a4 01D0     		beq	.L82
+ 166:Core/Src/device/onenet.c **** 
+ 1397              		.loc 1 166 10 view .LVU274
+ 1398 00a6 0125     		movs	r5, #1
+ 1399 00a8 2CE0     		b	.L68
+ 1400              	.L82:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 34
+
+
+ 191:Core/Src/device/onenet.c ****                 case 0: printf("[ONENET] MQTT Connected!\r\n"); status = 0; break;
+ 1401              		.loc 1 191 13 is_stmt 1 view .LVU275
+ 191:Core/Src/device/onenet.c ****                 case 0: printf("[ONENET] MQTT Connected!\r\n"); status = 0; break;
+ 1402              		.loc 1 191 21 is_stmt 0 view .LVU276
+ 1403 00aa 2046     		mov	r0, r4
+ 1404 00ac FFF7FEFF 		bl	MQTT_UnPacketConnectAck
+ 1405              	.LVL141:
+ 191:Core/Src/device/onenet.c ****                 case 0: printf("[ONENET] MQTT Connected!\r\n"); status = 0; break;
+ 1406              		.loc 1 191 13 discriminator 1 view .LVU277
+ 1407 00b0 0528     		cmp	r0, #5
+ 1408 00b2 21D8     		bhi	.L69
+ 1409 00b4 DFE800F0 		tbb	[pc, r0]
+ 1410              	.L71:
+ 1411 00b8 03       		.byte	(.L76-.L71)/2
+ 1412 00b9 07       		.byte	(.L75-.L71)/2
+ 1413 00ba 0C       		.byte	(.L74-.L71)/2
+ 1414 00bb 11       		.byte	(.L73-.L71)/2
+ 1415 00bc 16       		.byte	(.L72-.L71)/2
+ 1416 00bd 1B       		.byte	(.L70-.L71)/2
+ 1417              		.p2align 1
+ 1418              	.L76:
+ 192:Core/Src/device/onenet.c ****                 case 1: printf("[ONENET] MQTT: protocol error\r\n"); break;
+ 1419              		.loc 1 192 25 is_stmt 1 view .LVU278
+ 1420 00be 2048     		ldr	r0, .L83+40
+ 1421 00c0 FFF7FEFF 		bl	puts
+ 1422              	.LVL142:
+ 192:Core/Src/device/onenet.c ****                 case 1: printf("[ONENET] MQTT: protocol error\r\n"); break;
+ 1423              		.loc 1 192 65 discriminator 1 view .LVU279
+ 192:Core/Src/device/onenet.c ****                 case 1: printf("[ONENET] MQTT: protocol error\r\n"); break;
+ 1424              		.loc 1 192 77 discriminator 1 view .LVU280
+ 192:Core/Src/device/onenet.c ****                 case 1: printf("[ONENET] MQTT: protocol error\r\n"); break;
+ 1425              		.loc 1 192 77 is_stmt 0 view .LVU281
+ 1426 00c4 1EE0     		b	.L68
+ 1427              	.LVL143:
+ 1428              	.L75:
+ 193:Core/Src/device/onenet.c ****                 case 2: printf("[ONENET] MQTT: bad clientid\r\n"); break;
+ 1429              		.loc 1 193 25 is_stmt 1 view .LVU282
+ 1430 00c6 1F48     		ldr	r0, .L83+44
+ 1431 00c8 FFF7FEFF 		bl	puts
+ 1432              	.LVL144:
+ 193:Core/Src/device/onenet.c ****                 case 2: printf("[ONENET] MQTT: bad clientid\r\n"); break;
+ 1433              		.loc 1 193 70 discriminator 1 view .LVU283
+ 166:Core/Src/device/onenet.c **** 
+ 1434              		.loc 1 166 10 is_stmt 0 view .LVU284
+ 1435 00cc 0125     		movs	r5, #1
+ 193:Core/Src/device/onenet.c ****                 case 2: printf("[ONENET] MQTT: bad clientid\r\n"); break;
+ 1436              		.loc 1 193 70 view .LVU285
+ 1437 00ce 19E0     		b	.L68
+ 1438              	.L74:
+ 194:Core/Src/device/onenet.c ****                 case 3: printf("[ONENET] MQTT: server error\r\n"); break;
+ 1439              		.loc 1 194 25 is_stmt 1 view .LVU286
+ 1440 00d0 1D48     		ldr	r0, .L83+48
+ 1441 00d2 FFF7FEFF 		bl	puts
+ 1442              	.LVL145:
+ 194:Core/Src/device/onenet.c ****                 case 3: printf("[ONENET] MQTT: server error\r\n"); break;
+ 1443              		.loc 1 194 68 discriminator 1 view .LVU287
+ 166:Core/Src/device/onenet.c **** 
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 35
+
+
+ 1444              		.loc 1 166 10 is_stmt 0 view .LVU288
+ 1445 00d6 0125     		movs	r5, #1
+ 194:Core/Src/device/onenet.c ****                 case 3: printf("[ONENET] MQTT: server error\r\n"); break;
+ 1446              		.loc 1 194 68 view .LVU289
+ 1447 00d8 14E0     		b	.L68
+ 1448              	.L73:
+ 195:Core/Src/device/onenet.c ****                 case 4: printf("[ONENET] MQTT: bad user/pass\r\n"); break;
+ 1449              		.loc 1 195 25 is_stmt 1 view .LVU290
+ 1450 00da 1C48     		ldr	r0, .L83+52
+ 1451 00dc FFF7FEFF 		bl	puts
+ 1452              	.LVL146:
+ 195:Core/Src/device/onenet.c ****                 case 4: printf("[ONENET] MQTT: bad user/pass\r\n"); break;
+ 1453              		.loc 1 195 68 discriminator 1 view .LVU291
+ 166:Core/Src/device/onenet.c **** 
+ 1454              		.loc 1 166 10 is_stmt 0 view .LVU292
+ 1455 00e0 0125     		movs	r5, #1
+ 195:Core/Src/device/onenet.c ****                 case 4: printf("[ONENET] MQTT: bad user/pass\r\n"); break;
+ 1456              		.loc 1 195 68 view .LVU293
+ 1457 00e2 0FE0     		b	.L68
+ 1458              	.L72:
+ 196:Core/Src/device/onenet.c ****                 case 5: printf("[ONENET] MQTT: bad token\r\n"); break;
+ 1459              		.loc 1 196 25 is_stmt 1 view .LVU294
+ 1460 00e4 1A48     		ldr	r0, .L83+56
+ 1461 00e6 FFF7FEFF 		bl	puts
+ 1462              	.LVL147:
+ 196:Core/Src/device/onenet.c ****                 case 5: printf("[ONENET] MQTT: bad token\r\n"); break;
+ 1463              		.loc 1 196 69 discriminator 1 view .LVU295
+ 166:Core/Src/device/onenet.c **** 
+ 1464              		.loc 1 166 10 is_stmt 0 view .LVU296
+ 1465 00ea 0125     		movs	r5, #1
+ 196:Core/Src/device/onenet.c ****                 case 5: printf("[ONENET] MQTT: bad token\r\n"); break;
+ 1466              		.loc 1 196 69 view .LVU297
+ 1467 00ec 0AE0     		b	.L68
+ 1468              	.L70:
+ 197:Core/Src/device/onenet.c ****                 default:printf("[ONENET] MQTT: unknown error\r\n"); break;
+ 1469              		.loc 1 197 25 is_stmt 1 view .LVU298
+ 1470 00ee 1948     		ldr	r0, .L83+60
+ 1471 00f0 FFF7FEFF 		bl	puts
+ 1472              	.LVL148:
+ 197:Core/Src/device/onenet.c ****                 default:printf("[ONENET] MQTT: unknown error\r\n"); break;
+ 1473              		.loc 1 197 65 discriminator 1 view .LVU299
+ 166:Core/Src/device/onenet.c **** 
+ 1474              		.loc 1 166 10 is_stmt 0 view .LVU300
+ 1475 00f4 0125     		movs	r5, #1
+ 197:Core/Src/device/onenet.c ****                 default:printf("[ONENET] MQTT: unknown error\r\n"); break;
+ 1476              		.loc 1 197 65 view .LVU301
+ 1477 00f6 05E0     		b	.L68
+ 1478              	.L69:
+ 198:Core/Src/device/onenet.c ****             }
+ 1479              		.loc 1 198 25 is_stmt 1 view .LVU302
+ 1480 00f8 1748     		ldr	r0, .L83+64
+ 1481 00fa FFF7FEFF 		bl	puts
+ 1482              	.LVL149:
+ 198:Core/Src/device/onenet.c ****             }
+ 1483              		.loc 1 198 69 discriminator 1 view .LVU303
+ 166:Core/Src/device/onenet.c **** 
+ 1484              		.loc 1 166 10 is_stmt 0 view .LVU304
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 36
+
+
+ 1485 00fe 0125     		movs	r5, #1
+ 198:Core/Src/device/onenet.c ****             }
+ 1486              		.loc 1 198 69 view .LVU305
+ 1487 0100 00E0     		b	.L68
+ 1488              	.LVL150:
+ 1489              	.L77:
+ 166:Core/Src/device/onenet.c **** 
+ 1490              		.loc 1 166 10 view .LVU306
+ 1491 0102 0125     		movs	r5, #1
+ 1492              	.LVL151:
+ 1493              	.L68:
+ 201:Core/Src/device/onenet.c ****     } else {
+ 1494              		.loc 1 201 9 is_stmt 1 view .LVU307
+ 1495 0104 2EA8     		add	r0, sp, #184
+ 1496 0106 FFF7FEFF 		bl	MQTT_DeleteBuffer
+ 1497              	.LVL152:
+ 1498 010a A9E7     		b	.L65
+ 1499              	.LVL153:
+ 1500              	.L67:
+ 203:Core/Src/device/onenet.c ****     }
+ 1501              		.loc 1 203 9 view .LVU308
+ 1502 010c 1348     		ldr	r0, .L83+68
+ 1503 010e FFF7FEFF 		bl	puts
+ 1504              	.LVL154:
+ 166:Core/Src/device/onenet.c **** 
+ 1505              		.loc 1 166 10 is_stmt 0 view .LVU309
+ 1506 0112 0125     		movs	r5, #1
+ 1507 0114 A4E7     		b	.L65
+ 1508              	.L84:
+ 1509 0116 00BF     		.align	2
+ 1510              	.L83:
+ 1511 0118 88000000 		.word	.LC25
+ 1512 011c 30010000 		.word	.LC28
+ 1513 0120 58000000 		.word	.LC24
+ 1514 0124 00CF9D74 		.word	1956499200
+ 1515 0128 94000000 		.word	.LC26
+ 1516 012c 00000000 		.word	.LC34
+ 1517 0130 20000000 		.word	.LC22
+ 1518 0134 28000000 		.word	.LC23
+ 1519 0138 50000000 		.word	.LC36
+ 1520 013c 1C000000 		.word	.LC35
+ 1521 0140 6C000000 		.word	.LC37
+ 1522 0144 88000000 		.word	.LC38
+ 1523 0148 A8000000 		.word	.LC39
+ 1524 014c C8000000 		.word	.LC40
+ 1525 0150 E8000000 		.word	.LC41
+ 1526 0154 08010000 		.word	.LC42
+ 1527 0158 24010000 		.word	.LC43
+ 1528 015c 44010000 		.word	.LC44
+ 1529              		.cfi_endproc
+ 1530              	.LFE77:
+ 1532              		.section	.rodata.OneNet_SendData.str1.4,"aMS",%progbits,1
+ 1533              		.align	2
+ 1534              	.LC45:
+ 1535 0000 5B4F4E45 		.ascii	"[ONENET] Sent %d bytes\015\012\000"
+ 1535      4E45545D 
+ 1535      2053656E 
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 37
+
+
+ 1535      74202564 
+ 1535      20627974 
+ 1536              		.section	.text.OneNet_SendData,"ax",%progbits
+ 1537              		.align	1
+ 1538              		.global	OneNet_SendData
+ 1539              		.syntax unified
+ 1540              		.thumb
+ 1541              		.thumb_func
+ 1543              	OneNet_SendData:
+ 1544              	.LFB79:
+ 247:Core/Src/device/onenet.c **** 
+ 248:Core/Src/device/onenet.c **** /* ==================================================================
+ 249:Core/Src/device/onenet.c ****  *  OneNet_SendData — 上传数据到 OneNET
+ 250:Core/Src/device/onenet.c ****  * ================================================================== */
+ 251:Core/Src/device/onenet.c **** void OneNet_SendData(void)
+ 252:Core/Src/device/onenet.c **** {
+ 1545              		.loc 1 252 1 is_stmt 1 view -0
+ 1546              		.cfi_startproc
+ 1547              		@ args = 0, pretend = 0, frame = 272
+ 1548              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1549 0000 10B5     		push	{r4, lr}
+ 1550              	.LCFI20:
+ 1551              		.cfi_def_cfa_offset 8
+ 1552              		.cfi_offset 4, -8
+ 1553              		.cfi_offset 14, -4
+ 1554 0002 C6B0     		sub	sp, sp, #280
+ 1555              	.LCFI21:
+ 1556              		.cfi_def_cfa_offset 288
+ 253:Core/Src/device/onenet.c ****     MQTT_PACKET_STRUCTURE mqttPacket = {NULL, 0, 0, 0};
+ 1557              		.loc 1 253 5 view .LVU311
+ 1558              		.loc 1 253 27 is_stmt 0 view .LVU312
+ 1559 0004 0021     		movs	r1, #0
+ 1560 0006 4291     		str	r1, [sp, #264]
+ 1561 0008 4391     		str	r1, [sp, #268]
+ 1562 000a 4491     		str	r1, [sp, #272]
+ 1563 000c 4591     		str	r1, [sp, #276]
+ 254:Core/Src/device/onenet.c ****     char buf[256];
+ 1564              		.loc 1 254 5 is_stmt 1 view .LVU313
+ 255:Core/Src/device/onenet.c ****     short body_len = 0, i = 0;
+ 1565              		.loc 1 255 5 view .LVU314
+ 1566              	.LVL155:
+ 256:Core/Src/device/onenet.c **** 
+ 257:Core/Src/device/onenet.c ****     memset(buf, 0, sizeof(buf));
+ 1567              		.loc 1 257 5 view .LVU315
+ 1568 000e 02AC     		add	r4, sp, #8
+ 1569 0010 4FF48072 		mov	r2, #256
+ 1570 0014 2046     		mov	r0, r4
+ 1571 0016 FFF7FEFF 		bl	memset
+ 1572              	.LVL156:
+ 258:Core/Src/device/onenet.c ****     body_len = OneNet_FillBuf(buf);
+ 1573              		.loc 1 258 5 view .LVU316
+ 1574              		.loc 1 258 16 is_stmt 0 view .LVU317
+ 1575 001a 2046     		mov	r0, r4
+ 1576 001c FFF7FEFF 		bl	OneNet_FillBuf
+ 1577              	.LVL157:
+ 1578              		.loc 1 258 14 discriminator 1 view .LVU318
+ 1579 0020 04B2     		sxth	r4, r0
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 38
+
+
+ 1580              	.LVL158:
+ 259:Core/Src/device/onenet.c **** 
+ 260:Core/Src/device/onenet.c ****     if (body_len) {
+ 1581              		.loc 1 260 5 is_stmt 1 view .LVU319
+ 1582              		.loc 1 260 8 is_stmt 0 view .LVU320
+ 1583 0022 0CB9     		cbnz	r4, .L90
+ 1584              	.LVL159:
+ 1585              	.L85:
+ 261:Core/Src/device/onenet.c ****         if (MQTT_PacketSaveData(ONENET_PROID, ONENET_DEV_NAME,
+ 262:Core/Src/device/onenet.c ****                                 body_len, NULL, &mqttPacket) == 0) {
+ 263:Core/Src/device/onenet.c ****             for (; i < body_len; i++)
+ 264:Core/Src/device/onenet.c ****                 mqttPacket._data[mqttPacket._len++] = buf[i];
+ 265:Core/Src/device/onenet.c ****             ESP8266_SendData(mqttPacket._data, mqttPacket._len);
+ 266:Core/Src/device/onenet.c ****             printf("[ONENET] Sent %d bytes\r\n", mqttPacket._len);
+ 267:Core/Src/device/onenet.c ****             MQTT_DeleteBuffer(&mqttPacket);
+ 268:Core/Src/device/onenet.c ****         }
+ 269:Core/Src/device/onenet.c ****     }
+ 270:Core/Src/device/onenet.c **** }
+ 1586              		.loc 1 270 1 view .LVU321
+ 1587 0024 46B0     		add	sp, sp, #280
+ 1588              	.LCFI22:
+ 1589              		.cfi_remember_state
+ 1590              		.cfi_def_cfa_offset 8
+ 1591              		@ sp needed
+ 1592 0026 10BD     		pop	{r4, pc}
+ 1593              	.LVL160:
+ 1594              	.L90:
+ 1595              	.LCFI23:
+ 1596              		.cfi_restore_state
+ 261:Core/Src/device/onenet.c ****         if (MQTT_PacketSaveData(ONENET_PROID, ONENET_DEV_NAME,
+ 1597              		.loc 1 261 9 is_stmt 1 view .LVU322
+ 261:Core/Src/device/onenet.c ****         if (MQTT_PacketSaveData(ONENET_PROID, ONENET_DEV_NAME,
+ 1598              		.loc 1 261 13 is_stmt 0 view .LVU323
+ 1599 0028 42AB     		add	r3, sp, #264
+ 1600 002a 0093     		str	r3, [sp]
+ 1601 002c 0023     		movs	r3, #0
+ 1602 002e 2246     		mov	r2, r4
+ 1603 0030 0F49     		ldr	r1, .L91
+ 1604 0032 1048     		ldr	r0, .L91+4
+ 1605 0034 FFF7FEFF 		bl	MQTT_PacketSaveData
+ 1606              	.LVL161:
+ 261:Core/Src/device/onenet.c ****         if (MQTT_PacketSaveData(ONENET_PROID, ONENET_DEV_NAME,
+ 1607              		.loc 1 261 12 view .LVU324
+ 1608 0038 0028     		cmp	r0, #0
+ 1609 003a F3D1     		bne	.L85
+ 255:Core/Src/device/onenet.c **** 
+ 1610              		.loc 1 255 25 view .LVU325
+ 1611 003c 0023     		movs	r3, #0
+ 1612 003e 08E0     		b	.L87
+ 1613              	.LVL162:
+ 1614              	.L88:
+ 264:Core/Src/device/onenet.c ****             ESP8266_SendData(mqttPacket._data, mqttPacket._len);
+ 1615              		.loc 1 264 17 is_stmt 1 view .LVU326
+ 264:Core/Src/device/onenet.c ****             ESP8266_SendData(mqttPacket._data, mqttPacket._len);
+ 1616              		.loc 1 264 44 is_stmt 0 view .LVU327
+ 1617 0040 439A     		ldr	r2, [sp, #268]
+ 264:Core/Src/device/onenet.c ****             ESP8266_SendData(mqttPacket._data, mqttPacket._len);
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 39
+
+
+ 1618              		.loc 1 264 49 view .LVU328
+ 1619 0042 511C     		adds	r1, r2, #1
+ 1620 0044 4391     		str	r1, [sp, #268]
+ 264:Core/Src/device/onenet.c ****             ESP8266_SendData(mqttPacket._data, mqttPacket._len);
+ 1621              		.loc 1 264 58 view .LVU329
+ 1622 0046 02A9     		add	r1, sp, #8
+ 1623 0048 C85C     		ldrb	r0, [r1, r3]	@ zero_extendqisi2
+ 264:Core/Src/device/onenet.c ****             ESP8266_SendData(mqttPacket._data, mqttPacket._len);
+ 1624              		.loc 1 264 53 view .LVU330
+ 1625 004a 4299     		ldr	r1, [sp, #264]
+ 1626 004c 8854     		strb	r0, [r1, r2]
+ 263:Core/Src/device/onenet.c ****                 mqttPacket._data[mqttPacket._len++] = buf[i];
+ 1627              		.loc 1 263 35 is_stmt 1 discriminator 2 view .LVU331
+ 1628 004e 0133     		adds	r3, r3, #1
+ 1629              	.LVL163:
+ 263:Core/Src/device/onenet.c ****                 mqttPacket._data[mqttPacket._len++] = buf[i];
+ 1630              		.loc 1 263 35 is_stmt 0 discriminator 2 view .LVU332
+ 1631 0050 1BB2     		sxth	r3, r3
+ 1632              	.LVL164:
+ 1633              	.L87:
+ 263:Core/Src/device/onenet.c ****                 mqttPacket._data[mqttPacket._len++] = buf[i];
+ 1634              		.loc 1 263 22 is_stmt 1 discriminator 1 view .LVU333
+ 1635 0052 A342     		cmp	r3, r4
+ 1636 0054 F4DB     		blt	.L88
+ 265:Core/Src/device/onenet.c ****             printf("[ONENET] Sent %d bytes\r\n", mqttPacket._len);
+ 1637              		.loc 1 265 13 view .LVU334
+ 1638 0056 BDF80C11 		ldrh	r1, [sp, #268]
+ 1639 005a 4298     		ldr	r0, [sp, #264]
+ 1640 005c FFF7FEFF 		bl	ESP8266_SendData
+ 1641              	.LVL165:
+ 266:Core/Src/device/onenet.c ****             MQTT_DeleteBuffer(&mqttPacket);
+ 1642              		.loc 1 266 13 view .LVU335
+ 1643 0060 4399     		ldr	r1, [sp, #268]
+ 1644 0062 0548     		ldr	r0, .L91+8
+ 1645 0064 FFF7FEFF 		bl	printf
+ 1646              	.LVL166:
+ 267:Core/Src/device/onenet.c ****         }
+ 1647              		.loc 1 267 13 view .LVU336
+ 1648 0068 42A8     		add	r0, sp, #264
+ 1649 006a FFF7FEFF 		bl	MQTT_DeleteBuffer
+ 1650              	.LVL167:
+ 1651              		.loc 1 270 1 is_stmt 0 view .LVU337
+ 1652 006e D9E7     		b	.L85
+ 1653              	.L92:
+ 1654              		.align	2
+ 1655              	.L91:
+ 1656 0070 30010000 		.word	.LC28
+ 1657 0074 88000000 		.word	.LC25
+ 1658 0078 00000000 		.word	.LC45
+ 1659              		.cfi_endproc
+ 1660              	.LFE79:
+ 1662              		.section	.rodata.OneNET_Subscribe.str1.4,"aMS",%progbits,1
+ 1663              		.align	2
+ 1664              	.LC46:
+ 1665 0000 24737973 		.ascii	"$sys/%s/%s/thing/property/set\000"
+ 1665      2F25732F 
+ 1665      25732F74 
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 40
+
+
+ 1665      68696E67 
+ 1665      2F70726F 
+ 1666 001e 0000     		.align	2
+ 1667              	.LC47:
+ 1668 0020 5B4F4E45 		.ascii	"[ONENET] Subscribe: %s\015\012\000"
+ 1668      4E45545D 
+ 1668      20537562 
+ 1668      73637269 
+ 1668      62653A20 
+ 1669              		.section	.text.OneNET_Subscribe,"ax",%progbits
+ 1670              		.align	1
+ 1671              		.global	OneNET_Subscribe
+ 1672              		.syntax unified
+ 1673              		.thumb
+ 1674              		.thumb_func
+ 1676              	OneNET_Subscribe:
+ 1677              	.LFB80:
+ 271:Core/Src/device/onenet.c **** 
+ 272:Core/Src/device/onenet.c **** /* ==================================================================
+ 273:Core/Src/device/onenet.c ****  *  OneNET_Subscribe — 订阅下行 Topic
+ 274:Core/Src/device/onenet.c ****  * ================================================================== */
+ 275:Core/Src/device/onenet.c **** void OneNET_Subscribe(void)
+ 276:Core/Src/device/onenet.c **** {
+ 1678              		.loc 1 276 1 is_stmt 1 view -0
+ 1679              		.cfi_startproc
+ 1680              		@ args = 0, pretend = 0, frame = 80
+ 1681              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1682 0000 70B5     		push	{r4, r5, r6, lr}
+ 1683              	.LCFI24:
+ 1684              		.cfi_def_cfa_offset 16
+ 1685              		.cfi_offset 4, -16
+ 1686              		.cfi_offset 5, -12
+ 1687              		.cfi_offset 6, -8
+ 1688              		.cfi_offset 14, -4
+ 1689 0002 96B0     		sub	sp, sp, #88
+ 1690              	.LCFI25:
+ 1691              		.cfi_def_cfa_offset 104
+ 277:Core/Src/device/onenet.c ****     MQTT_PACKET_STRUCTURE mqtt_packet = {NULL, 0, 0, 0};
+ 1692              		.loc 1 277 5 view .LVU339
+ 1693              		.loc 1 277 27 is_stmt 0 view .LVU340
+ 1694 0004 12AD     		add	r5, sp, #72
+ 1695 0006 0024     		movs	r4, #0
+ 1696 0008 1294     		str	r4, [sp, #72]
+ 1697 000a 1394     		str	r4, [sp, #76]
+ 1698 000c 1494     		str	r4, [sp, #80]
+ 1699 000e 1594     		str	r4, [sp, #84]
+ 278:Core/Src/device/onenet.c ****     char topic_buf[56];
+ 1700              		.loc 1 278 5 is_stmt 1 view .LVU341
+ 279:Core/Src/device/onenet.c ****     const char *topic = topic_buf;
+ 1701              		.loc 1 279 5 view .LVU342
+ 1702              		.loc 1 279 17 is_stmt 0 view .LVU343
+ 1703 0010 04AE     		add	r6, sp, #16
+ 1704 0012 0396     		str	r6, [sp, #12]
+ 280:Core/Src/device/onenet.c **** 
+ 281:Core/Src/device/onenet.c ****     snprintf(topic_buf, sizeof(topic_buf), "$sys/%s/%s/thing/property/set",
+ 1705              		.loc 1 281 5 is_stmt 1 view .LVU344
+ 1706 0014 0F4B     		ldr	r3, .L97
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 41
+
+
+ 1707 0016 0093     		str	r3, [sp]
+ 1708 0018 0F4B     		ldr	r3, .L97+4
+ 1709 001a 104A     		ldr	r2, .L97+8
+ 1710 001c 3821     		movs	r1, #56
+ 1711 001e 3046     		mov	r0, r6
+ 1712 0020 FFF7FEFF 		bl	snprintf
+ 1713              	.LVL168:
+ 282:Core/Src/device/onenet.c ****              ONENET_PROID, ONENET_DEV_NAME);
+ 283:Core/Src/device/onenet.c ****     printf("[ONENET] Subscribe: %s\r\n", topic_buf);
+ 1714              		.loc 1 283 5 view .LVU345
+ 1715 0024 3146     		mov	r1, r6
+ 1716 0026 0E48     		ldr	r0, .L97+12
+ 1717 0028 FFF7FEFF 		bl	printf
+ 1718              	.LVL169:
+ 284:Core/Src/device/onenet.c **** 
+ 285:Core/Src/device/onenet.c ****     if (MQTT_PacketSubscribe(MQTT_SUBSCRIBE_ID, MQTT_QOS_LEVEL0,
+ 1719              		.loc 1 285 5 view .LVU346
+ 1720              		.loc 1 285 9 is_stmt 0 view .LVU347
+ 1721 002c 0095     		str	r5, [sp]
+ 1722 002e 0123     		movs	r3, #1
+ 1723 0030 03AA     		add	r2, sp, #12
+ 1724 0032 2146     		mov	r1, r4
+ 1725 0034 1420     		movs	r0, #20
+ 1726 0036 FFF7FEFF 		bl	MQTT_PacketSubscribe
+ 1727              	.LVL170:
+ 1728              		.loc 1 285 8 discriminator 1 view .LVU348
+ 1729 003a 08B1     		cbz	r0, .L96
+ 1730              	.L93:
+ 286:Core/Src/device/onenet.c ****                              &topic, 1, &mqtt_packet) == 0) {
+ 287:Core/Src/device/onenet.c ****         ESP8266_SendData(mqtt_packet._data, mqtt_packet._len);
+ 288:Core/Src/device/onenet.c ****         MQTT_DeleteBuffer(&mqtt_packet);
+ 289:Core/Src/device/onenet.c ****     }
+ 290:Core/Src/device/onenet.c **** }
+ 1731              		.loc 1 290 1 view .LVU349
+ 1732 003c 16B0     		add	sp, sp, #88
+ 1733              	.LCFI26:
+ 1734              		.cfi_remember_state
+ 1735              		.cfi_def_cfa_offset 16
+ 1736              		@ sp needed
+ 1737 003e 70BD     		pop	{r4, r5, r6, pc}
+ 1738              	.L96:
+ 1739              	.LCFI27:
+ 1740              		.cfi_restore_state
+ 287:Core/Src/device/onenet.c ****         MQTT_DeleteBuffer(&mqtt_packet);
+ 1741              		.loc 1 287 9 is_stmt 1 view .LVU350
+ 1742 0040 BDF84C10 		ldrh	r1, [sp, #76]
+ 1743 0044 1298     		ldr	r0, [sp, #72]
+ 1744 0046 FFF7FEFF 		bl	ESP8266_SendData
+ 1745              	.LVL171:
+ 288:Core/Src/device/onenet.c ****     }
+ 1746              		.loc 1 288 9 view .LVU351
+ 1747 004a 2846     		mov	r0, r5
+ 1748 004c FFF7FEFF 		bl	MQTT_DeleteBuffer
+ 1749              	.LVL172:
+ 1750              		.loc 1 290 1 is_stmt 0 view .LVU352
+ 1751 0050 F4E7     		b	.L93
+ 1752              	.L98:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 42
+
+
+ 1753 0052 00BF     		.align	2
+ 1754              	.L97:
+ 1755 0054 30010000 		.word	.LC28
+ 1756 0058 88000000 		.word	.LC25
+ 1757 005c 00000000 		.word	.LC46
+ 1758 0060 20000000 		.word	.LC47
+ 1759              		.cfi_endproc
+ 1760              	.LFE80:
+ 1762              		.section	.rodata.OneNet_RevPro.str1.4,"aMS",%progbits,1
+ 1763              		.align	2
+ 1764              	.LC48:
+ 1765 0000 5B4F4E45 		.ascii	"[ONENET] Publish: topic=%s, payload=%s\015\012\000"
+ 1765      4E45545D 
+ 1765      20507562 
+ 1765      6C697368 
+ 1765      3A20746F 
+ 1766 0029 000000   		.align	2
+ 1767              	.LC49:
+ 1768 002c 70617261 		.ascii	"params\000"
+ 1768      6D7300
+ 1769 0033 00       		.align	2
+ 1770              	.LC50:
+ 1771 0034 6C656400 		.ascii	"led\000"
+ 1772              		.align	2
+ 1773              	.LC51:
+ 1774 0038 5B4F4E45 		.ascii	"[ONENET] CMD: led=%d\015\012\000"
+ 1774      4E45545D 
+ 1774      20434D44 
+ 1774      3A206C65 
+ 1774      643D2564 
+ 1775 004f 00       		.align	2
+ 1776              	.LC52:
+ 1777 0050 5B4F4E45 		.ascii	"[ONENET] PUBACK OK\015\000"
+ 1777      4E45545D 
+ 1777      20505542 
+ 1777      41434B20 
+ 1777      4F4B0D00 
+ 1778              		.align	2
+ 1779              	.LC53:
+ 1780 0064 5B4F4E45 		.ascii	"[ONENET] SUBACK OK\015\000"
+ 1780      4E45545D 
+ 1780      20535542 
+ 1780      41434B20 
+ 1780      4F4B0D00 
+ 1781              		.section	.text.OneNet_RevPro,"ax",%progbits
+ 1782              		.align	1
+ 1783              		.global	OneNet_RevPro
+ 1784              		.syntax unified
+ 1785              		.thumb
+ 1786              		.thumb_func
+ 1788              	OneNet_RevPro:
+ 1789              	.LVL173:
+ 1790              	.LFB81:
+ 291:Core/Src/device/onenet.c **** 
+ 292:Core/Src/device/onenet.c **** /* ==================================================================
+ 293:Core/Src/device/onenet.c ****  *  OneNet_RevPro — 处理平台下发的命令
+ 294:Core/Src/device/onenet.c ****  * ================================================================== */
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 43
+
+
+ 295:Core/Src/device/onenet.c **** void OneNet_RevPro(unsigned char *cmd)
+ 296:Core/Src/device/onenet.c **** {
+ 1791              		.loc 1 296 1 is_stmt 1 view -0
+ 1792              		.cfi_startproc
+ 1793              		@ args = 0, pretend = 0, frame = 16
+ 1794              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1795              		.loc 1 296 1 is_stmt 0 view .LVU354
+ 1796 0000 30B5     		push	{r4, r5, lr}
+ 1797              	.LCFI28:
+ 1798              		.cfi_def_cfa_offset 12
+ 1799              		.cfi_offset 4, -12
+ 1800              		.cfi_offset 5, -8
+ 1801              		.cfi_offset 14, -4
+ 1802 0002 89B0     		sub	sp, sp, #36
+ 1803              	.LCFI29:
+ 1804              		.cfi_def_cfa_offset 48
+ 1805 0004 0546     		mov	r5, r0
+ 297:Core/Src/device/onenet.c ****     char *req_payload = NULL, *cmdid_topic = NULL;
+ 1806              		.loc 1 297 5 is_stmt 1 view .LVU355
+ 1807              		.loc 1 297 11 is_stmt 0 view .LVU356
+ 1808 0006 0023     		movs	r3, #0
+ 1809 0008 0793     		str	r3, [sp, #28]
+ 1810              		.loc 1 297 32 view .LVU357
+ 1811 000a 0693     		str	r3, [sp, #24]
+ 298:Core/Src/device/onenet.c ****     unsigned short topic_len = 0, req_len = 0;
+ 1812              		.loc 1 298 5 is_stmt 1 view .LVU358
+ 1813              		.loc 1 298 20 is_stmt 0 view .LVU359
+ 1814 000c ADF81630 		strh	r3, [sp, #22]	@ movhi
+ 1815              		.loc 1 298 35 view .LVU360
+ 1816 0010 ADF81430 		strh	r3, [sp, #20]	@ movhi
+ 299:Core/Src/device/onenet.c ****     unsigned char qos = 0;
+ 1817              		.loc 1 299 5 is_stmt 1 view .LVU361
+ 1818              		.loc 1 299 19 is_stmt 0 view .LVU362
+ 1819 0014 8DF81330 		strb	r3, [sp, #19]
+ 300:Core/Src/device/onenet.c ****     static unsigned short pkt_id = 0;
+ 1820              		.loc 1 300 5 is_stmt 1 view .LVU363
+ 301:Core/Src/device/onenet.c ****     unsigned char type = MQTT_UnPacketRecv(cmd);
+ 1821              		.loc 1 301 5 view .LVU364
+ 1822              		.loc 1 301 26 is_stmt 0 view .LVU365
+ 1823 0018 FFF7FEFF 		bl	MQTT_UnPacketRecv
+ 1824              	.LVL174:
+ 1825              		.loc 1 301 26 view .LVU366
+ 1826 001c 0446     		mov	r4, r0
+ 1827              	.LVL175:
+ 302:Core/Src/device/onenet.c **** 
+ 303:Core/Src/device/onenet.c ****     switch (type) {
+ 1828              		.loc 1 303 5 is_stmt 1 view .LVU367
+ 1829 001e 0428     		cmp	r0, #4
+ 1830 0020 3ED0     		beq	.L100
+ 1831 0022 0928     		cmp	r0, #9
+ 1832 0024 45D0     		beq	.L101
+ 1833 0026 0328     		cmp	r0, #3
+ 1834 0028 02D0     		beq	.L102
+ 304:Core/Src/device/onenet.c ****     case MQTT_PKT_PUBLISH:
+ 305:Core/Src/device/onenet.c ****         if (MQTT_UnPacketPublish(cmd, &cmdid_topic, &topic_len,
+ 306:Core/Src/device/onenet.c ****                                  &req_payload, &req_len, &qos, &pkt_id) == 0) {
+ 307:Core/Src/device/onenet.c ****             printf("[ONENET] Publish: topic=%s, payload=%s\r\n", cmdid_topic, req_payload);
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 44
+
+
+ 308:Core/Src/device/onenet.c **** 
+ 309:Core/Src/device/onenet.c ****             cJSON *raw = cJSON_Parse(req_payload);
+ 310:Core/Src/device/onenet.c ****             if (raw) {
+ 311:Core/Src/device/onenet.c ****                 cJSON *params = cJSON_GetObjectItem(raw, "params");
+ 312:Core/Src/device/onenet.c ****                 if (params) {
+ 313:Core/Src/device/onenet.c ****                     cJSON *led = cJSON_GetObjectItem(params, "led");
+ 314:Core/Src/device/onenet.c ****                     if (led) {
+ 315:Core/Src/device/onenet.c ****                         printf("[ONENET] CMD: led=%d\r\n", led->valueint);
+ 316:Core/Src/device/onenet.c ****                     }
+ 317:Core/Src/device/onenet.c ****                 }
+ 318:Core/Src/device/onenet.c ****                 cJSON_Delete(raw);
+ 319:Core/Src/device/onenet.c ****             }
+ 320:Core/Src/device/onenet.c ****         }
+ 321:Core/Src/device/onenet.c ****         break;
+ 322:Core/Src/device/onenet.c **** 
+ 323:Core/Src/device/onenet.c ****     case MQTT_PKT_PUBACK:
+ 324:Core/Src/device/onenet.c ****         if (MQTT_UnPacketPublishAck(cmd) == 0)
+ 325:Core/Src/device/onenet.c ****             printf("[ONENET] PUBACK OK\r\n");
+ 326:Core/Src/device/onenet.c ****         break;
+ 327:Core/Src/device/onenet.c **** 
+ 328:Core/Src/device/onenet.c ****     case MQTT_PKT_SUBACK:
+ 329:Core/Src/device/onenet.c ****         if (MQTT_UnPacketSubscribe(cmd) == 0)
+ 330:Core/Src/device/onenet.c ****             printf("[ONENET] SUBACK OK\r\n");
+ 331:Core/Src/device/onenet.c ****         break;
+ 332:Core/Src/device/onenet.c **** 
+ 333:Core/Src/device/onenet.c ****     default:
+ 334:Core/Src/device/onenet.c ****         break;
+ 335:Core/Src/device/onenet.c ****     }
+ 336:Core/Src/device/onenet.c **** 
+ 337:Core/Src/device/onenet.c ****     ESP8266_Clear();
+ 1835              		.loc 1 337 5 view .LVU368
+ 1836 002a FFF7FEFF 		bl	ESP8266_Clear
+ 1837              	.LVL176:
+ 338:Core/Src/device/onenet.c **** 
+ 339:Core/Src/device/onenet.c ****     if (type == MQTT_PKT_PUBLISH || type == MQTT_PKT_CMD) {
+ 1838              		.loc 1 339 5 view .LVU369
+ 1839 002e 12E0     		b	.L103
+ 1840              	.LVL177:
+ 1841              	.L102:
+ 305:Core/Src/device/onenet.c ****                                  &req_payload, &req_len, &qos, &pkt_id) == 0) {
+ 1842              		.loc 1 305 9 view .LVU370
+ 305:Core/Src/device/onenet.c ****                                  &req_payload, &req_len, &qos, &pkt_id) == 0) {
+ 1843              		.loc 1 305 13 is_stmt 0 view .LVU371
+ 1844 0030 244B     		ldr	r3, .L110
+ 1845 0032 0293     		str	r3, [sp, #8]
+ 1846 0034 0DF11303 		add	r3, sp, #19
+ 1847 0038 0193     		str	r3, [sp, #4]
+ 1848 003a 05AB     		add	r3, sp, #20
+ 1849 003c 0093     		str	r3, [sp]
+ 1850 003e 07AB     		add	r3, sp, #28
+ 1851 0040 0DF11602 		add	r2, sp, #22
+ 1852 0044 06A9     		add	r1, sp, #24
+ 1853 0046 2846     		mov	r0, r5
+ 1854              	.LVL178:
+ 305:Core/Src/device/onenet.c ****                                  &req_payload, &req_len, &qos, &pkt_id) == 0) {
+ 1855              		.loc 1 305 13 view .LVU372
+ 1856 0048 FFF7FEFF 		bl	MQTT_UnPacketPublish
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 45
+
+
+ 1857              	.LVL179:
+ 305:Core/Src/device/onenet.c ****                                  &req_payload, &req_len, &qos, &pkt_id) == 0) {
+ 1858              		.loc 1 305 12 discriminator 1 view .LVU373
+ 1859 004c 68B1     		cbz	r0, .L109
+ 1860              	.LVL180:
+ 1861              	.L104:
+ 337:Core/Src/device/onenet.c **** 
+ 1862              		.loc 1 337 5 is_stmt 1 view .LVU374
+ 1863 004e FFF7FEFF 		bl	ESP8266_Clear
+ 1864              	.LVL181:
+ 1865              		.loc 1 339 5 view .LVU375
+ 1866              		.loc 1 339 8 is_stmt 0 view .LVU376
+ 1867 0052 032C     		cmp	r4, #3
+ 1868 0054 01D0     		beq	.L106
+ 1869              	.L103:
+ 1870              		.loc 1 339 34 discriminator 1 view .LVU377
+ 1871 0056 0F2C     		cmp	r4, #15
+ 1872 0058 05D1     		bne	.L99
+ 1873              	.L106:
+ 340:Core/Src/device/onenet.c ****         MQTT_FreeBuffer(cmdid_topic);
+ 1874              		.loc 1 340 9 is_stmt 1 view .LVU378
+ 1875 005a 0698     		ldr	r0, [sp, #24]
+ 1876 005c FFF7FEFF 		bl	vPortFree
+ 1877              	.LVL182:
+ 341:Core/Src/device/onenet.c ****         MQTT_FreeBuffer(req_payload);
+ 1878              		.loc 1 341 9 view .LVU379
+ 1879 0060 0798     		ldr	r0, [sp, #28]
+ 1880 0062 FFF7FEFF 		bl	vPortFree
+ 1881              	.LVL183:
+ 1882              	.L99:
+ 342:Core/Src/device/onenet.c ****     }
+ 343:Core/Src/device/onenet.c **** }
+ 1883              		.loc 1 343 1 is_stmt 0 view .LVU380
+ 1884 0066 09B0     		add	sp, sp, #36
+ 1885              	.LCFI30:
+ 1886              		.cfi_remember_state
+ 1887              		.cfi_def_cfa_offset 12
+ 1888              		@ sp needed
+ 1889 0068 30BD     		pop	{r4, r5, pc}
+ 1890              	.LVL184:
+ 1891              	.L109:
+ 1892              	.LCFI31:
+ 1893              		.cfi_restore_state
+ 1894              	.LBB6:
+ 307:Core/Src/device/onenet.c **** 
+ 1895              		.loc 1 307 13 is_stmt 1 view .LVU381
+ 1896 006a 079A     		ldr	r2, [sp, #28]
+ 1897 006c 0699     		ldr	r1, [sp, #24]
+ 1898 006e 1648     		ldr	r0, .L110+4
+ 1899 0070 FFF7FEFF 		bl	printf
+ 1900              	.LVL185:
+ 309:Core/Src/device/onenet.c ****             if (raw) {
+ 1901              		.loc 1 309 13 view .LVU382
+ 309:Core/Src/device/onenet.c ****             if (raw) {
+ 1902              		.loc 1 309 26 is_stmt 0 view .LVU383
+ 1903 0074 0798     		ldr	r0, [sp, #28]
+ 1904 0076 FFF7FEFF 		bl	cJSON_Parse
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 46
+
+
+ 1905              	.LVL186:
+ 310:Core/Src/device/onenet.c ****                 cJSON *params = cJSON_GetObjectItem(raw, "params");
+ 1906              		.loc 1 310 13 is_stmt 1 view .LVU384
+ 310:Core/Src/device/onenet.c ****                 cJSON *params = cJSON_GetObjectItem(raw, "params");
+ 1907              		.loc 1 310 16 is_stmt 0 view .LVU385
+ 1908 007a 0546     		mov	r5, r0
+ 1909              	.LVL187:
+ 310:Core/Src/device/onenet.c ****                 cJSON *params = cJSON_GetObjectItem(raw, "params");
+ 1910              		.loc 1 310 16 view .LVU386
+ 1911 007c 0028     		cmp	r0, #0
+ 1912 007e E6D0     		beq	.L104
+ 1913              	.LBB7:
+ 311:Core/Src/device/onenet.c ****                 if (params) {
+ 1914              		.loc 1 311 17 is_stmt 1 view .LVU387
+ 311:Core/Src/device/onenet.c ****                 if (params) {
+ 1915              		.loc 1 311 33 is_stmt 0 view .LVU388
+ 1916 0080 1249     		ldr	r1, .L110+8
+ 1917 0082 FFF7FEFF 		bl	cJSON_GetObjectItem
+ 1918              	.LVL188:
+ 312:Core/Src/device/onenet.c ****                     cJSON *led = cJSON_GetObjectItem(params, "led");
+ 1919              		.loc 1 312 17 is_stmt 1 view .LVU389
+ 312:Core/Src/device/onenet.c ****                     cJSON *led = cJSON_GetObjectItem(params, "led");
+ 1920              		.loc 1 312 20 is_stmt 0 view .LVU390
+ 1921 0086 38B1     		cbz	r0, .L105
+ 1922              	.LBB8:
+ 313:Core/Src/device/onenet.c ****                     if (led) {
+ 1923              		.loc 1 313 21 is_stmt 1 view .LVU391
+ 313:Core/Src/device/onenet.c ****                     if (led) {
+ 1924              		.loc 1 313 34 is_stmt 0 view .LVU392
+ 1925 0088 1149     		ldr	r1, .L110+12
+ 1926 008a FFF7FEFF 		bl	cJSON_GetObjectItem
+ 1927              	.LVL189:
+ 314:Core/Src/device/onenet.c ****                         printf("[ONENET] CMD: led=%d\r\n", led->valueint);
+ 1928              		.loc 1 314 21 is_stmt 1 view .LVU393
+ 314:Core/Src/device/onenet.c ****                         printf("[ONENET] CMD: led=%d\r\n", led->valueint);
+ 1929              		.loc 1 314 24 is_stmt 0 view .LVU394
+ 1930 008e 18B1     		cbz	r0, .L105
+ 315:Core/Src/device/onenet.c ****                     }
+ 1931              		.loc 1 315 25 is_stmt 1 view .LVU395
+ 1932 0090 4169     		ldr	r1, [r0, #20]
+ 1933 0092 1048     		ldr	r0, .L110+16
+ 1934              	.LVL190:
+ 315:Core/Src/device/onenet.c ****                     }
+ 1935              		.loc 1 315 25 is_stmt 0 view .LVU396
+ 1936 0094 FFF7FEFF 		bl	printf
+ 1937              	.LVL191:
+ 1938              	.L105:
+ 315:Core/Src/device/onenet.c ****                     }
+ 1939              		.loc 1 315 25 view .LVU397
+ 1940              	.LBE8:
+ 318:Core/Src/device/onenet.c ****             }
+ 1941              		.loc 1 318 17 is_stmt 1 view .LVU398
+ 1942 0098 2846     		mov	r0, r5
+ 1943 009a FFF7FEFF 		bl	cJSON_Delete
+ 1944              	.LVL192:
+ 1945 009e D6E7     		b	.L104
+ 1946              	.LVL193:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 47
+
+
+ 1947              	.L100:
+ 318:Core/Src/device/onenet.c ****             }
+ 1948              		.loc 1 318 17 is_stmt 0 view .LVU399
+ 1949              	.LBE7:
+ 1950              	.LBE6:
+ 324:Core/Src/device/onenet.c ****             printf("[ONENET] PUBACK OK\r\n");
+ 1951              		.loc 1 324 9 is_stmt 1 view .LVU400
+ 324:Core/Src/device/onenet.c ****             printf("[ONENET] PUBACK OK\r\n");
+ 1952              		.loc 1 324 13 is_stmt 0 view .LVU401
+ 1953 00a0 2846     		mov	r0, r5
+ 1954              	.LVL194:
+ 324:Core/Src/device/onenet.c ****             printf("[ONENET] PUBACK OK\r\n");
+ 1955              		.loc 1 324 13 view .LVU402
+ 1956 00a2 FFF7FEFF 		bl	MQTT_UnPacketPublishAck
+ 1957              	.LVL195:
+ 324:Core/Src/device/onenet.c ****             printf("[ONENET] PUBACK OK\r\n");
+ 1958              		.loc 1 324 12 discriminator 1 view .LVU403
+ 1959 00a6 0028     		cmp	r0, #0
+ 1960 00a8 D1D1     		bne	.L104
+ 325:Core/Src/device/onenet.c ****         break;
+ 1961              		.loc 1 325 13 is_stmt 1 view .LVU404
+ 1962 00aa 0B48     		ldr	r0, .L110+20
+ 1963 00ac FFF7FEFF 		bl	puts
+ 1964              	.LVL196:
+ 1965 00b0 CDE7     		b	.L104
+ 1966              	.LVL197:
+ 1967              	.L101:
+ 329:Core/Src/device/onenet.c ****             printf("[ONENET] SUBACK OK\r\n");
+ 1968              		.loc 1 329 9 view .LVU405
+ 329:Core/Src/device/onenet.c ****             printf("[ONENET] SUBACK OK\r\n");
+ 1969              		.loc 1 329 13 is_stmt 0 view .LVU406
+ 1970 00b2 2846     		mov	r0, r5
+ 1971              	.LVL198:
+ 329:Core/Src/device/onenet.c ****             printf("[ONENET] SUBACK OK\r\n");
+ 1972              		.loc 1 329 13 view .LVU407
+ 1973 00b4 FFF7FEFF 		bl	MQTT_UnPacketSubscribe
+ 1974              	.LVL199:
+ 329:Core/Src/device/onenet.c ****             printf("[ONENET] SUBACK OK\r\n");
+ 1975              		.loc 1 329 12 discriminator 1 view .LVU408
+ 1976 00b8 0028     		cmp	r0, #0
+ 1977 00ba C8D1     		bne	.L104
+ 330:Core/Src/device/onenet.c ****         break;
+ 1978              		.loc 1 330 13 is_stmt 1 view .LVU409
+ 1979 00bc 0748     		ldr	r0, .L110+24
+ 1980 00be FFF7FEFF 		bl	puts
+ 1981              	.LVL200:
+ 1982 00c2 C4E7     		b	.L104
+ 1983              	.L111:
+ 1984              		.align	2
+ 1985              	.L110:
+ 1986 00c4 00000000 		.word	pkt_id.0
+ 1987 00c8 00000000 		.word	.LC48
+ 1988 00cc 2C000000 		.word	.LC49
+ 1989 00d0 34000000 		.word	.LC50
+ 1990 00d4 38000000 		.word	.LC51
+ 1991 00d8 50000000 		.word	.LC52
+ 1992 00dc 64000000 		.word	.LC53
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 48
+
+
+ 1993              		.cfi_endproc
+ 1994              	.LFE81:
+ 1996              		.section	.bss.pkt_id.0,"aw",%nobits
+ 1997              		.align	1
+ 2000              	pkt_id.0:
+ 2001 0000 0000     		.space	2
+ 2002              		.section	.bss.send_buf.1,"aw",%nobits
+ 2003              		.align	2
+ 2006              	send_buf.1:
+ 2007 0000 00000000 		.space	512
+ 2007      00000000 
+ 2007      00000000 
+ 2007      00000000 
+ 2007      00000000 
+ 2008              		.global	onenet_key
+ 2009              		.section	.bss.onenet_key,"aw",%nobits
+ 2010              		.align	2
+ 2013              	onenet_key:
+ 2014 0000 00000000 		.space	48
+ 2014      00000000 
+ 2014      00000000 
+ 2014      00000000 
+ 2014      00000000 
+ 2015              		.global	onenet_devid
+ 2016              		.section	.bss.onenet_devid,"aw",%nobits
+ 2017              		.align	2
+ 2020              	onenet_devid:
+ 2021 0000 00000000 		.space	16
+ 2021      00000000 
+ 2021      00000000 
+ 2021      00000000 
+ 2022              		.text
+ 2023              	.Letext0:
+ 2024              		.file 2 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_defa
+ 2025              		.file 3 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h
+ 2026              		.file 4 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/lib/gcc/arm-none-eabi/14.2.1/includ
+ 2027              		.file 5 "Core/Inc/device/onenet.h"
+ 2028              		.file 6 "Core/Inc/device/Common.h"
+ 2029              		.file 7 "Core/Inc/device/mqttkit.h"
+ 2030              		.file 8 "Core/Inc/device/cJSON.h"
+ 2031              		.file 9 "Middlewares/FreeRTOS/Source/include/portable.h"
+ 2032              		.file 10 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/string.h"
+ 2033              		.file 11 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/stdio.h"
+ 2034              		.file 12 "Core/Inc/device/base64.h"
+ 2035              		.file 13 "Core/Inc/device/hmac_sha1.h"
+ 2036              		.file 14 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h"
+ 2037              		.file 15 "Core/Inc/device/esp8266.h"
+ 2038              		.file 16 "<built-in>"
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 49
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 onenet.c
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:19     .text.DelayXms:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:24     .text.DelayXms:00000000 DelayXms
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:46     .rodata.OTA_UrlEncode.str1.4:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:71     .text.OTA_UrlEncode:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:76     .text.OTA_UrlEncode:00000000 OTA_UrlEncode
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:361    .text.OTA_UrlEncode:0000013c $d
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:393    .text.OTA_UrlEncode:000001bc $t
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:428    .text.OTA_UrlEncode:000001d0 $d
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:440    .rodata.OneNET_Authorization.str1.4:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:458    .text.OneNET_Authorization:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:463    .text.OneNET_Authorization:00000000 OneNET_Authorization
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:735    .text.OneNET_Authorization:00000168 $d
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:745    .rodata.OneNet_FillBuf.str1.4:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:770    .text.OneNet_FillBuf:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:775    .text.OneNet_FillBuf:00000000 OneNet_FillBuf
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:942    .text.OneNet_FillBuf:000000dc $d
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:956    .rodata.OneNET_RegisterDevice.str1.4:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:1002   .text.OneNET_RegisterDevice:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:1008   .text.OneNET_RegisterDevice:00000000 OneNET_RegisterDevice
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:1194   .text.OneNET_RegisterDevice:000000c0 $d
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:2006   .bss.send_buf.1:00000000 send_buf.1
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:2013   .bss.onenet_key:00000000 onenet_key
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:2020   .bss.onenet_devid:00000000 onenet_devid
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:1215   .rodata.OneNet_DevLink.str1.4:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:1250   .text.OneNet_DevLink:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:1256   .text.OneNet_DevLink:00000000 OneNet_DevLink
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:1411   .text.OneNet_DevLink:000000b8 $d
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:1417   .text.OneNet_DevLink:000000be $t
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:1511   .text.OneNet_DevLink:00000118 $d
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:1533   .rodata.OneNet_SendData.str1.4:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:1537   .text.OneNet_SendData:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:1543   .text.OneNet_SendData:00000000 OneNet_SendData
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:1656   .text.OneNet_SendData:00000070 $d
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:1663   .rodata.OneNET_Subscribe.str1.4:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:1670   .text.OneNET_Subscribe:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:1676   .text.OneNET_Subscribe:00000000 OneNET_Subscribe
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:1755   .text.OneNET_Subscribe:00000054 $d
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:1763   .rodata.OneNet_RevPro.str1.4:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:1782   .text.OneNet_RevPro:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:1788   .text.OneNet_RevPro:00000000 OneNet_RevPro
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:1986   .text.OneNet_RevPro:000000c4 $d
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:2000   .bss.pkt_id.0:00000000 pkt_id.0
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:1997   .bss.pkt_id.0:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:2003   .bss.send_buf.1:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:2010   .bss.onenet_key:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s:2017   .bss.onenet_devid:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_Delay
+strlen
+memset
+BASE64_Decode
+snprintf
+hmac_sha1
+BASE64_Encode
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccfnDP7T.s 			page 50
+
+
+__aeabi_fmul
+__aeabi_f2iz
+sprintf
+strcat
+onenet_az_g
+ESP8266_SendCmd
+puts
+ESP8266_SendData
+ESP8266_GetIPD
+strstr
+sscanf
+printf
+MQTT_PacketConnect
+MQTT_UnPacketRecv
+MQTT_UnPacketConnectAck
+MQTT_DeleteBuffer
+MQTT_PacketSaveData
+MQTT_PacketSubscribe
+ESP8266_Clear
+MQTT_UnPacketPublish
+vPortFree
+cJSON_Parse
+cJSON_GetObjectItem
+cJSON_Delete
+MQTT_UnPacketPublishAck
+MQTT_UnPacketSubscribe

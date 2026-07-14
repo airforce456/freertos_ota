@@ -299,14 +299,8 @@ void USART1_IRQHandler(void)
 void USART2_IRQHandler(void)
 {
   /* USER CODE BEGIN USART2_IRQn 0 */
-  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);  /* PC13=入口指示：灯闪=ISR被调用了 */
-  if (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_IDLE)) {
-      HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_15);  /* PC15=IDLE捕获指示 */
-      __HAL_UART_CLEAR_IDLEFLAG(&huart2);
-      uint16_t rxLen = 256 - __HAL_DMA_GET_COUNTER(huart2.hdmarx);
-      extern void BSP_UART_HandleIdle(UART_HandleTypeDef *h, uint16_t len);
-      BSP_UART_HandleIdle(&huart2, rxLen);
-  }
+  /* 中断逐字节接收模式 — 必须调 HAL_UART_IRQHandler 触发 RxCpltCallback */
+  HAL_UART_IRQHandler(&huart2);
   /* USER CODE END USART2_IRQn 0 */
   /* USER CODE BEGIN USART2_IRQn 1 */
   /* USER CODE END USART2_IRQn 1 */

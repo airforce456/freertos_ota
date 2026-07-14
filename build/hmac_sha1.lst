@@ -1,0 +1,2188 @@
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.arch armv7-m
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"hmac_sha1.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.file 1 "Core/Src/device/hmac_sha1.c"
+  18              		.section	.text.ft,"ax",%progbits
+  19              		.align	1
+  20              		.global	ft
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  25              	ft:
+  26              	.LVL0:
+  27              	.LFB68:
+   1:Core/Src/device/hmac_sha1.c **** /**
+   2:Core/Src/device/hmac_sha1.c **** 	************************************************************
+   3:Core/Src/device/hmac_sha1.c **** 	************************************************************
+   4:Core/Src/device/hmac_sha1.c **** 	************************************************************
+   5:Core/Src/device/hmac_sha1.c **** 		文件名： 	hamc_sha1.c
+   6:Core/Src/device/hmac_sha1.c **** 
+   7:Core/Src/device/hmac_sha1.c **** 		作者： 		张继瑞
+   8:Core/Src/device/hmac_sha1.c **** 
+   9:Core/Src/device/hmac_sha1.c **** 		日期： 		2018-05-14
+  10:Core/Src/device/hmac_sha1.c **** 
+  11:Core/Src/device/hmac_sha1.c **** 		版本： 		V1.0
+  12:Core/Src/device/hmac_sha1.c **** 
+  13:Core/Src/device/hmac_sha1.c **** 		说明： 		Hmac_sha1加密算法
+  14:Core/Src/device/hmac_sha1.c **** 
+  15:Core/Src/device/hmac_sha1.c **** 		修改记录：
+  16:Core/Src/device/hmac_sha1.c **** 	************************************************************
+  17:Core/Src/device/hmac_sha1.c **** 	************************************************************
+  18:Core/Src/device/hmac_sha1.c **** 	************************************************************
+  19:Core/Src/device/hmac_sha1.c **** **/
+  20:Core/Src/device/hmac_sha1.c **** 
+  21:Core/Src/device/hmac_sha1.c **** //
+  22:Core/Src/device/hmac_sha1.c **** #include "hmac_sha1.h"
+  23:Core/Src/device/hmac_sha1.c **** 
+  24:Core/Src/device/hmac_sha1.c **** //C库
+  25:Core/Src/device/hmac_sha1.c **** #include <stdlib.h>
+  26:Core/Src/device/hmac_sha1.c **** #include <stdio.h>
+  27:Core/Src/device/hmac_sha1.c **** #include "usart.h"
+  28:Core/Src/device/hmac_sha1.c **** 
+  29:Core/Src/device/hmac_sha1.c **** 
+  30:Core/Src/device/hmac_sha1.c **** int test_case_length[] = {9, 8, 28, 50, 50, 20, 54, 73, 54, 73};
+  31:Core/Src/device/hmac_sha1.c **** 
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 2
+
+
+  32:Core/Src/device/hmac_sha1.c **** 
+  33:Core/Src/device/hmac_sha1.c **** unsigned char test_cases[] =
+  34:Core/Src/device/hmac_sha1.c **** {
+  35:Core/Src/device/hmac_sha1.c **** 	/* "Sample #1" */
+  36:Core/Src/device/hmac_sha1.c **** 	0x53, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x20, 0x23, 0x31,
+  37:Core/Src/device/hmac_sha1.c **** 	/* "Hi There"   */
+  38:Core/Src/device/hmac_sha1.c **** 	0x48, 0x69, 0x20, 0x54, 0x68, 0x65, 0x72, 0x65,
+  39:Core/Src/device/hmac_sha1.c **** 
+  40:Core/Src/device/hmac_sha1.c **** 	/* "what do ya want for nothing?" */
+  41:Core/Src/device/hmac_sha1.c **** 	0x77, 0x68, 0x61, 0x74, 0x20, 0x64, 0x6f, 0x20, 0x79, 0x61,
+  42:Core/Src/device/hmac_sha1.c **** 	0x20, 0x77, 0x61, 0x6e, 0x74, 0x20, 0x66, 0x6f, 0x72, 0x20,
+  43:Core/Src/device/hmac_sha1.c **** 	0x6e, 0x6f, 0x74, 0x68, 0x69, 0x6e, 0x67, 0x3f,
+  44:Core/Src/device/hmac_sha1.c **** 
+  45:Core/Src/device/hmac_sha1.c **** 	0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd,
+  46:Core/Src/device/hmac_sha1.c **** 	0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd,
+  47:Core/Src/device/hmac_sha1.c **** 	0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd,
+  48:Core/Src/device/hmac_sha1.c **** 	0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd,
+  49:Core/Src/device/hmac_sha1.c **** 	0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd,
+  50:Core/Src/device/hmac_sha1.c **** 
+  51:Core/Src/device/hmac_sha1.c **** 	0xcd, 0xcd, 0xcd, 0xcd, 0xcd, 0xcd, 0xcd, 0xcd, 0xcd, 0xcd,
+  52:Core/Src/device/hmac_sha1.c **** 	0xcd, 0xcd, 0xcd, 0xcd, 0xcd, 0xcd, 0xcd, 0xcd, 0xcd, 0xcd,
+  53:Core/Src/device/hmac_sha1.c **** 	0xcd, 0xcd, 0xcd, 0xcd, 0xcd, 0xcd, 0xcd, 0xcd, 0xcd, 0xcd,
+  54:Core/Src/device/hmac_sha1.c **** 	0xcd, 0xcd, 0xcd, 0xcd, 0xcd, 0xcd, 0xcd, 0xcd, 0xcd, 0xcd,
+  55:Core/Src/device/hmac_sha1.c **** 	0xcd, 0xcd, 0xcd, 0xcd, 0xcd, 0xcd, 0xcd, 0xcd, 0xcd, 0xcd,
+  56:Core/Src/device/hmac_sha1.c **** 
+  57:Core/Src/device/hmac_sha1.c **** 	/* "Test With Truncation" */
+  58:Core/Src/device/hmac_sha1.c **** 	0x54, 0x65, 0x73, 0x74, 0x20, 0x57, 0x69, 0x74, 0x68, 0x20, 0x54, 0x72, 0x75, 0x6e, 0x63, 0x61,
+  59:Core/Src/device/hmac_sha1.c **** 	0x74, 0x69, 0x6f, 0x6e,
+  60:Core/Src/device/hmac_sha1.c **** 
+  61:Core/Src/device/hmac_sha1.c **** 	/* "Test Using Larger Than Block-Size Key - Hash Key First" */
+  62:Core/Src/device/hmac_sha1.c **** 	0x54, 0x65, 0x73, 0x74, 0x20, 0x55, 0x73, 0x69, 0x6e, 0x67, 0x20, 0x4c, 0x61, 0x72, 0x67, 0x65,
+  63:Core/Src/device/hmac_sha1.c **** 	0x72, 0x20, 0x54, 0x68, 0x61, 0x6e, 0x20, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x2d, 0x53, 0x69, 0x7a,
+  64:Core/Src/device/hmac_sha1.c **** 	0x65, 0x20, 0x4b, 0x65, 0x79, 0x20, 0x2d, 0x20, 0x48, 0x61, 0x73, 0x68, 0x20, 0x4b, 0x65, 0x79,
+  65:Core/Src/device/hmac_sha1.c **** 	0x20, 0x46, 0x69, 0x72, 0x73, 0x74,
+  66:Core/Src/device/hmac_sha1.c **** 
+  67:Core/Src/device/hmac_sha1.c **** 	/* "Test Using Larger Than Block-Size Key and Larger Than One Block-Size Data" */
+  68:Core/Src/device/hmac_sha1.c **** 	0x54, 0x65, 0x73, 0x74, 0x20, 0x55, 0x73, 0x69, 0x6e, 0x67, 0x20, 0x4c, 0x61, 0x72, 0x67, 0x65,
+  69:Core/Src/device/hmac_sha1.c **** 	0x72, 0x20, 0x54, 0x68, 0x61, 0x6e, 0x20, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x2d, 0x53, 0x69, 0x7a,
+  70:Core/Src/device/hmac_sha1.c **** 	0x65, 0x20, 0x4b, 0x65, 0x79, 0x20, 0x61, 0x6e, 0x64, 0x20, 0x4c, 0x61, 0x72, 0x67, 0x65, 0x72,
+  71:Core/Src/device/hmac_sha1.c **** 	0x20, 0x54, 0x68, 0x61, 0x6e, 0x20, 0x4f, 0x6e, 0x65, 0x20, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x2d,
+  72:Core/Src/device/hmac_sha1.c **** 	0x53, 0x69, 0x7a, 0x65, 0x20, 0x44, 0x61, 0x74, 0x61,
+  73:Core/Src/device/hmac_sha1.c **** 
+  74:Core/Src/device/hmac_sha1.c **** 
+  75:Core/Src/device/hmac_sha1.c **** 	/* "Test Using Larger Than Block-Size Key - Hash Key First" */
+  76:Core/Src/device/hmac_sha1.c **** 	0x54, 0x65, 0x73, 0x74, 0x20, 0x55, 0x73, 0x69, 0x6e, 0x67, 0x20, 0x4c, 0x61, 0x72, 0x67, 0x65,
+  77:Core/Src/device/hmac_sha1.c **** 	0x72, 0x20, 0x54, 0x68, 0x61, 0x6e, 0x20, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x2d, 0x53, 0x69, 0x7a,
+  78:Core/Src/device/hmac_sha1.c **** 	0x65, 0x20, 0x4b, 0x65, 0x79, 0x20, 0x2d, 0x20, 0x48, 0x61, 0x73, 0x68, 0x20, 0x4b, 0x65, 0x79,
+  79:Core/Src/device/hmac_sha1.c **** 	0x20, 0x46, 0x69, 0x72, 0x73, 0x74,
+  80:Core/Src/device/hmac_sha1.c **** 
+  81:Core/Src/device/hmac_sha1.c **** 	/* "Test Using Larger Than Block-Size Key and Larger Than One Block-Size Data" */
+  82:Core/Src/device/hmac_sha1.c **** 	0x54, 0x65, 0x73, 0x74, 0x20, 0x55, 0x73, 0x69, 0x6e, 0x67, 0x20, 0x4c, 0x61, 0x72, 0x67, 0x65,
+  83:Core/Src/device/hmac_sha1.c **** 	0x72, 0x20, 0x54, 0x68, 0x61, 0x6e, 0x20, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x2d, 0x53, 0x69, 0x7a,
+  84:Core/Src/device/hmac_sha1.c **** 	0x65, 0x20, 0x4b, 0x65, 0x79, 0x20, 0x61, 0x6e, 0x64, 0x20, 0x4c, 0x61, 0x72, 0x67, 0x65, 0x72,
+  85:Core/Src/device/hmac_sha1.c **** 	0x20, 0x54, 0x68, 0x61, 0x6e, 0x20, 0x4f, 0x6e, 0x65, 0x20, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x2d,
+  86:Core/Src/device/hmac_sha1.c **** 	0x53, 0x69, 0x7a, 0x65, 0x20, 0x44, 0x61, 0x74, 0x61
+  87:Core/Src/device/hmac_sha1.c **** };
+  88:Core/Src/device/hmac_sha1.c **** 
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 3
+
+
+  89:Core/Src/device/hmac_sha1.c **** int key_lengths[] =
+  90:Core/Src/device/hmac_sha1.c **** {
+  91:Core/Src/device/hmac_sha1.c **** 	64, 20, 4, 20, 25, 20, 80, 80, 80, 80
+  92:Core/Src/device/hmac_sha1.c **** };
+  93:Core/Src/device/hmac_sha1.c **** 
+  94:Core/Src/device/hmac_sha1.c **** unsigned char keys[] =
+  95:Core/Src/device/hmac_sha1.c **** {
+  96:Core/Src/device/hmac_sha1.c **** 
+  97:Core/Src/device/hmac_sha1.c **** 	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+  98:Core/Src/device/hmac_sha1.c **** 	0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
+  99:Core/Src/device/hmac_sha1.c **** 	0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f,
+ 100:Core/Src/device/hmac_sha1.c **** 	0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f,
+ 101:Core/Src/device/hmac_sha1.c **** 
+ 102:Core/Src/device/hmac_sha1.c **** 
+ 103:Core/Src/device/hmac_sha1.c **** 	0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b,
+ 104:Core/Src/device/hmac_sha1.c **** 	0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b,
+ 105:Core/Src/device/hmac_sha1.c **** 	0x0b, 0x0b, 0x0b, 0x0b,
+ 106:Core/Src/device/hmac_sha1.c **** 
+ 107:Core/Src/device/hmac_sha1.c **** 	0x4a, 0x65, 0x66, 0x65, /* "Jefe" */
+ 108:Core/Src/device/hmac_sha1.c **** 
+ 109:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 110:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 111:Core/Src/device/hmac_sha1.c **** 
+ 112:Core/Src/device/hmac_sha1.c **** 	0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a,
+ 113:Core/Src/device/hmac_sha1.c **** 	0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x14,
+ 114:Core/Src/device/hmac_sha1.c **** 	0x15, 0x16, 0x17, 0x18, 0x19,
+ 115:Core/Src/device/hmac_sha1.c **** 
+ 116:Core/Src/device/hmac_sha1.c **** 	0x0c, 0x0c, 0x0c, 0x0c, 0x0c, 0x0c, 0x0c, 0x0c, 0x0c, 0x0c,
+ 117:Core/Src/device/hmac_sha1.c **** 	0x0c, 0x0c, 0x0c, 0x0c, 0x0c, 0x0c, 0x0c, 0x0c, 0x0c, 0x0c,
+ 118:Core/Src/device/hmac_sha1.c **** 
+ 119:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 120:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 121:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 122:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 123:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 124:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 125:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 126:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 127:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 128:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 129:Core/Src/device/hmac_sha1.c **** 
+ 130:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 131:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 132:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 133:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 134:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 135:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 136:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 137:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 138:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 139:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 140:Core/Src/device/hmac_sha1.c **** 
+ 141:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 142:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 143:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 144:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 145:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 4
+
+
+ 146:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 147:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 148:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 149:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 150:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 151:Core/Src/device/hmac_sha1.c **** 
+ 152:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 153:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 154:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 155:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 156:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 157:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 158:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 159:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 160:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+ 161:Core/Src/device/hmac_sha1.c **** 	0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa
+ 162:Core/Src/device/hmac_sha1.c **** 
+ 163:Core/Src/device/hmac_sha1.c **** };
+ 164:Core/Src/device/hmac_sha1.c **** 
+ 165:Core/Src/device/hmac_sha1.c **** /*****************************/
+ 166:Core/Src/device/hmac_sha1.c **** /**** Function Prototypes ****/
+ 167:Core/Src/device/hmac_sha1.c **** /*****************************/
+ 168:Core/Src/device/hmac_sha1.c **** 
+ 169:Core/Src/device/hmac_sha1.c **** unsigned long int ft(
+ 170:Core/Src/device/hmac_sha1.c **** 	int t,
+ 171:Core/Src/device/hmac_sha1.c **** 	unsigned long int x,
+ 172:Core/Src/device/hmac_sha1.c **** 	unsigned long int y,
+ 173:Core/Src/device/hmac_sha1.c **** 	unsigned long int z
+ 174:Core/Src/device/hmac_sha1.c **** );
+ 175:Core/Src/device/hmac_sha1.c **** 
+ 176:Core/Src/device/hmac_sha1.c **** int get_testcase(int test_case,
+ 177:Core/Src/device/hmac_sha1.c **** 				 unsigned char *plaintext,
+ 178:Core/Src/device/hmac_sha1.c **** 				 unsigned char *key,
+ 179:Core/Src/device/hmac_sha1.c **** 				 int *key_length_ptr);
+ 180:Core/Src/device/hmac_sha1.c **** 
+ 181:Core/Src/device/hmac_sha1.c **** 
+ 182:Core/Src/device/hmac_sha1.c **** void sha1(
+ 183:Core/Src/device/hmac_sha1.c **** 	unsigned char *message,
+ 184:Core/Src/device/hmac_sha1.c **** 	int message_length,
+ 185:Core/Src/device/hmac_sha1.c **** 	unsigned char *digest
+ 186:Core/Src/device/hmac_sha1.c **** );
+ 187:Core/Src/device/hmac_sha1.c **** 
+ 188:Core/Src/device/hmac_sha1.c **** /**************************/
+ 189:Core/Src/device/hmac_sha1.c **** /* Debug out              */
+ 190:Core/Src/device/hmac_sha1.c **** /**************************/
+ 191:Core/Src/device/hmac_sha1.c **** 
+ 192:Core/Src/device/hmac_sha1.c **** #ifdef HMAC_DEBUG
+ 193:Core/Src/device/hmac_sha1.c **** debug_out(
+ 194:Core/Src/device/hmac_sha1.c **** 	unsigned char *label,
+ 195:Core/Src/device/hmac_sha1.c **** 	unsigned char *data,
+ 196:Core/Src/device/hmac_sha1.c **** 	int data_length
+ 197:Core/Src/device/hmac_sha1.c **** )
+ 198:Core/Src/device/hmac_sha1.c **** 
+ 199:Core/Src/device/hmac_sha1.c **** {
+ 200:Core/Src/device/hmac_sha1.c **** 	int i, j;
+ 201:Core/Src/device/hmac_sha1.c **** 	int num_blocks;
+ 202:Core/Src/device/hmac_sha1.c **** 	int block_remainder;
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 5
+
+
+ 203:Core/Src/device/hmac_sha1.c **** 	num_blocks = data_length / 16;
+ 204:Core/Src/device/hmac_sha1.c **** 	block_remainder = data_length % 16;
+ 205:Core/Src/device/hmac_sha1.c **** 	printf("%s\n", label);
+ 206:Core/Src/device/hmac_sha1.c **** 
+ 207:Core/Src/device/hmac_sha1.c **** 	for(i = 0; i < num_blocks; i++)
+ 208:Core/Src/device/hmac_sha1.c **** 	{
+ 209:Core/Src/device/hmac_sha1.c **** 		printf("\t");
+ 210:Core/Src/device/hmac_sha1.c **** 
+ 211:Core/Src/device/hmac_sha1.c **** 		for(j = 0; j < 16; j++)
+ 212:Core/Src/device/hmac_sha1.c **** 		{
+ 213:Core/Src/device/hmac_sha1.c **** 			printf("%02x ", data[j + (i * 16)]);
+ 214:Core/Src/device/hmac_sha1.c **** 		}
+ 215:Core/Src/device/hmac_sha1.c **** 
+ 216:Core/Src/device/hmac_sha1.c **** 		printf("\n");
+ 217:Core/Src/device/hmac_sha1.c **** 	}
+ 218:Core/Src/device/hmac_sha1.c **** 
+ 219:Core/Src/device/hmac_sha1.c **** 	if(block_remainder > 0)
+ 220:Core/Src/device/hmac_sha1.c **** 	{
+ 221:Core/Src/device/hmac_sha1.c **** 		printf("\t");
+ 222:Core/Src/device/hmac_sha1.c **** 
+ 223:Core/Src/device/hmac_sha1.c **** 		for(j = 0; j < block_remainder; j++)
+ 224:Core/Src/device/hmac_sha1.c **** 		{
+ 225:Core/Src/device/hmac_sha1.c **** 			printf("%02x ", data[j + (num_blocks * 16)]);
+ 226:Core/Src/device/hmac_sha1.c **** 		}
+ 227:Core/Src/device/hmac_sha1.c **** 
+ 228:Core/Src/device/hmac_sha1.c **** 		printf("\n");
+ 229:Core/Src/device/hmac_sha1.c **** 	}
+ 230:Core/Src/device/hmac_sha1.c **** }
+ 231:Core/Src/device/hmac_sha1.c **** #endif
+ 232:Core/Src/device/hmac_sha1.c **** 
+ 233:Core/Src/device/hmac_sha1.c **** /****************************************/
+ 234:Core/Src/device/hmac_sha1.c **** /* sha1()                               */
+ 235:Core/Src/device/hmac_sha1.c **** /* Performs the NIST SHA-1 algorithm    */
+ 236:Core/Src/device/hmac_sha1.c **** /****************************************/
+ 237:Core/Src/device/hmac_sha1.c **** 
+ 238:Core/Src/device/hmac_sha1.c **** unsigned long int ft(
+ 239:Core/Src/device/hmac_sha1.c **** 	int t,
+ 240:Core/Src/device/hmac_sha1.c **** 	unsigned long int x,
+ 241:Core/Src/device/hmac_sha1.c **** 	unsigned long int y,
+ 242:Core/Src/device/hmac_sha1.c **** 	unsigned long int z
+ 243:Core/Src/device/hmac_sha1.c **** )
+ 244:Core/Src/device/hmac_sha1.c **** 
+ 245:Core/Src/device/hmac_sha1.c **** {
+  28              		.loc 1 245 1 view -0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+ 246:Core/Src/device/hmac_sha1.c **** 	unsigned long int a, b, c;
+  33              		.loc 1 246 2 view .LVU1
+ 247:Core/Src/device/hmac_sha1.c **** 
+ 248:Core/Src/device/hmac_sha1.c **** 	if(t < 20)
+  34              		.loc 1 248 2 view .LVU2
+  35              		.loc 1 248 4 is_stmt 0 view .LVU3
+  36 0000 1328     		cmp	r0, #19
+  37 0002 06DC     		bgt	.L2
+ 249:Core/Src/device/hmac_sha1.c **** 	{
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 6
+
+
+ 250:Core/Src/device/hmac_sha1.c **** 		a = x & y;
+  38              		.loc 1 250 3 is_stmt 1 view .LVU4
+  39              		.loc 1 250 5 is_stmt 0 view .LVU5
+  40 0004 0A40     		ands	r2, r2, r1
+  41              	.LVL1:
+ 251:Core/Src/device/hmac_sha1.c **** 		b = (~x) &z;
+  42              		.loc 1 251 3 is_stmt 1 view .LVU6
+  43              		.loc 1 251 5 is_stmt 0 view .LVU7
+  44 0006 23EA0103 		bic	r3, r3, r1
+  45              	.LVL2:
+ 252:Core/Src/device/hmac_sha1.c **** 		c = a ^ b;
+  46              		.loc 1 252 3 is_stmt 1 view .LVU8
+  47              		.loc 1 252 5 is_stmt 0 view .LVU9
+  48 000a 82EA030C 		eor	ip, r2, r3
+  49              	.LVL3:
+  50              	.L1:
+ 253:Core/Src/device/hmac_sha1.c **** 	}
+ 254:Core/Src/device/hmac_sha1.c **** 
+ 255:Core/Src/device/hmac_sha1.c **** 	else if(t < 40)
+ 256:Core/Src/device/hmac_sha1.c **** 	{
+ 257:Core/Src/device/hmac_sha1.c **** 		c = x ^ y ^ z;
+ 258:Core/Src/device/hmac_sha1.c **** 	}
+ 259:Core/Src/device/hmac_sha1.c **** 
+ 260:Core/Src/device/hmac_sha1.c **** 	else if(t < 60)
+ 261:Core/Src/device/hmac_sha1.c **** 	{
+ 262:Core/Src/device/hmac_sha1.c **** 		a = x & y;
+ 263:Core/Src/device/hmac_sha1.c **** 		b = a ^ (x & z);
+ 264:Core/Src/device/hmac_sha1.c **** 		c = b ^ (y & z);
+ 265:Core/Src/device/hmac_sha1.c **** 	}
+ 266:Core/Src/device/hmac_sha1.c **** 
+ 267:Core/Src/device/hmac_sha1.c **** 	else if(t < 80)
+ 268:Core/Src/device/hmac_sha1.c **** 	{
+ 269:Core/Src/device/hmac_sha1.c **** 		c = (x ^ y) ^z;
+ 270:Core/Src/device/hmac_sha1.c **** 	}
+ 271:Core/Src/device/hmac_sha1.c **** 
+ 272:Core/Src/device/hmac_sha1.c **** 	return c;
+ 273:Core/Src/device/hmac_sha1.c **** }
+  51              		.loc 1 273 1 view .LVU10
+  52 000e 6046     		mov	r0, ip
+  53              	.LVL4:
+  54              		.loc 1 273 1 view .LVU11
+  55 0010 7047     		bx	lr
+  56              	.LVL5:
+  57              	.L2:
+ 255:Core/Src/device/hmac_sha1.c **** 	{
+  58              		.loc 1 255 7 is_stmt 1 view .LVU12
+ 255:Core/Src/device/hmac_sha1.c **** 	{
+  59              		.loc 1 255 9 is_stmt 0 view .LVU13
+  60 0012 2728     		cmp	r0, #39
+  61 0014 03DC     		bgt	.L4
+ 257:Core/Src/device/hmac_sha1.c **** 	}
+  62              		.loc 1 257 3 is_stmt 1 view .LVU14
+ 257:Core/Src/device/hmac_sha1.c **** 	}
+  63              		.loc 1 257 9 is_stmt 0 view .LVU15
+  64 0016 5140     		eors	r1, r1, r2
+  65              	.LVL6:
+ 257:Core/Src/device/hmac_sha1.c **** 	}
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 7
+
+
+  66              		.loc 1 257 5 view .LVU16
+  67 0018 81EA030C 		eor	ip, r1, r3
+  68              	.LVL7:
+ 257:Core/Src/device/hmac_sha1.c **** 	}
+  69              		.loc 1 257 5 view .LVU17
+  70 001c F7E7     		b	.L1
+  71              	.LVL8:
+  72              	.L4:
+ 260:Core/Src/device/hmac_sha1.c **** 	{
+  73              		.loc 1 260 7 is_stmt 1 view .LVU18
+ 260:Core/Src/device/hmac_sha1.c **** 	{
+  74              		.loc 1 260 9 is_stmt 0 view .LVU19
+  75 001e 3B28     		cmp	r0, #59
+  76 0020 07DC     		bgt	.L5
+ 262:Core/Src/device/hmac_sha1.c **** 		b = a ^ (x & z);
+  77              		.loc 1 262 3 is_stmt 1 view .LVU20
+  78              	.LVL9:
+ 263:Core/Src/device/hmac_sha1.c **** 		c = b ^ (y & z);
+  79              		.loc 1 263 3 view .LVU21
+ 263:Core/Src/device/hmac_sha1.c **** 		c = b ^ (y & z);
+  80              		.loc 1 263 5 is_stmt 0 view .LVU22
+  81 0022 82EA030C 		eor	ip, r2, r3
+  82 0026 0CEA010C 		and	ip, ip, r1
+  83              	.LVL10:
+ 264:Core/Src/device/hmac_sha1.c **** 	}
+  84              		.loc 1 264 3 is_stmt 1 view .LVU23
+ 264:Core/Src/device/hmac_sha1.c **** 	}
+  85              		.loc 1 264 14 is_stmt 0 view .LVU24
+  86 002a 1A40     		ands	r2, r2, r3
+  87              	.LVL11:
+ 264:Core/Src/device/hmac_sha1.c **** 	}
+  88              		.loc 1 264 5 view .LVU25
+  89 002c 82EA0C0C 		eor	ip, r2, ip
+  90              	.LVL12:
+ 264:Core/Src/device/hmac_sha1.c **** 	}
+  91              		.loc 1 264 5 view .LVU26
+  92 0030 EDE7     		b	.L1
+  93              	.LVL13:
+  94              	.L5:
+ 267:Core/Src/device/hmac_sha1.c **** 	{
+  95              		.loc 1 267 7 is_stmt 1 view .LVU27
+ 267:Core/Src/device/hmac_sha1.c **** 	{
+  96              		.loc 1 267 9 is_stmt 0 view .LVU28
+  97 0032 4F28     		cmp	r0, #79
+  98 0034 EBDC     		bgt	.L1
+ 269:Core/Src/device/hmac_sha1.c **** 	}
+  99              		.loc 1 269 3 is_stmt 1 view .LVU29
+ 269:Core/Src/device/hmac_sha1.c **** 	}
+ 100              		.loc 1 269 10 is_stmt 0 view .LVU30
+ 101 0036 5140     		eors	r1, r1, r2
+ 102              	.LVL14:
+ 269:Core/Src/device/hmac_sha1.c **** 	}
+ 103              		.loc 1 269 5 view .LVU31
+ 104 0038 81EA030C 		eor	ip, r1, r3
+ 105              	.LVL15:
+ 272:Core/Src/device/hmac_sha1.c **** }
+ 106              		.loc 1 272 2 is_stmt 1 view .LVU32
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 8
+
+
+ 272:Core/Src/device/hmac_sha1.c **** }
+ 107              		.loc 1 272 9 is_stmt 0 view .LVU33
+ 108 003c E7E7     		b	.L1
+ 109              		.cfi_endproc
+ 110              	.LFE68:
+ 112              		.section	.text.k,"ax",%progbits
+ 113              		.align	1
+ 114              		.global	k
+ 115              		.syntax unified
+ 116              		.thumb
+ 117              		.thumb_func
+ 119              	k:
+ 120              	.LVL16:
+ 121              	.LFB69:
+ 274:Core/Src/device/hmac_sha1.c **** 
+ 275:Core/Src/device/hmac_sha1.c **** unsigned long int k(int t)
+ 276:Core/Src/device/hmac_sha1.c **** 
+ 277:Core/Src/device/hmac_sha1.c **** {
+ 122              		.loc 1 277 1 is_stmt 1 view -0
+ 123              		.cfi_startproc
+ 124              		@ args = 0, pretend = 0, frame = 0
+ 125              		@ frame_needed = 0, uses_anonymous_args = 0
+ 126              		@ link register save eliminated.
+ 278:Core/Src/device/hmac_sha1.c **** 	unsigned long int c;
+ 127              		.loc 1 278 2 view .LVU35
+ 279:Core/Src/device/hmac_sha1.c **** 
+ 280:Core/Src/device/hmac_sha1.c **** 	if(t < 20)
+ 128              		.loc 1 280 2 view .LVU36
+ 129              		.loc 1 280 4 is_stmt 0 view .LVU37
+ 130 0000 1328     		cmp	r0, #19
+ 131 0002 07DD     		ble	.L8
+ 281:Core/Src/device/hmac_sha1.c **** 	{
+ 282:Core/Src/device/hmac_sha1.c **** 		c = 0x5a827999;
+ 283:Core/Src/device/hmac_sha1.c **** 	}
+ 284:Core/Src/device/hmac_sha1.c **** 
+ 285:Core/Src/device/hmac_sha1.c **** 	else if(t < 40)
+ 132              		.loc 1 285 7 is_stmt 1 view .LVU38
+ 133              		.loc 1 285 9 is_stmt 0 view .LVU39
+ 134 0004 2728     		cmp	r0, #39
+ 135 0006 08DD     		ble	.L9
+ 286:Core/Src/device/hmac_sha1.c **** 	{
+ 287:Core/Src/device/hmac_sha1.c **** 		c = 0x6ed9eba1;
+ 288:Core/Src/device/hmac_sha1.c **** 	}
+ 289:Core/Src/device/hmac_sha1.c **** 
+ 290:Core/Src/device/hmac_sha1.c **** 	else if(t < 60)
+ 136              		.loc 1 290 7 is_stmt 1 view .LVU40
+ 137              		.loc 1 290 9 is_stmt 0 view .LVU41
+ 138 0008 3B28     		cmp	r0, #59
+ 139 000a 08DD     		ble	.L10
+ 291:Core/Src/device/hmac_sha1.c **** 	{
+ 292:Core/Src/device/hmac_sha1.c **** 		c = 0x8f1bbcdc;
+ 293:Core/Src/device/hmac_sha1.c **** 	}
+ 294:Core/Src/device/hmac_sha1.c **** 
+ 295:Core/Src/device/hmac_sha1.c **** 	else if(t < 80)
+ 140              		.loc 1 295 7 is_stmt 1 view .LVU42
+ 141              		.loc 1 295 9 is_stmt 0 view .LVU43
+ 142 000c 4F28     		cmp	r0, #79
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 9
+
+
+ 143 000e 02DC     		bgt	.L6
+ 296:Core/Src/device/hmac_sha1.c **** 	{
+ 297:Core/Src/device/hmac_sha1.c **** 		c = 0xca62c1d6;
+ 144              		.loc 1 297 5 view .LVU44
+ 145 0010 044B     		ldr	r3, .L12
+ 146              	.LVL17:
+ 298:Core/Src/device/hmac_sha1.c **** 	}
+ 299:Core/Src/device/hmac_sha1.c **** 
+ 300:Core/Src/device/hmac_sha1.c **** 	return c;
+ 147              		.loc 1 300 2 is_stmt 1 view .LVU45
+ 148              		.loc 1 300 9 is_stmt 0 view .LVU46
+ 149 0012 00E0     		b	.L6
+ 150              	.LVL18:
+ 151              	.L8:
+ 282:Core/Src/device/hmac_sha1.c **** 	}
+ 152              		.loc 1 282 5 view .LVU47
+ 153 0014 044B     		ldr	r3, .L12+4
+ 154              	.L6:
+ 301:Core/Src/device/hmac_sha1.c **** }
+ 155              		.loc 1 301 1 view .LVU48
+ 156 0016 1846     		mov	r0, r3
+ 157              	.LVL19:
+ 158              		.loc 1 301 1 view .LVU49
+ 159 0018 7047     		bx	lr
+ 160              	.LVL20:
+ 161              	.L9:
+ 287:Core/Src/device/hmac_sha1.c **** 	}
+ 162              		.loc 1 287 5 view .LVU50
+ 163 001a 044B     		ldr	r3, .L12+8
+ 164 001c FBE7     		b	.L6
+ 165              	.L10:
+ 292:Core/Src/device/hmac_sha1.c **** 	}
+ 166              		.loc 1 292 5 view .LVU51
+ 167 001e 044B     		ldr	r3, .L12+12
+ 168 0020 F9E7     		b	.L6
+ 169              	.L13:
+ 170 0022 00BF     		.align	2
+ 171              	.L12:
+ 172 0024 D6C162CA 		.word	-899497514
+ 173 0028 9979825A 		.word	1518500249
+ 174 002c A1EBD96E 		.word	1859775393
+ 175 0030 DCBC1B8F 		.word	-1894007588
+ 176              		.cfi_endproc
+ 177              	.LFE69:
+ 179              		.section	.text.rotr,"ax",%progbits
+ 180              		.align	1
+ 181              		.global	rotr
+ 182              		.syntax unified
+ 183              		.thumb
+ 184              		.thumb_func
+ 186              	rotr:
+ 187              	.LVL21:
+ 188              	.LFB70:
+ 302:Core/Src/device/hmac_sha1.c **** 
+ 303:Core/Src/device/hmac_sha1.c **** unsigned long int rotr(int bits, unsigned long int a)
+ 304:Core/Src/device/hmac_sha1.c **** 
+ 305:Core/Src/device/hmac_sha1.c **** {
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 10
+
+
+ 189              		.loc 1 305 1 is_stmt 1 view -0
+ 190              		.cfi_startproc
+ 191              		@ args = 0, pretend = 0, frame = 0
+ 192              		@ frame_needed = 0, uses_anonymous_args = 0
+ 193              		@ link register save eliminated.
+ 306:Core/Src/device/hmac_sha1.c **** 	unsigned long int c, d, e, f, g;
+ 194              		.loc 1 306 2 view .LVU53
+ 307:Core/Src/device/hmac_sha1.c **** 	c = (0x0001 << bits) - 1;
+ 195              		.loc 1 307 2 view .LVU54
+ 196              		.loc 1 307 14 is_stmt 0 view .LVU55
+ 197 0000 0123     		movs	r3, #1
+ 198 0002 8340     		lsls	r3, r3, r0
+ 199              		.loc 1 307 23 view .LVU56
+ 200 0004 5A1E     		subs	r2, r3, #1
+ 201              	.LVL22:
+ 308:Core/Src/device/hmac_sha1.c **** 	d = ~c;
+ 202              		.loc 1 308 2 is_stmt 1 view .LVU57
+ 203              		.loc 1 308 4 is_stmt 0 view .LVU58
+ 204 0006 5B42     		rsbs	r3, r3, #0
+ 205              	.LVL23:
+ 309:Core/Src/device/hmac_sha1.c **** 	e = (a & d) >> bits;
+ 206              		.loc 1 309 2 is_stmt 1 view .LVU59
+ 207              		.loc 1 309 9 is_stmt 0 view .LVU60
+ 208 0008 0B40     		ands	r3, r3, r1
+ 209              	.LVL24:
+ 210              		.loc 1 309 4 view .LVU61
+ 211 000a C340     		lsrs	r3, r3, r0
+ 212              	.LVL25:
+ 310:Core/Src/device/hmac_sha1.c **** 	f = (a & c) << (32 - bits);
+ 213              		.loc 1 310 2 is_stmt 1 view .LVU62
+ 214              		.loc 1 310 9 is_stmt 0 view .LVU63
+ 215 000c 1140     		ands	r1, r1, r2
+ 216              	.LVL26:
+ 217              		.loc 1 310 21 view .LVU64
+ 218 000e C0F12000 		rsb	r0, r0, #32
+ 219              	.LVL27:
+ 220              		.loc 1 310 4 view .LVU65
+ 221 0012 01FA00F0 		lsl	r0, r1, r0
+ 222              	.LVL28:
+ 311:Core/Src/device/hmac_sha1.c **** 	g = e | f;
+ 223              		.loc 1 311 2 is_stmt 1 view .LVU66
+ 312:Core/Src/device/hmac_sha1.c **** 	return (g & 0xffffffff);
+ 224              		.loc 1 312 2 view .LVU67
+ 313:Core/Src/device/hmac_sha1.c **** }
+ 225              		.loc 1 313 1 is_stmt 0 view .LVU68
+ 226 0016 1843     		orrs	r0, r0, r3
+ 227              	.LVL29:
+ 228              		.loc 1 313 1 view .LVU69
+ 229 0018 7047     		bx	lr
+ 230              		.cfi_endproc
+ 231              	.LFE70:
+ 233              		.section	.text.rotl,"ax",%progbits
+ 234              		.align	1
+ 235              		.global	rotl
+ 236              		.syntax unified
+ 237              		.thumb
+ 238              		.thumb_func
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 11
+
+
+ 240              	rotl:
+ 241              	.LVL30:
+ 242              	.LFB71:
+ 314:Core/Src/device/hmac_sha1.c **** 
+ 315:Core/Src/device/hmac_sha1.c **** unsigned long int rotl(int bits, unsigned long int a)
+ 316:Core/Src/device/hmac_sha1.c **** 
+ 317:Core/Src/device/hmac_sha1.c **** {
+ 243              		.loc 1 317 1 is_stmt 1 view -0
+ 244              		.cfi_startproc
+ 245              		@ args = 0, pretend = 0, frame = 0
+ 246              		@ frame_needed = 0, uses_anonymous_args = 0
+ 247              		@ link register save eliminated.
+ 318:Core/Src/device/hmac_sha1.c **** 	unsigned long int c, d, e, f, g;
+ 248              		.loc 1 318 2 view .LVU71
+ 319:Core/Src/device/hmac_sha1.c **** 	c = (0x0001 << (32 - bits)) - 1;
+ 249              		.loc 1 319 2 view .LVU72
+ 250              		.loc 1 319 21 is_stmt 0 view .LVU73
+ 251 0000 C0F1200C 		rsb	ip, r0, #32
+ 252              		.loc 1 319 14 view .LVU74
+ 253 0004 0123     		movs	r3, #1
+ 254 0006 03FA0CF3 		lsl	r3, r3, ip
+ 255              		.loc 1 319 30 view .LVU75
+ 256 000a 5A1E     		subs	r2, r3, #1
+ 257              	.LVL31:
+ 320:Core/Src/device/hmac_sha1.c **** 	d = ~c;
+ 258              		.loc 1 320 2 is_stmt 1 view .LVU76
+ 259              		.loc 1 320 4 is_stmt 0 view .LVU77
+ 260 000c 5B42     		rsbs	r3, r3, #0
+ 261              	.LVL32:
+ 321:Core/Src/device/hmac_sha1.c **** 	e = (a & c) << bits;
+ 262              		.loc 1 321 2 is_stmt 1 view .LVU78
+ 263              		.loc 1 321 9 is_stmt 0 view .LVU79
+ 264 000e 0A40     		ands	r2, r2, r1
+ 265              	.LVL33:
+ 266              		.loc 1 321 4 view .LVU80
+ 267 0010 02FA00F0 		lsl	r0, r2, r0
+ 268              	.LVL34:
+ 322:Core/Src/device/hmac_sha1.c **** 	f = (a & d) >> (32 - bits);
+ 269              		.loc 1 322 2 is_stmt 1 view .LVU81
+ 270              		.loc 1 322 9 is_stmt 0 view .LVU82
+ 271 0014 0B40     		ands	r3, r3, r1
+ 272              	.LVL35:
+ 273              		.loc 1 322 4 view .LVU83
+ 274 0016 23FA0CF3 		lsr	r3, r3, ip
+ 275              	.LVL36:
+ 323:Core/Src/device/hmac_sha1.c **** 	g = e | f;
+ 276              		.loc 1 323 2 is_stmt 1 view .LVU84
+ 324:Core/Src/device/hmac_sha1.c **** 	return (g & 0xffffffff);
+ 277              		.loc 1 324 2 view .LVU85
+ 325:Core/Src/device/hmac_sha1.c **** }
+ 278              		.loc 1 325 1 is_stmt 0 view .LVU86
+ 279 001a 1843     		orrs	r0, r0, r3
+ 280              	.LVL37:
+ 281              		.loc 1 325 1 view .LVU87
+ 282 001c 7047     		bx	lr
+ 283              		.cfi_endproc
+ 284              	.LFE71:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 12
+
+
+ 286              		.section	.text.sha1,"ax",%progbits
+ 287              		.align	1
+ 288              		.global	sha1
+ 289              		.syntax unified
+ 290              		.thumb
+ 291              		.thumb_func
+ 293              	sha1:
+ 294              	.LVL38:
+ 295              	.LFB72:
+ 326:Core/Src/device/hmac_sha1.c **** 
+ 327:Core/Src/device/hmac_sha1.c **** 
+ 328:Core/Src/device/hmac_sha1.c **** void sha1(
+ 329:Core/Src/device/hmac_sha1.c **** 	unsigned char *message,
+ 330:Core/Src/device/hmac_sha1.c **** 	int message_length,
+ 331:Core/Src/device/hmac_sha1.c **** 	unsigned char *digest
+ 332:Core/Src/device/hmac_sha1.c **** )
+ 333:Core/Src/device/hmac_sha1.c **** 
+ 334:Core/Src/device/hmac_sha1.c **** {
+ 296              		.loc 1 334 1 is_stmt 1 view -0
+ 297              		.cfi_startproc
+ 298              		@ args = 0, pretend = 0, frame = 376
+ 299              		@ frame_needed = 0, uses_anonymous_args = 0
+ 300              		.loc 1 334 1 is_stmt 0 view .LVU89
+ 301 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+ 302              	.LCFI0:
+ 303              		.cfi_def_cfa_offset 36
+ 304              		.cfi_offset 4, -36
+ 305              		.cfi_offset 5, -32
+ 306              		.cfi_offset 6, -28
+ 307              		.cfi_offset 7, -24
+ 308              		.cfi_offset 8, -20
+ 309              		.cfi_offset 9, -16
+ 310              		.cfi_offset 10, -12
+ 311              		.cfi_offset 11, -8
+ 312              		.cfi_offset 14, -4
+ 313 0004 DFB0     		sub	sp, sp, #380
+ 314              	.LCFI1:
+ 315              		.cfi_def_cfa_offset 416
+ 316 0006 0546     		mov	r5, r0
+ 317 0008 0846     		mov	r0, r1
+ 318              	.LVL39:
+ 319              		.loc 1 334 1 view .LVU90
+ 320 000a 1646     		mov	r6, r2
+ 335:Core/Src/device/hmac_sha1.c **** 	int i;
+ 321              		.loc 1 335 2 is_stmt 1 view .LVU91
+ 336:Core/Src/device/hmac_sha1.c **** 	int num_blocks;
+ 322              		.loc 1 336 2 view .LVU92
+ 337:Core/Src/device/hmac_sha1.c **** 	int block_remainder;
+ 323              		.loc 1 337 2 view .LVU93
+ 338:Core/Src/device/hmac_sha1.c **** 	int padded_length;
+ 324              		.loc 1 338 2 view .LVU94
+ 339:Core/Src/device/hmac_sha1.c **** 	unsigned long int l;
+ 325              		.loc 1 339 2 view .LVU95
+ 340:Core/Src/device/hmac_sha1.c **** 	unsigned long int t;
+ 326              		.loc 1 340 2 view .LVU96
+ 341:Core/Src/device/hmac_sha1.c **** 	unsigned long int h[5];
+ 327              		.loc 1 341 2 view .LVU97
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 13
+
+
+ 342:Core/Src/device/hmac_sha1.c **** 	unsigned long int a, b, c, d, e;
+ 328              		.loc 1 342 2 view .LVU98
+ 343:Core/Src/device/hmac_sha1.c **** 	unsigned long int w[80];
+ 329              		.loc 1 343 2 view .LVU99
+ 344:Core/Src/device/hmac_sha1.c **** 	unsigned long int temp;
+ 330              		.loc 1 344 2 view .LVU100
+ 345:Core/Src/device/hmac_sha1.c **** #ifdef SHA1_DEBUG
+ 346:Core/Src/device/hmac_sha1.c **** 	int x, y;
+ 347:Core/Src/device/hmac_sha1.c **** #endif
+ 348:Core/Src/device/hmac_sha1.c **** 	/* Calculate the number of 512 bit blocks */
+ 349:Core/Src/device/hmac_sha1.c **** 	padded_length = message_length + 8; /* Add length for l */
+ 331              		.loc 1 349 2 view .LVU101
+ 332              	.LVL40:
+ 350:Core/Src/device/hmac_sha1.c **** 	padded_length = padded_length + 1; /* Add the 0x01 bit postfix */
+ 333              		.loc 1 350 2 view .LVU102
+ 334              		.loc 1 350 16 is_stmt 0 view .LVU103
+ 335 000c 01F10903 		add	r3, r1, #9
+ 336              	.LVL41:
+ 351:Core/Src/device/hmac_sha1.c **** 	l = message_length * 8;
+ 337              		.loc 1 351 2 is_stmt 1 view .LVU104
+ 338              		.loc 1 351 21 is_stmt 0 view .LVU105
+ 339 0010 C900     		lsls	r1, r1, #3
+ 340              	.LVL42:
+ 352:Core/Src/device/hmac_sha1.c **** 	num_blocks = padded_length / 64;
+ 341              		.loc 1 352 2 is_stmt 1 view .LVU106
+ 342              		.loc 1 352 13 is_stmt 0 view .LVU107
+ 343 0012 1A46     		mov	r2, r3
+ 344              	.LVL43:
+ 345              		.loc 1 352 13 view .LVU108
+ 346 0014 002B     		cmp	r3, #0
+ 347 0016 0EDB     		blt	.L30
+ 348              	.L17:
+ 349              		.loc 1 352 13 view .LVU109
+ 350 0018 4FEAA21C 		asr	ip, r2, #6
+ 351              	.LVL44:
+ 353:Core/Src/device/hmac_sha1.c **** 	block_remainder = padded_length % 64;
+ 352              		.loc 1 353 2 is_stmt 1 view .LVU110
+ 353              		.loc 1 353 18 is_stmt 0 view .LVU111
+ 354 001c 5A42     		rsbs	r2, r3, #0
+ 355 001e 03F03F03 		and	r3, r3, #63
+ 356              	.LVL45:
+ 357              		.loc 1 353 18 view .LVU112
+ 358 0022 02F03F02 		and	r2, r2, #63
+ 359 0026 58BF     		it	pl
+ 360 0028 5342     		rsbpl	r3, r2, #0
+ 361              	.LVL46:
+ 354:Core/Src/device/hmac_sha1.c **** 
+ 355:Core/Src/device/hmac_sha1.c **** 	if(block_remainder > 0)
+ 362              		.loc 1 355 2 is_stmt 1 view .LVU113
+ 363              		.loc 1 355 4 is_stmt 0 view .LVU114
+ 364 002a 002B     		cmp	r3, #0
+ 365 002c 01DD     		ble	.L18
+ 356:Core/Src/device/hmac_sha1.c **** 	{
+ 357:Core/Src/device/hmac_sha1.c **** 		num_blocks++;
+ 366              		.loc 1 357 3 is_stmt 1 view .LVU115
+ 367              		.loc 1 357 13 is_stmt 0 view .LVU116
+ 368 002e 0CF1010C 		add	ip, ip, #1
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 14
+
+
+ 369              	.LVL47:
+ 370              	.L18:
+ 358:Core/Src/device/hmac_sha1.c **** 	}
+ 359:Core/Src/device/hmac_sha1.c **** 
+ 360:Core/Src/device/hmac_sha1.c **** 	padded_length = padded_length + (64 - block_remainder);
+ 371              		.loc 1 360 2 is_stmt 1 view .LVU117
+ 361:Core/Src/device/hmac_sha1.c **** 
+ 362:Core/Src/device/hmac_sha1.c **** 	/* clear the padding field */
+ 363:Core/Src/device/hmac_sha1.c **** 
+ 364:Core/Src/device/hmac_sha1.c **** 	for(i = message_length; i < (num_blocks * 64); i++)
+ 372              		.loc 1 364 2 view .LVU118
+ 373              		.loc 1 364 8 is_stmt 0 view .LVU119
+ 374 0032 0346     		mov	r3, r0
+ 375              	.LVL48:
+ 376              		.loc 1 364 2 view .LVU120
+ 377 0034 05E0     		b	.L19
+ 378              	.LVL49:
+ 379              	.L30:
+ 352:Core/Src/device/hmac_sha1.c **** 	block_remainder = padded_length % 64;
+ 380              		.loc 1 352 13 view .LVU121
+ 381 0036 03F13F02 		add	r2, r3, #63
+ 382              	.LVL50:
+ 352:Core/Src/device/hmac_sha1.c **** 	block_remainder = padded_length % 64;
+ 383              		.loc 1 352 13 view .LVU122
+ 384 003a EDE7     		b	.L17
+ 385              	.LVL51:
+ 386              	.L20:
+ 365:Core/Src/device/hmac_sha1.c **** 	{
+ 366:Core/Src/device/hmac_sha1.c **** 		message[i] = 0x00;
+ 387              		.loc 1 366 3 is_stmt 1 view .LVU123
+ 388              		.loc 1 366 14 is_stmt 0 view .LVU124
+ 389 003c 0022     		movs	r2, #0
+ 390 003e EA54     		strb	r2, [r5, r3]
+ 364:Core/Src/device/hmac_sha1.c **** 	{
+ 391              		.loc 1 364 50 is_stmt 1 discriminator 3 view .LVU125
+ 392 0040 0133     		adds	r3, r3, #1
+ 393              	.LVL52:
+ 394              	.L19:
+ 364:Core/Src/device/hmac_sha1.c **** 	{
+ 395              		.loc 1 364 28 discriminator 1 view .LVU126
+ 364:Core/Src/device/hmac_sha1.c **** 	{
+ 396              		.loc 1 364 42 is_stmt 0 discriminator 1 view .LVU127
+ 397 0042 4FEA8C12 		lsl	r2, ip, #6
+ 364:Core/Src/device/hmac_sha1.c **** 	{
+ 398              		.loc 1 364 28 discriminator 1 view .LVU128
+ 399 0046 B3EB8C1F 		cmp	r3, ip, lsl #6
+ 400 004a F7DB     		blt	.L20
+ 367:Core/Src/device/hmac_sha1.c **** 	}
+ 368:Core/Src/device/hmac_sha1.c **** 
+ 369:Core/Src/device/hmac_sha1.c **** 	/* insert b1 padding bit */
+ 370:Core/Src/device/hmac_sha1.c **** 	message[message_length] = 0x80;
+ 401              		.loc 1 370 2 is_stmt 1 view .LVU129
+ 402              		.loc 1 370 26 is_stmt 0 view .LVU130
+ 403 004c 8023     		movs	r3, #128
+ 404              	.LVL53:
+ 405              		.loc 1 370 26 view .LVU131
+ 406 004e 2B54     		strb	r3, [r5, r0]
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 15
+
+
+ 371:Core/Src/device/hmac_sha1.c **** 	/* Insert l */
+ 372:Core/Src/device/hmac_sha1.c **** 	message[(num_blocks * 64) - 1] = (unsigned char)(l        & 0xff);
+ 407              		.loc 1 372 2 is_stmt 1 view .LVU132
+ 408              		.loc 1 372 9 is_stmt 0 view .LVU133
+ 409 0050 531E     		subs	r3, r2, #1
+ 410              		.loc 1 372 33 view .LVU134
+ 411 0052 E954     		strb	r1, [r5, r3]
+ 373:Core/Src/device/hmac_sha1.c **** 	message[(num_blocks * 64) - 2] = (unsigned char)((l >> 8)  & 0xff);
+ 412              		.loc 1 373 2 is_stmt 1 view .LVU135
+ 413              		.loc 1 373 9 is_stmt 0 view .LVU136
+ 414 0054 931E     		subs	r3, r2, #2
+ 415              		.loc 1 373 35 view .LVU137
+ 416 0056 C1F30720 		ubfx	r0, r1, #8, #8
+ 417              	.LVL54:
+ 418              		.loc 1 373 33 view .LVU138
+ 419 005a E854     		strb	r0, [r5, r3]
+ 374:Core/Src/device/hmac_sha1.c **** 	message[(num_blocks * 64) - 3] = (unsigned char)((l >> 16) & 0xff);
+ 420              		.loc 1 374 2 is_stmt 1 view .LVU139
+ 421              		.loc 1 374 9 is_stmt 0 view .LVU140
+ 422 005c D31E     		subs	r3, r2, #3
+ 423              		.loc 1 374 35 view .LVU141
+ 424 005e C1F30740 		ubfx	r0, r1, #16, #8
+ 425              		.loc 1 374 33 view .LVU142
+ 426 0062 E854     		strb	r0, [r5, r3]
+ 375:Core/Src/device/hmac_sha1.c **** 	message[(num_blocks * 64) - 4] = (unsigned char)((l >> 24) & 0xff);
+ 427              		.loc 1 375 2 is_stmt 1 view .LVU143
+ 428              		.loc 1 375 9 is_stmt 0 view .LVU144
+ 429 0064 043A     		subs	r2, r2, #4
+ 430              		.loc 1 375 35 view .LVU145
+ 431 0066 090E     		lsrs	r1, r1, #24
+ 432              	.LVL55:
+ 433              		.loc 1 375 33 view .LVU146
+ 434 0068 A954     		strb	r1, [r5, r2]
+ 376:Core/Src/device/hmac_sha1.c **** 	/* Set initial hash state */
+ 377:Core/Src/device/hmac_sha1.c **** 	h[0] = 0x67452301;
+ 435              		.loc 1 377 2 is_stmt 1 view .LVU147
+ 436              		.loc 1 377 7 is_stmt 0 view .LVU148
+ 437 006a 684B     		ldr	r3, .L34
+ 438 006c 5993     		str	r3, [sp, #356]
+ 378:Core/Src/device/hmac_sha1.c **** 	h[1] = 0xefcdab89;
+ 439              		.loc 1 378 2 is_stmt 1 view .LVU149
+ 440              		.loc 1 378 7 is_stmt 0 view .LVU150
+ 441 006e 03F18833 		add	r3, r3, #-2004318072
+ 442 0072 5A93     		str	r3, [sp, #360]
+ 379:Core/Src/device/hmac_sha1.c **** 	h[2] = 0x98badcfe;
+ 443              		.loc 1 379 2 is_stmt 1 view .LVU151
+ 444              		.loc 1 379 7 is_stmt 0 view .LVU152
+ 445 0074 03F12943 		add	r3, r3, #-1459617792
+ 446 0078 A3F59613 		sub	r3, r3, #1228800
+ 447 007c A3F68B63 		subw	r3, r3, #3723
+ 448 0080 5B93     		str	r3, [sp, #364]
+ 380:Core/Src/device/hmac_sha1.c **** 	h[3] = 0x10325476;
+ 449              		.loc 1 380 2 is_stmt 1 view .LVU153
+ 450              		.loc 1 380 7 is_stmt 0 view .LVU154
+ 451 0082 A3F18833 		sub	r3, r3, #-2004318072
+ 452 0086 5C93     		str	r3, [sp, #368]
+ 381:Core/Src/device/hmac_sha1.c **** 	h[4] = 0xc3d2e1f0;
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 16
+
+
+ 453              		.loc 1 381 2 is_stmt 1 view .LVU155
+ 454              		.loc 1 381 7 is_stmt 0 view .LVU156
+ 455 0088 614B     		ldr	r3, .L34+4
+ 456 008a 5D93     		str	r3, [sp, #372]
+ 382:Core/Src/device/hmac_sha1.c **** #ifdef SHA1_DEBUG
+ 383:Core/Src/device/hmac_sha1.c **** 	printf("INITIAL message_length = %d\n", message_length);
+ 384:Core/Src/device/hmac_sha1.c **** 	printf("INITIAL padded_length = %d\n", padded_length);
+ 385:Core/Src/device/hmac_sha1.c **** 	printf("INITIAL num_blocks = %d\n", num_blocks);
+ 386:Core/Src/device/hmac_sha1.c **** 
+ 387:Core/Src/device/hmac_sha1.c **** 	for(x = 0; x < num_blocks; x++)
+ 388:Core/Src/device/hmac_sha1.c **** 	{
+ 389:Core/Src/device/hmac_sha1.c **** 		printf("\t\t");
+ 390:Core/Src/device/hmac_sha1.c **** 
+ 391:Core/Src/device/hmac_sha1.c **** 		for(y = 0; y < 16; y++)
+ 392:Core/Src/device/hmac_sha1.c **** 		{
+ 393:Core/Src/device/hmac_sha1.c **** 			printf("%02x ", message[y + (x * 64)]);
+ 394:Core/Src/device/hmac_sha1.c **** 		}
+ 395:Core/Src/device/hmac_sha1.c **** 
+ 396:Core/Src/device/hmac_sha1.c **** 		printf("\n");
+ 397:Core/Src/device/hmac_sha1.c **** 		printf("\t\t");
+ 398:Core/Src/device/hmac_sha1.c **** 
+ 399:Core/Src/device/hmac_sha1.c **** 		for(y = 0; y < 16; y++)
+ 400:Core/Src/device/hmac_sha1.c **** 		{
+ 401:Core/Src/device/hmac_sha1.c **** 			printf("%02x ", message[16 + y + (x * 64)]);
+ 402:Core/Src/device/hmac_sha1.c **** 		}
+ 403:Core/Src/device/hmac_sha1.c **** 
+ 404:Core/Src/device/hmac_sha1.c **** 		printf("\n");
+ 405:Core/Src/device/hmac_sha1.c **** 		printf("\t\t");
+ 406:Core/Src/device/hmac_sha1.c **** 
+ 407:Core/Src/device/hmac_sha1.c **** 		for(y = 0; y < 16; y++)
+ 408:Core/Src/device/hmac_sha1.c **** 		{
+ 409:Core/Src/device/hmac_sha1.c **** 			printf("%02x ", message[32 + y + (x * 64)]);
+ 410:Core/Src/device/hmac_sha1.c **** 		}
+ 411:Core/Src/device/hmac_sha1.c **** 
+ 412:Core/Src/device/hmac_sha1.c **** 		printf("\n");
+ 413:Core/Src/device/hmac_sha1.c **** 		printf("\t\t");
+ 414:Core/Src/device/hmac_sha1.c **** 
+ 415:Core/Src/device/hmac_sha1.c **** 		for(y = 0; y < 16; y++)
+ 416:Core/Src/device/hmac_sha1.c **** 		{
+ 417:Core/Src/device/hmac_sha1.c **** 			printf("%02x ", message[48 + y + (x * 64)]);
+ 418:Core/Src/device/hmac_sha1.c **** 		}
+ 419:Core/Src/device/hmac_sha1.c **** 
+ 420:Core/Src/device/hmac_sha1.c **** 		printf("\n");
+ 421:Core/Src/device/hmac_sha1.c **** 	}
+ 422:Core/Src/device/hmac_sha1.c **** 
+ 423:Core/Src/device/hmac_sha1.c **** #endif
+ 424:Core/Src/device/hmac_sha1.c **** 
+ 425:Core/Src/device/hmac_sha1.c **** 	for(i = 0; i < num_blocks; i++)
+ 457              		.loc 1 425 2 is_stmt 1 view .LVU157
+ 458              	.LVL56:
+ 459              		.loc 1 425 8 is_stmt 0 view .LVU158
+ 460 008c 4FF0000B 		mov	fp, #0
+ 461 0090 DA46     		mov	r10, fp
+ 462 0092 CDF818C0 		str	ip, [sp, #24]
+ 463 0096 0796     		str	r6, [sp, #28]
+ 464              		.loc 1 425 2 view .LVU159
+ 465 0098 7DE0     		b	.L21
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 17
+
+
+ 466              	.LVL57:
+ 467              	.L32:
+ 426:Core/Src/device/hmac_sha1.c **** 	{
+ 427:Core/Src/device/hmac_sha1.c **** 		/* Prepare the message schedule */
+ 428:Core/Src/device/hmac_sha1.c **** 		for(t = 0; t < 80; t++)
+ 429:Core/Src/device/hmac_sha1.c **** 		{
+ 430:Core/Src/device/hmac_sha1.c **** 			if(t < 16)
+ 431:Core/Src/device/hmac_sha1.c **** 			{
+ 432:Core/Src/device/hmac_sha1.c **** 				w[t]  = (256 * 256 * 256) * message[(i * 64) + (t * 4)];
+ 468              		.loc 1 432 5 is_stmt 1 view .LVU160
+ 469              		.loc 1 432 55 is_stmt 0 view .LVU161
+ 470 009a A200     		lsls	r2, r4, #2
+ 471              		.loc 1 432 50 view .LVU162
+ 472 009c 02EB8A12 		add	r2, r2, r10, lsl #6
+ 473              		.loc 1 432 40 view .LVU163
+ 474 00a0 AB5C     		ldrb	r3, [r5, r2]	@ zero_extendqisi2
+ 475              		.loc 1 432 31 view .LVU164
+ 476 00a2 1B06     		lsls	r3, r3, #24
+ 477              		.loc 1 432 11 view .LVU165
+ 478 00a4 09A9     		add	r1, sp, #36
+ 479 00a6 41F82430 		str	r3, [r1, r4, lsl #2]
+ 433:Core/Src/device/hmac_sha1.c **** 				w[t] += (256 * 256) * message[(i * 64) + (t * 4) + 1];
+ 480              		.loc 1 433 5 is_stmt 1 view .LVU166
+ 481              		.loc 1 433 34 is_stmt 0 view .LVU167
+ 482 00aa 2A44     		add	r2, r2, r5
+ 483 00ac 5078     		ldrb	r0, [r2, #1]	@ zero_extendqisi2
+ 484              		.loc 1 433 10 view .LVU168
+ 485 00ae 03EB0043 		add	r3, r3, r0, lsl #16
+ 486 00b2 41F82430 		str	r3, [r1, r4, lsl #2]
+ 434:Core/Src/device/hmac_sha1.c **** 				w[t] += (256) * message[(i * 64) + (t * 4) + 2];
+ 487              		.loc 1 434 5 is_stmt 1 view .LVU169
+ 488              		.loc 1 434 28 is_stmt 0 view .LVU170
+ 489 00b6 9078     		ldrb	r0, [r2, #2]	@ zero_extendqisi2
+ 490              		.loc 1 434 10 view .LVU171
+ 491 00b8 03EB0023 		add	r3, r3, r0, lsl #8
+ 492 00bc 41F82430 		str	r3, [r1, r4, lsl #2]
+ 435:Core/Src/device/hmac_sha1.c **** 				w[t] +=                 message[(i * 64) + (t * 4) + 3];
+ 493              		.loc 1 435 5 is_stmt 1 view .LVU172
+ 494              		.loc 1 435 36 is_stmt 0 view .LVU173
+ 495 00c0 D278     		ldrb	r2, [r2, #3]	@ zero_extendqisi2
+ 496              		.loc 1 435 10 view .LVU174
+ 497 00c2 1344     		add	r3, r3, r2
+ 498 00c4 41F82430 		str	r3, [r1, r4, lsl #2]
+ 499              	.L23:
+ 428:Core/Src/device/hmac_sha1.c **** 		{
+ 500              		.loc 1 428 23 is_stmt 1 discriminator 2 view .LVU175
+ 501 00c8 0134     		adds	r4, r4, #1
+ 502              	.LVL58:
+ 503              	.L27:
+ 428:Core/Src/device/hmac_sha1.c **** 		{
+ 504              		.loc 1 428 16 discriminator 1 view .LVU176
+ 505 00ca 4F2C     		cmp	r4, #79
+ 506 00cc 1AD8     		bhi	.L31
+ 430:Core/Src/device/hmac_sha1.c **** 			{
+ 507              		.loc 1 430 4 view .LVU177
+ 430:Core/Src/device/hmac_sha1.c **** 			{
+ 508              		.loc 1 430 6 is_stmt 0 view .LVU178
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 18
+
+
+ 509 00ce 0F2C     		cmp	r4, #15
+ 510 00d0 E3D9     		bls	.L32
+ 436:Core/Src/device/hmac_sha1.c **** 			}
+ 437:Core/Src/device/hmac_sha1.c **** 
+ 438:Core/Src/device/hmac_sha1.c **** 			else if(t < 80)
+ 511              		.loc 1 438 9 is_stmt 1 view .LVU179
+ 439:Core/Src/device/hmac_sha1.c **** 			{
+ 440:Core/Src/device/hmac_sha1.c **** 				w[t] = rotl(1, (w[t - 3] ^ w[t - 8] ^ w[t - 14] ^ w[t - 16]));
+ 512              		.loc 1 440 5 view .LVU180
+ 513              		.loc 1 440 25 is_stmt 0 view .LVU181
+ 514 00d2 E31E     		subs	r3, r4, #3
+ 515              		.loc 1 440 22 view .LVU182
+ 516 00d4 09AE     		add	r6, sp, #36
+ 517 00d6 56F82330 		ldr	r3, [r6, r3, lsl #2]
+ 518              		.loc 1 440 36 view .LVU183
+ 519 00da A4F10802 		sub	r2, r4, #8
+ 520              		.loc 1 440 33 view .LVU184
+ 521 00de 56F82220 		ldr	r2, [r6, r2, lsl #2]
+ 522              		.loc 1 440 30 view .LVU185
+ 523 00e2 5340     		eors	r3, r3, r2
+ 524              		.loc 1 440 47 view .LVU186
+ 525 00e4 A4F10E02 		sub	r2, r4, #14
+ 526              		.loc 1 440 44 view .LVU187
+ 527 00e8 56F82220 		ldr	r2, [r6, r2, lsl #2]
+ 528              		.loc 1 440 41 view .LVU188
+ 529 00ec 5340     		eors	r3, r3, r2
+ 530              		.loc 1 440 59 view .LVU189
+ 531 00ee A4F11002 		sub	r2, r4, #16
+ 532              		.loc 1 440 56 view .LVU190
+ 533 00f2 56F82210 		ldr	r1, [r6, r2, lsl #2]
+ 534              		.loc 1 440 12 view .LVU191
+ 535 00f6 5940     		eors	r1, r1, r3
+ 536 00f8 0120     		movs	r0, #1
+ 537 00fa FFF7FEFF 		bl	rotl
+ 538              	.LVL59:
+ 539              		.loc 1 440 10 discriminator 1 view .LVU192
+ 540 00fe 46F82400 		str	r0, [r6, r4, lsl #2]
+ 541 0102 E1E7     		b	.L23
+ 542              	.L31:
+ 441:Core/Src/device/hmac_sha1.c **** 			}
+ 442:Core/Src/device/hmac_sha1.c **** 		}
+ 443:Core/Src/device/hmac_sha1.c **** 
+ 444:Core/Src/device/hmac_sha1.c **** #ifdef SHA1_DEBUG
+ 445:Core/Src/device/hmac_sha1.c **** 		printf("\tW(0) = %08lX \t W(9)  = %08lX \n", w[0], w[8]);
+ 446:Core/Src/device/hmac_sha1.c **** 		printf("\tW(1) = %08lX \t W(10) = %08lX \n", w[1], w[9]);
+ 447:Core/Src/device/hmac_sha1.c **** 		printf("\tW(2) = %08lX \t W(11) = %08lX \n", w[2], w[10]);
+ 448:Core/Src/device/hmac_sha1.c **** 		printf("\tW(3) = %08lX \t W(12) = %08lX \n", w[3], w[11]);
+ 449:Core/Src/device/hmac_sha1.c **** 		printf("\tW(4) = %08lX \t W(13) = %08lX \n", w[4], w[12]);
+ 450:Core/Src/device/hmac_sha1.c **** 		printf("\tW(5) = %08lX \t W(14) = %08lX \n", w[5], w[13]);
+ 451:Core/Src/device/hmac_sha1.c **** 		printf("\tW(6) = %08lX \t W(15) = %08lX \n", w[6], w[14]);
+ 452:Core/Src/device/hmac_sha1.c **** 		printf("\tW(7) = %08lX \t W(16) = %08lX \n\n", w[7], w[15]);
+ 453:Core/Src/device/hmac_sha1.c **** #endif
+ 454:Core/Src/device/hmac_sha1.c **** 		/* Initialize the five working variables */
+ 455:Core/Src/device/hmac_sha1.c **** 		a = h[0];
+ 543              		.loc 1 455 3 is_stmt 1 view .LVU193
+ 544              		.loc 1 455 5 is_stmt 0 view .LVU194
+ 545 0104 5999     		ldr	r1, [sp, #356]
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 19
+
+
+ 546              	.LVL60:
+ 456:Core/Src/device/hmac_sha1.c **** 		b = h[1];
+ 547              		.loc 1 456 3 is_stmt 1 view .LVU195
+ 548              		.loc 1 456 5 is_stmt 0 view .LVU196
+ 549 0106 5A9A     		ldr	r2, [sp, #360]
+ 550              	.LVL61:
+ 457:Core/Src/device/hmac_sha1.c **** 		c = h[2];
+ 551              		.loc 1 457 3 is_stmt 1 view .LVU197
+ 552              		.loc 1 457 5 is_stmt 0 view .LVU198
+ 553 0108 5B9B     		ldr	r3, [sp, #364]
+ 554              	.LVL62:
+ 458:Core/Src/device/hmac_sha1.c **** 		d = h[3];
+ 555              		.loc 1 458 3 is_stmt 1 view .LVU199
+ 556              		.loc 1 458 5 is_stmt 0 view .LVU200
+ 557 010a 5C9F     		ldr	r7, [sp, #368]
+ 558 010c 0097     		str	r7, [sp]
+ 559              	.LVL63:
+ 459:Core/Src/device/hmac_sha1.c **** 		e = h[4];
+ 560              		.loc 1 459 3 is_stmt 1 view .LVU201
+ 561              		.loc 1 459 5 is_stmt 0 view .LVU202
+ 562 010e 5D98     		ldr	r0, [sp, #372]
+ 563 0110 0190     		str	r0, [sp, #4]
+ 564              	.LVL64:
+ 460:Core/Src/device/hmac_sha1.c **** 
+ 461:Core/Src/device/hmac_sha1.c **** 		/* iterate a-e 80 times */
+ 462:Core/Src/device/hmac_sha1.c **** 
+ 463:Core/Src/device/hmac_sha1.c **** 		for(t = 0; t < 80; t++)
+ 565              		.loc 1 463 3 is_stmt 1 view .LVU203
+ 459:Core/Src/device/hmac_sha1.c **** 		e = h[4];
+ 566              		.loc 1 459 5 is_stmt 0 view .LVU204
+ 567 0112 0446     		mov	r4, r0
+ 457:Core/Src/device/hmac_sha1.c **** 		d = h[3];
+ 568              		.loc 1 457 5 view .LVU205
+ 569 0114 9846     		mov	r8, r3
+ 456:Core/Src/device/hmac_sha1.c **** 		c = h[2];
+ 570              		.loc 1 456 5 view .LVU206
+ 571 0116 9346     		mov	fp, r2
+ 455:Core/Src/device/hmac_sha1.c **** 		b = h[1];
+ 572              		.loc 1 455 5 view .LVU207
+ 573 0118 8946     		mov	r9, r1
+ 574              		.loc 1 463 9 view .LVU208
+ 575 011a 0026     		movs	r6, #0
+ 576 011c CDF808A0 		str	r10, [sp, #8]
+ 577 0120 0391     		str	r1, [sp, #12]
+ 578 0122 0492     		str	r2, [sp, #16]
+ 579 0124 0593     		str	r3, [sp, #20]
+ 580              		.loc 1 463 3 view .LVU209
+ 581 0126 1FE0     		b	.L25
+ 582              	.LVL65:
+ 583              	.L26:
+ 464:Core/Src/device/hmac_sha1.c **** 		{
+ 465:Core/Src/device/hmac_sha1.c **** 			temp = (rotl(5, a) + ft(t, b, c, d)) & 0xffffffff;
+ 584              		.loc 1 465 4 is_stmt 1 view .LVU210
+ 585              		.loc 1 465 12 is_stmt 0 view .LVU211
+ 586 0128 4946     		mov	r1, r9
+ 587 012a 0520     		movs	r0, #5
+ 588 012c FFF7FEFF 		bl	rotl
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 20
+
+
+ 589              	.LVL66:
+ 590 0130 8246     		mov	r10, r0
+ 591              		.loc 1 465 25 discriminator 1 view .LVU212
+ 592 0132 3B46     		mov	r3, r7
+ 593 0134 4246     		mov	r2, r8
+ 594 0136 5946     		mov	r1, fp
+ 595 0138 3046     		mov	r0, r6
+ 596 013a FFF7FEFF 		bl	ft
+ 597              	.LVL67:
+ 598              		.loc 1 465 9 discriminator 2 view .LVU213
+ 599 013e 8244     		add	r10, r10, r0
+ 600              	.LVL68:
+ 466:Core/Src/device/hmac_sha1.c **** 			temp = (temp + e) & 0xffffffff;
+ 601              		.loc 1 466 4 is_stmt 1 view .LVU214
+ 602              		.loc 1 466 9 is_stmt 0 view .LVU215
+ 603 0140 A244     		add	r10, r10, r4
+ 604              	.LVL69:
+ 467:Core/Src/device/hmac_sha1.c **** 			temp = (temp + k(t)) & 0xffffffff;
+ 605              		.loc 1 467 4 is_stmt 1 view .LVU216
+ 606              		.loc 1 467 19 is_stmt 0 view .LVU217
+ 607 0142 3046     		mov	r0, r6
+ 608 0144 FFF7FEFF 		bl	k
+ 609              	.LVL70:
+ 610              		.loc 1 467 9 discriminator 1 view .LVU218
+ 611 0148 5044     		add	r0, r0, r10
+ 612              	.LVL71:
+ 468:Core/Src/device/hmac_sha1.c **** 			temp = (temp + w[t]) & 0xffffffff;
+ 613              		.loc 1 468 4 is_stmt 1 view .LVU219
+ 614              		.loc 1 468 20 is_stmt 0 view .LVU220
+ 615 014a 09AB     		add	r3, sp, #36
+ 616 014c 53F82630 		ldr	r3, [r3, r6, lsl #2]
+ 617              		.loc 1 468 9 view .LVU221
+ 618 0150 03EB000A 		add	r10, r3, r0
+ 619              	.LVL72:
+ 469:Core/Src/device/hmac_sha1.c **** 			e = d;
+ 620              		.loc 1 469 4 is_stmt 1 view .LVU222
+ 470:Core/Src/device/hmac_sha1.c **** 			d = c;
+ 621              		.loc 1 470 4 view .LVU223
+ 471:Core/Src/device/hmac_sha1.c **** 			c = rotl(30, b);
+ 622              		.loc 1 471 4 view .LVU224
+ 623              		.loc 1 471 8 is_stmt 0 view .LVU225
+ 624 0154 5946     		mov	r1, fp
+ 625 0156 1E20     		movs	r0, #30
+ 626 0158 FFF7FEFF 		bl	rotl
+ 627              	.LVL73:
+ 472:Core/Src/device/hmac_sha1.c **** 			b = a;
+ 628              		.loc 1 472 4 is_stmt 1 view .LVU226
+ 473:Core/Src/device/hmac_sha1.c **** 			a = temp;
+ 629              		.loc 1 473 4 view .LVU227
+ 463:Core/Src/device/hmac_sha1.c **** 		{
+ 630              		.loc 1 463 23 discriminator 3 view .LVU228
+ 631 015c 0136     		adds	r6, r6, #1
+ 632              	.LVL74:
+ 469:Core/Src/device/hmac_sha1.c **** 			d = c;
+ 633              		.loc 1 469 6 is_stmt 0 view .LVU229
+ 634 015e 3C46     		mov	r4, r7
+ 470:Core/Src/device/hmac_sha1.c **** 			c = rotl(30, b);
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 21
+
+
+ 635              		.loc 1 470 6 view .LVU230
+ 636 0160 4746     		mov	r7, r8
+ 637              	.LVL75:
+ 471:Core/Src/device/hmac_sha1.c **** 			b = a;
+ 638              		.loc 1 471 8 view .LVU231
+ 639 0162 8046     		mov	r8, r0
+ 640              	.LVL76:
+ 472:Core/Src/device/hmac_sha1.c **** 			a = temp;
+ 641              		.loc 1 472 6 view .LVU232
+ 642 0164 CB46     		mov	fp, r9
+ 643              		.loc 1 473 6 view .LVU233
+ 644 0166 D146     		mov	r9, r10
+ 645              	.LVL77:
+ 646              	.L25:
+ 463:Core/Src/device/hmac_sha1.c **** 		{
+ 647              		.loc 1 463 16 is_stmt 1 discriminator 1 view .LVU234
+ 648 0168 4F2E     		cmp	r6, #79
+ 649 016a DDD9     		bls	.L26
+ 474:Core/Src/device/hmac_sha1.c **** #ifdef SHA1_DEBUG
+ 475:Core/Src/device/hmac_sha1.c **** 			printf("t = %2ld\t %08lx, %08lx, %08lx, %08lx, %08lx\n", t, a, b, c, d, e);
+ 476:Core/Src/device/hmac_sha1.c **** #endif
+ 477:Core/Src/device/hmac_sha1.c **** 		}
+ 478:Core/Src/device/hmac_sha1.c **** 
+ 479:Core/Src/device/hmac_sha1.c **** 		/* compute the ith intermediate hash value */
+ 480:Core/Src/device/hmac_sha1.c **** #ifdef SHA1_DEBUG
+ 481:Core/Src/device/hmac_sha1.c **** 		printf("  +   \t %08lx, %08lx, %08lx, %08lx, %08lx\n", h[0], h[1], h[2], h[3], h[4]);
+ 482:Core/Src/device/hmac_sha1.c **** #endif
+ 483:Core/Src/device/hmac_sha1.c **** 		h[0] = (a + h[0]) & 0xffffffff;
+ 650              		.loc 1 483 21 is_stmt 0 view .LVU235
+ 651 016c DDF808A0 		ldr	r10, [sp, #8]
+ 652 0170 0399     		ldr	r1, [sp, #12]
+ 653 0172 049A     		ldr	r2, [sp, #16]
+ 654 0174 059B     		ldr	r3, [sp, #20]
+ 655              		.loc 1 483 3 is_stmt 1 view .LVU236
+ 656              		.loc 1 483 21 is_stmt 0 view .LVU237
+ 657 0176 09EB0100 		add	r0, r9, r1
+ 658              		.loc 1 483 8 view .LVU238
+ 659 017a 5990     		str	r0, [sp, #356]
+ 484:Core/Src/device/hmac_sha1.c **** 		h[1] = (b + h[1]) & 0xffffffff;
+ 660              		.loc 1 484 3 is_stmt 1 view .LVU239
+ 661              		.loc 1 484 21 is_stmt 0 view .LVU240
+ 662 017c 0BEB0201 		add	r1, fp, r2
+ 663              		.loc 1 484 8 view .LVU241
+ 664 0180 5A91     		str	r1, [sp, #360]
+ 485:Core/Src/device/hmac_sha1.c **** 		h[2] = (c + h[2]) & 0xffffffff;
+ 665              		.loc 1 485 3 is_stmt 1 view .LVU242
+ 666              		.loc 1 485 21 is_stmt 0 view .LVU243
+ 667 0182 4344     		add	r3, r3, r8
+ 668              		.loc 1 485 8 view .LVU244
+ 669 0184 5B93     		str	r3, [sp, #364]
+ 486:Core/Src/device/hmac_sha1.c **** 		h[3] = (d + h[3]) & 0xffffffff;
+ 670              		.loc 1 486 3 is_stmt 1 view .LVU245
+ 671              		.loc 1 486 21 is_stmt 0 view .LVU246
+ 672 0186 009B     		ldr	r3, [sp]
+ 673 0188 1F44     		add	r7, r7, r3
+ 674              	.LVL78:
+ 675              		.loc 1 486 8 view .LVU247
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 22
+
+
+ 676 018a 5C97     		str	r7, [sp, #368]
+ 487:Core/Src/device/hmac_sha1.c **** 		h[4] = (e + h[4]) & 0xffffffff;
+ 677              		.loc 1 487 3 is_stmt 1 view .LVU248
+ 678              		.loc 1 487 21 is_stmt 0 view .LVU249
+ 679 018c 019B     		ldr	r3, [sp, #4]
+ 680 018e 1C44     		add	r4, r4, r3
+ 681              	.LVL79:
+ 682              		.loc 1 487 8 view .LVU250
+ 683 0190 5D94     		str	r4, [sp, #372]
+ 425:Core/Src/device/hmac_sha1.c **** 	{
+ 684              		.loc 1 425 30 is_stmt 1 discriminator 2 view .LVU251
+ 685 0192 0AF1010A 		add	r10, r10, #1
+ 686              	.LVL80:
+ 687              	.L21:
+ 425:Core/Src/device/hmac_sha1.c **** 	{
+ 688              		.loc 1 425 15 discriminator 1 view .LVU252
+ 689 0196 069B     		ldr	r3, [sp, #24]
+ 690 0198 9A45     		cmp	r10, r3
+ 691 019a 01DA     		bge	.L33
+ 428:Core/Src/device/hmac_sha1.c **** 		{
+ 692              		.loc 1 428 9 is_stmt 0 view .LVU253
+ 693 019c 0024     		movs	r4, #0
+ 694 019e 94E7     		b	.L27
+ 695              	.L33:
+ 488:Core/Src/device/hmac_sha1.c **** #ifdef SHA1_DEBUG
+ 489:Core/Src/device/hmac_sha1.c **** 		printf("  =   \t %08lx, %08lx, %08lx, %08lx, %08lx\n", h[0], h[1], h[2], h[3], h[4]);
+ 490:Core/Src/device/hmac_sha1.c **** #endif
+ 491:Core/Src/device/hmac_sha1.c **** 	}
+ 492:Core/Src/device/hmac_sha1.c **** 
+ 493:Core/Src/device/hmac_sha1.c **** 	digest[3]  = (unsigned char)(h[0]       & 0xff);
+ 696              		.loc 1 493 32 view .LVU254
+ 697 01a0 079E     		ldr	r6, [sp, #28]
+ 698              		.loc 1 493 2 is_stmt 1 view .LVU255
+ 699              		.loc 1 493 32 is_stmt 0 view .LVU256
+ 700 01a2 599B     		ldr	r3, [sp, #356]
+ 701              		.loc 1 493 13 view .LVU257
+ 702 01a4 F370     		strb	r3, [r6, #3]
+ 494:Core/Src/device/hmac_sha1.c **** 	digest[2]  = (unsigned char)((h[0] >> 8) & 0xff);
+ 703              		.loc 1 494 2 is_stmt 1 view .LVU258
+ 704              		.loc 1 494 15 is_stmt 0 view .LVU259
+ 705 01a6 C3F30722 		ubfx	r2, r3, #8, #8
+ 706              		.loc 1 494 13 view .LVU260
+ 707 01aa B270     		strb	r2, [r6, #2]
+ 495:Core/Src/device/hmac_sha1.c **** 	digest[1]  = (unsigned char)((h[0] >> 16) & 0xff);
+ 708              		.loc 1 495 2 is_stmt 1 view .LVU261
+ 709              		.loc 1 495 15 is_stmt 0 view .LVU262
+ 710 01ac C3F30742 		ubfx	r2, r3, #16, #8
+ 711              		.loc 1 495 13 view .LVU263
+ 712 01b0 7270     		strb	r2, [r6, #1]
+ 496:Core/Src/device/hmac_sha1.c **** 	digest[0]  = (unsigned char)((h[0] >> 24) & 0xff);
+ 713              		.loc 1 496 2 is_stmt 1 view .LVU264
+ 714              		.loc 1 496 15 is_stmt 0 view .LVU265
+ 715 01b2 1B0E     		lsrs	r3, r3, #24
+ 716              		.loc 1 496 13 view .LVU266
+ 717 01b4 3370     		strb	r3, [r6]
+ 497:Core/Src/device/hmac_sha1.c **** 	digest[7]  = (unsigned char)(h[1]       & 0xff);
+ 718              		.loc 1 497 2 is_stmt 1 view .LVU267
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 23
+
+
+ 719              		.loc 1 497 32 is_stmt 0 view .LVU268
+ 720 01b6 5A9B     		ldr	r3, [sp, #360]
+ 721              		.loc 1 497 13 view .LVU269
+ 722 01b8 F371     		strb	r3, [r6, #7]
+ 498:Core/Src/device/hmac_sha1.c **** 	digest[6]  = (unsigned char)((h[1] >> 8) & 0xff);
+ 723              		.loc 1 498 2 is_stmt 1 view .LVU270
+ 724              		.loc 1 498 15 is_stmt 0 view .LVU271
+ 725 01ba C3F30722 		ubfx	r2, r3, #8, #8
+ 726              		.loc 1 498 13 view .LVU272
+ 727 01be B271     		strb	r2, [r6, #6]
+ 499:Core/Src/device/hmac_sha1.c **** 	digest[5]  = (unsigned char)((h[1] >> 16) & 0xff);
+ 728              		.loc 1 499 2 is_stmt 1 view .LVU273
+ 729              		.loc 1 499 15 is_stmt 0 view .LVU274
+ 730 01c0 C3F30742 		ubfx	r2, r3, #16, #8
+ 731              		.loc 1 499 13 view .LVU275
+ 732 01c4 7271     		strb	r2, [r6, #5]
+ 500:Core/Src/device/hmac_sha1.c **** 	digest[4]  = (unsigned char)((h[1] >> 24) & 0xff);
+ 733              		.loc 1 500 2 is_stmt 1 view .LVU276
+ 734              		.loc 1 500 15 is_stmt 0 view .LVU277
+ 735 01c6 1B0E     		lsrs	r3, r3, #24
+ 736              		.loc 1 500 13 view .LVU278
+ 737 01c8 3371     		strb	r3, [r6, #4]
+ 501:Core/Src/device/hmac_sha1.c **** 	digest[11]  = (unsigned char)(h[2]       & 0xff);
+ 738              		.loc 1 501 2 is_stmt 1 view .LVU279
+ 739              		.loc 1 501 33 is_stmt 0 view .LVU280
+ 740 01ca 5B9B     		ldr	r3, [sp, #364]
+ 741              		.loc 1 501 14 view .LVU281
+ 742 01cc F372     		strb	r3, [r6, #11]
+ 502:Core/Src/device/hmac_sha1.c **** 	digest[10]  = (unsigned char)((h[2] >> 8) & 0xff);
+ 743              		.loc 1 502 2 is_stmt 1 view .LVU282
+ 744              		.loc 1 502 16 is_stmt 0 view .LVU283
+ 745 01ce C3F30722 		ubfx	r2, r3, #8, #8
+ 746              		.loc 1 502 14 view .LVU284
+ 747 01d2 B272     		strb	r2, [r6, #10]
+ 503:Core/Src/device/hmac_sha1.c **** 	digest[9] = (unsigned char)((h[2] >> 16) & 0xff);
+ 748              		.loc 1 503 2 is_stmt 1 view .LVU285
+ 749              		.loc 1 503 14 is_stmt 0 view .LVU286
+ 750 01d4 C3F30742 		ubfx	r2, r3, #16, #8
+ 751              		.loc 1 503 12 view .LVU287
+ 752 01d8 7272     		strb	r2, [r6, #9]
+ 504:Core/Src/device/hmac_sha1.c **** 	digest[8] = (unsigned char)((h[2] >> 24) & 0xff);
+ 753              		.loc 1 504 2 is_stmt 1 view .LVU288
+ 754              		.loc 1 504 14 is_stmt 0 view .LVU289
+ 755 01da 1B0E     		lsrs	r3, r3, #24
+ 756              		.loc 1 504 12 view .LVU290
+ 757 01dc 3372     		strb	r3, [r6, #8]
+ 505:Core/Src/device/hmac_sha1.c **** 	digest[15] = (unsigned char)(h[3]       & 0xff);
+ 758              		.loc 1 505 2 is_stmt 1 view .LVU291
+ 759              		.loc 1 505 32 is_stmt 0 view .LVU292
+ 760 01de 5C9B     		ldr	r3, [sp, #368]
+ 761              		.loc 1 505 13 view .LVU293
+ 762 01e0 F373     		strb	r3, [r6, #15]
+ 506:Core/Src/device/hmac_sha1.c **** 	digest[14] = (unsigned char)((h[3] >> 8) & 0xff);
+ 763              		.loc 1 506 2 is_stmt 1 view .LVU294
+ 764              		.loc 1 506 15 is_stmt 0 view .LVU295
+ 765 01e2 C3F30722 		ubfx	r2, r3, #8, #8
+ 766              		.loc 1 506 13 view .LVU296
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 24
+
+
+ 767 01e6 B273     		strb	r2, [r6, #14]
+ 507:Core/Src/device/hmac_sha1.c **** 	digest[13] = (unsigned char)((h[3] >> 16) & 0xff);
+ 768              		.loc 1 507 2 is_stmt 1 view .LVU297
+ 769              		.loc 1 507 15 is_stmt 0 view .LVU298
+ 770 01e8 C3F30742 		ubfx	r2, r3, #16, #8
+ 771              		.loc 1 507 13 view .LVU299
+ 772 01ec 7273     		strb	r2, [r6, #13]
+ 508:Core/Src/device/hmac_sha1.c **** 	digest[12] = (unsigned char)((h[3] >> 24) & 0xff);
+ 773              		.loc 1 508 2 is_stmt 1 view .LVU300
+ 774              		.loc 1 508 15 is_stmt 0 view .LVU301
+ 775 01ee 1B0E     		lsrs	r3, r3, #24
+ 776              		.loc 1 508 13 view .LVU302
+ 777 01f0 3373     		strb	r3, [r6, #12]
+ 509:Core/Src/device/hmac_sha1.c **** 	digest[19] = (unsigned char)(h[4]       & 0xff);
+ 778              		.loc 1 509 2 is_stmt 1 view .LVU303
+ 779              		.loc 1 509 32 is_stmt 0 view .LVU304
+ 780 01f2 5D9B     		ldr	r3, [sp, #372]
+ 781              		.loc 1 509 13 view .LVU305
+ 782 01f4 F374     		strb	r3, [r6, #19]
+ 510:Core/Src/device/hmac_sha1.c **** 	digest[18] = (unsigned char)((h[4] >> 8) & 0xff);
+ 783              		.loc 1 510 2 is_stmt 1 view .LVU306
+ 784              		.loc 1 510 15 is_stmt 0 view .LVU307
+ 785 01f6 C3F30722 		ubfx	r2, r3, #8, #8
+ 786              		.loc 1 510 13 view .LVU308
+ 787 01fa B274     		strb	r2, [r6, #18]
+ 511:Core/Src/device/hmac_sha1.c **** 	digest[17] = (unsigned char)((h[4] >> 16) & 0xff);
+ 788              		.loc 1 511 2 is_stmt 1 view .LVU309
+ 789              		.loc 1 511 15 is_stmt 0 view .LVU310
+ 790 01fc C3F30742 		ubfx	r2, r3, #16, #8
+ 791              		.loc 1 511 13 view .LVU311
+ 792 0200 7274     		strb	r2, [r6, #17]
+ 512:Core/Src/device/hmac_sha1.c **** 	digest[16] = (unsigned char)((h[4] >> 24) & 0xff);
+ 793              		.loc 1 512 2 is_stmt 1 view .LVU312
+ 794              		.loc 1 512 15 is_stmt 0 view .LVU313
+ 795 0202 1B0E     		lsrs	r3, r3, #24
+ 796              		.loc 1 512 13 view .LVU314
+ 797 0204 3374     		strb	r3, [r6, #16]
+ 513:Core/Src/device/hmac_sha1.c **** }
+ 798              		.loc 1 513 1 view .LVU315
+ 799 0206 5FB0     		add	sp, sp, #380
+ 800              	.LCFI2:
+ 801              		.cfi_def_cfa_offset 36
+ 802              		@ sp needed
+ 803 0208 BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 804              	.LVL81:
+ 805              	.L35:
+ 806              		.loc 1 513 1 view .LVU316
+ 807              		.align	2
+ 808              	.L34:
+ 809 020c 01234567 		.word	1732584193
+ 810 0210 F0E1D2C3 		.word	-1009589776
+ 811              		.cfi_endproc
+ 812              	.LFE72:
+ 814              		.section	.text.hmac_sha1,"ax",%progbits
+ 815              		.align	1
+ 816              		.global	hmac_sha1
+ 817              		.syntax unified
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 25
+
+
+ 818              		.thumb
+ 819              		.thumb_func
+ 821              	hmac_sha1:
+ 822              	.LVL82:
+ 823              	.LFB73:
+ 514:Core/Src/device/hmac_sha1.c **** 
+ 515:Core/Src/device/hmac_sha1.c **** /******************************************************/
+ 516:Core/Src/device/hmac_sha1.c **** /* hmac-sha1()                                        */
+ 517:Core/Src/device/hmac_sha1.c **** /* Performs the hmac-sha1 keyed secure hash algorithm */
+ 518:Core/Src/device/hmac_sha1.c **** /******************************************************/
+ 519:Core/Src/device/hmac_sha1.c **** 
+ 520:Core/Src/device/hmac_sha1.c **** void hmac_sha1(
+ 521:Core/Src/device/hmac_sha1.c **** 	unsigned char *key,
+ 522:Core/Src/device/hmac_sha1.c **** 	int key_length,
+ 523:Core/Src/device/hmac_sha1.c **** 	unsigned char *data,
+ 524:Core/Src/device/hmac_sha1.c **** 	int data_length,
+ 525:Core/Src/device/hmac_sha1.c **** 	unsigned char *digest
+ 526:Core/Src/device/hmac_sha1.c **** )
+ 527:Core/Src/device/hmac_sha1.c **** 
+ 528:Core/Src/device/hmac_sha1.c **** 
+ 529:Core/Src/device/hmac_sha1.c **** {
+ 824              		.loc 1 529 1 is_stmt 1 view -0
+ 825              		.cfi_startproc
+ 826              		@ args = 4, pretend = 0, frame = 1432
+ 827              		@ frame_needed = 0, uses_anonymous_args = 0
+ 828              		.loc 1 529 1 is_stmt 0 view .LVU318
+ 829 0000 70B5     		push	{r4, r5, r6, lr}
+ 830              	.LCFI3:
+ 831              		.cfi_def_cfa_offset 16
+ 832              		.cfi_offset 4, -16
+ 833              		.cfi_offset 5, -12
+ 834              		.cfi_offset 6, -8
+ 835              		.cfi_offset 14, -4
+ 836 0002 ADF5B36D 		sub	sp, sp, #1432
+ 837              	.LCFI4:
+ 838              		.cfi_def_cfa_offset 1448
+ 839 0006 1646     		mov	r6, r2
+ 840 0008 1D46     		mov	r5, r3
+ 841 000a DDF8A845 		ldr	r4, [sp, #1448]
+ 530:Core/Src/device/hmac_sha1.c **** 	int b = 64; /* blocksize */
+ 842              		.loc 1 530 2 is_stmt 1 view .LVU319
+ 843              	.LVL83:
+ 531:Core/Src/device/hmac_sha1.c **** 	unsigned char ipad = 0x36;
+ 844              		.loc 1 531 2 view .LVU320
+ 532:Core/Src/device/hmac_sha1.c **** 	unsigned char opad = 0x5c;
+ 845              		.loc 1 532 2 view .LVU321
+ 533:Core/Src/device/hmac_sha1.c **** 	unsigned char k0[64];
+ 846              		.loc 1 533 2 view .LVU322
+ 534:Core/Src/device/hmac_sha1.c **** 	unsigned char k0xorIpad[64];
+ 847              		.loc 1 534 2 view .LVU323
+ 535:Core/Src/device/hmac_sha1.c **** 	unsigned char step7data[64];
+ 848              		.loc 1 535 2 view .LVU324
+ 536:Core/Src/device/hmac_sha1.c **** 	unsigned char step5data[MAX_MESSAGE_LENGTH + 128];
+ 849              		.loc 1 536 2 view .LVU325
+ 537:Core/Src/device/hmac_sha1.c **** 	unsigned char step8data[64 + 20];
+ 850              		.loc 1 537 2 view .LVU326
+ 538:Core/Src/device/hmac_sha1.c **** 	int i;
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 26
+
+
+ 851              		.loc 1 538 2 view .LVU327
+ 539:Core/Src/device/hmac_sha1.c **** 
+ 540:Core/Src/device/hmac_sha1.c **** 	for(i = 0; i < 64; i++)
+ 852              		.loc 1 540 2 view .LVU328
+ 853              		.loc 1 540 8 is_stmt 0 view .LVU329
+ 854 000e 4FF0000C 		mov	ip, #0
+ 855              		.loc 1 540 2 view .LVU330
+ 856 0012 07E0     		b	.L37
+ 857              	.LVL84:
+ 858              	.L38:
+ 541:Core/Src/device/hmac_sha1.c **** 	{
+ 542:Core/Src/device/hmac_sha1.c **** 		k0[i] = 0x00;
+ 859              		.loc 1 542 3 is_stmt 1 view .LVU331
+ 860              		.loc 1 542 9 is_stmt 0 view .LVU332
+ 861 0014 0CF5B363 		add	r3, ip, #1432
+ 862 0018 6B44     		add	r3, sp, r3
+ 863 001a 0022     		movs	r2, #0
+ 864 001c 03F8402C 		strb	r2, [r3, #-64]
+ 540:Core/Src/device/hmac_sha1.c **** 	{
+ 865              		.loc 1 540 22 is_stmt 1 discriminator 3 view .LVU333
+ 866 0020 0CF1010C 		add	ip, ip, #1
+ 867              	.LVL85:
+ 868              	.L37:
+ 540:Core/Src/device/hmac_sha1.c **** 	{
+ 869              		.loc 1 540 15 discriminator 1 view .LVU334
+ 870 0024 BCF13F0F 		cmp	ip, #63
+ 871 0028 F4DD     		ble	.L38
+ 543:Core/Src/device/hmac_sha1.c **** 	}
+ 544:Core/Src/device/hmac_sha1.c **** 
+ 545:Core/Src/device/hmac_sha1.c **** 	if(key_length != b)     /* Step 1 */
+ 872              		.loc 1 545 2 view .LVU335
+ 873              		.loc 1 545 4 is_stmt 0 view .LVU336
+ 874 002a 4029     		cmp	r1, #64
+ 875 002c 20D0     		beq	.L59
+ 546:Core/Src/device/hmac_sha1.c **** 	{
+ 547:Core/Src/device/hmac_sha1.c **** 		/* Step 2 */
+ 548:Core/Src/device/hmac_sha1.c **** 		if(key_length > b)
+ 876              		.loc 1 548 3 is_stmt 1 view .LVU337
+ 877              		.loc 1 548 5 is_stmt 0 view .LVU338
+ 878 002e 03DC     		bgt	.L62
+ 549:Core/Src/device/hmac_sha1.c **** 		{
+ 550:Core/Src/device/hmac_sha1.c **** 			sha1(key, key_length, digest);
+ 551:Core/Src/device/hmac_sha1.c **** 
+ 552:Core/Src/device/hmac_sha1.c **** 			for(i = 0; i < 20; i++)
+ 553:Core/Src/device/hmac_sha1.c **** 			{
+ 554:Core/Src/device/hmac_sha1.c **** 				k0[i] = digest[i];
+ 555:Core/Src/device/hmac_sha1.c **** 			}
+ 556:Core/Src/device/hmac_sha1.c **** 		}
+ 557:Core/Src/device/hmac_sha1.c **** 
+ 558:Core/Src/device/hmac_sha1.c **** 		else if(key_length < b)   /* Step 3 */
+ 879              		.loc 1 558 8 is_stmt 1 view .LVU339
+ 880              		.loc 1 558 10 is_stmt 0 view .LVU340
+ 881 0030 3F29     		cmp	r1, #63
+ 882 0032 1BDD     		ble	.L60
+ 883              	.LVL86:
+ 884              	.L43:
+ 559:Core/Src/device/hmac_sha1.c **** 		{
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 27
+
+
+ 560:Core/Src/device/hmac_sha1.c **** 			for(i = 0; i < key_length; i++)
+ 561:Core/Src/device/hmac_sha1.c **** 			{
+ 562:Core/Src/device/hmac_sha1.c **** 				k0[i] = key[i];
+ 563:Core/Src/device/hmac_sha1.c **** 			}
+ 564:Core/Src/device/hmac_sha1.c **** 		}
+ 565:Core/Src/device/hmac_sha1.c **** 	}
+ 566:Core/Src/device/hmac_sha1.c **** 
+ 567:Core/Src/device/hmac_sha1.c **** 	else
+ 568:Core/Src/device/hmac_sha1.c **** 	{
+ 569:Core/Src/device/hmac_sha1.c **** 		for(i = 0; i < b; i++)
+ 885              		.loc 1 569 9 view .LVU341
+ 886 0034 0021     		movs	r1, #0
+ 887 0036 30E0     		b	.L47
+ 888              	.LVL87:
+ 889              	.L62:
+ 550:Core/Src/device/hmac_sha1.c **** 
+ 890              		.loc 1 550 4 is_stmt 1 view .LVU342
+ 891 0038 2246     		mov	r2, r4
+ 892 003a FFF7FEFF 		bl	sha1
+ 893              	.LVL88:
+ 552:Core/Src/device/hmac_sha1.c **** 			{
+ 894              		.loc 1 552 4 view .LVU343
+ 552:Core/Src/device/hmac_sha1.c **** 			{
+ 895              		.loc 1 552 10 is_stmt 0 view .LVU344
+ 896 003e 0023     		movs	r3, #0
+ 552:Core/Src/device/hmac_sha1.c **** 			{
+ 897              		.loc 1 552 4 view .LVU345
+ 898 0040 06E0     		b	.L41
+ 899              	.LVL89:
+ 900              	.L42:
+ 554:Core/Src/device/hmac_sha1.c **** 			}
+ 901              		.loc 1 554 5 is_stmt 1 view .LVU346
+ 554:Core/Src/device/hmac_sha1.c **** 			}
+ 902              		.loc 1 554 19 is_stmt 0 view .LVU347
+ 903 0042 E15C     		ldrb	r1, [r4, r3]	@ zero_extendqisi2
+ 554:Core/Src/device/hmac_sha1.c **** 			}
+ 904              		.loc 1 554 11 view .LVU348
+ 905 0044 03F5B362 		add	r2, r3, #1432
+ 906 0048 6A44     		add	r2, sp, r2
+ 907 004a 02F8401C 		strb	r1, [r2, #-64]
+ 552:Core/Src/device/hmac_sha1.c **** 			{
+ 908              		.loc 1 552 24 is_stmt 1 discriminator 3 view .LVU349
+ 909 004e 0133     		adds	r3, r3, #1
+ 910              	.LVL90:
+ 911              	.L41:
+ 552:Core/Src/device/hmac_sha1.c **** 			{
+ 912              		.loc 1 552 17 discriminator 1 view .LVU350
+ 913 0050 132B     		cmp	r3, #19
+ 914 0052 F6DD     		ble	.L42
+ 915 0054 EEE7     		b	.L43
+ 916              	.LVL91:
+ 917              	.L45:
+ 562:Core/Src/device/hmac_sha1.c **** 			}
+ 918              		.loc 1 562 5 view .LVU351
+ 562:Core/Src/device/hmac_sha1.c **** 			}
+ 919              		.loc 1 562 16 is_stmt 0 view .LVU352
+ 920 0056 10F803C0 		ldrb	ip, [r0, r3]	@ zero_extendqisi2
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 28
+
+
+ 562:Core/Src/device/hmac_sha1.c **** 			}
+ 921              		.loc 1 562 11 view .LVU353
+ 922 005a 03F5B362 		add	r2, r3, #1432
+ 923 005e 6A44     		add	r2, sp, r2
+ 924 0060 02F840CC 		strb	ip, [r2, #-64]
+ 560:Core/Src/device/hmac_sha1.c **** 			{
+ 925              		.loc 1 560 32 is_stmt 1 discriminator 3 view .LVU354
+ 926 0064 0133     		adds	r3, r3, #1
+ 927              	.LVL92:
+ 928              	.L44:
+ 560:Core/Src/device/hmac_sha1.c **** 			{
+ 929              		.loc 1 560 17 discriminator 1 view .LVU355
+ 930 0066 8B42     		cmp	r3, r1
+ 931 0068 F5DB     		blt	.L45
+ 932 006a E3E7     		b	.L43
+ 933              	.LVL93:
+ 934              	.L60:
+ 560:Core/Src/device/hmac_sha1.c **** 			{
+ 935              		.loc 1 560 10 is_stmt 0 view .LVU356
+ 936 006c 0023     		movs	r3, #0
+ 937 006e FAE7     		b	.L44
+ 938              	.L59:
+ 939              		.loc 1 569 9 view .LVU357
+ 940 0070 0023     		movs	r3, #0
+ 941              	.LVL94:
+ 942              	.L39:
+ 943              		.loc 1 569 16 is_stmt 1 discriminator 1 view .LVU358
+ 944 0072 3F2B     		cmp	r3, #63
+ 945 0074 DEDC     		bgt	.L43
+ 570:Core/Src/device/hmac_sha1.c **** 		{
+ 571:Core/Src/device/hmac_sha1.c **** 			k0[i] = key[i];
+ 946              		.loc 1 571 4 view .LVU359
+ 947              		.loc 1 571 15 is_stmt 0 view .LVU360
+ 948 0076 C15C     		ldrb	r1, [r0, r3]	@ zero_extendqisi2
+ 949              		.loc 1 571 10 view .LVU361
+ 950 0078 03F5B362 		add	r2, r3, #1432
+ 951 007c 6A44     		add	r2, sp, r2
+ 952 007e 02F8401C 		strb	r1, [r2, #-64]
+ 569:Core/Src/device/hmac_sha1.c **** 		{
+ 953              		.loc 1 569 22 is_stmt 1 discriminator 3 view .LVU362
+ 954 0082 0133     		adds	r3, r3, #1
+ 955              	.LVL95:
+ 569:Core/Src/device/hmac_sha1.c **** 		{
+ 956              		.loc 1 569 22 is_stmt 0 discriminator 3 view .LVU363
+ 957 0084 F5E7     		b	.L39
+ 958              	.LVL96:
+ 959              	.L48:
+ 572:Core/Src/device/hmac_sha1.c **** 		}
+ 573:Core/Src/device/hmac_sha1.c **** 	}
+ 574:Core/Src/device/hmac_sha1.c **** 
+ 575:Core/Src/device/hmac_sha1.c **** #ifdef HMAC_DEBUG
+ 576:Core/Src/device/hmac_sha1.c **** 	debug_out("k0", k0, 64);
+ 577:Core/Src/device/hmac_sha1.c **** #endif
+ 578:Core/Src/device/hmac_sha1.c **** 	/* Step 4 */
+ 579:Core/Src/device/hmac_sha1.c **** 
+ 580:Core/Src/device/hmac_sha1.c **** 	for(i = 0; i < 64; i++)
+ 581:Core/Src/device/hmac_sha1.c **** 	{
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 29
+
+
+ 582:Core/Src/device/hmac_sha1.c **** 		k0xorIpad[i] = k0[i] ^ ipad;
+ 960              		.loc 1 582 3 is_stmt 1 view .LVU364
+ 961              		.loc 1 582 20 is_stmt 0 view .LVU365
+ 962 0086 01F5B363 		add	r3, r1, #1432
+ 963 008a 6B44     		add	r3, sp, r3
+ 964 008c 13F8400C 		ldrb	r0, [r3, #-64]	@ zero_extendqisi2
+ 965              		.loc 1 582 16 view .LVU366
+ 966 0090 80F03600 		eor	r0, r0, #54
+ 967 0094 03F8800C 		strb	r0, [r3, #-128]
+ 580:Core/Src/device/hmac_sha1.c **** 	{
+ 968              		.loc 1 580 22 is_stmt 1 discriminator 3 view .LVU367
+ 969 0098 0131     		adds	r1, r1, #1
+ 970              	.LVL97:
+ 971              	.L47:
+ 580:Core/Src/device/hmac_sha1.c **** 	{
+ 972              		.loc 1 580 15 discriminator 1 view .LVU368
+ 973 009a 3F29     		cmp	r1, #63
+ 974 009c F3DD     		ble	.L48
+ 583:Core/Src/device/hmac_sha1.c **** 	}
+ 584:Core/Src/device/hmac_sha1.c **** 
+ 585:Core/Src/device/hmac_sha1.c **** #ifdef HMAC_DEBUG
+ 586:Core/Src/device/hmac_sha1.c **** 	debug_out("k0 xor ipad", k0xorIpad, 64);
+ 587:Core/Src/device/hmac_sha1.c **** #endif
+ 588:Core/Src/device/hmac_sha1.c **** 	/* Step 5 */
+ 589:Core/Src/device/hmac_sha1.c **** 
+ 590:Core/Src/device/hmac_sha1.c **** 	for(i = 0; i < 64; i++)
+ 975              		.loc 1 590 8 is_stmt 0 view .LVU369
+ 976 009e 0021     		movs	r1, #0
+ 977              	.LVL98:
+ 978              		.loc 1 590 8 view .LVU370
+ 979 00a0 07E0     		b	.L49
+ 980              	.LVL99:
+ 981              	.L50:
+ 591:Core/Src/device/hmac_sha1.c **** 	{
+ 592:Core/Src/device/hmac_sha1.c **** 		step5data[i] = k0xorIpad[i];
+ 982              		.loc 1 592 3 is_stmt 1 view .LVU371
+ 983              		.loc 1 592 27 is_stmt 0 view .LVU372
+ 984 00a2 01F5B363 		add	r3, r1, #1432
+ 985 00a6 6B44     		add	r3, sp, r3
+ 986 00a8 13F8802C 		ldrb	r2, [r3, #-128]	@ zero_extendqisi2
+ 987              		.loc 1 592 16 view .LVU373
+ 988 00ac 16AB     		add	r3, sp, #88
+ 989 00ae 5A54     		strb	r2, [r3, r1]
+ 590:Core/Src/device/hmac_sha1.c **** 	{
+ 990              		.loc 1 590 22 is_stmt 1 discriminator 3 view .LVU374
+ 991 00b0 0131     		adds	r1, r1, #1
+ 992              	.LVL100:
+ 993              	.L49:
+ 590:Core/Src/device/hmac_sha1.c **** 	{
+ 994              		.loc 1 590 15 discriminator 1 view .LVU375
+ 995 00b2 3F29     		cmp	r1, #63
+ 996 00b4 F5DD     		ble	.L50
+ 593:Core/Src/device/hmac_sha1.c **** 	}
+ 594:Core/Src/device/hmac_sha1.c **** 
+ 595:Core/Src/device/hmac_sha1.c **** 	for(i = 0; i < data_length; i++)
+ 997              		.loc 1 595 8 is_stmt 0 view .LVU376
+ 998 00b6 0023     		movs	r3, #0
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 30
+
+
+ 999 00b8 05E0     		b	.L51
+ 1000              	.LVL101:
+ 1001              	.L52:
+ 596:Core/Src/device/hmac_sha1.c **** 	{
+ 597:Core/Src/device/hmac_sha1.c **** 		step5data[i + 64] = data[i];
+ 1002              		.loc 1 597 3 is_stmt 1 view .LVU377
+ 1003              		.loc 1 597 15 is_stmt 0 view .LVU378
+ 1004 00ba 03F14002 		add	r2, r3, #64
+ 1005              		.loc 1 597 27 view .LVU379
+ 1006 00be F05C     		ldrb	r0, [r6, r3]	@ zero_extendqisi2
+ 1007              		.loc 1 597 21 view .LVU380
+ 1008 00c0 16A9     		add	r1, sp, #88
+ 1009 00c2 8854     		strb	r0, [r1, r2]
+ 595:Core/Src/device/hmac_sha1.c **** 	{
+ 1010              		.loc 1 595 31 is_stmt 1 discriminator 3 view .LVU381
+ 1011 00c4 0133     		adds	r3, r3, #1
+ 1012              	.LVL102:
+ 1013              	.L51:
+ 595:Core/Src/device/hmac_sha1.c **** 	{
+ 1014              		.loc 1 595 15 discriminator 1 view .LVU382
+ 1015 00c6 AB42     		cmp	r3, r5
+ 1016 00c8 F7DB     		blt	.L52
+ 598:Core/Src/device/hmac_sha1.c **** 	}
+ 599:Core/Src/device/hmac_sha1.c **** 
+ 600:Core/Src/device/hmac_sha1.c **** #ifdef HMAC_DEBUG
+ 601:Core/Src/device/hmac_sha1.c **** 	debug_out("(k0 xor ipad) || text", step5data, data_length + 64);
+ 602:Core/Src/device/hmac_sha1.c **** #endif
+ 603:Core/Src/device/hmac_sha1.c **** 	/* Step 6 */
+ 604:Core/Src/device/hmac_sha1.c **** 	sha1(step5data, data_length + b, digest);
+ 1017              		.loc 1 604 2 view .LVU383
+ 1018 00ca 2246     		mov	r2, r4
+ 1019 00cc 05F14001 		add	r1, r5, #64
+ 1020 00d0 16A8     		add	r0, sp, #88
+ 1021 00d2 FFF7FEFF 		bl	sha1
+ 1022              	.LVL103:
+ 605:Core/Src/device/hmac_sha1.c **** #ifdef HMAC_DEBUG
+ 606:Core/Src/device/hmac_sha1.c **** 	debug_out("Hash((k0 xor ipad) || text)", digest, 20);
+ 607:Core/Src/device/hmac_sha1.c **** #endif
+ 608:Core/Src/device/hmac_sha1.c **** 
+ 609:Core/Src/device/hmac_sha1.c **** 	/* Step 7 */
+ 610:Core/Src/device/hmac_sha1.c **** 
+ 611:Core/Src/device/hmac_sha1.c **** 	for(i = 0; i < 64; i++)
+ 1023              		.loc 1 611 2 view .LVU384
+ 1024              		.loc 1 611 8 is_stmt 0 view .LVU385
+ 1025 00d6 0023     		movs	r3, #0
+ 1026              		.loc 1 611 2 view .LVU386
+ 1027 00d8 0AE0     		b	.L53
+ 1028              	.LVL104:
+ 1029              	.L54:
+ 612:Core/Src/device/hmac_sha1.c **** 	{
+ 613:Core/Src/device/hmac_sha1.c **** 		step7data[i] = k0[i] ^ opad;
+ 1030              		.loc 1 613 3 is_stmt 1 view .LVU387
+ 1031              		.loc 1 613 20 is_stmt 0 view .LVU388
+ 1032 00da 03F5B362 		add	r2, r3, #1432
+ 1033 00de 0DEB0201 		add	r1, sp, r2
+ 1034 00e2 11F8402C 		ldrb	r2, [r1, #-64]	@ zero_extendqisi2
+ 1035              		.loc 1 613 16 view .LVU389
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 31
+
+
+ 1036 00e6 82F05C02 		eor	r2, r2, #92
+ 1037 00ea 01F8C02C 		strb	r2, [r1, #-192]
+ 611:Core/Src/device/hmac_sha1.c **** 	{
+ 1038              		.loc 1 611 22 is_stmt 1 discriminator 3 view .LVU390
+ 1039 00ee 0133     		adds	r3, r3, #1
+ 1040              	.LVL105:
+ 1041              	.L53:
+ 611:Core/Src/device/hmac_sha1.c **** 	{
+ 1042              		.loc 1 611 15 discriminator 1 view .LVU391
+ 1043 00f0 3F2B     		cmp	r3, #63
+ 1044 00f2 F2DD     		ble	.L54
+ 614:Core/Src/device/hmac_sha1.c **** 	}
+ 615:Core/Src/device/hmac_sha1.c **** 
+ 616:Core/Src/device/hmac_sha1.c **** #ifdef HMAC_DEBUG
+ 617:Core/Src/device/hmac_sha1.c **** 	debug_out("(k0 xor opad)", step7data, 64);
+ 618:Core/Src/device/hmac_sha1.c **** #endif
+ 619:Core/Src/device/hmac_sha1.c **** 
+ 620:Core/Src/device/hmac_sha1.c **** 	/* Step 8 */
+ 621:Core/Src/device/hmac_sha1.c **** 
+ 622:Core/Src/device/hmac_sha1.c **** 	for(i = 0; i < 64; i++)
+ 1045              		.loc 1 622 8 is_stmt 0 view .LVU392
+ 1046 00f4 0023     		movs	r3, #0
+ 1047              	.LVL106:
+ 1048              		.loc 1 622 8 view .LVU393
+ 1049 00f6 07E0     		b	.L55
+ 1050              	.LVL107:
+ 1051              	.L56:
+ 623:Core/Src/device/hmac_sha1.c **** 	{
+ 624:Core/Src/device/hmac_sha1.c **** 		step8data[i] = step7data[i];
+ 1052              		.loc 1 624 3 is_stmt 1 view .LVU394
+ 1053              		.loc 1 624 27 is_stmt 0 view .LVU395
+ 1054 00f8 03F5B362 		add	r2, r3, #1432
+ 1055 00fc 6A44     		add	r2, sp, r2
+ 1056 00fe 12F8C01C 		ldrb	r1, [r2, #-192]	@ zero_extendqisi2
+ 1057              		.loc 1 624 16 view .LVU396
+ 1058 0102 01AA     		add	r2, sp, #4
+ 1059 0104 D154     		strb	r1, [r2, r3]
+ 622:Core/Src/device/hmac_sha1.c **** 	{
+ 1060              		.loc 1 622 22 is_stmt 1 discriminator 3 view .LVU397
+ 1061 0106 0133     		adds	r3, r3, #1
+ 1062              	.LVL108:
+ 1063              	.L55:
+ 622:Core/Src/device/hmac_sha1.c **** 	{
+ 1064              		.loc 1 622 15 discriminator 1 view .LVU398
+ 1065 0108 3F2B     		cmp	r3, #63
+ 1066 010a F5DD     		ble	.L56
+ 625:Core/Src/device/hmac_sha1.c **** 	}
+ 626:Core/Src/device/hmac_sha1.c **** 
+ 627:Core/Src/device/hmac_sha1.c **** 	for(i = 0; i < 20; i++)
+ 1067              		.loc 1 627 8 is_stmt 0 view .LVU399
+ 1068 010c 0023     		movs	r3, #0
+ 1069              	.LVL109:
+ 1070              		.loc 1 627 8 view .LVU400
+ 1071 010e 05E0     		b	.L57
+ 1072              	.LVL110:
+ 1073              	.L58:
+ 628:Core/Src/device/hmac_sha1.c **** 	{
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 32
+
+
+ 629:Core/Src/device/hmac_sha1.c **** 		step8data[i + 64] = digest[i];
+ 1074              		.loc 1 629 3 is_stmt 1 view .LVU401
+ 1075              		.loc 1 629 15 is_stmt 0 view .LVU402
+ 1076 0110 03F14002 		add	r2, r3, #64
+ 1077              		.loc 1 629 29 view .LVU403
+ 1078 0114 E05C     		ldrb	r0, [r4, r3]	@ zero_extendqisi2
+ 1079              		.loc 1 629 21 view .LVU404
+ 1080 0116 01A9     		add	r1, sp, #4
+ 1081 0118 8854     		strb	r0, [r1, r2]
+ 627:Core/Src/device/hmac_sha1.c **** 	{
+ 1082              		.loc 1 627 22 is_stmt 1 discriminator 3 view .LVU405
+ 1083 011a 0133     		adds	r3, r3, #1
+ 1084              	.LVL111:
+ 1085              	.L57:
+ 627:Core/Src/device/hmac_sha1.c **** 	{
+ 1086              		.loc 1 627 15 discriminator 1 view .LVU406
+ 1087 011c 132B     		cmp	r3, #19
+ 1088 011e F7DD     		ble	.L58
+ 630:Core/Src/device/hmac_sha1.c **** 	}
+ 631:Core/Src/device/hmac_sha1.c **** 
+ 632:Core/Src/device/hmac_sha1.c **** #ifdef HMAC_DEBUG
+ 633:Core/Src/device/hmac_sha1.c **** 	debug_out("(k0 xor opad) || Hash((k0 xor ipad) || text)", step8data, 20 + 64);
+ 634:Core/Src/device/hmac_sha1.c **** #endif
+ 635:Core/Src/device/hmac_sha1.c **** 	/* Step 9 */
+ 636:Core/Src/device/hmac_sha1.c **** 	sha1(step8data, b + 20, digest);
+ 1089              		.loc 1 636 2 view .LVU407
+ 1090 0120 2246     		mov	r2, r4
+ 1091 0122 5421     		movs	r1, #84
+ 1092 0124 01A8     		add	r0, sp, #4
+ 1093 0126 FFF7FEFF 		bl	sha1
+ 1094              	.LVL112:
+ 637:Core/Src/device/hmac_sha1.c **** #ifdef HMAC_DEBUG
+ 638:Core/Src/device/hmac_sha1.c **** 	debug_out("HASH((k0 xor opad) || Hash((k0 xor ipad) || text))", digest, 20);
+ 639:Core/Src/device/hmac_sha1.c **** #endif
+ 640:Core/Src/device/hmac_sha1.c **** }
+ 1095              		.loc 1 640 1 is_stmt 0 view .LVU408
+ 1096 012a 0DF5B36D 		add	sp, sp, #1432
+ 1097              	.LCFI5:
+ 1098              		.cfi_def_cfa_offset 16
+ 1099              		@ sp needed
+ 1100 012e 70BD     		pop	{r4, r5, r6, pc}
+ 1101              		.loc 1 640 1 view .LVU409
+ 1102              		.cfi_endproc
+ 1103              	.LFE73:
+ 1105              		.global	keys
+ 1106              		.section	.data.keys,"aw"
+ 1107              		.align	2
+ 1110              	keys:
+ 1111 0000 00010203 		.ascii	"\000\001\002\003\004\005\006\007\010\011\012\013\014"
+ 1111      04050607 
+ 1111      08090A0B 
+ 1111      0C
+ 1112 000d 0D0E0F10 		.ascii	"\015\016\017\020\021\022\023\024\025\026\027\030\031"
+ 1112      11121314 
+ 1112      15161718 
+ 1112      19
+ 1113 001a 1A1B1C1D 		.ascii	"\032\033\034\035\036\037 !\"#$%&'()*+,-./0123456789"
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 33
+
+
+ 1113      1E1F2021 
+ 1113      22232425 
+ 1113      26272829 
+ 1113      2A2B2C2D 
+ 1114 003a 3A3B3C3D 		.ascii	":;<=>?\013\013\013\013\013\013\013\013\013\013\013\013"
+ 1114      3E3F0B0B 
+ 1114      0B0B0B0B 
+ 1114      0B0B0B0B 
+ 1114      0B0B
+ 1115 004c 0B0B0B0B 		.ascii	"\013\013\013\013\013\013\013\013Jefe\252\252\252\252"
+ 1115      0B0B0B0B 
+ 1115      4A656665 
+ 1115      AAAAAAAA 
+ 1116 005c AAAAAAAA 		.ascii	"\252\252\252\252\252\252\252\252\252\252\252\252\252"
+ 1116      AAAAAAAA 
+ 1116      AAAAAAAA 
+ 1116      AA
+ 1117 0069 AAAAAA01 		.ascii	"\252\252\252\001\002\003\004\005\006\007\010\011\012"
+ 1117      02030405 
+ 1117      06070809 
+ 1117      0A
+ 1118 0076 0B0C0D0E 		.ascii	"\013\014\015\016\017\020\021\022\023\024\025\026\027"
+ 1118      0F101112 
+ 1118      13141516 
+ 1118      17
+ 1119 0083 18190C0C 		.ascii	"\030\031\014\014\014\014\014\014\014\014\014\014\014"
+ 1119      0C0C0C0C 
+ 1119      0C0C0C0C 
+ 1119      0C
+ 1120 0090 0C0C0C0C 		.ascii	"\014\014\014\014\014\014\014\014\014\252\252\252\252"
+ 1120      0C0C0C0C 
+ 1120      0CAAAAAA 
+ 1120      AA
+ 1121 009d AAAAAAAA 		.ascii	"\252\252\252\252\252\252\252\252\252\252\252\252\252"
+ 1121      AAAAAAAA 
+ 1121      AAAAAAAA 
+ 1121      AA
+ 1122 00aa AAAAAAAA 		.ascii	"\252\252\252\252\252\252\252\252\252\252\252\252\252"
+ 1122      AAAAAAAA 
+ 1122      AAAAAAAA 
+ 1122      AA
+ 1123 00b7 AAAAAAAA 		.ascii	"\252\252\252\252\252\252\252\252\252\252\252\252\252"
+ 1123      AAAAAAAA 
+ 1123      AAAAAAAA 
+ 1123      AA
+ 1124 00c4 AAAAAAAA 		.ascii	"\252\252\252\252\252\252\252\252\252\252\252\252\252"
+ 1124      AAAAAAAA 
+ 1124      AAAAAAAA 
+ 1124      AA
+ 1125 00d1 AAAAAAAA 		.ascii	"\252\252\252\252\252\252\252\252\252\252\252\252\252"
+ 1125      AAAAAAAA 
+ 1125      AAAAAAAA 
+ 1125      AA
+ 1126 00de AAAAAAAA 		.ascii	"\252\252\252\252\252\252\252\252\252\252\252\252\252"
+ 1126      AAAAAAAA 
+ 1126      AAAAAAAA 
+ 1126      AA
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 34
+
+
+ 1127 00eb AAAAAAAA 		.ascii	"\252\252\252\252\252\252\252\252\252\252\252\252\252"
+ 1127      AAAAAAAA 
+ 1127      AAAAAAAA 
+ 1127      AA
+ 1128 00f8 AAAAAAAA 		.ascii	"\252\252\252\252\252\252\252\252\252\252\252\252\252"
+ 1128      AAAAAAAA 
+ 1128      AAAAAAAA 
+ 1128      AA
+ 1129 0105 AAAAAAAA 		.ascii	"\252\252\252\252\252\252\252\252\252\252\252\252\252"
+ 1129      AAAAAAAA 
+ 1129      AAAAAAAA 
+ 1129      AA
+ 1130 0112 AAAAAAAA 		.ascii	"\252\252\252\252\252\252\252\252\252\252\252\252\252"
+ 1130      AAAAAAAA 
+ 1130      AAAAAAAA 
+ 1130      AA
+ 1131 011f AAAAAAAA 		.ascii	"\252\252\252\252\252\252\252\252\252\252\252\252\252"
+ 1131      AAAAAAAA 
+ 1131      AAAAAAAA 
+ 1131      AA
+ 1132 012c AAAAAAAA 		.ascii	"\252\252\252\252\252\252\252\252\252\252\252\252\252"
+ 1132      AAAAAAAA 
+ 1132      AAAAAAAA 
+ 1132      AA
+ 1133 0139 AAAAAAAA 		.ascii	"\252\252\252\252\252\252\252\252\252\252\252\252\252"
+ 1133      AAAAAAAA 
+ 1133      AAAAAAAA 
+ 1133      AA
+ 1134 0146 AAAAAAAA 		.ascii	"\252\252\252\252\252\252\252\252\252\252\252\252\252"
+ 1134      AAAAAAAA 
+ 1134      AAAAAAAA 
+ 1134      AA
+ 1135 0153 AAAAAAAA 		.ascii	"\252\252\252\252\252\252\252\252\252\252\252\252\252"
+ 1135      AAAAAAAA 
+ 1135      AAAAAAAA 
+ 1135      AA
+ 1136 0160 AAAAAAAA 		.ascii	"\252\252\252\252\252\252\252\252\252\252\252\252\252"
+ 1136      AAAAAAAA 
+ 1136      AAAAAAAA 
+ 1136      AA
+ 1137 016d AAAAAAAA 		.ascii	"\252\252\252\252\252\252\252\252\252\252\252\252\252"
+ 1137      AAAAAAAA 
+ 1137      AAAAAAAA 
+ 1137      AA
+ 1138 017a AAAAAAAA 		.ascii	"\252\252\252\252\252\252\252\252\252\252\252\252\252"
+ 1138      AAAAAAAA 
+ 1138      AAAAAAAA 
+ 1138      AA
+ 1139 0187 AAAAAAAA 		.ascii	"\252\252\252\252\252\252\252\252\252\252\252\252\252"
+ 1139      AAAAAAAA 
+ 1139      AAAAAAAA 
+ 1139      AA
+ 1140 0194 AAAAAAAA 		.ascii	"\252\252\252\252\252\252\252\252\252\252\252\252\252"
+ 1140      AAAAAAAA 
+ 1140      AAAAAAAA 
+ 1140      AA
+ 1141 01a1 AAAAAAAA 		.ascii	"\252\252\252\252\252\252\252\252\252\252\252\252\252"
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 35
+
+
+ 1141      AAAAAAAA 
+ 1141      AAAAAAAA 
+ 1141      AA
+ 1142 01ae AAAAAAAA 		.ascii	"\252\252\252\252\252\252\252\252\252\252\252\252\252"
+ 1142      AAAAAAAA 
+ 1142      AAAAAAAA 
+ 1142      AA
+ 1143 01bb AAAAAAAA 		.ascii	"\252\252\252\252\252\252\252\252\252\252\252\252\252"
+ 1143      AAAAAAAA 
+ 1143      AAAAAAAA 
+ 1143      AA
+ 1144 01c8 AAAAAAAA 		.ascii	"\252\252\252\252\252\252\252\252\252\252\252\252\252"
+ 1144      AAAAAAAA 
+ 1144      AAAAAAAA 
+ 1144      AA
+ 1145 01d5 AAAAAAAA 		.ascii	"\252\252\252\252"
+ 1146              		.global	key_lengths
+ 1147              		.section	.data.key_lengths,"aw"
+ 1148              		.align	2
+ 1151              	key_lengths:
+ 1152 0000 40000000 		.word	64
+ 1153 0004 14000000 		.word	20
+ 1154 0008 04000000 		.word	4
+ 1155 000c 14000000 		.word	20
+ 1156 0010 19000000 		.word	25
+ 1157 0014 14000000 		.word	20
+ 1158 0018 50000000 		.word	80
+ 1159 001c 50000000 		.word	80
+ 1160 0020 50000000 		.word	80
+ 1161 0024 50000000 		.word	80
+ 1162              		.global	test_cases
+ 1163              		.section	.data.test_cases,"aw"
+ 1164              		.align	2
+ 1167              	test_cases:
+ 1168 0000 53616D70 		.ascii	"Sample #1Hi Therewhat do ya want for nothing?\335\335"
+ 1168      6C652023 
+ 1168      31486920 
+ 1168      54686572 
+ 1168      65776861 
+ 1169 002f DDDDDDDD 		.ascii	"\335\335\335\335\335\335\335\335\335\335\335\335\335"
+ 1169      DDDDDDDD 
+ 1169      DDDDDDDD 
+ 1169      DD
+ 1170 003c DDDDDDDD 		.ascii	"\335\335\335\335\335\335\335\335\335\335\335\335\335"
+ 1170      DDDDDDDD 
+ 1170      DDDDDDDD 
+ 1170      DD
+ 1171 0049 DDDDDDDD 		.ascii	"\335\335\335\335\335\335\335\335\335\335\335\335\335"
+ 1171      DDDDDDDD 
+ 1171      DDDDDDDD 
+ 1171      DD
+ 1172 0056 DDDDDDDD 		.ascii	"\335\335\335\335\335\335\335\335\335\315\315\315\315"
+ 1172      DDDDDDDD 
+ 1172      DDCDCDCD 
+ 1172      CD
+ 1173 0063 CDCDCDCD 		.ascii	"\315\315\315\315\315\315\315\315\315\315\315\315\315"
+ 1173      CDCDCDCD 
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 36
+
+
+ 1173      CDCDCDCD 
+ 1173      CD
+ 1174 0070 CDCDCDCD 		.ascii	"\315\315\315\315\315\315\315\315\315\315\315\315\315"
+ 1174      CDCDCDCD 
+ 1174      CDCDCDCD 
+ 1174      CD
+ 1175 007d CDCDCDCD 		.ascii	"\315\315\315\315\315\315\315\315\315\315\315\315\315"
+ 1175      CDCDCDCD 
+ 1175      CDCDCDCD 
+ 1175      CD
+ 1176 008a CDCDCDCD 		.ascii	"\315\315\315\315\315\315\315Test With TruncationTes"
+ 1176      CDCDCD54 
+ 1176      65737420 
+ 1176      57697468 
+ 1176      20547275 
+ 1177 00a8 74205573 		.ascii	"t Using Larger Than Block-Size Key - Hash Key First"
+ 1177      696E6720 
+ 1177      4C617267 
+ 1177      65722054 
+ 1177      68616E20 
+ 1178 00db 54657374 		.ascii	"Test Using Larger Than Block-Size Key and Larger Th"
+ 1178      20557369 
+ 1178      6E67204C 
+ 1178      61726765 
+ 1178      72205468 
+ 1179 010e 616E204F 		.ascii	"an One Block-Size DataTest Using Larger Than Block-"
+ 1179      6E652042 
+ 1179      6C6F636B 
+ 1179      2D53697A 
+ 1179      65204461 
+ 1180 0141 53697A65 		.ascii	"Size Key - Hash Key FirstTest Using Larger Than Blo"
+ 1180      204B6579 
+ 1180      202D2048 
+ 1180      61736820 
+ 1180      4B657920 
+ 1181 0174 636B2D53 		.ascii	"ck-Size Key and Larger Than One Block-Size Data"
+ 1181      697A6520 
+ 1181      4B657920 
+ 1181      616E6420 
+ 1181      4C617267 
+ 1182              		.global	test_case_length
+ 1183              		.section	.data.test_case_length,"aw"
+ 1184              		.align	2
+ 1187              	test_case_length:
+ 1188 0000 09000000 		.word	9
+ 1189 0004 08000000 		.word	8
+ 1190 0008 1C000000 		.word	28
+ 1191 000c 32000000 		.word	50
+ 1192 0010 32000000 		.word	50
+ 1193 0014 14000000 		.word	20
+ 1194 0018 36000000 		.word	54
+ 1195 001c 49000000 		.word	73
+ 1196 0020 36000000 		.word	54
+ 1197 0024 49000000 		.word	73
+ 1198              		.text
+ 1199              	.Letext0:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s 			page 37
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 hmac_sha1.c
+C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s:19     .text.ft:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s:25     .text.ft:00000000 ft
+C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s:113    .text.k:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s:119    .text.k:00000000 k
+C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s:172    .text.k:00000024 $d
+C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s:180    .text.rotr:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s:186    .text.rotr:00000000 rotr
+C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s:234    .text.rotl:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s:240    .text.rotl:00000000 rotl
+C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s:287    .text.sha1:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s:293    .text.sha1:00000000 sha1
+C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s:809    .text.sha1:0000020c $d
+C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s:815    .text.hmac_sha1:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s:821    .text.hmac_sha1:00000000 hmac_sha1
+C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s:1110   .data.keys:00000000 keys
+C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s:1107   .data.keys:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s:1151   .data.key_lengths:00000000 key_lengths
+C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s:1148   .data.key_lengths:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s:1167   .data.test_cases:00000000 test_cases
+C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s:1164   .data.test_cases:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s:1187   .data.test_case_length:00000000 test_case_length
+C:\Users\airforce\AppData\Local\Temp\cccFL7TR.s:1184   .data.test_case_length:00000000 $d
+
+NO UNDEFINED SYMBOLS

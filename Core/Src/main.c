@@ -28,6 +28,7 @@
 #include "event_groups.h"
 #include <stdbool.h>
 #include "esp8266.h"
+#include "onenet.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -52,10 +53,11 @@ QueueHandle_t xCookedQueue = NULL;   /* Cooked_Data_t: 消费者→消费�?? *
 SemaphoreHandle_t xI2CMutex = NULL;  /* 保护�?? I2C 总线 (MPU6050 & OLED 共享) */
 EventGroupHandle_t xSensorEvent;
 SemaphoreHandle_t MPU_Sem;
-#define ssid "Xiaomi 13"
-#define pwd "123456789"
+/* WiFi 配置见 esp8266.h 中的 ESP8266_WIFI_SSID / ESP8266_WIFI_PWD */
 
-ESP_HandleTypeDef espWifi;
+/* OneNET 上报数据（onenet.c 引用，调用 OneNet_SendData 前更新） */
+float onenet_ax_g, onenet_ay_g, onenet_az_g;
+uint32_t onenet_count;
 typedef struct
 {
     QueueHandle_t xSensorQueue;
@@ -73,6 +75,7 @@ void SystemClock_Config(void);
 void Task_MPU6050_Read(void *argument);
 void Task_OLED_Display(void *argument);
 void Task_DataProcess(void *argument);
+void Task_OneNET_Upload(void *argument);
 
 /* USER CODE END PFP */
 
@@ -122,7 +125,7 @@ int main(void)
   /* ---- �?? I2C 初始化（接管 PB6/PB7，释放硬�?? I2C1�?? ---- */
   BSP_Init();
   /* ---- OLED 初始?? ---- */
-  // OLED_Init();
+  OLED_Init();
   /* ---- MPU6050 初始�?? ---- */
   if (MPU6050_Init() != SOFT_I2C_OK) {
       printf("[ERR] MPU6050 init failed! Check wiring.\r\n");
@@ -165,44 +168,57 @@ int main(void)
   xTaskCreate(Task_DataProcess, "DataProc", 256,
               (void *)&ProcessTaskParam, 2, NULL);
 
-  /* OLED 显示任务（消费�?�，Prio=1�?? */
+  /* OLED 显示任务（消费�?�，Prio=3） */
   xTaskCreate(Task_OLED_Display, "OLED_Disp", 256,
               (void *)xCookedQueue, 3, NULL);
+
+  /* OneNET 周期上传任务（Prio=1，每 5 秒上报一次） */
+  xTaskCreate(Task_OneNET_Upload, "OneNET_Upl", 256,
+              NULL, 1, NULL);
 
 
 
   printf("\r\n========== FreeRTOS + MPU6050 + OLED Data Pipeline ==========\r\n");
   printf("Tasks: MPU_Read(2) -> Queue[8] -> DataProc(2) -> Queue[4] -> OLED_Disp(1)\r\n\r\n");
 
-  /* ---- ESP8266 初始化（等模块上电完成后再操作） ---- */
+  /* ---- ESP8266 初始化（NET 包 API：中断逐字节接收 + 轮询等待） ---- */
   printf("[ESP] Waiting for module boot (2s)...\r\n");
   HAL_Delay(2000);
-  ESP_Init(&espWifi, &huart2);
-  printf("[ESP] Initializing...\r\n");
-  int espRetry = 0;
-  while (!ESP_RunInitStateMachine(&espWifi)) {
-      if (++espRetry > 20) break;
-      printf("[ESP] State=%d retry=%d\r\n", espWifi.initState, espRetry);
-  }
-  if (espRetry > 20) {
-      printf("[ESP] Init FAILED (timeout, state=%d)\r\n", espWifi.initState);
-  } else {
-      printf("[ESP] Init OK, connecting WiFi...\r\n");
-      if (ESP_ConnectWiFi(&espWifi, ssid, pwd)) {
-          printf("[ESP] WiFi Connected!\r\n");
-          HAL_Delay(2000);
-          /* 直接尝试 TCP，不等了 */
-          if (ESP_TCPConnect(&espWifi, "192.168.203.36", 8080)) {
-              printf("[ESP] TCP Connected!\r\n");
-              ESP_TCPSend(&espWifi, (const uint8_t *)"hello from STM32\r\n", 18);
-          } else {
-              printf("[ESP] TCP Connect FAILED\r\n");
-          }
+
+  /* 启动 USART2 中断逐字节接收 */
+  ESP8266_StartRx();
+
+  /* 阻塞初始化：AT 检测 → 关回显 → STA 模式 → 连 WiFi */
+  ESP8266_Init();
+
+  /* ---- OneNET 云平台接入 ---- */
+  printf("[ONENET] Registering device...\r\n");
+  if (OneNET_RegisterDevice()) {
+      printf("[ONENET] Register OK\r\n");
+
+      if (OneNet_DevLink() == 0) {
+          printf("[ONENET] MQTT Link OK\r\n");
+
+          onenet_ax_g = 0; onenet_ay_g = 0;
+          onenet_az_g = 0; onenet_count = 0;
+          OneNET_Subscribe();
+          OneNet_SendData();
       } else {
-          printf("[ESP] WiFi FAILED\r\n");
+          printf("[ONENET] MQTT Link FAILED\r\n");
+      }
+  } else {
+      printf("[ONENET] Register device, using default key\r\n");
+      /* 若设备已注册过，直接用默认 key 连接 */
+      if (OneNet_DevLink() == 0) {
+          printf("[ONENET] MQTT Link OK\r\n");
+          onenet_ax_g = 0; onenet_ay_g = 0;
+          onenet_az_g = 0; onenet_count = 0;
+          OneNET_Subscribe();
+          OneNet_SendData();
       }
   }
   /* ---- 启动 FreeRTOS 调度器（此调用永不返回） ---- */
+  printf("Starting scheduler...\r\n");
   vTaskStartScheduler();
 
   /* 调度器永远不会返�?? */
@@ -354,8 +370,25 @@ void Task_DataProcess(void *argument)
             cooked.ax_g = (float)(data.ax - param->ax_offset) / 16384.0f;
             cooked.ay_g = (float)(data.ay - param->ay_offset) / 16384.0f;
             cooked.az_g = (float)(data.az - param->az_offset) / 16384.0f;
+            cooked.count++;
             xQueueSend(xCookedQueue, &cooked, pdMS_TO_TICKS(100));
+
+            /* 同步更新 OneNET 上报数据 */
+            onenet_ax_g  = cooked.ax_g;
+            onenet_ay_g  = cooked.ay_g;
+            onenet_az_g  = cooked.az_g;
+            onenet_count = cooked.count;
         }
+    }
+}
+/* ===== OneNET 周期上传任务 ===== */
+void Task_OneNET_Upload(void *argument)
+{
+    (void)argument;
+    while (1) {
+        vTaskDelay(pdMS_TO_TICKS(5000));
+        printf("[ONENET] Uploading...\r\n");
+        OneNet_SendData();
     }
 }
 /* USER CODE END 4 */

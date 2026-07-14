@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 1
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 1
   31:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****  * (coalescences) adjacent memory blocks as they are freed, and in so doing
   32:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****  * limits memory fragmentation.
   33:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****  *
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 2
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s 			page 2
 
 
   34:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****  * See heap_1.c, heap_2.c and heap_3.c for alternative implementations, and the
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 1
   88:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****  * Called automatically to setup the required heap structures the first time
   89:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****  * pvPortMalloc() is called.
   90:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****  */
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 3
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s 			page 3
 
 
   91:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c **** static void prvHeapInit( void ) PRIVILEGED_FUNCTION;
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 1
  145:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****             {
  146:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****                 xWantedSize += xHeapStructSize;
  147:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c **** 
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 4
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s 			page 4
 
 
  148:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****                 /* Ensure that blocks are always aligned. */
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 1
  202:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****                         /* This block is to be split into two.  Create a new
  203:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****                          * block following the number of bytes requested. The void
  204:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****                          * cast is used to prevent byte alignment warnings from the
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 5
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s 			page 5
 
 
  205:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****                          * compiler. */
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 1
  259:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****         {
  260:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****             if( pvReturn == NULL )
  261:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****             {
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 6
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s 			page 6
 
 
  262:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****                 extern void vApplicationMallocFailedHook( void );
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 1
  316:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****             }
  317:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****         }
  318:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****         else
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 7
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s 			page 7
 
 
  319:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****         {
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 1
  355:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****     {
  356:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****         uxAddress += ( portBYTE_ALIGNMENT - 1 );
   44              		.loc 1 356 9 is_stmt 1 view .LVU9
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 8
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s 			page 8
 
 
   45              		.loc 1 356 19 is_stmt 0 view .LVU10
@@ -478,7 +478,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 1
  373:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****     pxEnd = ( void * ) uxAddress;
   82              		.loc 1 373 5 is_stmt 1 view .LVU27
   83              		.loc 1 373 11 is_stmt 0 view .LVU28
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 9
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s 			page 9
 
 
   84 0026 0B48     		ldr	r0, .L4+8
@@ -538,7 +538,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 1
  122              	.L3:
  349:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c **** 
  123              		.loc 1 349 12 view .LVU48
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 10
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s 			page 10
 
 
  124 0046 4FF42053 		mov	r3, #10240
@@ -598,7 +598,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 1
  403:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c **** 
  404:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****     /* Do the block being inserted, and the block it is being inserted after
  405:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****      * make a contiguous block of memory? */
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 11
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s 			page 11
 
 
  406:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****     puc = ( uint8_t * ) pxIterator;
@@ -658,7 +658,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 1
  189              		.loc 1 437 9 is_stmt 1 view .LVU68
  190              		.loc 1 437 42 is_stmt 0 view .LVU69
  191 001e 0360     		str	r3, [r0]
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 12
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s 			page 12
 
 
  438:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****     }
@@ -718,7 +718,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 1
  225 0036 2468     		ldr	r4, [r4]
  424:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****         {
  226              		.loc 1 424 11 view .LVU83
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 13
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s 			page 13
 
 
  227 0038 A342     		cmp	r3, r4
@@ -778,7 +778,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 1
  266              	.L16:
  267              	.LCFI3:
  268              		.cfi_def_cfa_offset 0
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 14
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s 			page 14
 
 
  269              		.cfi_restore 4
@@ -838,7 +838,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 1
  132:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****         }
  316              		.loc 1 132 37 is_stmt 1 view .LVU108
  139:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****         {
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 15
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s 			page 15
 
 
  317              		.loc 1 139 9 view .LVU109
@@ -898,7 +898,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 1
  355 003a 1B68     		ldr	r3, [r3]
  173:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****             {
  356              		.loc 1 173 37 discriminator 1 view .LVU126
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 16
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s 			page 16
 
 
  357 003c 9342     		cmp	r3, r2
@@ -958,7 +958,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 1
  188:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****                 {
  397              		.loc 1 188 29 is_stmt 0 view .LVU141
  398 005c 1B4B     		ldr	r3, .L41
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 17
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s 			page 17
 
 
  399 005e 1B68     		ldr	r3, [r3]
@@ -1018,7 +1018,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 1
  436 0080 0968     		ldr	r1, [r1]
  224:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****                     {
  437              		.loc 1 224 23 view .LVU159
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 18
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s 			page 18
 
 
  438 0082 8B42     		cmp	r3, r1
@@ -1078,7 +1078,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 1
  215:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****                     }
  476              		.loc 1 215 25 is_stmt 1 view .LVU176
  477 00a6 FFF7FEFF 		bl	prvInsertBlockIntoFreeList
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 19
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s 			page 19
 
 
  478              	.LVL38:
@@ -1138,7 +1138,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 1
  519 00c8 F1E7     		b	.L25
  520              	.L42:
  521 00ca 00BF     		.align	2
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 20
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s 			page 20
 
 
  522              	.L41:
@@ -1198,7 +1198,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 1
  295:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****         {
  567              		.loc 1 295 9 view .LVU201
  295:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****         {
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 21
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s 			page 21
 
 
  568              		.loc 1 295 21 is_stmt 0 view .LVU202
@@ -1258,7 +1258,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 1
  607              		.loc 1 309 21 view .LVU217
  309:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****                 }
  608              		.loc 1 309 45 is_stmt 0 view .LVU218
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 22
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s 			page 22
 
 
  609 003c 054A     		ldr	r2, .L50+8
@@ -1318,7 +1318,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 1
  657 0004 7047     		bx	lr
  658              	.L54:
  659 0006 00BF     		.align	2
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 23
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s 			page 23
 
 
  660              	.L53:
@@ -1378,7 +1378,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 1
  714              		.thumb
  715              		.thumb_func
  717              	vPortGetHeapStats:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 24
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s 			page 24
 
 
  718              	.LVL53:
@@ -1438,7 +1438,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 1
  755 0016 04E0     		b	.L63
  756              	.LVL57:
  757              	.L62:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 25
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s 			page 25
 
 
  467:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****         {
@@ -1498,7 +1498,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 1
  479:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****                 {
  784              		.loc 1 479 17 is_stmt 1 view .LVU254
  479:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****                 {
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 26
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s 			page 26
 
 
  785              		.loc 1 479 19 is_stmt 0 view .LVU255
@@ -1558,7 +1558,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 1
  823 004e 3B60     		str	r3, [r7]
  499:Middlewares/FreeRTOS/Source/portable/MemMang/heap_4.c ****         pxHeapStats->xNumberOfSuccessfulAllocations = xNumberOfSuccessfulAllocations;
  824              		.loc 1 499 9 is_stmt 1 view .LVU272
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 27
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s 			page 27
 
 
  825              		.loc 1 499 53 is_stmt 0 view .LVU273
@@ -1618,7 +1618,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 1
  883              		.align	2
  886              	xFreeBytesRemaining:
  887 0000 00000000 		.space	4
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 28
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s 			page 28
 
 
  888              		.section	.bss.pxEnd,"aw",%nobits
@@ -1646,50 +1646,50 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 1
  911              		.file 5 "Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h"
  912              		.file 6 "Middlewares/FreeRTOS/Source/include/portable.h"
  913              		.file 7 "Middlewares/FreeRTOS/Source/include/task.h"
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s 			page 29
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s 			page 29
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 heap_4.c
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:19     .text.prvHeapInit:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:24     .text.prvHeapInit:00000000 prvHeapInit
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:129    .text.prvHeapInit:0000004c $d
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:904    .bss.ucHeap:00000000 ucHeap
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:898    .bss.xStart:00000000 xStart
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:892    .bss.pxEnd:00000000 pxEnd
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:880    .bss.xMinimumEverFreeBytesRemaining:00000000 xMinimumEverFreeBytesRemaining
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:886    .bss.xFreeBytesRemaining:00000000 xFreeBytesRemaining
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:862    .bss.xBlockAllocatedBit:00000000 xBlockAllocatedBit
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:139    .text.prvInsertBlockIntoFreeList:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:144    .text.prvInsertBlockIntoFreeList:00000000 prvInsertBlockIntoFreeList
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:275    .text.prvInsertBlockIntoFreeList:00000058 $d
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:281    .text.pvPortMalloc:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:287    .text.pvPortMalloc:00000000 pvPortMalloc
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:523    .text.pvPortMalloc:000000cc $d
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:874    .bss.xNumberOfSuccessfulAllocations:00000000 xNumberOfSuccessfulAllocations
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:533    .text.vPortFree:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:539    .text.vPortFree:00000000 vPortFree
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:633    .text.vPortFree:0000004c $d
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:868    .bss.xNumberOfSuccessfulFrees:00000000 xNumberOfSuccessfulFrees
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:640    .text.xPortGetFreeHeapSize:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:646    .text.xPortGetFreeHeapSize:00000000 xPortGetFreeHeapSize
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:661    .text.xPortGetFreeHeapSize:00000008 $d
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:666    .text.xPortGetMinimumEverFreeHeapSize:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:672    .text.xPortGetMinimumEverFreeHeapSize:00000000 xPortGetMinimumEverFreeHeapSize
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:687    .text.xPortGetMinimumEverFreeHeapSize:00000008 $d
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:692    .text.vPortInitialiseBlocks:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:698    .text.vPortInitialiseBlocks:00000000 vPortInitialiseBlocks
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:711    .text.vPortGetHeapStats:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:717    .text.vPortGetHeapStats:00000000 vPortGetHeapStats
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:849    .text.vPortGetHeapStats:00000068 $d
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:859    .bss.xBlockAllocatedBit:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:865    .bss.xNumberOfSuccessfulFrees:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:871    .bss.xNumberOfSuccessfulAllocations:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:877    .bss.xMinimumEverFreeBytesRemaining:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:883    .bss.xFreeBytesRemaining:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:889    .bss.pxEnd:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:895    .bss.xStart:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\cc7mRWbb.s:901    .bss.ucHeap:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:19     .text.prvHeapInit:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:24     .text.prvHeapInit:00000000 prvHeapInit
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:129    .text.prvHeapInit:0000004c $d
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:904    .bss.ucHeap:00000000 ucHeap
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:898    .bss.xStart:00000000 xStart
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:892    .bss.pxEnd:00000000 pxEnd
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:880    .bss.xMinimumEverFreeBytesRemaining:00000000 xMinimumEverFreeBytesRemaining
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:886    .bss.xFreeBytesRemaining:00000000 xFreeBytesRemaining
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:862    .bss.xBlockAllocatedBit:00000000 xBlockAllocatedBit
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:139    .text.prvInsertBlockIntoFreeList:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:144    .text.prvInsertBlockIntoFreeList:00000000 prvInsertBlockIntoFreeList
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:275    .text.prvInsertBlockIntoFreeList:00000058 $d
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:281    .text.pvPortMalloc:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:287    .text.pvPortMalloc:00000000 pvPortMalloc
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:523    .text.pvPortMalloc:000000cc $d
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:874    .bss.xNumberOfSuccessfulAllocations:00000000 xNumberOfSuccessfulAllocations
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:533    .text.vPortFree:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:539    .text.vPortFree:00000000 vPortFree
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:633    .text.vPortFree:0000004c $d
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:868    .bss.xNumberOfSuccessfulFrees:00000000 xNumberOfSuccessfulFrees
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:640    .text.xPortGetFreeHeapSize:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:646    .text.xPortGetFreeHeapSize:00000000 xPortGetFreeHeapSize
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:661    .text.xPortGetFreeHeapSize:00000008 $d
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:666    .text.xPortGetMinimumEverFreeHeapSize:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:672    .text.xPortGetMinimumEverFreeHeapSize:00000000 xPortGetMinimumEverFreeHeapSize
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:687    .text.xPortGetMinimumEverFreeHeapSize:00000008 $d
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:692    .text.vPortInitialiseBlocks:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:698    .text.vPortInitialiseBlocks:00000000 vPortInitialiseBlocks
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:711    .text.vPortGetHeapStats:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:717    .text.vPortGetHeapStats:00000000 vPortGetHeapStats
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:849    .text.vPortGetHeapStats:00000068 $d
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:859    .bss.xBlockAllocatedBit:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:865    .bss.xNumberOfSuccessfulFrees:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:871    .bss.xNumberOfSuccessfulAllocations:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:877    .bss.xMinimumEverFreeBytesRemaining:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:883    .bss.xFreeBytesRemaining:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:889    .bss.pxEnd:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:895    .bss.xStart:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccqmOikR.s:901    .bss.ucHeap:00000000 $d
 
 UNDEFINED SYMBOLS
 vTaskSuspendAll

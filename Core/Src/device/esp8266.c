@@ -1,237 +1,177 @@
+/**
+ * 文件名： esp8266.c
+ * 说明：   ESP8266 简单驱动（HAL 移植版）
+ *         中断逐字节接收 + 轮询等待模式，匹配 NET 包 onenet.c 调用约定
+ */
 #include "esp8266.h"
 #include "usart.h"
-#include <stdio.h>
 #include <string.h>
-#include <stdbool.h>
+#include <stdio.h>
 
-/* ==================================================================
- *  Parser — 纯函数，不依赖句柄
- * ================================================================== */
+/* ---- 全局接收缓冲（ISR 填充） ---- */
+unsigned char esp8266_buf[512];
+volatile unsigned short esp8266_cnt    = 0;
+volatile unsigned short esp8266_cntPre = 0;
+static uint8_t esp8266_rxByte;    /* HAL_UART_Receive_IT 单字节接收缓冲 */
 
-ESP_RespType_t ESP_ParseLine(const char *line, uint16_t len,
-                             uint8_t **outData, uint16_t *outLen)
+/* ---- 内部延时（阻塞，10ms 粒度，调度器启动前可用） ---- */
+static void DelayXms(unsigned short ms)
 {
-    (void)len;
+    HAL_Delay(ms);
+}
 
-    /* "OK\r\n" — 排除 "SEND OK" */
-    if (strstr(line, "OK") && !strstr(line, "SEND OK"))  return ESP_RESP_OK;
-    if (strstr(line, "SEND OK"))                         return ESP_RESP_SEND_OK;
-    if (strstr(line, "ERROR"))                           return ESP_RESP_ERROR;
-    if (strchr(line, '>'))                               return ESP_RESP_SEND_PROMPT;
-    if (strstr(line, "busy"))                            return ESP_RESP_BUSY;
-    if (strstr(line, "FAIL"))                            return ESP_RESP_FAIL;
-    if (strstr(line, "ready"))                           return ESP_RESP_READY;
-    if (strstr(line, "CONNECT") && !strstr(line, "FAIL")) return ESP_RESP_CONNECT;
-    if (strstr(line, "CLOSED"))                          return ESP_RESP_CLOSED;
-
-    /* "+IPD,<len>:<data>" — 提取 TCP 数据指针和长度 */
-    if (strstr(line, "+IPD,")) {
-        const char *p = strstr(line, "+IPD,") + 5;
-        int dataLen = 0;
-        while (*p >= '0' && *p <= '9') { dataLen = dataLen * 10 + (*p - '0'); p++; }
-        if (*p == ':') p++;
-        if (outData) *outData = (uint8_t *)p;
-        if (outLen)  *outLen  = (uint16_t)dataLen;
-        return ESP_RESP_IPD;
-    }
-    return ESP_RESP_NONE;
+/* ---- UART 发送（阻塞） ---- */
+static void Usart_SendString(UART_HandleTypeDef *huart, unsigned char *data, unsigned short len)
+{
+    HAL_UART_Transmit(huart, data, len, HAL_MAX_DELAY);
 }
 
 /* ==================================================================
- *  ISR 回调 — 只搬运字节，行边界识别，通知句柄
- *  注意：本函数在 USART IDLE 中断上下文中执行！
+ *  ESP8266_Clear — 清空接收缓冲区
  * ================================================================== */
-
-static void ESP_UART_RxISR(UART_HandleTypeDef *huart, uint16_t len)
+void ESP8266_Clear(void)
 {
-    extern ESP_HandleTypeDef espWifi;  /* App 层全局句柄 */
-    ESP_HandleTypeDef *h = &espWifi;
+    memset(esp8266_buf, 0, sizeof(esp8266_buf));
+    esp8266_cnt = 0;
+}
 
-    if (huart != h->huart) return;
-    if (len > sizeof(h->rxDmaBuf)) len = sizeof(h->rxDmaBuf);
+/* ==================================================================
+ *  ESP8266_WaitRecive — 检测是否收到完整一帧
+ *  原理：中断把字节写入 esp8266_buf 并递增 esp8266_cnt，
+ *        当 esp8266_cnt 不再增长时认为接收完毕。
+ * ================================================================== */
+static _Bool ESP8266_WaitRecive(void)
+{
+    if (esp8266_cnt == 0)
+        return 1;   /* 还没收到数据 */
 
-    for (uint16_t i = 0; i < len; i++) {
-        uint8_t ch = h->rxDmaBuf[i];
+    if (esp8266_cnt == esp8266_cntPre) {
+        esp8266_cnt = 0;    /* 计数稳定 → 接收完毕 */
+        return 0;           /* REV_OK */
+    }
 
-        if (ch == '\n') {
-            h->rxLineBuf[h->rxLinePos] = '\0';
-            ESP_RespType_t r = ESP_ParseLine((const char *)h->rxLineBuf,
-                                             h->rxLinePos, NULL, NULL);
-            h->rxLinePos = 0;
+    esp8266_cntPre = esp8266_cnt;
+    return 1;               /* REV_WAIT */
+}
 
-            /* 匹配目标 → 标记命令完成 */
-            if (!h->cmdDone && r != ESP_RESP_NONE) {
-                h->cmdResult = r;
-                h->cmdDone   = true;
+/* ==================================================================
+ *  ESP8266_SendCmd — 发送 AT 命令，阻塞等待回复
+ *  返回 0=成功（回复中包含 res） 1=超时
+ * ================================================================== */
+_Bool ESP8266_SendCmd(char *cmd, char *res)
+{
+    unsigned char timeOut = 200;   /* 200 × 10ms = 2 秒超时 */
+
+    Usart_SendString(&huart2, (unsigned char *)cmd, strlen(cmd));
+
+    while (timeOut--) {
+        if (ESP8266_WaitRecive() == 0) {
+            if (strstr((const char *)esp8266_buf, res) != NULL) {
+                ESP8266_Clear();
+                return 0;   /* 成功 */
             }
+        }
+        DelayXms(10);
+    }
+    return 1;   /* 超时 */
+}
 
-            /* 用户要了响应缓冲 → 保存本条原始行 */
-            if (h->cmdRespBuf && h->cmdRespSize > 0 && r != ESP_RESP_NONE) {
-                uint16_t remain = h->cmdRespSize - strlen(h->cmdRespBuf) - 1;
-                if (remain > 0) {
-                    strncat(h->cmdRespBuf, (const char *)h->rxLineBuf, remain);
-                    strncat(h->cmdRespBuf, "\r\n",
-                            h->cmdRespSize - strlen(h->cmdRespBuf) - 1);
+/* ==================================================================
+ *  ESP8266_SendData — 发送 TCP 数据
+ *  先发 AT+CIPSEND=len，等 '>' 提示符后发送原始数据
+ * ================================================================== */
+void ESP8266_SendData(unsigned char *data, unsigned short len)
+{
+    char cmdBuf[32];
+
+    ESP8266_Clear();
+    snprintf(cmdBuf, sizeof(cmdBuf), "AT+CIPSEND=%d\r\n", len);
+    if (ESP8266_SendCmd(cmdBuf, ">") == 0) {
+        Usart_SendString(&huart2, data, len);
+    }
+}
+
+/* ==================================================================
+ *  ESP8266_GetIPD — 等待 +IPD TCP 传入数据
+ *  返回指向数据内容的指针（esp8266_buf 内部偏移），超时返回 NULL
+ * ================================================================== */
+unsigned char *ESP8266_GetIPD(unsigned short timeOut)
+{
+    char *ptrIPD = NULL;
+
+    do {
+        if (ESP8266_WaitRecive() == 0) {
+            ptrIPD = strstr((char *)esp8266_buf, "IPD,");
+            if (ptrIPD == NULL) {
+                /* IPD 可能延迟，继续等 */
+            } else {
+                ptrIPD = strchr(ptrIPD, ':');
+                if (ptrIPD != NULL) {
+                    ptrIPD++;
+                    return (unsigned char *)ptrIPD;
                 }
+                return NULL;
             }
-
-            /* 上层的网络事件回调 */
-            if (h->onEventCallback) {
-                if (r == ESP_RESP_OK)      h->onEventCallback(h, 0);
-                if (r == ESP_RESP_CLOSED)  h->onEventCallback(h, ESP_EVENT_TCP_CLOSED);
-            }
-        } else if (ch != '\r' && h->rxLinePos < sizeof(h->rxLineBuf) - 1) {
-            h->rxLineBuf[h->rxLinePos++] = ch;
         }
+        DelayXms(5);
+    } while (timeOut--);
+
+    return NULL;
+}
+
+/* ==================================================================
+ *  ESP8266_Init — 上电初始化（阻塞，直到连上 WiFi）
+ *  流程：AT 检测 → 关回显 → STA 模式 → DHCP → 连 WiFi
+ * ================================================================== */
+void ESP8266_Init(void)
+{
+    char cmdBuf[128];
+
+    ESP8266_Clear();
+
+    printf("[ESP] 1. AT\r\n");
+    while (ESP8266_SendCmd("AT\r\n", "OK"))
+        DelayXms(500);
+
+    printf("[ESP] 2. ATE0\r\n");
+    while (ESP8266_SendCmd("ATE0\r\n", "OK"))
+        DelayXms(500);
+
+    printf("[ESP] 3. CWMODE=1\r\n");
+    while (ESP8266_SendCmd("AT+CWMODE=1\r\n", "OK"))
+        DelayXms(500);
+
+    printf("[ESP] 4. CWDHCP\r\n");
+    while (ESP8266_SendCmd("AT+CWDHCP=1,1\r\n", "OK"))
+        DelayXms(500);
+
+    printf("[ESP] 5. CWJAP\r\n");
+    snprintf(cmdBuf, sizeof(cmdBuf), "AT+CWJAP=\"%s\",\"%s\"\r\n",
+             ESP8266_WIFI_SSID, ESP8266_WIFI_PWD);
+    while (ESP8266_SendCmd(cmdBuf, "GOT IP"))
+        DelayXms(500);
+
+    printf("[ESP] Init OK\r\n");
+}
+
+/* ==================================================================
+ *  HAL_UART_RxCpltCallback — USART2 每收到一个字节的回调
+ * ================================================================== */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+    if (huart->Instance == USART2) {
+        if (esp8266_cnt >= sizeof(esp8266_buf))
+            esp8266_cnt = 0;
+        esp8266_buf[esp8266_cnt++] = esp8266_rxByte;
+        /* 继续接收下一个字节 */
+        HAL_UART_Receive_IT(&huart2, &esp8266_rxByte, 1);
     }
 }
 
 /* ==================================================================
- *  初始化句柄 + 注册回调 + 启动 DMA
+ *  ESP8266_StartRx — 启动中断接收（MX_USART2_UART_Init 之后调用）
  * ================================================================== */
-
-void ESP_Init(ESP_HandleTypeDef *h, UART_HandleTypeDef *huart)
+void ESP8266_StartRx(void)
 {
-    memset(h, 0, sizeof(*h));
-    h->huart     = huart;
-    h->initState = ESP_STATE_RESET;
-
-    BSP_UART_RegisterRxCallback(huart, ESP_UART_RxISR);
-    BSP_UART_StartRx_DMA(huart, h->rxDmaBuf, sizeof(h->rxDmaBuf));
+    HAL_UART_Receive_IT(&huart2, &esp8266_rxByte, 1);
 }
-
-/* ==================================================================
- *  发送 AT 命令并阻塞等待结果
- *  FreeRTOS 环境下应改用 TaskNotify，当前为兼容裸机使用轮询
- * ================================================================== */
-
-ESP_RespType_t ESP_SendCmd(ESP_HandleTypeDef *h, const char *cmd,
-                           char *response, uint16_t respSize,
-                           uint32_t timeout_ms)
-{
-    h->cmdDone     = false;
-    h->cmdResult   = ESP_RESP_NONE;
-    h->cmdRespBuf  = response;
-    h->cmdRespSize = respSize;
-    if (response && respSize > 0) response[0] = '\0';
-
-    /* 发送命令 */
-    if (cmd != NULL) {
-        BSP_UART_Send(h->huart, (const uint8_t *)cmd, strlen(cmd));
-    }
-
-    /* 等待 ISR 回调填充 cmdDone */
-    uint32_t t0 = HAL_GetTick();
-    while (!h->cmdDone) {
-        if (HAL_GetTick() - t0 > timeout_ms) {
-            return ESP_RESP_NONE;
-        }
-    }
-    return h->cmdResult;
-}
-
-/* ==================================================================
- *  初始化状态机 — App 层循环调用直至返回 true
- * ================================================================== */
-
-bool ESP_RunInitStateMachine(ESP_HandleTypeDef *h)
-{
-    ESP_RespType_t r;
-
-    switch (h->initState) {
-    case ESP_STATE_RESET:
-        r = ESP_SendCmd(h, "AT\r\n", NULL, 0, 3000);
-        if (r == ESP_RESP_OK) {
-            h->initState = ESP_STATE_ECHO_OFF;
-            h->initRetry = 0;
-        } else if (++h->initRetry > 3) {
-            h->initState = ESP_STATE_ERROR;
-        }
-        break;
-
-    case ESP_STATE_ECHO_OFF:
-        r = ESP_SendCmd(h, "ATE0\r\n", NULL, 0, 2000);
-        h->initState = (r == ESP_RESP_OK) ? ESP_STATE_STA_MODE : ESP_STATE_ERROR;
-        break;
-
-    case ESP_STATE_STA_MODE:
-        r = ESP_SendCmd(h, "AT+CWMODE=1\r\n", NULL, 0, 2000);
-        h->initState = (r == ESP_RESP_OK) ? ESP_STATE_READY : ESP_STATE_ERROR;
-        break;
-
-    case ESP_STATE_READY:
-        return true;
-
-    case ESP_STATE_ERROR:
-    default:
-        break;
-    }
-    return false;
-}
-
-/* ==================================================================
- *  便捷封装
- * ================================================================== */
-
-bool ESP_ConnectWiFi(ESP_HandleTypeDef *h, const char *ssid, const char *pwd)
-{
-    char cmd[128];
-    snprintf(cmd, sizeof(cmd), "AT+CWJAP=\"%s\",\"%s\"\r\n", ssid, pwd);
-    ESP_RespType_t r = ESP_SendCmd(h, cmd, NULL, 0, 15000);
-    if (r == ESP_RESP_OK && h->onEventCallback) {
-        h->onEventCallback(h, ESP_EVENT_WIFI_CONNECTED);
-    }
-    return (r == ESP_RESP_OK);
-}
-
-bool ESP_GetIP(ESP_HandleTypeDef *h, char *ipBuf, uint16_t bufSize)
-{
-    ESP_RespType_t r = ESP_SendCmd(h, "AT+CIFSR\r\n", ipBuf, bufSize, 5000);
-    if (r == ESP_RESP_OK && h->onEventCallback) {
-        h->onEventCallback(h, ESP_EVENT_GOT_IP);
-    }
-    return (r == ESP_RESP_OK);
-}
-
-bool ESP_TCPConnect(ESP_HandleTypeDef *h, const char *host, uint16_t port)
-{
-    char cmd[128];
-    snprintf(cmd, sizeof(cmd), "AT+CIPSTART=\"TCP\",\"%s\",%u\r\n", host, port);
-
-    /* 第一步：发命令，等 OK（命令语法正确） */
-    ESP_RespType_t r = ESP_SendCmd(h, cmd, NULL, 0, 10000);
-    if (r != ESP_RESP_OK) return false;
-
-    /* 第二步：等实际的 CONNECT 或 ERROR/CLOSED（ESP 异步返回） */
-    r = ESP_SendCmd(h, NULL, NULL, 0, 15000);
-    if (r == ESP_RESP_CONNECT || r == ESP_RESP_OK) {
-        if (h->onEventCallback) h->onEventCallback(h, ESP_EVENT_TCP_CONNECTED);
-        return true;
-    }
-    return false;
-}
-
-bool ESP_TCPSend(ESP_HandleTypeDef *h, const uint8_t *data, uint16_t len)
-{
-    char cmd[32];
-    snprintf(cmd, sizeof(cmd), "AT+CIPSEND=%u\r\n", len);
-
-    /* 等 > 提示符 */
-    ESP_RespType_t r = ESP_SendCmd(h, cmd, NULL, 0, 5000);
-    if (r != ESP_RESP_SEND_PROMPT) return false;
-
-    /* 发实际数据 */
-    BSP_UART_Send(h->huart, data, len);
-
-    /* 等 SEND OK */
-    r = ESP_SendCmd(h, NULL, NULL, 0, 10000);
-    return (r == ESP_RESP_SEND_OK);
-}
-
-void ESP_RegisterEventCallback(ESP_HandleTypeDef *h,
-                               void (*cb)(ESP_HandleTypeDef *h, uint32_t event))
-{
-    h->onEventCallback = cb;
-}
-
-/* espWifi 在 App 层 (main.c) 中定义，此处通过 ISR 内 extern 引用 */

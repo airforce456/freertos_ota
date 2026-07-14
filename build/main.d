@@ -40,7 +40,7 @@ build/main.o: Core/Src/main.c Core/Inc/main.h \
  Core/Inc/device/oled.h \
  Middlewares/FreeRTOS/Source/include/event_groups.h \
  Middlewares/FreeRTOS/Source/include/timers.h Core/Inc/device/esp8266.h \
- Core/Inc/bsp/bsp_uart.h
+ Core/Inc/device/onenet.h
 Core/Inc/main.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 Core/Inc/stm32f1xx_hal_conf.h:
@@ -94,4 +94,4 @@ Core/Inc/device/oled.h:
 Middlewares/FreeRTOS/Source/include/event_groups.h:
 Middlewares/FreeRTOS/Source/include/timers.h:
 Core/Inc/device/esp8266.h:
-Core/Inc/bsp/bsp_uart.h:
+Core/Inc/device/onenet.h:
