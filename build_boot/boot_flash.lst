@@ -1,0 +1,973 @@
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxNoD86.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.arch armv7-m
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"boot_flash.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.file 1 "Core/Src/boot/boot_flash.c"
+  18              		.section	.text.Boot_FlashReadWord,"ax",%progbits
+  19              		.align	1
+  20              		.global	Boot_FlashReadWord
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  25              	Boot_FlashReadWord:
+  26              	.LVL0:
+  27              	.LFB65:
+   1:Core/Src/boot/boot_flash.c **** /**
+   2:Core/Src/boot/boot_flash.c ****  * @file    boot_flash.c
+   3:Core/Src/boot/boot_flash.c ****  * @brief   STM32F103 内部 Flash 擦写读（仅操作 APP 区）
+   4:Core/Src/boot/boot_flash.c ****  * @note    Flash 写之前必须先擦除（擦除把所有 bit 变 1，写只能把 1 变 0）
+   5:Core/Src/boot/boot_flash.c ****  *          擦写期间必须关全局中断
+   6:Core/Src/boot/boot_flash.c ****  */
+   7:Core/Src/boot/boot_flash.c **** #include "boot_flash.h"
+   8:Core/Src/boot/boot_flash.c **** #include "stm32f1xx_hal.h"
+   9:Core/Src/boot/boot_flash.c **** #include <string.h>
+  10:Core/Src/boot/boot_flash.c **** 
+  11:Core/Src/boot/boot_flash.c **** /* ==================================================================
+  12:Core/Src/boot/boot_flash.c ****  *  读一个 32 位字（直接指针解引用）
+  13:Core/Src/boot/boot_flash.c ****  * ================================================================== */
+  14:Core/Src/boot/boot_flash.c **** uint32_t Boot_FlashReadWord(uint32_t addr)
+  15:Core/Src/boot/boot_flash.c **** {
+  28              		.loc 1 15 1 view -0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+  16:Core/Src/boot/boot_flash.c ****     return *(volatile uint32_t *)addr;
+  33              		.loc 1 16 5 view .LVU1
+  34              		.loc 1 16 12 is_stmt 0 view .LVU2
+  35 0000 0068     		ldr	r0, [r0]
+  36              	.LVL1:
+  17:Core/Src/boot/boot_flash.c **** }
+  37              		.loc 1 17 1 view .LVU3
+  38 0002 7047     		bx	lr
+  39              		.cfi_endproc
+  40              	.LFE65:
+  42              		.section	.text.Boot_FlashWriteWord,"ax",%progbits
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxNoD86.s 			page 2
+
+
+  43              		.align	1
+  44              		.global	Boot_FlashWriteWord
+  45              		.syntax unified
+  46              		.thumb
+  47              		.thumb_func
+  49              	Boot_FlashWriteWord:
+  50              	.LVL2:
+  51              	.LFB66:
+  18:Core/Src/boot/boot_flash.c **** 
+  19:Core/Src/boot/boot_flash.c **** /* ==================================================================
+  20:Core/Src/boot/boot_flash.c ****  *  写一个 32 位字（地址必须已擦除 = 0xFFFFFFFF）
+  21:Core/Src/boot/boot_flash.c ****  * ================================================================== */
+  22:Core/Src/boot/boot_flash.c **** bool Boot_FlashWriteWord(uint32_t addr, uint32_t data)
+  23:Core/Src/boot/boot_flash.c **** {
+  52              		.loc 1 23 1 is_stmt 1 view -0
+  53              		.cfi_startproc
+  54              		@ args = 0, pretend = 0, frame = 0
+  55              		@ frame_needed = 0, uses_anonymous_args = 0
+  24:Core/Src/boot/boot_flash.c ****     if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, addr, data) != HAL_OK)
+  56              		.loc 1 24 5 view .LVU5
+  23:Core/Src/boot/boot_flash.c ****     if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, addr, data) != HAL_OK)
+  57              		.loc 1 23 1 is_stmt 0 view .LVU6
+  58 0000 38B5     		push	{r3, r4, r5, lr}
+  59              	.LCFI0:
+  60              		.cfi_def_cfa_offset 16
+  61              		.cfi_offset 3, -16
+  62              		.cfi_offset 4, -12
+  63              		.cfi_offset 5, -8
+  64              		.cfi_offset 14, -4
+  65              		.loc 1 24 9 view .LVU7
+  66 0002 0A46     		mov	r2, r1
+  23:Core/Src/boot/boot_flash.c ****     if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, addr, data) != HAL_OK)
+  67              		.loc 1 23 1 view .LVU8
+  68 0004 0546     		mov	r5, r0
+  69 0006 0C46     		mov	r4, r1
+  70              		.loc 1 24 9 view .LVU9
+  71 0008 0023     		movs	r3, #0
+  72 000a 0146     		mov	r1, r0
+  73              	.LVL3:
+  74              		.loc 1 24 9 view .LVU10
+  75 000c 0220     		movs	r0, #2
+  76              	.LVL4:
+  77              		.loc 1 24 9 view .LVU11
+  78 000e FFF7FEFF 		bl	HAL_FLASH_Program
+  79              	.LVL5:
+  80              		.loc 1 24 8 discriminator 1 view .LVU12
+  81 0012 20B9     		cbnz	r0, .L4
+  25:Core/Src/boot/boot_flash.c ****         return false;
+  26:Core/Src/boot/boot_flash.c **** 
+  27:Core/Src/boot/boot_flash.c ****     /* 回读验证 */
+  28:Core/Src/boot/boot_flash.c ****     if (Boot_FlashReadWord(addr) != data)
+  82              		.loc 1 28 5 is_stmt 1 view .LVU13
+  83              	.LVL6:
+  84              	.LBB36:
+  85              	.LBI36:
+  14:Core/Src/boot/boot_flash.c **** {
+  86              		.loc 1 14 10 view .LVU14
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxNoD86.s 			page 3
+
+
+  87              	.LBB37:
+  16:Core/Src/boot/boot_flash.c **** }
+  88              		.loc 1 16 5 view .LVU15
+  16:Core/Src/boot/boot_flash.c **** }
+  89              		.loc 1 16 12 is_stmt 0 view .LVU16
+  90 0014 2868     		ldr	r0, [r5]
+  91              	.LVL7:
+  16:Core/Src/boot/boot_flash.c **** }
+  92              		.loc 1 16 12 view .LVU17
+  93              	.LBE37:
+  94              	.LBE36:
+  95              		.loc 1 28 8 discriminator 1 view .LVU18
+  96 0016 231A     		subs	r3, r4, r0
+  97 0018 5842     		rsbs	r0, r3, #0
+  98 001a 5841     		adcs	r0, r0, r3
+  99              	.L3:
+  29:Core/Src/boot/boot_flash.c ****         return false;
+  30:Core/Src/boot/boot_flash.c **** 
+  31:Core/Src/boot/boot_flash.c ****     return true;
+  32:Core/Src/boot/boot_flash.c **** }
+ 100              		.loc 1 32 1 view .LVU19
+ 101 001c 38BD     		pop	{r3, r4, r5, pc}
+ 102              	.LVL8:
+ 103              	.L4:
+  25:Core/Src/boot/boot_flash.c **** 
+ 104              		.loc 1 25 16 view .LVU20
+ 105 001e 0020     		movs	r0, #0
+ 106 0020 FCE7     		b	.L3
+ 107              		.cfi_endproc
+ 108              	.LFE66:
+ 110              		.section	.text.Boot_EraseAppArea,"ax",%progbits
+ 111              		.align	1
+ 112              		.global	Boot_EraseAppArea
+ 113              		.syntax unified
+ 114              		.thumb
+ 115              		.thumb_func
+ 117              	Boot_EraseAppArea:
+ 118              	.LFB67:
+  33:Core/Src/boot/boot_flash.c **** 
+  34:Core/Src/boot/boot_flash.c **** /* ==================================================================
+  35:Core/Src/boot/boot_flash.c ****  *  擦除 APP 区全部 52 页（每页 1KB）
+  36:Core/Src/boot/boot_flash.c ****  *  耗时约 52 × 20ms ≈ 1 秒
+  37:Core/Src/boot/boot_flash.c ****  * ================================================================== */
+  38:Core/Src/boot/boot_flash.c **** bool Boot_EraseAppArea(void)
+  39:Core/Src/boot/boot_flash.c **** {
+ 119              		.loc 1 39 1 is_stmt 1 view -0
+ 120              		.cfi_startproc
+ 121              		@ args = 0, pretend = 0, frame = 24
+ 122              		@ frame_needed = 0, uses_anonymous_args = 0
+  40:Core/Src/boot/boot_flash.c ****     FLASH_EraseInitTypeDef erase = {0};
+ 123              		.loc 1 40 5 view .LVU22
+  39:Core/Src/boot/boot_flash.c ****     FLASH_EraseInitTypeDef erase = {0};
+ 124              		.loc 1 39 1 is_stmt 0 view .LVU23
+ 125 0000 70B5     		push	{r4, r5, r6, lr}
+ 126              	.LCFI1:
+ 127              		.cfi_def_cfa_offset 16
+ 128              		.cfi_offset 4, -16
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxNoD86.s 			page 4
+
+
+ 129              		.cfi_offset 5, -12
+ 130              		.cfi_offset 6, -8
+ 131              		.cfi_offset 14, -4
+  41:Core/Src/boot/boot_flash.c ****     uint32_t pageError = 0;
+ 132              		.loc 1 41 14 view .LVU24
+ 133 0002 0024     		movs	r4, #0
+  39:Core/Src/boot/boot_flash.c ****     FLASH_EraseInitTypeDef erase = {0};
+ 134              		.loc 1 39 1 view .LVU25
+ 135 0004 86B0     		sub	sp, sp, #24
+ 136              	.LCFI2:
+ 137              		.cfi_def_cfa_offset 40
+  40:Core/Src/boot/boot_flash.c ****     FLASH_EraseInitTypeDef erase = {0};
+ 138              		.loc 1 40 28 view .LVU26
+ 139 0006 1022     		movs	r2, #16
+ 140 0008 0021     		movs	r1, #0
+ 141 000a 02A8     		add	r0, sp, #8
+ 142 000c FFF7FEFF 		bl	memset
+ 143              	.LVL9:
+ 144              		.loc 1 41 5 is_stmt 1 view .LVU27
+ 145              		.loc 1 41 14 is_stmt 0 view .LVU28
+ 146 0010 0194     		str	r4, [sp, #4]
+  42:Core/Src/boot/boot_flash.c **** 
+  43:Core/Src/boot/boot_flash.c ****     HAL_FLASH_Unlock();
+ 147              		.loc 1 43 5 is_stmt 1 view .LVU29
+ 148 0012 FFF7FEFF 		bl	HAL_FLASH_Unlock
+ 149              	.LVL10:
+  44:Core/Src/boot/boot_flash.c ****     __disable_irq();
+ 150              		.loc 1 44 5 view .LVU30
+ 151              	.LBB38:
+ 152              	.LBI38:
+ 153              		.file 2 "Drivers/CMSIS/Include/cmsis_gcc.h"
+   1:Drivers/CMSIS/Include/cmsis_gcc.h **** /**************************************************************************//**
+   2:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @file     cmsis_gcc.h
+   3:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @brief    CMSIS compiler GCC header file
+   4:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @version  V5.0.4
+   5:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @date     09. April 2018
+   6:Drivers/CMSIS/Include/cmsis_gcc.h ****  ******************************************************************************/
+   7:Drivers/CMSIS/Include/cmsis_gcc.h **** /*
+   8:Drivers/CMSIS/Include/cmsis_gcc.h ****  * Copyright (c) 2009-2018 Arm Limited. All rights reserved.
+   9:Drivers/CMSIS/Include/cmsis_gcc.h ****  *
+  10:Drivers/CMSIS/Include/cmsis_gcc.h ****  * SPDX-License-Identifier: Apache-2.0
+  11:Drivers/CMSIS/Include/cmsis_gcc.h ****  *
+  12:Drivers/CMSIS/Include/cmsis_gcc.h ****  * Licensed under the Apache License, Version 2.0 (the License); you may
+  13:Drivers/CMSIS/Include/cmsis_gcc.h ****  * not use this file except in compliance with the License.
+  14:Drivers/CMSIS/Include/cmsis_gcc.h ****  * You may obtain a copy of the License at
+  15:Drivers/CMSIS/Include/cmsis_gcc.h ****  *
+  16:Drivers/CMSIS/Include/cmsis_gcc.h ****  * www.apache.org/licenses/LICENSE-2.0
+  17:Drivers/CMSIS/Include/cmsis_gcc.h ****  *
+  18:Drivers/CMSIS/Include/cmsis_gcc.h ****  * Unless required by applicable law or agreed to in writing, software
+  19:Drivers/CMSIS/Include/cmsis_gcc.h ****  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  20:Drivers/CMSIS/Include/cmsis_gcc.h ****  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  21:Drivers/CMSIS/Include/cmsis_gcc.h ****  * See the License for the specific language governing permissions and
+  22:Drivers/CMSIS/Include/cmsis_gcc.h ****  * limitations under the License.
+  23:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+  24:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+  25:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __CMSIS_GCC_H
+  26:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __CMSIS_GCC_H
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxNoD86.s 			page 5
+
+
+  27:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+  28:Drivers/CMSIS/Include/cmsis_gcc.h **** /* ignore some GCC warnings */
+  29:Drivers/CMSIS/Include/cmsis_gcc.h **** #pragma GCC diagnostic push
+  30:Drivers/CMSIS/Include/cmsis_gcc.h **** #pragma GCC diagnostic ignored "-Wsign-conversion"
+  31:Drivers/CMSIS/Include/cmsis_gcc.h **** #pragma GCC diagnostic ignored "-Wconversion"
+  32:Drivers/CMSIS/Include/cmsis_gcc.h **** #pragma GCC diagnostic ignored "-Wunused-parameter"
+  33:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+  34:Drivers/CMSIS/Include/cmsis_gcc.h **** /* Fallback for __has_builtin */
+  35:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __has_builtin
+  36:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __has_builtin(x) (0)
+  37:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  38:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+  39:Drivers/CMSIS/Include/cmsis_gcc.h **** /* CMSIS compiler specific defines */
+  40:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __ASM
+  41:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __ASM                                  __asm
+  42:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  43:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __INLINE
+  44:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __INLINE                               inline
+  45:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  46:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __STATIC_INLINE
+  47:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __STATIC_INLINE                        static inline
+  48:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  49:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __STATIC_FORCEINLINE                 
+  50:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __STATIC_FORCEINLINE                   __attribute__((always_inline)) static inline
+  51:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif                                           
+  52:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __NO_RETURN
+  53:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __NO_RETURN                            __attribute__((__noreturn__))
+  54:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  55:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __USED
+  56:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __USED                                 __attribute__((used))
+  57:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  58:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __WEAK
+  59:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __WEAK                                 __attribute__((weak))
+  60:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  61:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __PACKED
+  62:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __PACKED                               __attribute__((packed, aligned(1)))
+  63:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  64:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __PACKED_STRUCT
+  65:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __PACKED_STRUCT                        struct __attribute__((packed, aligned(1)))
+  66:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  67:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __PACKED_UNION
+  68:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __PACKED_UNION                         union __attribute__((packed, aligned(1)))
+  69:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  70:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT32        /* deprecated */
+  71:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
+  72:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
+  73:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
+  74:Drivers/CMSIS/Include/cmsis_gcc.h ****   struct __attribute__((packed)) T_UINT32 { uint32_t v; };
+  75:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
+  76:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT32(x)                  (((struct T_UINT32 *)(x))->v)
+  77:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  78:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT16_WRITE
+  79:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
+  80:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
+  81:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
+  82:Drivers/CMSIS/Include/cmsis_gcc.h ****   __PACKED_STRUCT T_UINT16_WRITE { uint16_t v; };
+  83:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxNoD86.s 			page 6
+
+
+  84:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT16_WRITE(addr, val)    (void)((((struct T_UINT16_WRITE *)(void *)(addr))-
+  85:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  86:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT16_READ
+  87:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
+  88:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
+  89:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
+  90:Drivers/CMSIS/Include/cmsis_gcc.h ****   __PACKED_STRUCT T_UINT16_READ { uint16_t v; };
+  91:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
+  92:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT16_READ(addr)          (((const struct T_UINT16_READ *)(const void *)(add
+  93:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  94:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT32_WRITE
+  95:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
+  96:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
+  97:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
+  98:Drivers/CMSIS/Include/cmsis_gcc.h ****   __PACKED_STRUCT T_UINT32_WRITE { uint32_t v; };
+  99:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
+ 100:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT32_WRITE(addr, val)    (void)((((struct T_UINT32_WRITE *)(void *)(addr))-
+ 101:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 102:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT32_READ
+ 103:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
+ 104:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
+ 105:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
+ 106:Drivers/CMSIS/Include/cmsis_gcc.h ****   __PACKED_STRUCT T_UINT32_READ { uint32_t v; };
+ 107:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
+ 108:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT32_READ(addr)          (((const struct T_UINT32_READ *)(const void *)(add
+ 109:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 110:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __ALIGNED
+ 111:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __ALIGNED(x)                           __attribute__((aligned(x)))
+ 112:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 113:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __RESTRICT
+ 114:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __RESTRICT                             __restrict
+ 115:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 116:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 117:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 118:Drivers/CMSIS/Include/cmsis_gcc.h **** /* ###########################  Core Function Access  ########################### */
+ 119:Drivers/CMSIS/Include/cmsis_gcc.h **** /** \ingroup  CMSIS_Core_FunctionInterface
+ 120:Drivers/CMSIS/Include/cmsis_gcc.h ****     \defgroup CMSIS_Core_RegAccFunctions CMSIS Core Register Access Functions
+ 121:Drivers/CMSIS/Include/cmsis_gcc.h ****   @{
+ 122:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 123:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 124:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 125:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Enable IRQ Interrupts
+ 126:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Enables IRQ interrupts by clearing the I-bit in the CPSR.
+ 127:Drivers/CMSIS/Include/cmsis_gcc.h ****            Can only be executed in Privileged modes.
+ 128:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 129:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __enable_irq(void)
+ 130:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 131:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("cpsie i" : : : "memory");
+ 132:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 133:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 134:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 135:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 136:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Disable IRQ Interrupts
+ 137:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Disables IRQ interrupts by setting the I-bit in the CPSR.
+ 138:Drivers/CMSIS/Include/cmsis_gcc.h ****            Can only be executed in Privileged modes.
+ 139:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 140:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __disable_irq(void)
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxNoD86.s 			page 7
+
+
+ 154              		.loc 2 140 27 view .LVU31
+ 155              	.LBB39:
+ 141:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 142:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("cpsid i" : : : "memory");
+ 156              		.loc 2 142 3 view .LVU32
+ 157              		.syntax unified
+ 158              	@ 142 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 159 0016 72B6     		cpsid i
+ 160              	@ 0 "" 2
+ 161              		.thumb
+ 162              		.syntax unified
+ 163              	.LBE39:
+ 164              	.LBE38:
+  45:Core/Src/boot/boot_flash.c **** 
+  46:Core/Src/boot/boot_flash.c ****     erase.TypeErase   = FLASH_TYPEERASE_PAGES;
+ 165              		.loc 1 46 5 view .LVU33
+  47:Core/Src/boot/boot_flash.c ****     erase.PageAddress = APP_START_ADDR;
+  48:Core/Src/boot/boot_flash.c ****     erase.NbPages     = 44;  /* 44KB / 1KB per page */
+ 166              		.loc 1 48 23 is_stmt 0 view .LVU34
+ 167 0018 2C23     		movs	r3, #44
+ 168 001a 0A4E     		ldr	r6, .L8
+  49:Core/Src/boot/boot_flash.c **** 
+  50:Core/Src/boot/boot_flash.c ****     HAL_StatusTypeDef status = HAL_FLASHEx_Erase(&erase, &pageError);
+ 169              		.loc 1 50 32 view .LVU35
+ 170 001c 01A9     		add	r1, sp, #4
+ 171 001e 02A8     		add	r0, sp, #8
+  48:Core/Src/boot/boot_flash.c **** 
+ 172              		.loc 1 48 23 view .LVU36
+ 173 0020 CDE90463 		strd	r6, r3, [sp, #16]
+  46:Core/Src/boot/boot_flash.c ****     erase.PageAddress = APP_START_ADDR;
+ 174              		.loc 1 46 23 view .LVU37
+ 175 0024 0294     		str	r4, [sp, #8]
+  47:Core/Src/boot/boot_flash.c ****     erase.NbPages     = 44;  /* 44KB / 1KB per page */
+ 176              		.loc 1 47 5 is_stmt 1 view .LVU38
+ 177              		.loc 1 50 5 view .LVU39
+ 178              		.loc 1 50 32 is_stmt 0 view .LVU40
+ 179 0026 FFF7FEFF 		bl	HAL_FLASHEx_Erase
+ 180              	.LVL11:
+ 181 002a 0546     		mov	r5, r0
+ 182              	.LVL12:
+  51:Core/Src/boot/boot_flash.c **** 
+  52:Core/Src/boot/boot_flash.c ****     __enable_irq();
+ 183              		.loc 1 52 5 is_stmt 1 view .LVU41
+ 184              	.LBB40:
+ 185              	.LBI40:
+ 129:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 186              		.loc 2 129 27 view .LVU42
+ 187              	.LBB41:
+ 131:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 188              		.loc 2 131 3 view .LVU43
+ 189              		.syntax unified
+ 190              	@ 131 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 191 002c 62B6     		cpsie i
+ 192              	@ 0 "" 2
+ 193              		.thumb
+ 194              		.syntax unified
+ 195              	.LBE41:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxNoD86.s 			page 8
+
+
+ 196              	.LBE40:
+  53:Core/Src/boot/boot_flash.c ****     HAL_FLASH_Lock();
+ 197              		.loc 1 53 5 view .LVU44
+ 198 002e FFF7FEFF 		bl	HAL_FLASH_Lock
+ 199              	.LVL13:
+  54:Core/Src/boot/boot_flash.c **** 
+  55:Core/Src/boot/boot_flash.c ****     if (status != HAL_OK)
+ 200              		.loc 1 55 5 view .LVU45
+ 201              		.loc 1 55 8 is_stmt 0 view .LVU46
+ 202 0032 2DB9     		cbnz	r5, .L7
+  56:Core/Src/boot/boot_flash.c ****         return false;
+  57:Core/Src/boot/boot_flash.c **** 
+  58:Core/Src/boot/boot_flash.c ****     /* 验证第一页确实被擦除了 */
+  59:Core/Src/boot/boot_flash.c ****     if (Boot_FlashReadWord(APP_START_ADDR) != 0xFFFFFFFF)
+ 203              		.loc 1 59 5 is_stmt 1 view .LVU47
+ 204              	.LVL14:
+ 205              	.LBB42:
+ 206              	.LBI42:
+  14:Core/Src/boot/boot_flash.c **** {
+ 207              		.loc 1 14 10 view .LVU48
+ 208              	.LBB43:
+  16:Core/Src/boot/boot_flash.c **** }
+ 209              		.loc 1 16 5 view .LVU49
+  16:Core/Src/boot/boot_flash.c **** }
+ 210              		.loc 1 16 12 is_stmt 0 view .LVU50
+ 211 0034 3068     		ldr	r0, [r6]
+ 212              	.LVL15:
+  16:Core/Src/boot/boot_flash.c **** }
+ 213              		.loc 1 16 12 view .LVU51
+ 214              	.LBE43:
+ 215              	.LBE42:
+ 216              		.loc 1 59 8 discriminator 1 view .LVU52
+ 217 0036 431C     		adds	r3, r0, #1
+ 218 0038 5842     		rsbs	r0, r3, #0
+ 219 003a 5841     		adcs	r0, r0, r3
+ 220              	.L6:
+  60:Core/Src/boot/boot_flash.c ****         return false;
+  61:Core/Src/boot/boot_flash.c **** 
+  62:Core/Src/boot/boot_flash.c ****     return true;
+  63:Core/Src/boot/boot_flash.c **** }
+ 221              		.loc 1 63 1 view .LVU53
+ 222 003c 06B0     		add	sp, sp, #24
+ 223              	.LCFI3:
+ 224              		.cfi_remember_state
+ 225              		.cfi_def_cfa_offset 16
+ 226              		@ sp needed
+ 227 003e 70BD     		pop	{r4, r5, r6, pc}
+ 228              	.LVL16:
+ 229              	.L7:
+ 230              	.LCFI4:
+ 231              		.cfi_restore_state
+  56:Core/Src/boot/boot_flash.c **** 
+ 232              		.loc 1 56 16 view .LVU54
+ 233 0040 2046     		mov	r0, r4
+ 234 0042 FBE7     		b	.L6
+ 235              	.L9:
+ 236              		.align	2
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxNoD86.s 			page 9
+
+
+ 237              	.L8:
+ 238 0044 00500008 		.word	134238208
+ 239              		.cfi_endproc
+ 240              	.LFE67:
+ 242              		.section	.text.Boot_FlashWriteBuf,"ax",%progbits
+ 243              		.align	1
+ 244              		.global	Boot_FlashWriteBuf
+ 245              		.syntax unified
+ 246              		.thumb
+ 247              		.thumb_func
+ 249              	Boot_FlashWriteBuf:
+ 250              	.LVL17:
+ 251              	.LFB68:
+  64:Core/Src/boot/boot_flash.c **** 
+  65:Core/Src/boot/boot_flash.c **** /* ==================================================================
+  66:Core/Src/boot/boot_flash.c ****  *  写入一块数据到 Flash
+  67:Core/Src/boot/boot_flash.c ****  *  流程：解锁 → 关中断 → 按页擦除 → 按字写入 → 开中断 → 上锁
+  68:Core/Src/boot/boot_flash.c ****  *
+  69:Core/Src/boot/boot_flash.c ****  *  @param addr  Flash 起始地址（必须 4 字节对齐）
+  70:Core/Src/boot/boot_flash.c ****  *  @param pBuf  源数据
+  71:Core/Src/boot/boot_flash.c ****  *  @param len   字节数（自动补齐到 4 字节边界）
+  72:Core/Src/boot/boot_flash.c ****  * ================================================================== */
+  73:Core/Src/boot/boot_flash.c **** bool Boot_FlashWriteBuf(uint32_t addr, const uint8_t *pBuf, uint32_t len)
+  74:Core/Src/boot/boot_flash.c **** {
+ 252              		.loc 1 74 1 is_stmt 1 view -0
+ 253              		.cfi_startproc
+ 254              		@ args = 0, pretend = 0, frame = 0
+ 255              		@ frame_needed = 0, uses_anonymous_args = 0
+  75:Core/Src/boot/boot_flash.c ****     uint32_t word;
+ 256              		.loc 1 75 5 view .LVU56
+  76:Core/Src/boot/boot_flash.c ****     uint32_t i;
+ 257              		.loc 1 76 5 view .LVU57
+  77:Core/Src/boot/boot_flash.c **** 
+  78:Core/Src/boot/boot_flash.c ****     if (pBuf == NULL || len == 0)
+ 258              		.loc 1 78 5 view .LVU58
+  74:Core/Src/boot/boot_flash.c ****     uint32_t word;
+ 259              		.loc 1 74 1 is_stmt 0 view .LVU59
+ 260 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 261              	.LCFI5:
+ 262              		.cfi_def_cfa_offset 24
+ 263              		.cfi_offset 4, -24
+ 264              		.cfi_offset 5, -20
+ 265              		.cfi_offset 6, -16
+ 266              		.cfi_offset 7, -12
+ 267              		.cfi_offset 8, -8
+ 268              		.cfi_offset 14, -4
+  74:Core/Src/boot/boot_flash.c ****     uint32_t word;
+ 269              		.loc 1 74 1 view .LVU60
+ 270 0004 8046     		mov	r8, r0
+ 271 0006 1646     		mov	r6, r2
+ 272              		.loc 1 78 8 view .LVU61
+ 273 0008 0C46     		mov	r4, r1
+ 274 000a 11B9     		cbnz	r1, .L11
+ 275              	.LVL18:
+ 276              	.L13:
+  79:Core/Src/boot/boot_flash.c ****         return false;
+ 277              		.loc 1 79 16 view .LVU62
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxNoD86.s 			page 10
+
+
+ 278 000c 0020     		movs	r0, #0
+ 279              	.L12:
+  80:Core/Src/boot/boot_flash.c **** 
+  81:Core/Src/boot/boot_flash.c ****     if (addr < APP_START_ADDR || addr + len > (APP_END_ADDR + 1))
+  82:Core/Src/boot/boot_flash.c ****         return false;  /* 超出 APP 区范围 */
+  83:Core/Src/boot/boot_flash.c **** 
+  84:Core/Src/boot/boot_flash.c ****     HAL_FLASH_Lock();    /* 先确保上锁状态 */
+  85:Core/Src/boot/boot_flash.c ****     HAL_FLASH_Unlock();
+  86:Core/Src/boot/boot_flash.c ****     __disable_irq();
+  87:Core/Src/boot/boot_flash.c **** 
+  88:Core/Src/boot/boot_flash.c ****     for (i = 0; i < len; i += 4) {
+  89:Core/Src/boot/boot_flash.c ****         /* 拼成 32 位字（处理尾部不足 4 字节的情况） */
+  90:Core/Src/boot/boot_flash.c ****         word  = (uint32_t)pBuf[i];
+  91:Core/Src/boot/boot_flash.c ****         word |= (i + 1 < len) ? ((uint32_t)pBuf[i + 1] << 8)  : 0xFF000000;
+  92:Core/Src/boot/boot_flash.c ****         word |= (i + 2 < len) ? ((uint32_t)pBuf[i + 2] << 16) : 0xFF000000;
+  93:Core/Src/boot/boot_flash.c ****         word |= (i + 3 < len) ? ((uint32_t)pBuf[i + 3] << 24) : 0xFF000000;
+  94:Core/Src/boot/boot_flash.c **** 
+  95:Core/Src/boot/boot_flash.c ****         if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, addr + i, word) != HAL_OK) {
+  96:Core/Src/boot/boot_flash.c ****             __enable_irq();
+  97:Core/Src/boot/boot_flash.c ****             HAL_FLASH_Lock();
+  98:Core/Src/boot/boot_flash.c ****             return false;
+  99:Core/Src/boot/boot_flash.c ****         }
+ 100:Core/Src/boot/boot_flash.c **** 
+ 101:Core/Src/boot/boot_flash.c ****         /* 回读验证这个字 */
+ 102:Core/Src/boot/boot_flash.c ****         if (Boot_FlashReadWord(addr + i) != word) {
+ 103:Core/Src/boot/boot_flash.c ****             __enable_irq();
+ 104:Core/Src/boot/boot_flash.c ****             HAL_FLASH_Lock();
+ 105:Core/Src/boot/boot_flash.c ****             return false;
+ 106:Core/Src/boot/boot_flash.c ****         }
+ 107:Core/Src/boot/boot_flash.c ****     }
+ 108:Core/Src/boot/boot_flash.c **** 
+ 109:Core/Src/boot/boot_flash.c ****     __enable_irq();
+ 110:Core/Src/boot/boot_flash.c ****     HAL_FLASH_Lock();
+ 111:Core/Src/boot/boot_flash.c ****     return true;
+ 112:Core/Src/boot/boot_flash.c **** }
+ 280              		.loc 1 112 1 view .LVU63
+ 281 000e BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 282              	.LVL19:
+ 283              	.L11:
+  78:Core/Src/boot/boot_flash.c ****         return false;
+ 284              		.loc 1 78 22 discriminator 1 view .LVU64
+ 285 0012 002A     		cmp	r2, #0
+ 286 0014 FAD0     		beq	.L13
+  81:Core/Src/boot/boot_flash.c ****         return false;  /* 超出 APP 区范围 */
+ 287              		.loc 1 81 5 is_stmt 1 view .LVU65
+  81:Core/Src/boot/boot_flash.c ****         return false;  /* 超出 APP 区范围 */
+ 288              		.loc 1 81 8 is_stmt 0 view .LVU66
+ 289 0016 224B     		ldr	r3, .L28
+ 290 0018 9842     		cmp	r0, r3
+ 291 001a F7D3     		bcc	.L13
+  81:Core/Src/boot/boot_flash.c ****         return false;  /* 超出 APP 区范围 */
+ 292              		.loc 1 81 39 discriminator 1 view .LVU67
+ 293 001c 0244     		add	r2, r2, r0
+ 294              	.LVL20:
+  81:Core/Src/boot/boot_flash.c ****         return false;  /* 超出 APP 区范围 */
+ 295              		.loc 1 81 31 discriminator 1 view .LVU68
+ 296 001e 03F53043 		add	r3, r3, #45056
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxNoD86.s 			page 11
+
+
+ 297 0022 9A42     		cmp	r2, r3
+ 298 0024 F2D8     		bhi	.L13
+  84:Core/Src/boot/boot_flash.c ****     HAL_FLASH_Unlock();
+ 299              		.loc 1 84 5 is_stmt 1 view .LVU69
+ 300 0026 FFF7FEFF 		bl	HAL_FLASH_Lock
+ 301              	.LVL21:
+  85:Core/Src/boot/boot_flash.c ****     __disable_irq();
+ 302              		.loc 1 85 5 view .LVU70
+ 303 002a FFF7FEFF 		bl	HAL_FLASH_Unlock
+ 304              	.LVL22:
+  86:Core/Src/boot/boot_flash.c **** 
+ 305              		.loc 1 86 5 view .LVU71
+ 306              	.LBB44:
+ 307              	.LBI44:
+ 140:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 308              		.loc 2 140 27 view .LVU72
+ 309              	.LBB45:
+ 310              		.loc 2 142 3 view .LVU73
+ 311              		.syntax unified
+ 312              	@ 142 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 313 002e 72B6     		cpsid i
+ 314              	@ 0 "" 2
+ 315              		.thumb
+ 316              		.syntax unified
+ 317              	.LBE45:
+ 318              	.LBE44:
+  88:Core/Src/boot/boot_flash.c ****         /* 拼成 32 位字（处理尾部不足 4 字节的情况） */
+ 319              		.loc 1 88 5 view .LVU74
+ 320              	.LVL23:
+  88:Core/Src/boot/boot_flash.c ****         /* 拼成 32 位字（处理尾部不足 4 字节的情况） */
+ 321              		.loc 1 88 19 discriminator 1 view .LVU75
+  88:Core/Src/boot/boot_flash.c ****         /* 拼成 32 位字（处理尾部不足 4 字节的情况） */
+ 322              		.loc 1 88 12 is_stmt 0 view .LVU76
+ 323 0030 0025     		movs	r5, #0
+ 324              	.LVL24:
+ 325              	.L19:
+  90:Core/Src/boot/boot_flash.c ****         word |= (i + 1 < len) ? ((uint32_t)pBuf[i + 1] << 8)  : 0xFF000000;
+ 326              		.loc 1 90 9 is_stmt 1 view .LVU77
+  91:Core/Src/boot/boot_flash.c ****         word |= (i + 2 < len) ? ((uint32_t)pBuf[i + 2] << 16) : 0xFF000000;
+ 327              		.loc 1 91 63 is_stmt 0 view .LVU78
+ 328 0032 6B1C     		adds	r3, r5, #1
+ 329 0034 9E42     		cmp	r6, r3
+  91:Core/Src/boot/boot_flash.c ****         word |= (i + 2 < len) ? ((uint32_t)pBuf[i + 2] << 16) : 0xFF000000;
+ 330              		.loc 1 91 63 discriminator 2 view .LVU79
+ 331 0036 94BF     		ite	ls
+ 332 0038 4FF07F43 		movls	r3, #-16777216
+  91:Core/Src/boot/boot_flash.c ****         word |= (i + 2 < len) ? ((uint32_t)pBuf[i + 2] << 16) : 0xFF000000;
+ 333              		.loc 1 91 34 discriminator 1 view .LVU80
+ 334 003c 6378     		ldrbhi	r3, [r4, #1]	@ zero_extendqisi2
+  90:Core/Src/boot/boot_flash.c ****         word |= (i + 1 < len) ? ((uint32_t)pBuf[i + 1] << 8)  : 0xFF000000;
+ 335              		.loc 1 90 15 view .LVU81
+ 336 003e 2278     		ldrb	r2, [r4]	@ zero_extendqisi2
+ 337              	.LVL25:
+  91:Core/Src/boot/boot_flash.c ****         word |= (i + 2 < len) ? ((uint32_t)pBuf[i + 2] << 16) : 0xFF000000;
+ 338              		.loc 1 91 9 is_stmt 1 view .LVU82
+  91:Core/Src/boot/boot_flash.c ****         word |= (i + 2 < len) ? ((uint32_t)pBuf[i + 2] << 16) : 0xFF000000;
+ 339              		.loc 1 91 63 is_stmt 0 discriminator 1 view .LVU83
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxNoD86.s 			page 12
+
+
+ 340 0040 88BF     		it	hi
+ 341 0042 1B02     		lslhi	r3, r3, #8
+  91:Core/Src/boot/boot_flash.c ****         word |= (i + 2 < len) ? ((uint32_t)pBuf[i + 2] << 16) : 0xFF000000;
+ 342              		.loc 1 91 14 discriminator 4 view .LVU84
+ 343 0044 1A43     		orrs	r2, r2, r3
+ 344              	.LVL26:
+  92:Core/Src/boot/boot_flash.c ****         word |= (i + 3 < len) ? ((uint32_t)pBuf[i + 3] << 24) : 0xFF000000;
+ 345              		.loc 1 92 9 is_stmt 1 view .LVU85
+  92:Core/Src/boot/boot_flash.c ****         word |= (i + 3 < len) ? ((uint32_t)pBuf[i + 3] << 24) : 0xFF000000;
+ 346              		.loc 1 92 63 is_stmt 0 view .LVU86
+ 347 0046 AB1C     		adds	r3, r5, #2
+ 348 0048 9E42     		cmp	r6, r3
+  92:Core/Src/boot/boot_flash.c ****         word |= (i + 3 < len) ? ((uint32_t)pBuf[i + 3] << 24) : 0xFF000000;
+ 349              		.loc 1 92 63 discriminator 2 view .LVU87
+ 350 004a 94BF     		ite	ls
+ 351 004c 4FF07F43 		movls	r3, #-16777216
+  92:Core/Src/boot/boot_flash.c ****         word |= (i + 3 < len) ? ((uint32_t)pBuf[i + 3] << 24) : 0xFF000000;
+ 352              		.loc 1 92 34 discriminator 1 view .LVU88
+ 353 0050 A378     		ldrbhi	r3, [r4, #2]	@ zero_extendqisi2
+  95:Core/Src/boot/boot_flash.c ****             __enable_irq();
+ 354              		.loc 1 95 13 view .LVU89
+ 355 0052 4FF00200 		mov	r0, #2
+  92:Core/Src/boot/boot_flash.c ****         word |= (i + 3 < len) ? ((uint32_t)pBuf[i + 3] << 24) : 0xFF000000;
+ 356              		.loc 1 92 63 discriminator 1 view .LVU90
+ 357 0056 88BF     		it	hi
+ 358 0058 1B04     		lslhi	r3, r3, #16
+  92:Core/Src/boot/boot_flash.c ****         word |= (i + 3 < len) ? ((uint32_t)pBuf[i + 3] << 24) : 0xFF000000;
+ 359              		.loc 1 92 14 discriminator 4 view .LVU91
+ 360 005a 1343     		orrs	r3, r3, r2
+ 361              	.LVL27:
+  93:Core/Src/boot/boot_flash.c **** 
+ 362              		.loc 1 93 9 is_stmt 1 view .LVU92
+  93:Core/Src/boot/boot_flash.c **** 
+ 363              		.loc 1 93 63 is_stmt 0 view .LVU93
+ 364 005c EA1C     		adds	r2, r5, #3
+ 365 005e 9642     		cmp	r6, r2
+  93:Core/Src/boot/boot_flash.c **** 
+ 366              		.loc 1 93 63 discriminator 2 view .LVU94
+ 367 0060 94BF     		ite	ls
+ 368 0062 4FF07F47 		movls	r7, #-16777216
+  93:Core/Src/boot/boot_flash.c **** 
+ 369              		.loc 1 93 34 discriminator 1 view .LVU95
+ 370 0066 E778     		ldrbhi	r7, [r4, #3]	@ zero_extendqisi2
+  95:Core/Src/boot/boot_flash.c ****             __enable_irq();
+ 371              		.loc 1 95 13 view .LVU96
+ 372 0068 08EB0501 		add	r1, r8, r5
+  93:Core/Src/boot/boot_flash.c **** 
+ 373              		.loc 1 93 63 discriminator 1 view .LVU97
+ 374 006c 88BF     		it	hi
+ 375 006e 3F06     		lslhi	r7, r7, #24
+  93:Core/Src/boot/boot_flash.c **** 
+ 376              		.loc 1 93 14 discriminator 4 view .LVU98
+ 377 0070 1F43     		orrs	r7, r7, r3
+ 378              	.LVL28:
+  95:Core/Src/boot/boot_flash.c ****             __enable_irq();
+ 379              		.loc 1 95 9 is_stmt 1 view .LVU99
+  95:Core/Src/boot/boot_flash.c ****             __enable_irq();
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxNoD86.s 			page 13
+
+
+ 380              		.loc 1 95 13 is_stmt 0 view .LVU100
+ 381 0072 3A46     		mov	r2, r7
+ 382 0074 0023     		movs	r3, #0
+ 383 0076 FFF7FEFF 		bl	HAL_FLASH_Program
+ 384              	.LVL29:
+  95:Core/Src/boot/boot_flash.c ****             __enable_irq();
+ 385              		.loc 1 95 12 discriminator 1 view .LVU101
+ 386 007a 18B1     		cbz	r0, .L17
+ 387              	.L27:
+ 103:Core/Src/boot/boot_flash.c ****             HAL_FLASH_Lock();
+ 388              		.loc 1 103 13 is_stmt 1 view .LVU102
+ 389              	.LBB46:
+ 390              	.LBI46:
+ 129:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 391              		.loc 2 129 27 view .LVU103
+ 392              	.LBB47:
+ 131:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 393              		.loc 2 131 3 view .LVU104
+ 394              		.syntax unified
+ 395              	@ 131 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 396 007c 62B6     		cpsie i
+ 397              	@ 0 "" 2
+ 398              		.thumb
+ 399              		.syntax unified
+ 400              	.LBE47:
+ 401              	.LBE46:
+ 104:Core/Src/boot/boot_flash.c ****             return false;
+ 402              		.loc 1 104 13 view .LVU105
+ 403 007e FFF7FEFF 		bl	HAL_FLASH_Lock
+ 404              	.LVL30:
+ 105:Core/Src/boot/boot_flash.c ****         }
+ 405              		.loc 1 105 13 view .LVU106
+ 105:Core/Src/boot/boot_flash.c ****         }
+ 406              		.loc 1 105 20 is_stmt 0 view .LVU107
+ 407 0082 C3E7     		b	.L13
+ 408              	.L17:
+ 102:Core/Src/boot/boot_flash.c ****             __enable_irq();
+ 409              		.loc 1 102 9 is_stmt 1 view .LVU108
+ 410              	.LBB48:
+ 411              	.LBI48:
+  14:Core/Src/boot/boot_flash.c **** {
+ 412              		.loc 1 14 10 view .LVU109
+ 413              	.LBB49:
+  16:Core/Src/boot/boot_flash.c **** }
+ 414              		.loc 1 16 5 view .LVU110
+  16:Core/Src/boot/boot_flash.c **** }
+ 415              		.loc 1 16 12 is_stmt 0 view .LVU111
+ 416 0084 58F80530 		ldr	r3, [r8, r5]
+ 417              	.LBE49:
+ 418              	.LBE48:
+ 102:Core/Src/boot/boot_flash.c ****             __enable_irq();
+ 419              		.loc 1 102 12 discriminator 1 view .LVU112
+ 420 0088 9F42     		cmp	r7, r3
+ 421 008a F7D1     		bne	.L27
+  88:Core/Src/boot/boot_flash.c ****         /* 拼成 32 位字（处理尾部不足 4 字节的情况） */
+ 422              		.loc 1 88 28 is_stmt 1 discriminator 2 view .LVU113
+ 423 008c 0435     		adds	r5, r5, #4
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxNoD86.s 			page 14
+
+
+ 424              	.LVL31:
+  88:Core/Src/boot/boot_flash.c ****         /* 拼成 32 位字（处理尾部不足 4 字节的情况） */
+ 425              		.loc 1 88 19 discriminator 1 view .LVU114
+ 426 008e AE42     		cmp	r6, r5
+ 427 0090 04F10404 		add	r4, r4, #4
+ 428 0094 CDD8     		bhi	.L19
+ 109:Core/Src/boot/boot_flash.c ****     HAL_FLASH_Lock();
+ 429              		.loc 1 109 5 view .LVU115
+ 430              	.LBB50:
+ 431              	.LBI50:
+ 129:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 432              		.loc 2 129 27 view .LVU116
+ 433              	.LBB51:
+ 131:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 434              		.loc 2 131 3 view .LVU117
+ 435              		.syntax unified
+ 436              	@ 131 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 437 0096 62B6     		cpsie i
+ 438              	@ 0 "" 2
+ 439              		.thumb
+ 440              		.syntax unified
+ 441              	.LBE51:
+ 442              	.LBE50:
+ 110:Core/Src/boot/boot_flash.c ****     return true;
+ 443              		.loc 1 110 5 view .LVU118
+ 444 0098 FFF7FEFF 		bl	HAL_FLASH_Lock
+ 445              	.LVL32:
+ 111:Core/Src/boot/boot_flash.c **** }
+ 446              		.loc 1 111 5 view .LVU119
+ 111:Core/Src/boot/boot_flash.c **** }
+ 447              		.loc 1 111 12 is_stmt 0 view .LVU120
+ 448 009c 0120     		movs	r0, #1
+ 449 009e B6E7     		b	.L12
+ 450              	.L29:
+ 451              		.align	2
+ 452              	.L28:
+ 453 00a0 00500008 		.word	134238208
+ 454              		.cfi_endproc
+ 455              	.LFE68:
+ 457              		.section	.text.Boot_CheckAppValid,"ax",%progbits
+ 458              		.align	1
+ 459              		.global	Boot_CheckAppValid
+ 460              		.syntax unified
+ 461              		.thumb
+ 462              		.thumb_func
+ 464              	Boot_CheckAppValid:
+ 465              	.LFB69:
+ 113:Core/Src/boot/boot_flash.c **** 
+ 114:Core/Src/boot/boot_flash.c **** /* ==================================================================
+ 115:Core/Src/boot/boot_flash.c ****  *  验证 APP 区向量表是否合法
+ 116:Core/Src/boot/boot_flash.c ****  *
+ 117:Core/Src/boot/boot_flash.c ****  *  向量表前两个条目：
+ 118:Core/Src/boot/boot_flash.c ****  *    [0] = 初始 SP 值  → 必须在 RAM 范围 (0x20000000 ~ 0x20005000)
+ 119:Core/Src/boot/boot_flash.c ****  *    [1] = Reset_Handler → 必须在 APP 区且 bit0=1（Thumb 模式）
+ 120:Core/Src/boot/boot_flash.c ****  *
+ 121:Core/Src/boot/boot_flash.c ****  *  这只能做"快速合法检查"，不能保证固件功能正常。
+ 122:Core/Src/boot/boot_flash.c ****  *  完整校验需要 CRC32 比对。
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxNoD86.s 			page 15
+
+
+ 123:Core/Src/boot/boot_flash.c ****  * ================================================================== */
+ 124:Core/Src/boot/boot_flash.c **** bool Boot_CheckAppValid(void)
+ 125:Core/Src/boot/boot_flash.c **** {
+ 466              		.loc 1 125 1 is_stmt 1 view -0
+ 467              		.cfi_startproc
+ 468              		@ args = 0, pretend = 0, frame = 0
+ 469              		@ frame_needed = 0, uses_anonymous_args = 0
+ 470              		@ link register save eliminated.
+ 126:Core/Src/boot/boot_flash.c ****     uint32_t sp = Boot_FlashReadWord(APP_START_ADDR);       /* 向量表[0] */
+ 471              		.loc 1 126 5 view .LVU122
+ 472              	.LVL33:
+ 473              	.LBB52:
+ 474              	.LBI52:
+  14:Core/Src/boot/boot_flash.c **** {
+ 475              		.loc 1 14 10 view .LVU123
+ 476              	.LBB53:
+  16:Core/Src/boot/boot_flash.c **** }
+ 477              		.loc 1 16 5 view .LVU124
+  16:Core/Src/boot/boot_flash.c **** }
+ 478              		.loc 1 16 12 is_stmt 0 view .LVU125
+ 479 0000 0A4A     		ldr	r2, .L33
+ 480 0002 1368     		ldr	r3, [r2]
+ 481              	.LVL34:
+  16:Core/Src/boot/boot_flash.c **** }
+ 482              		.loc 1 16 12 view .LVU126
+ 483              	.LBE53:
+ 484              	.LBE52:
+ 127:Core/Src/boot/boot_flash.c ****     uint32_t pc = Boot_FlashReadWord(APP_START_ADDR + 4);   /* 向量表[1] */
+ 485              		.loc 1 127 5 is_stmt 1 view .LVU127
+ 486              	.LBB54:
+ 487              	.LBI54:
+  14:Core/Src/boot/boot_flash.c **** {
+ 488              		.loc 1 14 10 view .LVU128
+ 489              	.LBB55:
+  16:Core/Src/boot/boot_flash.c **** }
+ 490              		.loc 1 16 5 view .LVU129
+  16:Core/Src/boot/boot_flash.c **** }
+ 491              		.loc 1 16 12 is_stmt 0 view .LVU130
+ 492 0004 5068     		ldr	r0, [r2, #4]
+ 493              	.LVL35:
+  16:Core/Src/boot/boot_flash.c **** }
+ 494              		.loc 1 16 12 view .LVU131
+ 495              	.LBE55:
+ 496              	.LBE54:
+ 128:Core/Src/boot/boot_flash.c **** 
+ 129:Core/Src/boot/boot_flash.c ****     /* SP 必须在 RAM 范围内 */
+ 130:Core/Src/boot/boot_flash.c ****     if (sp < 0x20000000 || sp > 0x20005000)
+ 497              		.loc 1 130 5 is_stmt 1 view .LVU132
+ 498              		.loc 1 130 25 is_stmt 0 view .LVU133
+ 499 0006 03F16043 		add	r3, r3, #-536870912
+ 500              	.LVL36:
+ 501              		.loc 1 130 8 view .LVU134
+ 502 000a B3F5A04F 		cmp	r3, #20480
+ 503 000e 0AD8     		bhi	.L32
+ 131:Core/Src/boot/boot_flash.c ****         return false;
+ 132:Core/Src/boot/boot_flash.c **** 
+ 133:Core/Src/boot/boot_flash.c ****     /* PC 必须在 APP 区 */
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxNoD86.s 			page 16
+
+
+ 134:Core/Src/boot/boot_flash.c ****     if (pc < APP_START_ADDR || pc > APP_END_ADDR)
+ 504              		.loc 1 134 5 is_stmt 1 view .LVU135
+ 505              		.loc 1 134 29 is_stmt 0 view .LVU136
+ 506 0010 00F17843 		add	r3, r0, #-134217728
+ 507              	.LVL37:
+ 508              		.loc 1 134 29 view .LVU137
+ 509 0014 A3F5A043 		sub	r3, r3, #20480
+ 510              		.loc 1 134 8 view .LVU138
+ 511 0018 B3F5304F 		cmp	r3, #45056
+ 512 001c 2CBF     		ite	cs
+ 513 001e 0020     		movcs	r0, #0
+ 514 0020 00F00100 		andcc	r0, r0, #1
+ 515              	.LVL38:
+ 516              		.loc 1 134 8 view .LVU139
+ 517 0024 7047     		bx	lr
+ 518              	.LVL39:
+ 519              	.L32:
+ 131:Core/Src/boot/boot_flash.c ****         return false;
+ 520              		.loc 1 131 16 view .LVU140
+ 521 0026 0020     		movs	r0, #0
+ 522              	.LVL40:
+ 135:Core/Src/boot/boot_flash.c ****         return false;
+ 136:Core/Src/boot/boot_flash.c **** 
+ 137:Core/Src/boot/boot_flash.c ****     /* Cortex-M3 只支持 Thumb 指令，bit0 必须为 1 */
+ 138:Core/Src/boot/boot_flash.c ****     if ((pc & 0x01) == 0)
+ 139:Core/Src/boot/boot_flash.c ****         return false;
+ 140:Core/Src/boot/boot_flash.c **** 
+ 141:Core/Src/boot/boot_flash.c ****     return true;
+ 142:Core/Src/boot/boot_flash.c **** }
+ 523              		.loc 1 142 1 view .LVU141
+ 524 0028 7047     		bx	lr
+ 525              	.L34:
+ 526 002a 00BF     		.align	2
+ 527              	.L33:
+ 528 002c 00500008 		.word	134238208
+ 529              		.cfi_endproc
+ 530              	.LFE69:
+ 532              		.text
+ 533              	.Letext0:
+ 534              		.file 3 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_defa
+ 535              		.file 4 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h
+ 536              		.file 5 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h"
+ 537              		.file 6 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h"
+ 538              		.file 7 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash.h"
+ 539              		.file 8 "<built-in>"
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxNoD86.s 			page 17
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 boot_flash.c
+C:\Users\airforce\AppData\Local\Temp\ccxNoD86.s:19     .text.Boot_FlashReadWord:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccxNoD86.s:25     .text.Boot_FlashReadWord:00000000 Boot_FlashReadWord
+C:\Users\airforce\AppData\Local\Temp\ccxNoD86.s:43     .text.Boot_FlashWriteWord:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccxNoD86.s:49     .text.Boot_FlashWriteWord:00000000 Boot_FlashWriteWord
+C:\Users\airforce\AppData\Local\Temp\ccxNoD86.s:111    .text.Boot_EraseAppArea:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccxNoD86.s:117    .text.Boot_EraseAppArea:00000000 Boot_EraseAppArea
+C:\Users\airforce\AppData\Local\Temp\ccxNoD86.s:238    .text.Boot_EraseAppArea:00000044 $d
+C:\Users\airforce\AppData\Local\Temp\ccxNoD86.s:243    .text.Boot_FlashWriteBuf:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccxNoD86.s:249    .text.Boot_FlashWriteBuf:00000000 Boot_FlashWriteBuf
+C:\Users\airforce\AppData\Local\Temp\ccxNoD86.s:453    .text.Boot_FlashWriteBuf:000000a0 $d
+C:\Users\airforce\AppData\Local\Temp\ccxNoD86.s:458    .text.Boot_CheckAppValid:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccxNoD86.s:464    .text.Boot_CheckAppValid:00000000 Boot_CheckAppValid
+C:\Users\airforce\AppData\Local\Temp\ccxNoD86.s:528    .text.Boot_CheckAppValid:0000002c $d
+
+UNDEFINED SYMBOLS
+HAL_FLASH_Program
+memset
+HAL_FLASH_Unlock
+HAL_FLASHEx_Erase
+HAL_FLASH_Lock

@@ -1,0 +1,393 @@
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccAWw6Wf.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.arch armv7-m
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"boot_spi.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.file 1 "Core/Src/boot/boot_spi.c"
+  18              		.section	.text.Boot_SPI_CS_Low,"ax",%progbits
+  19              		.align	1
+  20              		.global	Boot_SPI_CS_Low
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  25              	Boot_SPI_CS_Low:
+  26              	.LFB65:
+   1:Core/Src/boot/boot_spi.c **** /**
+   2:Core/Src/boot/boot_spi.c ****  * @file    boot_spi.c
+   3:Core/Src/boot/boot_spi.c ****  * @brief   Minimal SPI1 driver for Bootloader (no HAL SPI dependency)
+   4:Core/Src/boot/boot_spi.c ****  *          Only implements what W25Q64 needs: TransmitReceive, Mode0, 4MHz
+   5:Core/Src/boot/boot_spi.c ****  */
+   6:Core/Src/boot/boot_spi.c **** #include "stm32f1xx_hal.h"
+   7:Core/Src/boot/boot_spi.c **** 
+   8:Core/Src/boot/boot_spi.c **** #define CS_PORT  GPIOA
+   9:Core/Src/boot/boot_spi.c **** #define CS_PIN   GPIO_PIN_4
+  10:Core/Src/boot/boot_spi.c **** 
+  11:Core/Src/boot/boot_spi.c **** void Boot_SPI_CS_Low(void)  { CS_PORT->BRR  = CS_PIN; }
+  27              		.loc 1 11 29 view -0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              		@ link register save eliminated.
+  32              		.loc 1 11 31 view .LVU1
+  33              		.loc 1 11 45 is_stmt 0 view .LVU2
+  34 0000 1022     		movs	r2, #16
+  35 0002 014B     		ldr	r3, .L2
+  36 0004 5A61     		str	r2, [r3, #20]
+  37              		.loc 1 11 55 view .LVU3
+  38 0006 7047     		bx	lr
+  39              	.L3:
+  40              		.align	2
+  41              	.L2:
+  42 0008 00080140 		.word	1073809408
+  43              		.cfi_endproc
+  44              	.LFE65:
+  46              		.section	.text.Boot_SPI_CS_High,"ax",%progbits
+  47              		.align	1
+  48              		.global	Boot_SPI_CS_High
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccAWw6Wf.s 			page 2
+
+
+  49              		.syntax unified
+  50              		.thumb
+  51              		.thumb_func
+  53              	Boot_SPI_CS_High:
+  54              	.LFB66:
+  12:Core/Src/boot/boot_spi.c **** void Boot_SPI_CS_High(void) { CS_PORT->BSRR = CS_PIN; }
+  55              		.loc 1 12 29 is_stmt 1 view -0
+  56              		.cfi_startproc
+  57              		@ args = 0, pretend = 0, frame = 0
+  58              		@ frame_needed = 0, uses_anonymous_args = 0
+  59              		@ link register save eliminated.
+  60              		.loc 1 12 31 view .LVU5
+  61              		.loc 1 12 45 is_stmt 0 view .LVU6
+  62 0000 1022     		movs	r2, #16
+  63 0002 014B     		ldr	r3, .L5
+  64 0004 1A61     		str	r2, [r3, #16]
+  65              		.loc 1 12 55 view .LVU7
+  66 0006 7047     		bx	lr
+  67              	.L6:
+  68              		.align	2
+  69              	.L5:
+  70 0008 00080140 		.word	1073809408
+  71              		.cfi_endproc
+  72              	.LFE66:
+  74              		.section	.text.Boot_SPI_Init,"ax",%progbits
+  75              		.align	1
+  76              		.global	Boot_SPI_Init
+  77              		.syntax unified
+  78              		.thumb
+  79              		.thumb_func
+  81              	Boot_SPI_Init:
+  82              	.LFB67:
+  13:Core/Src/boot/boot_spi.c **** 
+  14:Core/Src/boot/boot_spi.c **** /* Init SPI1 + CS pin */
+  15:Core/Src/boot/boot_spi.c **** void Boot_SPI_Init(void)
+  16:Core/Src/boot/boot_spi.c **** {
+  83              		.loc 1 16 1 is_stmt 1 view -0
+  84              		.cfi_startproc
+  85              		@ args = 0, pretend = 0, frame = 24
+  86              		@ frame_needed = 0, uses_anonymous_args = 0
+  17:Core/Src/boot/boot_spi.c ****     __HAL_RCC_SPI1_CLK_ENABLE();
+  87              		.loc 1 17 5 view .LVU9
+  88              	.LBB6:
+  89              		.loc 1 17 5 view .LVU10
+  90              		.loc 1 17 5 view .LVU11
+  91              	.LBE6:
+  16:Core/Src/boot/boot_spi.c ****     __HAL_RCC_SPI1_CLK_ENABLE();
+  92              		.loc 1 16 1 is_stmt 0 view .LVU12
+  93 0000 10B5     		push	{r4, lr}
+  94              	.LCFI0:
+  95              		.cfi_def_cfa_offset 8
+  96              		.cfi_offset 4, -8
+  97              		.cfi_offset 14, -4
+  98              	.LBB7:
+  99              		.loc 1 17 5 view .LVU13
+ 100 0002 1D4B     		ldr	r3, .L8
+ 101              	.LBE7:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccAWw6Wf.s 			page 3
+
+
+  16:Core/Src/boot/boot_spi.c ****     __HAL_RCC_SPI1_CLK_ENABLE();
+ 102              		.loc 1 16 1 view .LVU14
+ 103 0004 86B0     		sub	sp, sp, #24
+ 104              	.LCFI1:
+ 105              		.cfi_def_cfa_offset 32
+ 106              	.LBB8:
+ 107              		.loc 1 17 5 view .LVU15
+ 108 0006 9A69     		ldr	r2, [r3, #24]
+ 109              	.LBE8:
+  18:Core/Src/boot/boot_spi.c ****     __HAL_RCC_GPIOA_CLK_ENABLE();
+  19:Core/Src/boot/boot_spi.c **** 
+  20:Core/Src/boot/boot_spi.c ****     /* PA5=SCK, PA7=MOSI: AF Push-Pull */
+  21:Core/Src/boot/boot_spi.c ****     GPIO_InitTypeDef cfg = {0};
+ 110              		.loc 1 21 22 view .LVU16
+ 111 0008 0024     		movs	r4, #0
+ 112              	.LBB9:
+  17:Core/Src/boot/boot_spi.c ****     __HAL_RCC_GPIOA_CLK_ENABLE();
+ 113              		.loc 1 17 5 view .LVU17
+ 114 000a 42F48052 		orr	r2, r2, #4096
+ 115 000e 9A61     		str	r2, [r3, #24]
+  17:Core/Src/boot/boot_spi.c ****     __HAL_RCC_GPIOA_CLK_ENABLE();
+ 116              		.loc 1 17 5 is_stmt 1 view .LVU18
+ 117 0010 9A69     		ldr	r2, [r3, #24]
+ 118              	.LBE9:
+  22:Core/Src/boot/boot_spi.c ****     cfg.Pin   = GPIO_PIN_5 | GPIO_PIN_7;
+  23:Core/Src/boot/boot_spi.c ****     cfg.Mode  = GPIO_MODE_AF_PP;
+  24:Core/Src/boot/boot_spi.c ****     cfg.Speed = GPIO_SPEED_FREQ_HIGH;
+  25:Core/Src/boot/boot_spi.c ****     HAL_GPIO_Init(GPIOA, &cfg);
+ 119              		.loc 1 25 5 is_stmt 0 view .LVU19
+ 120 0012 02A9     		add	r1, sp, #8
+ 121              	.LBB10:
+  17:Core/Src/boot/boot_spi.c ****     __HAL_RCC_GPIOA_CLK_ENABLE();
+ 122              		.loc 1 17 5 view .LVU20
+ 123 0014 02F48052 		and	r2, r2, #4096
+ 124 0018 0092     		str	r2, [sp]
+  17:Core/Src/boot/boot_spi.c ****     __HAL_RCC_GPIOA_CLK_ENABLE();
+ 125              		.loc 1 17 5 is_stmt 1 view .LVU21
+ 126 001a 009A     		ldr	r2, [sp]
+ 127              	.LBE10:
+  17:Core/Src/boot/boot_spi.c ****     __HAL_RCC_GPIOA_CLK_ENABLE();
+ 128              		.loc 1 17 5 view .LVU22
+  18:Core/Src/boot/boot_spi.c **** 
+ 129              		.loc 1 18 5 view .LVU23
+ 130              	.LBB11:
+  18:Core/Src/boot/boot_spi.c **** 
+ 131              		.loc 1 18 5 view .LVU24
+  18:Core/Src/boot/boot_spi.c **** 
+ 132              		.loc 1 18 5 view .LVU25
+ 133 001c 9A69     		ldr	r2, [r3, #24]
+ 134              	.LBE11:
+ 135              		.loc 1 25 5 is_stmt 0 view .LVU26
+ 136 001e 1748     		ldr	r0, .L8+4
+ 137              	.LBB12:
+  18:Core/Src/boot/boot_spi.c **** 
+ 138              		.loc 1 18 5 view .LVU27
+ 139 0020 42F00402 		orr	r2, r2, #4
+ 140 0024 9A61     		str	r2, [r3, #24]
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccAWw6Wf.s 			page 4
+
+
+  18:Core/Src/boot/boot_spi.c **** 
+ 141              		.loc 1 18 5 is_stmt 1 view .LVU28
+ 142 0026 9B69     		ldr	r3, [r3, #24]
+ 143              	.LBE12:
+  23:Core/Src/boot/boot_spi.c ****     cfg.Speed = GPIO_SPEED_FREQ_HIGH;
+ 144              		.loc 1 23 15 is_stmt 0 view .LVU29
+ 145 0028 A022     		movs	r2, #160
+ 146              	.LBB13:
+  18:Core/Src/boot/boot_spi.c **** 
+ 147              		.loc 1 18 5 view .LVU30
+ 148 002a 03F00403 		and	r3, r3, #4
+ 149 002e 0193     		str	r3, [sp, #4]
+  18:Core/Src/boot/boot_spi.c **** 
+ 150              		.loc 1 18 5 is_stmt 1 view .LVU31
+ 151 0030 019B     		ldr	r3, [sp, #4]
+ 152              	.LBE13:
+  18:Core/Src/boot/boot_spi.c **** 
+ 153              		.loc 1 18 5 view .LVU32
+  21:Core/Src/boot/boot_spi.c ****     cfg.Pin   = GPIO_PIN_5 | GPIO_PIN_7;
+ 154              		.loc 1 21 5 view .LVU33
+  23:Core/Src/boot/boot_spi.c ****     cfg.Speed = GPIO_SPEED_FREQ_HIGH;
+ 155              		.loc 1 23 15 is_stmt 0 view .LVU34
+ 156 0032 0223     		movs	r3, #2
+ 157 0034 CDE90223 		strd	r2, r3, [sp, #8]
+  24:Core/Src/boot/boot_spi.c ****     HAL_GPIO_Init(GPIOA, &cfg);
+ 158              		.loc 1 24 15 view .LVU35
+ 159 0038 0323     		movs	r3, #3
+  21:Core/Src/boot/boot_spi.c ****     cfg.Pin   = GPIO_PIN_5 | GPIO_PIN_7;
+ 160              		.loc 1 21 22 view .LVU36
+ 161 003a 0494     		str	r4, [sp, #16]
+  22:Core/Src/boot/boot_spi.c ****     cfg.Mode  = GPIO_MODE_AF_PP;
+ 162              		.loc 1 22 5 is_stmt 1 view .LVU37
+  24:Core/Src/boot/boot_spi.c ****     HAL_GPIO_Init(GPIOA, &cfg);
+ 163              		.loc 1 24 5 view .LVU38
+  24:Core/Src/boot/boot_spi.c ****     HAL_GPIO_Init(GPIOA, &cfg);
+ 164              		.loc 1 24 15 is_stmt 0 view .LVU39
+ 165 003c 0593     		str	r3, [sp, #20]
+ 166              		.loc 1 25 5 is_stmt 1 view .LVU40
+ 167 003e FFF7FEFF 		bl	HAL_GPIO_Init
+ 168              	.LVL0:
+  26:Core/Src/boot/boot_spi.c **** 
+  27:Core/Src/boot/boot_spi.c ****     /* PA6=MISO: Input floating */
+  28:Core/Src/boot/boot_spi.c ****     cfg.Pin  = GPIO_PIN_6;
+ 169              		.loc 1 28 5 view .LVU41
+ 170              		.loc 1 28 14 is_stmt 0 view .LVU42
+ 171 0042 4023     		movs	r3, #64
+  29:Core/Src/boot/boot_spi.c ****     cfg.Mode = GPIO_MODE_INPUT;
+  30:Core/Src/boot/boot_spi.c ****     cfg.Pull = GPIO_NOPULL;
+  31:Core/Src/boot/boot_spi.c ****     HAL_GPIO_Init(GPIOA, &cfg);
+ 172              		.loc 1 31 5 view .LVU43
+ 173 0044 02A9     		add	r1, sp, #8
+ 174 0046 0D48     		ldr	r0, .L8+4
+  29:Core/Src/boot/boot_spi.c ****     cfg.Mode = GPIO_MODE_INPUT;
+ 175              		.loc 1 29 14 view .LVU44
+ 176 0048 CDE90234 		strd	r3, r4, [sp, #8]
+  30:Core/Src/boot/boot_spi.c ****     HAL_GPIO_Init(GPIOA, &cfg);
+ 177              		.loc 1 30 5 is_stmt 1 view .LVU45
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccAWw6Wf.s 			page 5
+
+
+  30:Core/Src/boot/boot_spi.c ****     HAL_GPIO_Init(GPIOA, &cfg);
+ 178              		.loc 1 30 14 is_stmt 0 view .LVU46
+ 179 004c 0494     		str	r4, [sp, #16]
+ 180              		.loc 1 31 5 is_stmt 1 view .LVU47
+ 181 004e FFF7FEFF 		bl	HAL_GPIO_Init
+ 182              	.LVL1:
+  32:Core/Src/boot/boot_spi.c **** 
+  33:Core/Src/boot/boot_spi.c ****     /* PA4=CS: Output push-pull, high */
+  34:Core/Src/boot/boot_spi.c ****     cfg.Pin  = CS_PIN;
+ 183              		.loc 1 34 5 view .LVU48
+  35:Core/Src/boot/boot_spi.c ****     cfg.Mode = GPIO_MODE_OUTPUT_PP;
+ 184              		.loc 1 35 14 is_stmt 0 view .LVU49
+ 185 0052 1024     		movs	r4, #16
+ 186 0054 0123     		movs	r3, #1
+  36:Core/Src/boot/boot_spi.c ****     cfg.Pull = GPIO_PULLUP;
+  37:Core/Src/boot/boot_spi.c ****     HAL_GPIO_Init(CS_PORT, &cfg);
+ 187              		.loc 1 37 5 view .LVU50
+ 188 0056 0948     		ldr	r0, .L8+4
+ 189 0058 02A9     		add	r1, sp, #8
+  35:Core/Src/boot/boot_spi.c ****     cfg.Mode = GPIO_MODE_OUTPUT_PP;
+ 190              		.loc 1 35 14 view .LVU51
+ 191 005a CDE90243 		strd	r4, r3, [sp, #8]
+  36:Core/Src/boot/boot_spi.c ****     cfg.Pull = GPIO_PULLUP;
+ 192              		.loc 1 36 5 is_stmt 1 view .LVU52
+  36:Core/Src/boot/boot_spi.c ****     cfg.Pull = GPIO_PULLUP;
+ 193              		.loc 1 36 14 is_stmt 0 view .LVU53
+ 194 005e 0493     		str	r3, [sp, #16]
+ 195              		.loc 1 37 5 is_stmt 1 view .LVU54
+ 196 0060 FFF7FEFF 		bl	HAL_GPIO_Init
+ 197              	.LVL2:
+  38:Core/Src/boot/boot_spi.c ****     Boot_SPI_CS_High();
+ 198              		.loc 1 38 5 view .LVU55
+ 199              	.LBB14:
+ 200              	.LBI14:
+  12:Core/Src/boot/boot_spi.c **** 
+ 201              		.loc 1 12 6 view .LVU56
+ 202              	.LBB15:
+  12:Core/Src/boot/boot_spi.c **** 
+ 203              		.loc 1 12 31 view .LVU57
+ 204              	.LBE15:
+ 205              	.LBE14:
+  39:Core/Src/boot/boot_spi.c **** 
+  40:Core/Src/boot/boot_spi.c ****     /* SPI1: Master, Mode0, BaudRate=fPCLK/2=4MHz */
+  41:Core/Src/boot/boot_spi.c ****     SPI1->CR1 = SPI_CR1_MSTR | SPI_CR1_SSM | SPI_CR1_SSI | SPI_CR1_SPE;
+ 206              		.loc 1 41 15 is_stmt 0 view .LVU58
+ 207 0064 4FF45172 		mov	r2, #836
+ 208              	.LBB17:
+ 209              	.LBB16:
+  12:Core/Src/boot/boot_spi.c **** 
+ 210              		.loc 1 12 45 view .LVU59
+ 211 0068 044B     		ldr	r3, .L8+4
+ 212 006a 1C61     		str	r4, [r3, #16]
+ 213              	.LBE16:
+ 214              	.LBE17:
+ 215              		.loc 1 41 5 is_stmt 1 view .LVU60
+ 216              		.loc 1 41 15 is_stmt 0 view .LVU61
+ 217 006c 03F52053 		add	r3, r3, #10240
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccAWw6Wf.s 			page 6
+
+
+ 218 0070 1A60     		str	r2, [r3]
+  42:Core/Src/boot/boot_spi.c **** }
+ 219              		.loc 1 42 1 view .LVU62
+ 220 0072 06B0     		add	sp, sp, #24
+ 221              	.LCFI2:
+ 222              		.cfi_def_cfa_offset 8
+ 223              		@ sp needed
+ 224 0074 10BD     		pop	{r4, pc}
+ 225              	.L9:
+ 226 0076 00BF     		.align	2
+ 227              	.L8:
+ 228 0078 00100240 		.word	1073876992
+ 229 007c 00080140 		.word	1073809408
+ 230              		.cfi_endproc
+ 231              	.LFE67:
+ 233              		.section	.text.Boot_SPI_Transfer,"ax",%progbits
+ 234              		.align	1
+ 235              		.global	Boot_SPI_Transfer
+ 236              		.syntax unified
+ 237              		.thumb
+ 238              		.thumb_func
+ 240              	Boot_SPI_Transfer:
+ 241              	.LVL3:
+ 242              	.LFB68:
+  43:Core/Src/boot/boot_spi.c **** 
+  44:Core/Src/boot/boot_spi.c **** /* Send & receive one byte */
+  45:Core/Src/boot/boot_spi.c **** uint8_t Boot_SPI_Transfer(uint8_t tx)
+  46:Core/Src/boot/boot_spi.c **** {
+ 243              		.loc 1 46 1 is_stmt 1 view -0
+ 244              		.cfi_startproc
+ 245              		@ args = 0, pretend = 0, frame = 0
+ 246              		@ frame_needed = 0, uses_anonymous_args = 0
+ 247              		@ link register save eliminated.
+  47:Core/Src/boot/boot_spi.c ****     *(volatile uint8_t *)&SPI1->DR = tx;
+ 248              		.loc 1 47 5 view .LVU64
+ 249              		.loc 1 47 36 is_stmt 0 view .LVU65
+ 250 0000 034B     		ldr	r3, .L14
+ 251 0002 1873     		strb	r0, [r3, #12]
+  48:Core/Src/boot/boot_spi.c ****     while (!(SPI1->SR & SPI_SR_RXNE));
+ 252              		.loc 1 48 5 is_stmt 1 view .LVU66
+ 253              	.L11:
+ 254              		.loc 1 48 12 discriminator 1 view .LVU67
+ 255              		.loc 1 48 18 is_stmt 0 discriminator 1 view .LVU68
+ 256 0004 9A68     		ldr	r2, [r3, #8]
+ 257              		.loc 1 48 12 discriminator 1 view .LVU69
+ 258 0006 D207     		lsls	r2, r2, #31
+ 259 0008 FCD5     		bpl	.L11
+  49:Core/Src/boot/boot_spi.c ****     return *(volatile uint8_t *)&SPI1->DR;
+ 260              		.loc 1 49 5 is_stmt 1 view .LVU70
+ 261              		.loc 1 49 12 is_stmt 0 view .LVU71
+ 262 000a 187B     		ldrb	r0, [r3, #12]	@ zero_extendqisi2
+ 263              	.LVL4:
+  50:Core/Src/boot/boot_spi.c **** }
+ 264              		.loc 1 50 1 view .LVU72
+ 265 000c 7047     		bx	lr
+ 266              	.L15:
+ 267 000e 00BF     		.align	2
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccAWw6Wf.s 			page 7
+
+
+ 268              	.L14:
+ 269 0010 00300140 		.word	1073819648
+ 270              		.cfi_endproc
+ 271              	.LFE68:
+ 273              		.text
+ 274              	.Letext0:
+ 275              		.file 2 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_defa
+ 276              		.file 3 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h
+ 277              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h"
+ 278              		.file 5 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio.h"
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccAWw6Wf.s 			page 8
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 boot_spi.c
+C:\Users\airforce\AppData\Local\Temp\ccAWw6Wf.s:19     .text.Boot_SPI_CS_Low:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccAWw6Wf.s:25     .text.Boot_SPI_CS_Low:00000000 Boot_SPI_CS_Low
+C:\Users\airforce\AppData\Local\Temp\ccAWw6Wf.s:42     .text.Boot_SPI_CS_Low:00000008 $d
+C:\Users\airforce\AppData\Local\Temp\ccAWw6Wf.s:47     .text.Boot_SPI_CS_High:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccAWw6Wf.s:53     .text.Boot_SPI_CS_High:00000000 Boot_SPI_CS_High
+C:\Users\airforce\AppData\Local\Temp\ccAWw6Wf.s:70     .text.Boot_SPI_CS_High:00000008 $d
+C:\Users\airforce\AppData\Local\Temp\ccAWw6Wf.s:75     .text.Boot_SPI_Init:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccAWw6Wf.s:81     .text.Boot_SPI_Init:00000000 Boot_SPI_Init
+C:\Users\airforce\AppData\Local\Temp\ccAWw6Wf.s:228    .text.Boot_SPI_Init:00000078 $d
+C:\Users\airforce\AppData\Local\Temp\ccAWw6Wf.s:234    .text.Boot_SPI_Transfer:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccAWw6Wf.s:240    .text.Boot_SPI_Transfer:00000000 Boot_SPI_Transfer
+C:\Users\airforce\AppData\Local\Temp\ccAWw6Wf.s:269    .text.Boot_SPI_Transfer:00000010 $d
+
+UNDEFINED SYMBOLS
+HAL_GPIO_Init

@@ -16,16 +16,47 @@
  *   0xAB  Release Power-down / Device ID
  */
 #include "w25q64.h"
-#include "spi.h"
 #include "main.h"
 #include <string.h>
 
-/* ---- CS pin: PA4 ---- */
-#define W25Q64_CS_PORT      GPIOA
-#define W25Q64_CS_PIN       GPIO_PIN_4
+#ifdef BOOTLOADER_BUILD
+  /* Bootloader: use minimal SPI driver (no HAL SPI) */
+  #include "stm32f1xx_hal.h"
+  extern void Boot_SPI_Init(void);
+  extern void Boot_SPI_CS_Low(void);
+  extern void Boot_SPI_CS_High(void);
+  extern uint8_t Boot_SPI_Transfer(uint8_t tx);
 
-#define CS_LOW()    (W25Q64_CS_PORT->BRR = W25Q64_CS_PIN)
-#define CS_HIGH()   (W25Q64_CS_PORT->BSRR = W25Q64_CS_PIN)
+  #define CS_LOW()          Boot_SPI_CS_Low()
+  #define CS_HIGH()         Boot_SPI_CS_High()
+  #define SPI_SendByte(tx)  Boot_SPI_Transfer(tx)
+
+  /* Bootloader init: just init SPI + CS */
+  #define W25Q64_HW_INIT()  do { \
+        GPIO_InitTypeDef _c = {0}; \
+        _c.Pin = GPIO_PIN_4; _c.Mode = GPIO_MODE_OUTPUT_PP; \
+        _c.Pull = GPIO_PULLUP; _c.Speed = GPIO_SPEED_FREQ_HIGH; \
+        HAL_GPIO_Init(GPIOA, &_c); \
+        Boot_SPI_Init(); \
+    } while(0)
+
+#else
+  /* APP: use HAL SPI */
+  #include "spi.h"
+
+  #define CS_LOW()    (GPIOA->BRR = GPIO_PIN_4)
+  #define CS_HIGH()   (GPIOA->BSRR = GPIO_PIN_4)
+
+  static uint8_t SPI_SendByte(uint8_t tx)
+  {
+      uint8_t rx;
+      HAL_SPI_TransmitReceive(&hspi1, &tx, &rx, 1, 100);
+      return rx;
+  }
+
+  /* APP init: already done by MX_SPI1_Init + W25Q64_Init configs CS */
+  #define W25Q64_HW_INIT()  do {} while(0)
+#endif
 
 /* ---- SPI commands ---- */
 #define CMD_WRITE_ENABLE    0x06
@@ -36,14 +67,6 @@
 #define CMD_BLOCK_ERASE     0xD8
 #define CMD_CHIP_ERASE      0xC7
 #define CMD_JEDEC_ID        0x9F
-
-/* ---- Internal helpers ---- */
-static uint8_t SPI_SendByte(uint8_t tx)
-{
-    uint8_t rx;
-    HAL_SPI_TransmitReceive(&hspi1, &tx, &rx, 1, 100);
-    return rx;
-}
 
 static void SPI_SendAddr(uint32_t addr)
 {
@@ -57,13 +80,7 @@ static void SPI_SendAddr(uint32_t addr)
  * ================================================================== */
 bool W25Q64_Init(void)
 {
-    /* Configure PA4 as GPIO Output (CS) */
-    GPIO_InitTypeDef cfg = {0};
-    cfg.Pin   = W25Q64_CS_PIN;
-    cfg.Mode  = GPIO_MODE_OUTPUT_PP;
-    cfg.Pull  = GPIO_PULLUP;
-    cfg.Speed = GPIO_SPEED_FREQ_HIGH;
-    HAL_GPIO_Init(W25Q64_CS_PORT, &cfg);
+    W25Q64_HW_INIT();
     CS_HIGH();
 
     /* Verify JEDEC ID: Manufacturer=0xEF, Type=0x40, Capacity=0x17 */

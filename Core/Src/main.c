@@ -93,7 +93,8 @@ uint8_t rebyte = 0;
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  /* 此处可放少量初始化代码（CubeMX 会在 HAL_Init() 之前执行�?? */
+  /* 向量表偏移：APP 从 0x08005000 启动，Bootloader 在 0x08000000 */
+//   SCB->VTOR = 0x08005000;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/

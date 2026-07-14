@@ -52,6 +52,7 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
 
   /* Enable TIM2 clock */
   __HAL_RCC_TIM2_CLK_ENABLE();
+  (void)(RCC->APB1ENR);  /* barrier: ensure clock is active before accessing TIM2 registers */
 
   /* Get clock configuration */
   HAL_RCC_GetClockConfig(&clkconfig, &pFLatency);
@@ -69,11 +70,13 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
   + Prescaler = (uwTimclock/1000000 - 1) to have a 1MHz counter clock.
   + ClockDivision = 0
   + Counter direction = Up
+  + AutoReloadPreload = DISABLE
   */
   htim2.Init.Period = (1000000U / 1000U) - 1U;
   htim2.Init.Prescaler = uwPrescalerValue;
   htim2.Init.ClockDivision = 0;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 
   if(HAL_TIM_Base_Init(&htim2) == HAL_OK)
   {

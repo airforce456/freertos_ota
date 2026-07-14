@@ -2,82 +2,90 @@
  * @file    at24c02.c
  * @brief   AT24C02 256-byte I2C EEPROM driver implementation
  * @note    Uses soft I2C (PB6/PB7), shared with OLED & MPU6050.
- *          Caller must hold xI2CMutex before calling any function.
+ *          APP mode: protected by xI2CMutex, uses vTaskDelay.
+ *          BOOT mode (#define BOOTLOADER_BUILD): no RTOS, uses HAL_Delay.
  */
 #include "at24c02.h"
 #include "bsp_i2c.h"
-#include "FreeRTOS.h"
-#include "semphr.h"
 #include <string.h>
 
-extern SemaphoreHandle_t xI2CMutex;
+#ifdef BOOTLOADER_BUILD
+  /* Bootloader: single-threaded, no lock needed.
+   * Use simple NOP-loop delay (no HAL_Delay, no TIM2 dependency).
+   * HSI 8MHz, ~5 cycles per loop → ~200000 iterations ≈ 1ms */
+  static void Boot_DelayMs(uint32_t ms) {
+      for (uint32_t i = 0; i < ms; i++) {
+          for (volatile uint32_t j = 0; j < 2000; j++);
+      }
+  }
+  #define EE_LOCK()       (true)
+  #define EE_UNLOCK()
+  #define EE_DELAY_MS(ms) Boot_DelayMs(ms)
+#else
+  /* APP: FreeRTOS mutex protection */
+  #include "FreeRTOS.h"
+  #include "semphr.h"
+  extern SemaphoreHandle_t xI2CMutex;
+  #define EE_LOCK()       (xSemaphoreTake(xI2CMutex, pdMS_TO_TICKS(100)) == pdPASS)
+  #define EE_UNLOCK()     xSemaphoreGive(xI2CMutex)
+  #define EE_DELAY_MS(ms) vTaskDelay(pdMS_TO_TICKS(ms))
+#endif
 
 /* ==================================================================
  *  Low-level: write one byte
- *  AT24C02 write sequence: Start → DevAddr(W) → MemAddr → Data → Stop
- *  Must wait up to 5ms for internal write cycle after Stop.
  * ================================================================== */
 bool AT24C02_WriteByte(uint8_t addr, uint8_t data)
 {
     bool ok = false;
 
-    if (xSemaphoreTake(xI2CMutex, pdMS_TO_TICKS(100)) != pdPASS)
-        return false;
+    if (!EE_LOCK()) return false;
 
     MyI2C_Start();
-    MyI2C_SendByte(AT24C02_ADDR << 1);          /* Device addr + Write */
+    MyI2C_SendByte(AT24C02_ADDR << 1);
     if (MyI2C_ReciveAck()) goto exit;
-    MyI2C_SendByte(addr);                        /* Memory address */
+    MyI2C_SendByte(addr);
     if (MyI2C_ReciveAck()) goto exit;
-    MyI2C_SendByte(data);                        /* Data byte */
+    MyI2C_SendByte(data);
     if (MyI2C_ReciveAck()) goto exit;
     ok = true;
 
 exit:
     MyI2C_Stop();
-    xSemaphoreGive(xI2CMutex);
-
-    /* AT24C02 internal write cycle: max 5ms */
-    vTaskDelay(pdMS_TO_TICKS(6));
+    EE_UNLOCK();
+    EE_DELAY_MS(6);  /* internal write cycle max 5ms */
     return ok;
 }
 
 /* ==================================================================
  *  Read one byte
- *  Sequence: Start → DevAddr(W) → MemAddr → ReStart → DevAddr(R) → Data(NACK) → Stop
  * ================================================================== */
 bool AT24C02_ReadByte(uint8_t addr, uint8_t *pData)
 {
     bool ok = false;
 
     if (pData == NULL) return false;
-    if (xSemaphoreTake(xI2CMutex, pdMS_TO_TICKS(100)) != pdPASS)
-        return false;
+    if (!EE_LOCK()) return false;
 
-    /* Dummy write to set internal address pointer */
     MyI2C_Start();
     MyI2C_SendByte(AT24C02_ADDR << 1);
     if (MyI2C_ReciveAck()) goto exit;
     MyI2C_SendByte(addr);
     if (MyI2C_ReciveAck()) goto exit;
 
-    /* Repeated Start + Read */
     MyI2C_Start();
-    MyI2C_SendByte((AT24C02_ADDR << 1) | 0x01);  /* Device addr + Read */
+    MyI2C_SendByte((AT24C02_ADDR << 1) | 0x01);
     if (MyI2C_ReciveAck()) goto exit;
-    *pData = MyI2C_RecvByte(1);                    /* NACK = last byte */
+    *pData = MyI2C_RecvByte(1);
     ok = true;
 
 exit:
     MyI2C_Stop();
-    xSemaphoreGive(xI2CMutex);
+    EE_UNLOCK();
     return ok;
 }
 
 /* ==================================================================
- *  Write buffer with page boundary handling
- *  AT24C02 page = 8 bytes. If write crosses page boundary,
- *  split into multiple page writes.
+ *  Write buffer (handles page boundary)
  * ================================================================== */
 bool AT24C02_WriteBuf(uint8_t addr, const uint8_t *pBuf, uint16_t len)
 {
@@ -91,25 +99,22 @@ bool AT24C02_WriteBuf(uint8_t addr, const uint8_t *pBuf, uint16_t len)
         uint8_t page_remain = AT24C02_PAGE_SIZE - (addr % AT24C02_PAGE_SIZE);
         uint8_t chunk = (remain < page_remain) ? (uint8_t)remain : page_remain;
 
-        if (xSemaphoreTake(xI2CMutex, pdMS_TO_TICKS(100)) != pdPASS)
-            return false;
+        if (!EE_LOCK()) return false;
 
         MyI2C_Start();
         MyI2C_SendByte(AT24C02_ADDR << 1);
-        if (MyI2C_ReciveAck()) { MyI2C_Stop(); xSemaphoreGive(xI2CMutex); return false; }
+        if (MyI2C_ReciveAck()) { MyI2C_Stop(); EE_UNLOCK(); return false; }
         MyI2C_SendByte(addr);
-        if (MyI2C_ReciveAck()) { MyI2C_Stop(); xSemaphoreGive(xI2CMutex); return false; }
+        if (MyI2C_ReciveAck()) { MyI2C_Stop(); EE_UNLOCK(); return false; }
 
         for (uint8_t i = 0; i < chunk; i++) {
             MyI2C_SendByte(pBuf[offset + i]);
-            if (MyI2C_ReciveAck()) { MyI2C_Stop(); xSemaphoreGive(xI2CMutex); return false; }
+            if (MyI2C_ReciveAck()) { MyI2C_Stop(); EE_UNLOCK(); return false; }
         }
 
         MyI2C_Stop();
-        xSemaphoreGive(xI2CMutex);
-
-        /* Wait for internal write cycle (max 5ms per page) */
-        vTaskDelay(pdMS_TO_TICKS(6));
+        EE_UNLOCK();
+        EE_DELAY_MS(6);
 
         offset += chunk;
         addr   += chunk;
@@ -119,7 +124,7 @@ bool AT24C02_WriteBuf(uint8_t addr, const uint8_t *pBuf, uint16_t len)
 }
 
 /* ==================================================================
- *  Read buffer (AT24C02 supports sequential read with auto-increment)
+ *  Read buffer (sequential read with auto-increment)
  * ================================================================== */
 bool AT24C02_ReadBuf(uint8_t addr, uint8_t *pBuf, uint16_t len)
 {
@@ -128,62 +133,54 @@ bool AT24C02_ReadBuf(uint8_t addr, uint8_t *pBuf, uint16_t len)
     if (pBuf == NULL || addr + len > AT24C02_TOTAL_SIZE)
         return false;
 
-    if (xSemaphoreTake(xI2CMutex, pdMS_TO_TICKS(100)) != pdPASS)
-        return false;
+    if (!EE_LOCK()) return false;
 
-    /* Dummy write to set address */
     MyI2C_Start();
     MyI2C_SendByte(AT24C02_ADDR << 1);
-    if (MyI2C_ReciveAck()) { MyI2C_Stop(); xSemaphoreGive(xI2CMutex); return false; }
+    if (MyI2C_ReciveAck()) { MyI2C_Stop(); EE_UNLOCK(); return false; }
     MyI2C_SendByte(addr);
-    if (MyI2C_ReciveAck()) { MyI2C_Stop(); xSemaphoreGive(xI2CMutex); return false; }
+    if (MyI2C_ReciveAck()) { MyI2C_Stop(); EE_UNLOCK(); return false; }
 
-    /* Repeated Start + sequential read */
     MyI2C_Start();
     MyI2C_SendByte((AT24C02_ADDR << 1) | 0x01);
-    if (MyI2C_ReciveAck()) { MyI2C_Stop(); xSemaphoreGive(xI2CMutex); return false; }
+    if (MyI2C_ReciveAck()) { MyI2C_Stop(); EE_UNLOCK(); return false; }
 
     for (i = 0; i < len - 1; i++) {
-        pBuf[i] = MyI2C_RecvByte(0);   /* ACK = continue reading */
+        pBuf[i] = MyI2C_RecvByte(0);
     }
-    pBuf[i] = MyI2C_RecvByte(1);       /* NACK = last byte */
+    pBuf[i] = MyI2C_RecvByte(1);
 
     MyI2C_Stop();
-    xSemaphoreGive(xI2CMutex);
+    EE_UNLOCK();
     return true;
 }
 
 /* ==================================================================
  *  Initialize OTA metadata area
- *  Checks magic number; if invalid, writes default values.
  * ================================================================== */
 bool AT24C02_Init(void)
 {
     uint32_t magic = 0;
     uint8_t buf[4];
 
-    /* Read existing magic */
     if (!AT24C02_ReadBuf(EE_MAGIC, buf, 4))
         return false;
     magic = ((uint32_t)buf[0] << 24) | ((uint32_t)buf[1] << 16) |
             ((uint32_t)buf[2] << 8)  |  (uint32_t)buf[3];
 
     if (magic == 0xA5A5A5A5)
-        return true;  /* Already initialized */
+        return true;
 
-    /* First-time init: write magic + defaults */
     uint8_t init_buf[4];
     init_buf[0] = 0xA5; init_buf[1] = 0xA5;
     init_buf[2] = 0xA5; init_buf[3] = 0xA5;
     if (!AT24C02_WriteBuf(EE_MAGIC, init_buf, 4))
         return false;
 
-    /* BootCmd = 0 (normal boot) */
     uint8_t zero = 0;
     if (!AT24C02_WriteByte(EE_BOOT_CMD, zero))
         return false;
 
-    /* Version string = "v1.0.0" */
     const char *ver = "v1.0.0";
     return AT24C02_WriteBuf(EE_VERSION_STR, (const uint8_t *)ver, strlen(ver));
 }

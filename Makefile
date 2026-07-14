@@ -22,7 +22,7 @@ TARGET = ota
 # debug build?
 DEBUG = 1
 # optimization
-OPT = -Og
+OPT ?= -Og
 
 
 #######################################
@@ -34,8 +34,8 @@ BUILD_DIR = build
 ######################################
 # source
 ######################################
-# C sources
-C_SOURCES =  \
+# C sources (can override via: make C_SOURCES="...")
+C_SOURCES ?=  \
 Core/Src/main.c \
 Core/Src/stm32f1xx_it.c \
 Core/Src/stm32f1xx_hal_msp.c \
@@ -166,8 +166,8 @@ CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 #######################################
 # LDFLAGS
 #######################################
-# link script
-LDSCRIPT = STM32F103C8Tx_FLASH.ld
+# link script (can override via: make LDSCRIPT=xxx.ld)
+LDSCRIPT ?= STM32F103C8Tx_FLASH.ld
 
 # libraries
 LIBS = -lc -lm -lnosys 
@@ -219,3 +219,32 @@ clean:
 -include $(wildcard $(BUILD_DIR)/*.d)
 
 # *** EOF ***
+# ---- Bootloader source list (minimal, no FreeRTOS) ----
+BOOT_C_SOURCES = \
+Core/Src/boot/boot_main.c \
+Core/Src/boot/boot_flash.c \
+Core/Src/boot/boot_spi.c \
+Core/Src/bsp/bsp_i2c.c \
+Core/Src/device/at24c02.c \
+Core/Src/device/w25q64.c \
+Core/Src/system_stm32f1xx.c \
+Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c \
+Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc.c \
+Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c \
+Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.c \
+Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_cortex.c \
+Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash.c \
+Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash_ex.c
+
+# ---- OTA build targets ----
+boot:
+	@echo "=== Building Bootloader ==="
+	@$(MAKE) BUILD_DIR=build_boot clean
+	@$(MAKE) BUILD_DIR=build_boot TARGET=bootloader LDSCRIPT=STM32F103C8Tx_BOOT.ld C_SOURCES="$(BOOT_C_SOURCES)" C_DEFS="-DUSE_HAL_DRIVER -DSTM32F103xB -DBOOTLOADER_BUILD" OPT=-Os all
+	@echo "  -> build_boot/bootloader.hex"
+
+app:
+	@echo "=== Building APP ==="
+	@$(MAKE) clean
+	@$(MAKE) TARGET=ota LDSCRIPT=STM32F103C8Tx_APP.ld OPT=-Os all
+	@echo "  -> build/ota.hex"

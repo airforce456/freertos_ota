@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 1
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -44,38 +44,47 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 1
   16:Core/Src/device/w25q64.c ****  *   0xAB  Release Power-down / Device ID
   17:Core/Src/device/w25q64.c ****  */
   18:Core/Src/device/w25q64.c **** #include "w25q64.h"
-  19:Core/Src/device/w25q64.c **** #include "spi.h"
-  20:Core/Src/device/w25q64.c **** #include "main.h"
-  21:Core/Src/device/w25q64.c **** #include <string.h>
-  22:Core/Src/device/w25q64.c **** 
-  23:Core/Src/device/w25q64.c **** /* ---- CS pin: PA4 ---- */
-  24:Core/Src/device/w25q64.c **** #define W25Q64_CS_PORT      GPIOA
-  25:Core/Src/device/w25q64.c **** #define W25Q64_CS_PIN       GPIO_PIN_4
-  26:Core/Src/device/w25q64.c **** 
-  27:Core/Src/device/w25q64.c **** #define CS_LOW()    (W25Q64_CS_PORT->BRR = W25Q64_CS_PIN)
-  28:Core/Src/device/w25q64.c **** #define CS_HIGH()   (W25Q64_CS_PORT->BSRR = W25Q64_CS_PIN)
+  19:Core/Src/device/w25q64.c **** #include "main.h"
+  20:Core/Src/device/w25q64.c **** #include <string.h>
+  21:Core/Src/device/w25q64.c **** 
+  22:Core/Src/device/w25q64.c **** #ifdef BOOTLOADER_BUILD
+  23:Core/Src/device/w25q64.c ****   /* Bootloader: use minimal SPI driver (no HAL SPI) */
+  24:Core/Src/device/w25q64.c ****   #include "stm32f1xx_hal.h"
+  25:Core/Src/device/w25q64.c ****   extern void Boot_SPI_Init(void);
+  26:Core/Src/device/w25q64.c ****   extern void Boot_SPI_CS_Low(void);
+  27:Core/Src/device/w25q64.c ****   extern void Boot_SPI_CS_High(void);
+  28:Core/Src/device/w25q64.c ****   extern uint8_t Boot_SPI_Transfer(uint8_t tx);
   29:Core/Src/device/w25q64.c **** 
-  30:Core/Src/device/w25q64.c **** /* ---- SPI commands ---- */
-  31:Core/Src/device/w25q64.c **** #define CMD_WRITE_ENABLE    0x06
-  32:Core/Src/device/w25q64.c **** #define CMD_READ_SR1        0x05
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 2
+  30:Core/Src/device/w25q64.c ****   #define CS_LOW()          Boot_SPI_CS_Low()
+  31:Core/Src/device/w25q64.c ****   #define CS_HIGH()         Boot_SPI_CS_High()
+  32:Core/Src/device/w25q64.c ****   #define SPI_SendByte(tx)  Boot_SPI_Transfer(tx)
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s 			page 2
 
 
-  33:Core/Src/device/w25q64.c **** #define CMD_READ_DATA       0x03
-  34:Core/Src/device/w25q64.c **** #define CMD_PAGE_PROGRAM    0x02
-  35:Core/Src/device/w25q64.c **** #define CMD_SECTOR_ERASE    0x20
-  36:Core/Src/device/w25q64.c **** #define CMD_BLOCK_ERASE     0xD8
-  37:Core/Src/device/w25q64.c **** #define CMD_CHIP_ERASE      0xC7
-  38:Core/Src/device/w25q64.c **** #define CMD_JEDEC_ID        0x9F
-  39:Core/Src/device/w25q64.c **** 
-  40:Core/Src/device/w25q64.c **** /* ---- Internal helpers ---- */
-  41:Core/Src/device/w25q64.c **** static uint8_t SPI_SendByte(uint8_t tx)
-  42:Core/Src/device/w25q64.c **** {
-  27              		.loc 1 42 1 view -0
+  33:Core/Src/device/w25q64.c **** 
+  34:Core/Src/device/w25q64.c ****   /* Bootloader init: just init SPI + CS */
+  35:Core/Src/device/w25q64.c ****   #define W25Q64_HW_INIT()  do { \
+  36:Core/Src/device/w25q64.c ****         GPIO_InitTypeDef _c = {0}; \
+  37:Core/Src/device/w25q64.c ****         _c.Pin = GPIO_PIN_4; _c.Mode = GPIO_MODE_OUTPUT_PP; \
+  38:Core/Src/device/w25q64.c ****         _c.Pull = GPIO_PULLUP; _c.Speed = GPIO_SPEED_FREQ_HIGH; \
+  39:Core/Src/device/w25q64.c ****         HAL_GPIO_Init(GPIOA, &_c); \
+  40:Core/Src/device/w25q64.c ****         Boot_SPI_Init(); \
+  41:Core/Src/device/w25q64.c ****     } while(0)
+  42:Core/Src/device/w25q64.c **** 
+  43:Core/Src/device/w25q64.c **** #else
+  44:Core/Src/device/w25q64.c ****   /* APP: use HAL SPI */
+  45:Core/Src/device/w25q64.c ****   #include "spi.h"
+  46:Core/Src/device/w25q64.c **** 
+  47:Core/Src/device/w25q64.c ****   #define CS_LOW()    (GPIOA->BRR = GPIO_PIN_4)
+  48:Core/Src/device/w25q64.c ****   #define CS_HIGH()   (GPIOA->BSRR = GPIO_PIN_4)
+  49:Core/Src/device/w25q64.c **** 
+  50:Core/Src/device/w25q64.c ****   static uint8_t SPI_SendByte(uint8_t tx)
+  51:Core/Src/device/w25q64.c ****   {
+  27              		.loc 1 51 3 view -0
   28              		.cfi_startproc
   29              		@ args = 0, pretend = 0, frame = 16
   30              		@ frame_needed = 0, uses_anonymous_args = 0
-  31              		.loc 1 42 1 is_stmt 0 view .LVU1
+  31              		.loc 1 51 3 is_stmt 0 view .LVU1
   32 0000 00B5     		push	{lr}
   33              	.LCFI0:
   34              		.cfi_def_cfa_offset 4
@@ -84,10 +93,10 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 1
   37              	.LCFI1:
   38              		.cfi_def_cfa_offset 32
   39 0004 8DF80F00 		strb	r0, [sp, #15]
-  43:Core/Src/device/w25q64.c ****     uint8_t rx;
-  40              		.loc 1 43 5 is_stmt 1 view .LVU2
-  44:Core/Src/device/w25q64.c ****     HAL_SPI_TransmitReceive(&hspi1, &tx, &rx, 1, 100);
-  41              		.loc 1 44 5 view .LVU3
+  52:Core/Src/device/w25q64.c ****       uint8_t rx;
+  40              		.loc 1 52 7 is_stmt 1 view .LVU2
+  53:Core/Src/device/w25q64.c ****       HAL_SPI_TransmitReceive(&hspi1, &tx, &rx, 1, 100);
+  41              		.loc 1 53 7 view .LVU3
   42 0008 6423     		movs	r3, #100
   43 000a 0093     		str	r3, [sp]
   44 000c 0123     		movs	r3, #1
@@ -95,13 +104,13 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 1
   46 0012 0DF10F01 		add	r1, sp, #15
   47 0016 0448     		ldr	r0, .L3
   48              	.LVL1:
-  49              		.loc 1 44 5 is_stmt 0 view .LVU4
+  49              		.loc 1 53 7 is_stmt 0 view .LVU4
   50 0018 FFF7FEFF 		bl	HAL_SPI_TransmitReceive
   51              	.LVL2:
-  45:Core/Src/device/w25q64.c ****     return rx;
-  52              		.loc 1 45 5 is_stmt 1 view .LVU5
-  46:Core/Src/device/w25q64.c **** }
-  53              		.loc 1 46 1 is_stmt 0 view .LVU6
+  54:Core/Src/device/w25q64.c ****       return rx;
+  52              		.loc 1 54 7 is_stmt 1 view .LVU5
+  55:Core/Src/device/w25q64.c ****   }
+  53              		.loc 1 55 3 is_stmt 0 view .LVU6
   54 001c 9DF81700 		ldrb	r0, [sp, #23]	@ zero_extendqisi2
   55 0020 07B0     		add	sp, sp, #28
   56              	.LCFI2:
@@ -109,6 +118,9 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 1
   58              		@ sp needed
   59 0022 5DF804FB 		ldr	pc, [sp], #4
   60              	.L4:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s 			page 3
+
+
   61 0026 00BF     		.align	2
   62              	.L3:
   63 0028 00000000 		.word	hspi1
@@ -118,48 +130,62 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 1
   68              		.align	1
   69              		.syntax unified
   70              		.thumb
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 3
-
-
   71              		.thumb_func
   73              	SPI_SendAddr:
   74              	.LVL3:
   75              	.LFB66:
-  47:Core/Src/device/w25q64.c **** 
-  48:Core/Src/device/w25q64.c **** static void SPI_SendAddr(uint32_t addr)
-  49:Core/Src/device/w25q64.c **** {
-  76              		.loc 1 49 1 is_stmt 1 view -0
+  56:Core/Src/device/w25q64.c **** 
+  57:Core/Src/device/w25q64.c ****   /* APP init: already done by MX_SPI1_Init + W25Q64_Init configs CS */
+  58:Core/Src/device/w25q64.c ****   #define W25Q64_HW_INIT()  do {} while(0)
+  59:Core/Src/device/w25q64.c **** #endif
+  60:Core/Src/device/w25q64.c **** 
+  61:Core/Src/device/w25q64.c **** /* ---- SPI commands ---- */
+  62:Core/Src/device/w25q64.c **** #define CMD_WRITE_ENABLE    0x06
+  63:Core/Src/device/w25q64.c **** #define CMD_READ_SR1        0x05
+  64:Core/Src/device/w25q64.c **** #define CMD_READ_DATA       0x03
+  65:Core/Src/device/w25q64.c **** #define CMD_PAGE_PROGRAM    0x02
+  66:Core/Src/device/w25q64.c **** #define CMD_SECTOR_ERASE    0x20
+  67:Core/Src/device/w25q64.c **** #define CMD_BLOCK_ERASE     0xD8
+  68:Core/Src/device/w25q64.c **** #define CMD_CHIP_ERASE      0xC7
+  69:Core/Src/device/w25q64.c **** #define CMD_JEDEC_ID        0x9F
+  70:Core/Src/device/w25q64.c **** 
+  71:Core/Src/device/w25q64.c **** static void SPI_SendAddr(uint32_t addr)
+  72:Core/Src/device/w25q64.c **** {
+  76              		.loc 1 72 1 is_stmt 1 view -0
   77              		.cfi_startproc
   78              		@ args = 0, pretend = 0, frame = 0
   79              		@ frame_needed = 0, uses_anonymous_args = 0
-  80              		.loc 1 49 1 is_stmt 0 view .LVU8
+  80              		.loc 1 72 1 is_stmt 0 view .LVU8
   81 0000 10B5     		push	{r4, lr}
   82              	.LCFI3:
   83              		.cfi_def_cfa_offset 8
   84              		.cfi_offset 4, -8
   85              		.cfi_offset 14, -4
   86 0002 0446     		mov	r4, r0
-  50:Core/Src/device/w25q64.c ****     SPI_SendByte((uint8_t)(addr >> 16));
-  87              		.loc 1 50 5 is_stmt 1 view .LVU9
+  73:Core/Src/device/w25q64.c ****     SPI_SendByte((uint8_t)(addr >> 16));
+  87              		.loc 1 73 5 is_stmt 1 view .LVU9
   88 0004 C0F30740 		ubfx	r0, r0, #16, #8
   89              	.LVL4:
-  90              		.loc 1 50 5 is_stmt 0 view .LVU10
+  90              		.loc 1 73 5 is_stmt 0 view .LVU10
   91 0008 FFF7FEFF 		bl	SPI_SendByte
   92              	.LVL5:
-  51:Core/Src/device/w25q64.c ****     SPI_SendByte((uint8_t)(addr >> 8));
-  93              		.loc 1 51 5 is_stmt 1 view .LVU11
+  74:Core/Src/device/w25q64.c ****     SPI_SendByte((uint8_t)(addr >> 8));
+  93              		.loc 1 74 5 is_stmt 1 view .LVU11
   94 000c C4F30720 		ubfx	r0, r4, #8, #8
   95 0010 FFF7FEFF 		bl	SPI_SendByte
   96              	.LVL6:
-  52:Core/Src/device/w25q64.c ****     SPI_SendByte((uint8_t)(addr));
-  97              		.loc 1 52 5 view .LVU12
+  75:Core/Src/device/w25q64.c ****     SPI_SendByte((uint8_t)(addr));
+  97              		.loc 1 75 5 view .LVU12
   98 0014 E0B2     		uxtb	r0, r4
   99 0016 FFF7FEFF 		bl	SPI_SendByte
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s 			page 4
+
+
  100              	.LVL7:
-  53:Core/Src/device/w25q64.c **** }
- 101              		.loc 1 53 1 is_stmt 0 view .LVU13
+  76:Core/Src/device/w25q64.c **** }
+ 101              		.loc 1 76 1 is_stmt 0 view .LVU13
  102 001a 10BD     		pop	{r4, pc}
- 103              		.loc 1 53 1 view .LVU14
+ 103              		.loc 1 76 1 view .LVU14
  104              		.cfi_endproc
  105              	.LFE66:
  107              		.section	.text.W25Q64_ReadJEDEC_ID,"ax",%progbits
@@ -171,43 +197,34 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 1
  114              	W25Q64_ReadJEDEC_ID:
  115              	.LVL8:
  116              	.LFB68:
-  54:Core/Src/device/w25q64.c **** 
-  55:Core/Src/device/w25q64.c **** /* ==================================================================
-  56:Core/Src/device/w25q64.c ****  *  Init: configure CS pin, verify JEDEC ID
-  57:Core/Src/device/w25q64.c ****  * ================================================================== */
-  58:Core/Src/device/w25q64.c **** bool W25Q64_Init(void)
-  59:Core/Src/device/w25q64.c **** {
-  60:Core/Src/device/w25q64.c ****     /* Configure PA4 as GPIO Output (CS) */
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 4
-
-
-  61:Core/Src/device/w25q64.c ****     GPIO_InitTypeDef cfg = {0};
-  62:Core/Src/device/w25q64.c ****     cfg.Pin   = W25Q64_CS_PIN;
-  63:Core/Src/device/w25q64.c ****     cfg.Mode  = GPIO_MODE_OUTPUT_PP;
-  64:Core/Src/device/w25q64.c ****     cfg.Pull  = GPIO_PULLUP;
-  65:Core/Src/device/w25q64.c ****     cfg.Speed = GPIO_SPEED_FREQ_HIGH;
-  66:Core/Src/device/w25q64.c ****     HAL_GPIO_Init(W25Q64_CS_PORT, &cfg);
-  67:Core/Src/device/w25q64.c ****     CS_HIGH();
-  68:Core/Src/device/w25q64.c **** 
-  69:Core/Src/device/w25q64.c ****     /* Verify JEDEC ID: Manufacturer=0xEF, Type=0x40, Capacity=0x17 */
-  70:Core/Src/device/w25q64.c ****     uint8_t id[3];
-  71:Core/Src/device/w25q64.c ****     W25Q64_ReadJEDEC_ID(id);
-  72:Core/Src/device/w25q64.c ****     if (id[0] != 0xEF || id[1] != 0x40 || id[2] != 0x17) {
-  73:Core/Src/device/w25q64.c ****         return false;
-  74:Core/Src/device/w25q64.c ****     }
-  75:Core/Src/device/w25q64.c ****     return true;
-  76:Core/Src/device/w25q64.c **** }
   77:Core/Src/device/w25q64.c **** 
   78:Core/Src/device/w25q64.c **** /* ==================================================================
-  79:Core/Src/device/w25q64.c ****  *  Read JEDEC ID (3 bytes)
+  79:Core/Src/device/w25q64.c ****  *  Init: configure CS pin, verify JEDEC ID
   80:Core/Src/device/w25q64.c ****  * ================================================================== */
-  81:Core/Src/device/w25q64.c **** void W25Q64_ReadJEDEC_ID(uint8_t *pID)
+  81:Core/Src/device/w25q64.c **** bool W25Q64_Init(void)
   82:Core/Src/device/w25q64.c **** {
- 117              		.loc 1 82 1 is_stmt 1 view -0
+  83:Core/Src/device/w25q64.c ****     W25Q64_HW_INIT();
+  84:Core/Src/device/w25q64.c ****     CS_HIGH();
+  85:Core/Src/device/w25q64.c **** 
+  86:Core/Src/device/w25q64.c ****     /* Verify JEDEC ID: Manufacturer=0xEF, Type=0x40, Capacity=0x17 */
+  87:Core/Src/device/w25q64.c ****     uint8_t id[3];
+  88:Core/Src/device/w25q64.c ****     W25Q64_ReadJEDEC_ID(id);
+  89:Core/Src/device/w25q64.c ****     if (id[0] != 0xEF || id[1] != 0x40 || id[2] != 0x17) {
+  90:Core/Src/device/w25q64.c ****         return false;
+  91:Core/Src/device/w25q64.c ****     }
+  92:Core/Src/device/w25q64.c ****     return true;
+  93:Core/Src/device/w25q64.c **** }
+  94:Core/Src/device/w25q64.c **** 
+  95:Core/Src/device/w25q64.c **** /* ==================================================================
+  96:Core/Src/device/w25q64.c ****  *  Read JEDEC ID (3 bytes)
+  97:Core/Src/device/w25q64.c ****  * ================================================================== */
+  98:Core/Src/device/w25q64.c **** void W25Q64_ReadJEDEC_ID(uint8_t *pID)
+  99:Core/Src/device/w25q64.c **** {
+ 117              		.loc 1 99 1 is_stmt 1 view -0
  118              		.cfi_startproc
  119              		@ args = 0, pretend = 0, frame = 0
  120              		@ frame_needed = 0, uses_anonymous_args = 0
- 121              		.loc 1 82 1 is_stmt 0 view .LVU16
+ 121              		.loc 1 99 1 is_stmt 0 view .LVU16
  122 0000 70B5     		push	{r4, r5, r6, lr}
  123              	.LCFI4:
  124              		.cfi_def_cfa_offset 16
@@ -216,54 +233,54 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 1
  127              		.cfi_offset 6, -8
  128              		.cfi_offset 14, -4
  129 0002 0446     		mov	r4, r0
-  83:Core/Src/device/w25q64.c ****     CS_LOW();
- 130              		.loc 1 83 5 is_stmt 1 view .LVU17
+ 100:Core/Src/device/w25q64.c ****     CS_LOW();
+ 130              		.loc 1 100 5 is_stmt 1 view .LVU17
  131 0004 094D     		ldr	r5, .L9
  132 0006 1026     		movs	r6, #16
  133 0008 6E61     		str	r6, [r5, #20]
-  84:Core/Src/device/w25q64.c ****     SPI_SendByte(CMD_JEDEC_ID);
- 134              		.loc 1 84 5 view .LVU18
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s 			page 5
+
+
+ 101:Core/Src/device/w25q64.c ****     SPI_SendByte(CMD_JEDEC_ID);
+ 134              		.loc 1 101 5 view .LVU18
  135 000a 9F20     		movs	r0, #159
  136              	.LVL9:
- 137              		.loc 1 84 5 is_stmt 0 view .LVU19
+ 137              		.loc 1 101 5 is_stmt 0 view .LVU19
  138 000c FFF7FEFF 		bl	SPI_SendByte
  139              	.LVL10:
-  85:Core/Src/device/w25q64.c ****     pID[0] = SPI_SendByte(0xFF);  /* Manufacturer */
- 140              		.loc 1 85 5 is_stmt 1 view .LVU20
- 141              		.loc 1 85 14 is_stmt 0 view .LVU21
+ 102:Core/Src/device/w25q64.c ****     pID[0] = SPI_SendByte(0xFF);  /* Manufacturer */
+ 140              		.loc 1 102 5 is_stmt 1 view .LVU20
+ 141              		.loc 1 102 14 is_stmt 0 view .LVU21
  142 0010 FF20     		movs	r0, #255
  143 0012 FFF7FEFF 		bl	SPI_SendByte
  144              	.LVL11:
- 145              		.loc 1 85 12 discriminator 1 view .LVU22
+ 145              		.loc 1 102 12 discriminator 1 view .LVU22
  146 0016 2070     		strb	r0, [r4]
-  86:Core/Src/device/w25q64.c ****     pID[1] = SPI_SendByte(0xFF);  /* Memory Type   */
- 147              		.loc 1 86 5 is_stmt 1 view .LVU23
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 5
-
-
- 148              		.loc 1 86 14 is_stmt 0 view .LVU24
+ 103:Core/Src/device/w25q64.c ****     pID[1] = SPI_SendByte(0xFF);  /* Memory Type   */
+ 147              		.loc 1 103 5 is_stmt 1 view .LVU23
+ 148              		.loc 1 103 14 is_stmt 0 view .LVU24
  149 0018 FF20     		movs	r0, #255
  150 001a FFF7FEFF 		bl	SPI_SendByte
  151              	.LVL12:
- 152              		.loc 1 86 12 discriminator 1 view .LVU25
+ 152              		.loc 1 103 12 discriminator 1 view .LVU25
  153 001e 6070     		strb	r0, [r4, #1]
-  87:Core/Src/device/w25q64.c ****     pID[2] = SPI_SendByte(0xFF);  /* Capacity       */
- 154              		.loc 1 87 5 is_stmt 1 view .LVU26
- 155              		.loc 1 87 14 is_stmt 0 view .LVU27
+ 104:Core/Src/device/w25q64.c ****     pID[2] = SPI_SendByte(0xFF);  /* Capacity       */
+ 154              		.loc 1 104 5 is_stmt 1 view .LVU26
+ 155              		.loc 1 104 14 is_stmt 0 view .LVU27
  156 0020 FF20     		movs	r0, #255
  157 0022 FFF7FEFF 		bl	SPI_SendByte
  158              	.LVL13:
- 159              		.loc 1 87 12 discriminator 1 view .LVU28
+ 159              		.loc 1 104 12 discriminator 1 view .LVU28
  160 0026 A070     		strb	r0, [r4, #2]
-  88:Core/Src/device/w25q64.c ****     CS_HIGH();
- 161              		.loc 1 88 5 is_stmt 1 view .LVU29
+ 105:Core/Src/device/w25q64.c ****     CS_HIGH();
+ 161              		.loc 1 105 5 is_stmt 1 view .LVU29
  162 0028 2E61     		str	r6, [r5, #16]
-  89:Core/Src/device/w25q64.c **** }
- 163              		.loc 1 89 1 is_stmt 0 view .LVU30
+ 106:Core/Src/device/w25q64.c **** }
+ 163              		.loc 1 106 1 is_stmt 0 view .LVU30
  164 002a 70BD     		pop	{r4, r5, r6, pc}
  165              	.LVL14:
  166              	.L10:
- 167              		.loc 1 89 1 view .LVU31
+ 167              		.loc 1 106 1 view .LVU31
  168              		.align	2
  169              	.L9:
  170 002c 00080140 		.word	1073809408
@@ -277,1346 +294,1308 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 1
  179              		.thumb_func
  181              	W25Q64_Init:
  182              	.LFB67:
-  59:Core/Src/device/w25q64.c ****     /* Configure PA4 as GPIO Output (CS) */
- 183              		.loc 1 59 1 is_stmt 1 view -0
+  82:Core/Src/device/w25q64.c ****     W25Q64_HW_INIT();
+ 183              		.loc 1 82 1 is_stmt 1 view -0
  184              		.cfi_startproc
- 185              		@ args = 0, pretend = 0, frame = 24
+ 185              		@ args = 0, pretend = 0, frame = 8
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s 			page 6
+
+
  186              		@ frame_needed = 0, uses_anonymous_args = 0
- 187 0000 30B5     		push	{r4, r5, lr}
+ 187 0000 00B5     		push	{lr}
  188              	.LCFI5:
- 189              		.cfi_def_cfa_offset 12
- 190              		.cfi_offset 4, -12
- 191              		.cfi_offset 5, -8
- 192              		.cfi_offset 14, -4
- 193 0002 87B0     		sub	sp, sp, #28
- 194              	.LCFI6:
- 195              		.cfi_def_cfa_offset 40
-  61:Core/Src/device/w25q64.c ****     cfg.Pin   = W25Q64_CS_PIN;
- 196              		.loc 1 61 5 view .LVU33
-  61:Core/Src/device/w25q64.c ****     cfg.Pin   = W25Q64_CS_PIN;
- 197              		.loc 1 61 22 is_stmt 0 view .LVU34
- 198 0004 02A9     		add	r1, sp, #8
- 199 0006 0023     		movs	r3, #0
- 200 0008 0293     		str	r3, [sp, #8]
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 6
+ 189              		.cfi_def_cfa_offset 4
+ 190              		.cfi_offset 14, -4
+ 191 0002 83B0     		sub	sp, sp, #12
+ 192              	.LCFI6:
+ 193              		.cfi_def_cfa_offset 16
+  83:Core/Src/device/w25q64.c ****     CS_HIGH();
+ 194              		.loc 1 83 5 view .LVU33
+  83:Core/Src/device/w25q64.c ****     CS_HIGH();
+ 195              		.loc 1 83 5 view .LVU34
+  83:Core/Src/device/w25q64.c ****     CS_HIGH();
+ 196              		.loc 1 83 5 view .LVU35
+  84:Core/Src/device/w25q64.c **** 
+ 197              		.loc 1 84 5 view .LVU36
+ 198 0004 0D4B     		ldr	r3, .L17
+ 199 0006 1022     		movs	r2, #16
+ 200 0008 1A61     		str	r2, [r3, #16]
+  87:Core/Src/device/w25q64.c ****     W25Q64_ReadJEDEC_ID(id);
+ 201              		.loc 1 87 5 view .LVU37
+  88:Core/Src/device/w25q64.c ****     if (id[0] != 0xEF || id[1] != 0x40 || id[2] != 0x17) {
+ 202              		.loc 1 88 5 view .LVU38
+ 203 000a 01A8     		add	r0, sp, #4
+ 204 000c FFF7FEFF 		bl	W25Q64_ReadJEDEC_ID
+ 205              	.LVL15:
+  89:Core/Src/device/w25q64.c ****         return false;
+ 206              		.loc 1 89 5 view .LVU39
+  89:Core/Src/device/w25q64.c ****         return false;
+ 207              		.loc 1 89 11 is_stmt 0 view .LVU40
+ 208 0010 9DF80430 		ldrb	r3, [sp, #4]	@ zero_extendqisi2
+  89:Core/Src/device/w25q64.c ****         return false;
+ 209              		.loc 1 89 8 view .LVU41
+ 210 0014 EF2B     		cmp	r3, #239
+ 211 0016 09D1     		bne	.L13
+  89:Core/Src/device/w25q64.c ****         return false;
+ 212              		.loc 1 89 28 discriminator 1 view .LVU42
+ 213 0018 9DF80530 		ldrb	r3, [sp, #5]	@ zero_extendqisi2
+  89:Core/Src/device/w25q64.c ****         return false;
+ 214              		.loc 1 89 23 discriminator 1 view .LVU43
+ 215 001c 402B     		cmp	r3, #64
+ 216 001e 09D1     		bne	.L14
+  89:Core/Src/device/w25q64.c ****         return false;
+ 217              		.loc 1 89 45 discriminator 2 view .LVU44
+ 218 0020 9DF80630 		ldrb	r3, [sp, #6]	@ zero_extendqisi2
+  89:Core/Src/device/w25q64.c ****         return false;
+ 219              		.loc 1 89 40 discriminator 2 view .LVU45
+ 220 0024 172B     		cmp	r3, #23
+ 221 0026 07D1     		bne	.L15
+  92:Core/Src/device/w25q64.c **** }
+ 222              		.loc 1 92 12 view .LVU46
+ 223 0028 0120     		movs	r0, #1
+ 224 002a 00E0     		b	.L12
+ 225              	.L13:
+  90:Core/Src/device/w25q64.c ****     }
+ 226              		.loc 1 90 16 view .LVU47
+ 227 002c 0020     		movs	r0, #0
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s 			page 7
 
 
- 201 000a 4B60     		str	r3, [r1, #4]
- 202 000c 8B60     		str	r3, [r1, #8]
- 203 000e CB60     		str	r3, [r1, #12]
-  62:Core/Src/device/w25q64.c ****     cfg.Mode  = GPIO_MODE_OUTPUT_PP;
- 204              		.loc 1 62 5 is_stmt 1 view .LVU35
-  62:Core/Src/device/w25q64.c ****     cfg.Mode  = GPIO_MODE_OUTPUT_PP;
- 205              		.loc 1 62 15 is_stmt 0 view .LVU36
- 206 0010 1025     		movs	r5, #16
- 207 0012 0295     		str	r5, [sp, #8]
-  63:Core/Src/device/w25q64.c ****     cfg.Pull  = GPIO_PULLUP;
- 208              		.loc 1 63 5 is_stmt 1 view .LVU37
-  63:Core/Src/device/w25q64.c ****     cfg.Pull  = GPIO_PULLUP;
- 209              		.loc 1 63 15 is_stmt 0 view .LVU38
- 210 0014 0123     		movs	r3, #1
- 211 0016 0393     		str	r3, [sp, #12]
-  64:Core/Src/device/w25q64.c ****     cfg.Speed = GPIO_SPEED_FREQ_HIGH;
- 212              		.loc 1 64 5 is_stmt 1 view .LVU39
-  64:Core/Src/device/w25q64.c ****     cfg.Speed = GPIO_SPEED_FREQ_HIGH;
- 213              		.loc 1 64 15 is_stmt 0 view .LVU40
- 214 0018 0493     		str	r3, [sp, #16]
-  65:Core/Src/device/w25q64.c ****     HAL_GPIO_Init(W25Q64_CS_PORT, &cfg);
- 215              		.loc 1 65 5 is_stmt 1 view .LVU41
-  65:Core/Src/device/w25q64.c ****     HAL_GPIO_Init(W25Q64_CS_PORT, &cfg);
- 216              		.loc 1 65 15 is_stmt 0 view .LVU42
- 217 001a 0323     		movs	r3, #3
- 218 001c 0593     		str	r3, [sp, #20]
-  66:Core/Src/device/w25q64.c ****     CS_HIGH();
- 219              		.loc 1 66 5 is_stmt 1 view .LVU43
- 220 001e 0E4C     		ldr	r4, .L17
- 221 0020 2046     		mov	r0, r4
- 222 0022 FFF7FEFF 		bl	HAL_GPIO_Init
- 223              	.LVL15:
-  67:Core/Src/device/w25q64.c **** 
- 224              		.loc 1 67 5 view .LVU44
- 225 0026 2561     		str	r5, [r4, #16]
-  70:Core/Src/device/w25q64.c ****     W25Q64_ReadJEDEC_ID(id);
- 226              		.loc 1 70 5 view .LVU45
-  71:Core/Src/device/w25q64.c ****     if (id[0] != 0xEF || id[1] != 0x40 || id[2] != 0x17) {
- 227              		.loc 1 71 5 view .LVU46
- 228 0028 01A8     		add	r0, sp, #4
- 229 002a FFF7FEFF 		bl	W25Q64_ReadJEDEC_ID
- 230              	.LVL16:
-  72:Core/Src/device/w25q64.c ****         return false;
- 231              		.loc 1 72 5 view .LVU47
-  72:Core/Src/device/w25q64.c ****         return false;
- 232              		.loc 1 72 11 is_stmt 0 view .LVU48
- 233 002e 9DF80430 		ldrb	r3, [sp, #4]	@ zero_extendqisi2
-  72:Core/Src/device/w25q64.c ****         return false;
- 234              		.loc 1 72 8 view .LVU49
- 235 0032 EF2B     		cmp	r3, #239
- 236 0034 09D1     		bne	.L13
-  72:Core/Src/device/w25q64.c ****         return false;
- 237              		.loc 1 72 28 discriminator 1 view .LVU50
- 238 0036 9DF80530 		ldrb	r3, [sp, #5]	@ zero_extendqisi2
-  72:Core/Src/device/w25q64.c ****         return false;
- 239              		.loc 1 72 23 discriminator 1 view .LVU51
- 240 003a 402B     		cmp	r3, #64
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 7
+ 228              	.L12:
+  93:Core/Src/device/w25q64.c **** 
+ 229              		.loc 1 93 1 view .LVU48
+ 230 002e 03B0     		add	sp, sp, #12
+ 231              	.LCFI7:
+ 232              		.cfi_remember_state
+ 233              		.cfi_def_cfa_offset 4
+ 234              		@ sp needed
+ 235 0030 5DF804FB 		ldr	pc, [sp], #4
+ 236              	.L14:
+ 237              	.LCFI8:
+ 238              		.cfi_restore_state
+  90:Core/Src/device/w25q64.c ****     }
+ 239              		.loc 1 90 16 view .LVU49
+ 240 0034 0020     		movs	r0, #0
+ 241 0036 FAE7     		b	.L12
+ 242              	.L15:
+ 243 0038 0020     		movs	r0, #0
+ 244 003a F8E7     		b	.L12
+ 245              	.L18:
+ 246              		.align	2
+ 247              	.L17:
+ 248 003c 00080140 		.word	1073809408
+ 249              		.cfi_endproc
+ 250              	.LFE67:
+ 252              		.section	.text.W25Q64_ReadSR,"ax",%progbits
+ 253              		.align	1
+ 254              		.global	W25Q64_ReadSR
+ 255              		.syntax unified
+ 256              		.thumb
+ 257              		.thumb_func
+ 259              	W25Q64_ReadSR:
+ 260              	.LFB69:
+ 107:Core/Src/device/w25q64.c **** 
+ 108:Core/Src/device/w25q64.c **** /* ==================================================================
+ 109:Core/Src/device/w25q64.c ****  *  Status Register
+ 110:Core/Src/device/w25q64.c ****  * ================================================================== */
+ 111:Core/Src/device/w25q64.c **** uint8_t W25Q64_ReadSR(void)
+ 112:Core/Src/device/w25q64.c **** {
+ 261              		.loc 1 112 1 is_stmt 1 view -0
+ 262              		.cfi_startproc
+ 263              		@ args = 0, pretend = 0, frame = 0
+ 264              		@ frame_needed = 0, uses_anonymous_args = 0
+ 265 0000 38B5     		push	{r3, r4, r5, lr}
+ 266              	.LCFI9:
+ 267              		.cfi_def_cfa_offset 16
+ 268              		.cfi_offset 3, -16
+ 269              		.cfi_offset 4, -12
+ 270              		.cfi_offset 5, -8
+ 271              		.cfi_offset 14, -4
+ 113:Core/Src/device/w25q64.c ****     uint8_t sr;
+ 272              		.loc 1 113 5 view .LVU51
+ 114:Core/Src/device/w25q64.c ****     CS_LOW();
+ 273              		.loc 1 114 5 view .LVU52
+ 274 0002 054C     		ldr	r4, .L21
+ 275 0004 1025     		movs	r5, #16
+ 276 0006 6561     		str	r5, [r4, #20]
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s 			page 8
 
 
- 241 003c 08D1     		bne	.L14
-  72:Core/Src/device/w25q64.c ****         return false;
- 242              		.loc 1 72 45 discriminator 2 view .LVU52
- 243 003e 9DF80630 		ldrb	r3, [sp, #6]	@ zero_extendqisi2
-  72:Core/Src/device/w25q64.c ****         return false;
- 244              		.loc 1 72 40 discriminator 2 view .LVU53
- 245 0042 172B     		cmp	r3, #23
- 246 0044 06D1     		bne	.L15
-  75:Core/Src/device/w25q64.c **** }
- 247              		.loc 1 75 12 view .LVU54
- 248 0046 0120     		movs	r0, #1
- 249 0048 00E0     		b	.L12
- 250              	.L13:
-  73:Core/Src/device/w25q64.c ****     }
- 251              		.loc 1 73 16 view .LVU55
- 252 004a 0020     		movs	r0, #0
- 253              	.L12:
-  76:Core/Src/device/w25q64.c **** 
- 254              		.loc 1 76 1 view .LVU56
- 255 004c 07B0     		add	sp, sp, #28
- 256              	.LCFI7:
- 257              		.cfi_remember_state
- 258              		.cfi_def_cfa_offset 12
- 259              		@ sp needed
- 260 004e 30BD     		pop	{r4, r5, pc}
- 261              	.L14:
- 262              	.LCFI8:
- 263              		.cfi_restore_state
-  73:Core/Src/device/w25q64.c ****     }
- 264              		.loc 1 73 16 view .LVU57
- 265 0050 0020     		movs	r0, #0
- 266 0052 FBE7     		b	.L12
- 267              	.L15:
- 268 0054 0020     		movs	r0, #0
- 269 0056 F9E7     		b	.L12
- 270              	.L18:
- 271              		.align	2
- 272              	.L17:
- 273 0058 00080140 		.word	1073809408
- 274              		.cfi_endproc
- 275              	.LFE67:
- 277              		.section	.text.W25Q64_ReadSR,"ax",%progbits
- 278              		.align	1
- 279              		.global	W25Q64_ReadSR
- 280              		.syntax unified
- 281              		.thumb
- 282              		.thumb_func
- 284              	W25Q64_ReadSR:
- 285              	.LFB69:
-  90:Core/Src/device/w25q64.c **** 
-  91:Core/Src/device/w25q64.c **** /* ==================================================================
-  92:Core/Src/device/w25q64.c ****  *  Status Register
-  93:Core/Src/device/w25q64.c ****  * ================================================================== */
-  94:Core/Src/device/w25q64.c **** uint8_t W25Q64_ReadSR(void)
-  95:Core/Src/device/w25q64.c **** {
- 286              		.loc 1 95 1 is_stmt 1 view -0
- 287              		.cfi_startproc
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 8
+ 115:Core/Src/device/w25q64.c ****     SPI_SendByte(CMD_READ_SR1);
+ 277              		.loc 1 115 5 view .LVU53
+ 278 0008 0520     		movs	r0, #5
+ 279 000a FFF7FEFF 		bl	SPI_SendByte
+ 280              	.LVL16:
+ 116:Core/Src/device/w25q64.c ****     sr = SPI_SendByte(0xFF);
+ 281              		.loc 1 116 5 view .LVU54
+ 282              		.loc 1 116 10 is_stmt 0 view .LVU55
+ 283 000e FF20     		movs	r0, #255
+ 284 0010 FFF7FEFF 		bl	SPI_SendByte
+ 285              	.LVL17:
+ 117:Core/Src/device/w25q64.c ****     CS_HIGH();
+ 286              		.loc 1 117 5 is_stmt 1 view .LVU56
+ 287 0014 2561     		str	r5, [r4, #16]
+ 118:Core/Src/device/w25q64.c ****     return sr;
+ 288              		.loc 1 118 5 view .LVU57
+ 119:Core/Src/device/w25q64.c **** }
+ 289              		.loc 1 119 1 is_stmt 0 view .LVU58
+ 290 0016 38BD     		pop	{r3, r4, r5, pc}
+ 291              	.L22:
+ 292              		.align	2
+ 293              	.L21:
+ 294 0018 00080140 		.word	1073809408
+ 295              		.cfi_endproc
+ 296              	.LFE69:
+ 298              		.section	.text.W25Q64_WaitBusy,"ax",%progbits
+ 299              		.align	1
+ 300              		.global	W25Q64_WaitBusy
+ 301              		.syntax unified
+ 302              		.thumb
+ 303              		.thumb_func
+ 305              	W25Q64_WaitBusy:
+ 306              	.LFB70:
+ 120:Core/Src/device/w25q64.c **** 
+ 121:Core/Src/device/w25q64.c **** void W25Q64_WaitBusy(void)
+ 122:Core/Src/device/w25q64.c **** {
+ 307              		.loc 1 122 1 is_stmt 1 view -0
+ 308              		.cfi_startproc
+ 309              		@ args = 0, pretend = 0, frame = 0
+ 310              		@ frame_needed = 0, uses_anonymous_args = 0
+ 311 0000 08B5     		push	{r3, lr}
+ 312              	.LCFI10:
+ 313              		.cfi_def_cfa_offset 8
+ 314              		.cfi_offset 3, -8
+ 315              		.cfi_offset 14, -4
+ 316              	.L24:
+ 123:Core/Src/device/w25q64.c ****     while (W25Q64_ReadSR() & W25Q64_SR_BUSY);
+ 317              		.loc 1 123 12 discriminator 1 view .LVU60
+ 318 0002 FFF7FEFF 		bl	W25Q64_ReadSR
+ 319              	.LVL18:
+ 320 0006 10F0010F 		tst	r0, #1
+ 321 000a FAD1     		bne	.L24
+ 124:Core/Src/device/w25q64.c **** }
+ 322              		.loc 1 124 1 is_stmt 0 view .LVU61
+ 323 000c 08BD     		pop	{r3, pc}
+ 324              		.cfi_endproc
+ 325              	.LFE70:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s 			page 9
 
 
- 288              		@ args = 0, pretend = 0, frame = 0
- 289              		@ frame_needed = 0, uses_anonymous_args = 0
- 290 0000 38B5     		push	{r3, r4, r5, lr}
- 291              	.LCFI9:
- 292              		.cfi_def_cfa_offset 16
- 293              		.cfi_offset 3, -16
- 294              		.cfi_offset 4, -12
- 295              		.cfi_offset 5, -8
- 296              		.cfi_offset 14, -4
-  96:Core/Src/device/w25q64.c ****     uint8_t sr;
- 297              		.loc 1 96 5 view .LVU59
-  97:Core/Src/device/w25q64.c ****     CS_LOW();
- 298              		.loc 1 97 5 view .LVU60
- 299 0002 054C     		ldr	r4, .L21
- 300 0004 1025     		movs	r5, #16
- 301 0006 6561     		str	r5, [r4, #20]
-  98:Core/Src/device/w25q64.c ****     SPI_SendByte(CMD_READ_SR1);
- 302              		.loc 1 98 5 view .LVU61
- 303 0008 0520     		movs	r0, #5
- 304 000a FFF7FEFF 		bl	SPI_SendByte
- 305              	.LVL17:
-  99:Core/Src/device/w25q64.c ****     sr = SPI_SendByte(0xFF);
- 306              		.loc 1 99 5 view .LVU62
- 307              		.loc 1 99 10 is_stmt 0 view .LVU63
- 308 000e FF20     		movs	r0, #255
- 309 0010 FFF7FEFF 		bl	SPI_SendByte
- 310              	.LVL18:
- 100:Core/Src/device/w25q64.c ****     CS_HIGH();
- 311              		.loc 1 100 5 is_stmt 1 view .LVU64
- 312 0014 2561     		str	r5, [r4, #16]
- 101:Core/Src/device/w25q64.c ****     return sr;
- 313              		.loc 1 101 5 view .LVU65
- 102:Core/Src/device/w25q64.c **** }
- 314              		.loc 1 102 1 is_stmt 0 view .LVU66
- 315 0016 38BD     		pop	{r3, r4, r5, pc}
- 316              	.L22:
- 317              		.align	2
- 318              	.L21:
- 319 0018 00080140 		.word	1073809408
- 320              		.cfi_endproc
- 321              	.LFE69:
- 323              		.section	.text.W25Q64_WaitBusy,"ax",%progbits
- 324              		.align	1
- 325              		.global	W25Q64_WaitBusy
- 326              		.syntax unified
- 327              		.thumb
- 328              		.thumb_func
- 330              	W25Q64_WaitBusy:
- 331              	.LFB70:
- 103:Core/Src/device/w25q64.c **** 
- 104:Core/Src/device/w25q64.c **** void W25Q64_WaitBusy(void)
- 105:Core/Src/device/w25q64.c **** {
- 332              		.loc 1 105 1 is_stmt 1 view -0
- 333              		.cfi_startproc
- 334              		@ args = 0, pretend = 0, frame = 0
- 335              		@ frame_needed = 0, uses_anonymous_args = 0
- 336 0000 08B5     		push	{r3, lr}
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 9
+ 327              		.section	.text.W25Q64_WriteEnable,"ax",%progbits
+ 328              		.align	1
+ 329              		.global	W25Q64_WriteEnable
+ 330              		.syntax unified
+ 331              		.thumb
+ 332              		.thumb_func
+ 334              	W25Q64_WriteEnable:
+ 335              	.LFB71:
+ 125:Core/Src/device/w25q64.c **** 
+ 126:Core/Src/device/w25q64.c **** void W25Q64_WriteEnable(void)
+ 127:Core/Src/device/w25q64.c **** {
+ 336              		.loc 1 127 1 is_stmt 1 view -0
+ 337              		.cfi_startproc
+ 338              		@ args = 0, pretend = 0, frame = 0
+ 339              		@ frame_needed = 0, uses_anonymous_args = 0
+ 340 0000 38B5     		push	{r3, r4, r5, lr}
+ 341              	.LCFI11:
+ 342              		.cfi_def_cfa_offset 16
+ 343              		.cfi_offset 3, -16
+ 344              		.cfi_offset 4, -12
+ 345              		.cfi_offset 5, -8
+ 346              		.cfi_offset 14, -4
+ 128:Core/Src/device/w25q64.c ****     CS_LOW();
+ 347              		.loc 1 128 5 view .LVU63
+ 348 0002 044C     		ldr	r4, .L28
+ 349 0004 1025     		movs	r5, #16
+ 350 0006 6561     		str	r5, [r4, #20]
+ 129:Core/Src/device/w25q64.c ****     SPI_SendByte(CMD_WRITE_ENABLE);
+ 351              		.loc 1 129 5 view .LVU64
+ 352 0008 0620     		movs	r0, #6
+ 353 000a FFF7FEFF 		bl	SPI_SendByte
+ 354              	.LVL19:
+ 130:Core/Src/device/w25q64.c ****     CS_HIGH();
+ 355              		.loc 1 130 5 view .LVU65
+ 356 000e 2561     		str	r5, [r4, #16]
+ 131:Core/Src/device/w25q64.c **** }
+ 357              		.loc 1 131 1 is_stmt 0 view .LVU66
+ 358 0010 38BD     		pop	{r3, r4, r5, pc}
+ 359              	.L29:
+ 360 0012 00BF     		.align	2
+ 361              	.L28:
+ 362 0014 00080140 		.word	1073809408
+ 363              		.cfi_endproc
+ 364              	.LFE71:
+ 366              		.section	.text.W25Q64_Read,"ax",%progbits
+ 367              		.align	1
+ 368              		.global	W25Q64_Read
+ 369              		.syntax unified
+ 370              		.thumb
+ 371              		.thumb_func
+ 373              	W25Q64_Read:
+ 374              	.LVL20:
+ 375              	.LFB72:
+ 132:Core/Src/device/w25q64.c **** 
+ 133:Core/Src/device/w25q64.c **** /* ==================================================================
+ 134:Core/Src/device/w25q64.c ****  *  Read data (standard SPI read, no address limit)
+ 135:Core/Src/device/w25q64.c ****  * ================================================================== */
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s 			page 10
 
 
- 337              	.LCFI10:
- 338              		.cfi_def_cfa_offset 8
- 339              		.cfi_offset 3, -8
- 340              		.cfi_offset 14, -4
- 341              	.L24:
- 106:Core/Src/device/w25q64.c ****     while (W25Q64_ReadSR() & W25Q64_SR_BUSY);
- 342              		.loc 1 106 12 discriminator 1 view .LVU68
- 343 0002 FFF7FEFF 		bl	W25Q64_ReadSR
- 344              	.LVL19:
- 345 0006 10F0010F 		tst	r0, #1
- 346 000a FAD1     		bne	.L24
- 107:Core/Src/device/w25q64.c **** }
- 347              		.loc 1 107 1 is_stmt 0 view .LVU69
- 348 000c 08BD     		pop	{r3, pc}
- 349              		.cfi_endproc
- 350              	.LFE70:
- 352              		.section	.text.W25Q64_WriteEnable,"ax",%progbits
- 353              		.align	1
- 354              		.global	W25Q64_WriteEnable
- 355              		.syntax unified
- 356              		.thumb
- 357              		.thumb_func
- 359              	W25Q64_WriteEnable:
- 360              	.LFB71:
- 108:Core/Src/device/w25q64.c **** 
- 109:Core/Src/device/w25q64.c **** void W25Q64_WriteEnable(void)
- 110:Core/Src/device/w25q64.c **** {
- 361              		.loc 1 110 1 is_stmt 1 view -0
- 362              		.cfi_startproc
- 363              		@ args = 0, pretend = 0, frame = 0
- 364              		@ frame_needed = 0, uses_anonymous_args = 0
- 365 0000 38B5     		push	{r3, r4, r5, lr}
- 366              	.LCFI11:
- 367              		.cfi_def_cfa_offset 16
- 368              		.cfi_offset 3, -16
- 369              		.cfi_offset 4, -12
- 370              		.cfi_offset 5, -8
- 371              		.cfi_offset 14, -4
- 111:Core/Src/device/w25q64.c ****     CS_LOW();
- 372              		.loc 1 111 5 view .LVU71
- 373 0002 044C     		ldr	r4, .L28
- 374 0004 1025     		movs	r5, #16
- 375 0006 6561     		str	r5, [r4, #20]
- 112:Core/Src/device/w25q64.c ****     SPI_SendByte(CMD_WRITE_ENABLE);
- 376              		.loc 1 112 5 view .LVU72
- 377 0008 0620     		movs	r0, #6
- 378 000a FFF7FEFF 		bl	SPI_SendByte
- 379              	.LVL20:
- 113:Core/Src/device/w25q64.c ****     CS_HIGH();
- 380              		.loc 1 113 5 view .LVU73
- 381 000e 2561     		str	r5, [r4, #16]
- 114:Core/Src/device/w25q64.c **** }
- 382              		.loc 1 114 1 is_stmt 0 view .LVU74
- 383 0010 38BD     		pop	{r3, r4, r5, pc}
- 384              	.L29:
- 385 0012 00BF     		.align	2
- 386              	.L28:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 10
+ 136:Core/Src/device/w25q64.c **** void W25Q64_Read(uint32_t addr, uint8_t *pBuf, uint32_t len)
+ 137:Core/Src/device/w25q64.c **** {
+ 376              		.loc 1 137 1 is_stmt 1 view -0
+ 377              		.cfi_startproc
+ 378              		@ args = 0, pretend = 0, frame = 0
+ 379              		@ frame_needed = 0, uses_anonymous_args = 0
+ 380              		.loc 1 137 1 is_stmt 0 view .LVU68
+ 381 0000 70B5     		push	{r4, r5, r6, lr}
+ 382              	.LCFI12:
+ 383              		.cfi_def_cfa_offset 16
+ 384              		.cfi_offset 4, -16
+ 385              		.cfi_offset 5, -12
+ 386              		.cfi_offset 6, -8
+ 387              		.cfi_offset 14, -4
+ 388 0002 0446     		mov	r4, r0
+ 389 0004 0E46     		mov	r6, r1
+ 390 0006 1546     		mov	r5, r2
+ 138:Core/Src/device/w25q64.c ****     CS_LOW();
+ 391              		.loc 1 138 5 is_stmt 1 view .LVU69
+ 392 0008 0A4B     		ldr	r3, .L34
+ 393 000a 1022     		movs	r2, #16
+ 394              	.LVL21:
+ 395              		.loc 1 138 5 is_stmt 0 view .LVU70
+ 396 000c 5A61     		str	r2, [r3, #20]
+ 139:Core/Src/device/w25q64.c ****     SPI_SendByte(CMD_READ_DATA);
+ 397              		.loc 1 139 5 is_stmt 1 view .LVU71
+ 398 000e 0320     		movs	r0, #3
+ 399              	.LVL22:
+ 400              		.loc 1 139 5 is_stmt 0 view .LVU72
+ 401 0010 FFF7FEFF 		bl	SPI_SendByte
+ 402              	.LVL23:
+ 140:Core/Src/device/w25q64.c ****     SPI_SendAddr(addr);
+ 403              		.loc 1 140 5 is_stmt 1 view .LVU73
+ 404 0014 2046     		mov	r0, r4
+ 405 0016 FFF7FEFF 		bl	SPI_SendAddr
+ 406              	.LVL24:
+ 141:Core/Src/device/w25q64.c **** 
+ 142:Core/Src/device/w25q64.c ****     for (uint32_t i = 0; i < len; i++) {
+ 407              		.loc 1 142 5 view .LVU74
+ 408              	.LBB2:
+ 409              		.loc 1 142 10 view .LVU75
+ 410              		.loc 1 142 19 is_stmt 0 view .LVU76
+ 411 001a 0024     		movs	r4, #0
+ 412              	.LVL25:
+ 413              		.loc 1 142 5 view .LVU77
+ 414 001c 04E0     		b	.L31
+ 415              	.LVL26:
+ 416              	.L32:
+ 143:Core/Src/device/w25q64.c ****         pBuf[i] = SPI_SendByte(0xFF);
+ 417              		.loc 1 143 9 is_stmt 1 view .LVU78
+ 418              		.loc 1 143 19 is_stmt 0 view .LVU79
+ 419 001e FF20     		movs	r0, #255
+ 420 0020 FFF7FEFF 		bl	SPI_SendByte
+ 421              	.LVL27:
+ 422              		.loc 1 143 17 discriminator 1 view .LVU80
+ 423 0024 3055     		strb	r0, [r6, r4]
+ 142:Core/Src/device/w25q64.c ****         pBuf[i] = SPI_SendByte(0xFF);
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s 			page 11
 
 
- 387 0014 00080140 		.word	1073809408
- 388              		.cfi_endproc
- 389              	.LFE71:
- 391              		.section	.text.W25Q64_Read,"ax",%progbits
- 392              		.align	1
- 393              		.global	W25Q64_Read
- 394              		.syntax unified
- 395              		.thumb
- 396              		.thumb_func
- 398              	W25Q64_Read:
- 399              	.LVL21:
- 400              	.LFB72:
- 115:Core/Src/device/w25q64.c **** 
- 116:Core/Src/device/w25q64.c **** /* ==================================================================
- 117:Core/Src/device/w25q64.c ****  *  Read data (standard SPI read, no address limit)
- 118:Core/Src/device/w25q64.c ****  * ================================================================== */
- 119:Core/Src/device/w25q64.c **** void W25Q64_Read(uint32_t addr, uint8_t *pBuf, uint32_t len)
- 120:Core/Src/device/w25q64.c **** {
- 401              		.loc 1 120 1 is_stmt 1 view -0
- 402              		.cfi_startproc
- 403              		@ args = 0, pretend = 0, frame = 0
- 404              		@ frame_needed = 0, uses_anonymous_args = 0
- 405              		.loc 1 120 1 is_stmt 0 view .LVU76
- 406 0000 70B5     		push	{r4, r5, r6, lr}
- 407              	.LCFI12:
- 408              		.cfi_def_cfa_offset 16
- 409              		.cfi_offset 4, -16
- 410              		.cfi_offset 5, -12
- 411              		.cfi_offset 6, -8
- 412              		.cfi_offset 14, -4
- 413 0002 0446     		mov	r4, r0
- 414 0004 0E46     		mov	r6, r1
- 415 0006 1546     		mov	r5, r2
- 121:Core/Src/device/w25q64.c ****     CS_LOW();
- 416              		.loc 1 121 5 is_stmt 1 view .LVU77
- 417 0008 0A4B     		ldr	r3, .L34
- 418 000a 1022     		movs	r2, #16
- 419              	.LVL22:
- 420              		.loc 1 121 5 is_stmt 0 view .LVU78
- 421 000c 5A61     		str	r2, [r3, #20]
- 122:Core/Src/device/w25q64.c ****     SPI_SendByte(CMD_READ_DATA);
- 422              		.loc 1 122 5 is_stmt 1 view .LVU79
- 423 000e 0320     		movs	r0, #3
- 424              	.LVL23:
- 425              		.loc 1 122 5 is_stmt 0 view .LVU80
- 426 0010 FFF7FEFF 		bl	SPI_SendByte
- 427              	.LVL24:
- 123:Core/Src/device/w25q64.c ****     SPI_SendAddr(addr);
- 428              		.loc 1 123 5 is_stmt 1 view .LVU81
- 429 0014 2046     		mov	r0, r4
- 430 0016 FFF7FEFF 		bl	SPI_SendAddr
- 431              	.LVL25:
- 124:Core/Src/device/w25q64.c **** 
- 125:Core/Src/device/w25q64.c ****     for (uint32_t i = 0; i < len; i++) {
- 432              		.loc 1 125 5 view .LVU82
- 433              	.LBB2:
- 434              		.loc 1 125 10 view .LVU83
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 11
+ 424              		.loc 1 142 36 is_stmt 1 discriminator 3 view .LVU81
+ 425 0026 0134     		adds	r4, r4, #1
+ 426              	.LVL28:
+ 427              	.L31:
+ 142:Core/Src/device/w25q64.c ****         pBuf[i] = SPI_SendByte(0xFF);
+ 428              		.loc 1 142 28 discriminator 1 view .LVU82
+ 429 0028 AC42     		cmp	r4, r5
+ 430 002a F8D3     		bcc	.L32
+ 431              	.LBE2:
+ 144:Core/Src/device/w25q64.c ****     }
+ 145:Core/Src/device/w25q64.c ****     CS_HIGH();
+ 432              		.loc 1 145 5 view .LVU83
+ 433 002c 014B     		ldr	r3, .L34
+ 434 002e 1022     		movs	r2, #16
+ 435 0030 1A61     		str	r2, [r3, #16]
+ 146:Core/Src/device/w25q64.c **** }
+ 436              		.loc 1 146 1 is_stmt 0 view .LVU84
+ 437 0032 70BD     		pop	{r4, r5, r6, pc}
+ 438              	.LVL29:
+ 439              	.L35:
+ 440              		.loc 1 146 1 view .LVU85
+ 441              		.align	2
+ 442              	.L34:
+ 443 0034 00080140 		.word	1073809408
+ 444              		.cfi_endproc
+ 445              	.LFE72:
+ 447              		.section	.text.W25Q64_PageProgram,"ax",%progbits
+ 448              		.align	1
+ 449              		.global	W25Q64_PageProgram
+ 450              		.syntax unified
+ 451              		.thumb
+ 452              		.thumb_func
+ 454              	W25Q64_PageProgram:
+ 455              	.LVL30:
+ 456              	.LFB73:
+ 147:Core/Src/device/w25q64.c **** 
+ 148:Core/Src/device/w25q64.c **** /* ==================================================================
+ 149:Core/Src/device/w25q64.c ****  *  Page Program (1~256 bytes, must not cross page boundary)
+ 150:Core/Src/device/w25q64.c ****  *  Caller must call WriteEnable + WaitBusy before/after.
+ 151:Core/Src/device/w25q64.c ****  * ================================================================== */
+ 152:Core/Src/device/w25q64.c **** void W25Q64_PageProgram(uint32_t addr, const uint8_t *pBuf, uint16_t len)
+ 153:Core/Src/device/w25q64.c **** {
+ 457              		.loc 1 153 1 is_stmt 1 view -0
+ 458              		.cfi_startproc
+ 459              		@ args = 0, pretend = 0, frame = 0
+ 460              		@ frame_needed = 0, uses_anonymous_args = 0
+ 154:Core/Src/device/w25q64.c ****     if (len == 0 || len > W25Q64_PAGE_SIZE) return;
+ 461              		.loc 1 154 5 view .LVU87
+ 462              		.loc 1 154 18 is_stmt 0 view .LVU88
+ 463 0000 531E     		subs	r3, r2, #1
+ 464 0002 9BB2     		uxth	r3, r3
+ 465              		.loc 1 154 8 view .LVU89
+ 466 0004 FF2B     		cmp	r3, #255
+ 467 0006 00D9     		bls	.L44
+ 468 0008 7047     		bx	lr
+ 469              	.L44:
+ 153:Core/Src/device/w25q64.c ****     if (len == 0 || len > W25Q64_PAGE_SIZE) return;
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s 			page 12
 
 
- 435              		.loc 1 125 19 is_stmt 0 view .LVU84
- 436 001a 0024     		movs	r4, #0
- 437              	.LVL26:
- 438              		.loc 1 125 5 view .LVU85
- 439 001c 04E0     		b	.L31
- 440              	.LVL27:
- 441              	.L32:
- 126:Core/Src/device/w25q64.c ****         pBuf[i] = SPI_SendByte(0xFF);
- 442              		.loc 1 126 9 is_stmt 1 view .LVU86
- 443              		.loc 1 126 19 is_stmt 0 view .LVU87
- 444 001e FF20     		movs	r0, #255
- 445 0020 FFF7FEFF 		bl	SPI_SendByte
- 446              	.LVL28:
- 447              		.loc 1 126 17 discriminator 1 view .LVU88
- 448 0024 3055     		strb	r0, [r6, r4]
- 125:Core/Src/device/w25q64.c ****         pBuf[i] = SPI_SendByte(0xFF);
- 449              		.loc 1 125 36 is_stmt 1 discriminator 3 view .LVU89
- 450 0026 0134     		adds	r4, r4, #1
- 451              	.LVL29:
- 452              	.L31:
- 125:Core/Src/device/w25q64.c ****         pBuf[i] = SPI_SendByte(0xFF);
- 453              		.loc 1 125 28 discriminator 1 view .LVU90
- 454 0028 AC42     		cmp	r4, r5
- 455 002a F8D3     		bcc	.L32
- 456              	.LBE2:
- 127:Core/Src/device/w25q64.c ****     }
- 128:Core/Src/device/w25q64.c ****     CS_HIGH();
- 457              		.loc 1 128 5 view .LVU91
- 458 002c 014B     		ldr	r3, .L34
- 459 002e 1022     		movs	r2, #16
- 460 0030 1A61     		str	r2, [r3, #16]
- 129:Core/Src/device/w25q64.c **** }
- 461              		.loc 1 129 1 is_stmt 0 view .LVU92
- 462 0032 70BD     		pop	{r4, r5, r6, pc}
- 463              	.LVL30:
- 464              	.L35:
- 465              		.loc 1 129 1 view .LVU93
- 466              		.align	2
- 467              	.L34:
- 468 0034 00080140 		.word	1073809408
- 469              		.cfi_endproc
- 470              	.LFE72:
- 472              		.section	.text.W25Q64_PageProgram,"ax",%progbits
- 473              		.align	1
- 474              		.global	W25Q64_PageProgram
- 475              		.syntax unified
- 476              		.thumb
- 477              		.thumb_func
- 479              	W25Q64_PageProgram:
- 480              	.LVL31:
- 481              	.LFB73:
- 130:Core/Src/device/w25q64.c **** 
- 131:Core/Src/device/w25q64.c **** /* ==================================================================
- 132:Core/Src/device/w25q64.c ****  *  Page Program (1~256 bytes, must not cross page boundary)
- 133:Core/Src/device/w25q64.c ****  *  Caller must call WriteEnable + WaitBusy before/after.
- 134:Core/Src/device/w25q64.c ****  * ================================================================== */
- 135:Core/Src/device/w25q64.c **** void W25Q64_PageProgram(uint32_t addr, const uint8_t *pBuf, uint16_t len)
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 12
+ 470              		.loc 1 153 1 view .LVU90
+ 471 000a 70B5     		push	{r4, r5, r6, lr}
+ 472              	.LCFI13:
+ 473              		.cfi_def_cfa_offset 16
+ 474              		.cfi_offset 4, -16
+ 475              		.cfi_offset 5, -12
+ 476              		.cfi_offset 6, -8
+ 477              		.cfi_offset 14, -4
+ 478 000c 0446     		mov	r4, r0
+ 479 000e 0E46     		mov	r6, r1
+ 480 0010 1546     		mov	r5, r2
+ 155:Core/Src/device/w25q64.c **** 
+ 156:Core/Src/device/w25q64.c ****     W25Q64_WriteEnable();
+ 481              		.loc 1 156 5 is_stmt 1 view .LVU91
+ 482 0012 FFF7FEFF 		bl	W25Q64_WriteEnable
+ 483              	.LVL31:
+ 157:Core/Src/device/w25q64.c ****     CS_LOW();
+ 484              		.loc 1 157 5 view .LVU92
+ 485 0016 0C4B     		ldr	r3, .L45
+ 486 0018 1022     		movs	r2, #16
+ 487 001a 5A61     		str	r2, [r3, #20]
+ 158:Core/Src/device/w25q64.c ****     SPI_SendByte(CMD_PAGE_PROGRAM);
+ 488              		.loc 1 158 5 view .LVU93
+ 489 001c 0220     		movs	r0, #2
+ 490 001e FFF7FEFF 		bl	SPI_SendByte
+ 491              	.LVL32:
+ 159:Core/Src/device/w25q64.c ****     SPI_SendAddr(addr);
+ 492              		.loc 1 159 5 view .LVU94
+ 493 0022 2046     		mov	r0, r4
+ 494 0024 FFF7FEFF 		bl	SPI_SendAddr
+ 495              	.LVL33:
+ 160:Core/Src/device/w25q64.c **** 
+ 161:Core/Src/device/w25q64.c ****     for (uint16_t i = 0; i < len; i++) {
+ 496              		.loc 1 161 5 view .LVU95
+ 497              	.LBB3:
+ 498              		.loc 1 161 10 view .LVU96
+ 499              		.loc 1 161 19 is_stmt 0 view .LVU97
+ 500 0028 0024     		movs	r4, #0
+ 501              	.LVL34:
+ 502              		.loc 1 161 5 view .LVU98
+ 503 002a 04E0     		b	.L38
+ 504              	.LVL35:
+ 505              	.L39:
+ 162:Core/Src/device/w25q64.c ****         SPI_SendByte(pBuf[i]);
+ 506              		.loc 1 162 9 is_stmt 1 view .LVU99
+ 507 002c 305D     		ldrb	r0, [r6, r4]	@ zero_extendqisi2
+ 508 002e FFF7FEFF 		bl	SPI_SendByte
+ 509              	.LVL36:
+ 161:Core/Src/device/w25q64.c ****         SPI_SendByte(pBuf[i]);
+ 510              		.loc 1 161 36 discriminator 3 view .LVU100
+ 511 0032 0134     		adds	r4, r4, #1
+ 512              	.LVL37:
+ 161:Core/Src/device/w25q64.c ****         SPI_SendByte(pBuf[i]);
+ 513              		.loc 1 161 36 is_stmt 0 discriminator 3 view .LVU101
+ 514 0034 A4B2     		uxth	r4, r4
+ 515              	.LVL38:
+ 516              	.L38:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s 			page 13
 
 
- 136:Core/Src/device/w25q64.c **** {
- 482              		.loc 1 136 1 is_stmt 1 view -0
- 483              		.cfi_startproc
- 484              		@ args = 0, pretend = 0, frame = 0
- 485              		@ frame_needed = 0, uses_anonymous_args = 0
- 137:Core/Src/device/w25q64.c ****     if (len == 0 || len > W25Q64_PAGE_SIZE) return;
- 486              		.loc 1 137 5 view .LVU95
- 487              		.loc 1 137 18 is_stmt 0 view .LVU96
- 488 0000 531E     		subs	r3, r2, #1
- 489 0002 9BB2     		uxth	r3, r3
- 490              		.loc 1 137 8 view .LVU97
- 491 0004 FF2B     		cmp	r3, #255
- 492 0006 00D9     		bls	.L44
- 493 0008 7047     		bx	lr
- 494              	.L44:
- 136:Core/Src/device/w25q64.c ****     if (len == 0 || len > W25Q64_PAGE_SIZE) return;
- 495              		.loc 1 136 1 view .LVU98
- 496 000a 70B5     		push	{r4, r5, r6, lr}
- 497              	.LCFI13:
- 498              		.cfi_def_cfa_offset 16
- 499              		.cfi_offset 4, -16
- 500              		.cfi_offset 5, -12
- 501              		.cfi_offset 6, -8
- 502              		.cfi_offset 14, -4
- 503 000c 0446     		mov	r4, r0
- 504 000e 0E46     		mov	r6, r1
- 505 0010 1546     		mov	r5, r2
- 138:Core/Src/device/w25q64.c **** 
- 139:Core/Src/device/w25q64.c ****     W25Q64_WriteEnable();
- 506              		.loc 1 139 5 is_stmt 1 view .LVU99
- 507 0012 FFF7FEFF 		bl	W25Q64_WriteEnable
- 508              	.LVL32:
- 140:Core/Src/device/w25q64.c ****     CS_LOW();
- 509              		.loc 1 140 5 view .LVU100
- 510 0016 0C4B     		ldr	r3, .L45
- 511 0018 1022     		movs	r2, #16
- 512 001a 5A61     		str	r2, [r3, #20]
- 141:Core/Src/device/w25q64.c ****     SPI_SendByte(CMD_PAGE_PROGRAM);
- 513              		.loc 1 141 5 view .LVU101
- 514 001c 0220     		movs	r0, #2
- 515 001e FFF7FEFF 		bl	SPI_SendByte
- 516              	.LVL33:
- 142:Core/Src/device/w25q64.c ****     SPI_SendAddr(addr);
- 517              		.loc 1 142 5 view .LVU102
- 518 0022 2046     		mov	r0, r4
- 519 0024 FFF7FEFF 		bl	SPI_SendAddr
- 520              	.LVL34:
- 143:Core/Src/device/w25q64.c **** 
- 144:Core/Src/device/w25q64.c ****     for (uint16_t i = 0; i < len; i++) {
- 521              		.loc 1 144 5 view .LVU103
- 522              	.LBB3:
- 523              		.loc 1 144 10 view .LVU104
- 524              		.loc 1 144 19 is_stmt 0 view .LVU105
- 525 0028 0024     		movs	r4, #0
- 526              	.LVL35:
- 527              		.loc 1 144 5 view .LVU106
- 528 002a 04E0     		b	.L38
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 13
+ 161:Core/Src/device/w25q64.c ****         SPI_SendByte(pBuf[i]);
+ 517              		.loc 1 161 28 is_stmt 1 discriminator 1 view .LVU102
+ 518 0036 AC42     		cmp	r4, r5
+ 519 0038 F8D3     		bcc	.L39
+ 520              	.LBE3:
+ 163:Core/Src/device/w25q64.c ****     }
+ 164:Core/Src/device/w25q64.c ****     CS_HIGH();
+ 521              		.loc 1 164 5 view .LVU103
+ 522 003a 034B     		ldr	r3, .L45
+ 523 003c 1022     		movs	r2, #16
+ 524 003e 1A61     		str	r2, [r3, #16]
+ 165:Core/Src/device/w25q64.c ****     W25Q64_WaitBusy();
+ 525              		.loc 1 165 5 view .LVU104
+ 526 0040 FFF7FEFF 		bl	W25Q64_WaitBusy
+ 527              	.LVL39:
+ 166:Core/Src/device/w25q64.c **** }
+ 528              		.loc 1 166 1 is_stmt 0 view .LVU105
+ 529 0044 70BD     		pop	{r4, r5, r6, pc}
+ 530              	.LVL40:
+ 531              	.L46:
+ 532              		.loc 1 166 1 view .LVU106
+ 533 0046 00BF     		.align	2
+ 534              	.L45:
+ 535 0048 00080140 		.word	1073809408
+ 536              		.cfi_endproc
+ 537              	.LFE73:
+ 539              		.section	.text.W25Q64_Write,"ax",%progbits
+ 540              		.align	1
+ 541              		.global	W25Q64_Write
+ 542              		.syntax unified
+ 543              		.thumb
+ 544              		.thumb_func
+ 546              	W25Q64_Write:
+ 547              	.LVL41:
+ 548              	.LFB74:
+ 167:Core/Src/device/w25q64.c **** 
+ 168:Core/Src/device/w25q64.c **** /* ==================================================================
+ 169:Core/Src/device/w25q64.c ****  *  Write arbitrary length (handles page boundaries)
+ 170:Core/Src/device/w25q64.c ****  * ================================================================== */
+ 171:Core/Src/device/w25q64.c **** bool W25Q64_Write(uint32_t addr, const uint8_t *pBuf, uint32_t len)
+ 172:Core/Src/device/w25q64.c **** {
+ 549              		.loc 1 172 1 is_stmt 1 view -0
+ 550              		.cfi_startproc
+ 551              		@ args = 0, pretend = 0, frame = 0
+ 552              		@ frame_needed = 0, uses_anonymous_args = 0
+ 173:Core/Src/device/w25q64.c ****     uint32_t offset = 0;
+ 553              		.loc 1 173 5 view .LVU108
+ 174:Core/Src/device/w25q64.c **** 
+ 175:Core/Src/device/w25q64.c ****     if (addr + len > W25Q64_TOTAL_SIZE) return false;
+ 554              		.loc 1 175 5 view .LVU109
+ 555              		.loc 1 175 14 is_stmt 0 view .LVU110
+ 556 0000 8318     		adds	r3, r0, r2
+ 557              		.loc 1 175 8 view .LVU111
+ 558 0002 B3F5000F 		cmp	r3, #8388608
+ 559 0006 1AD8     		bhi	.L51
+ 172:Core/Src/device/w25q64.c ****     uint32_t offset = 0;
+ 560              		.loc 1 172 1 view .LVU112
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s 			page 14
 
 
- 529              	.LVL36:
- 530              	.L39:
- 145:Core/Src/device/w25q64.c ****         SPI_SendByte(pBuf[i]);
- 531              		.loc 1 145 9 is_stmt 1 view .LVU107
- 532 002c 305D     		ldrb	r0, [r6, r4]	@ zero_extendqisi2
- 533 002e FFF7FEFF 		bl	SPI_SendByte
- 534              	.LVL37:
- 144:Core/Src/device/w25q64.c ****         SPI_SendByte(pBuf[i]);
- 535              		.loc 1 144 36 discriminator 3 view .LVU108
- 536 0032 0134     		adds	r4, r4, #1
- 537              	.LVL38:
- 144:Core/Src/device/w25q64.c ****         SPI_SendByte(pBuf[i]);
- 538              		.loc 1 144 36 is_stmt 0 discriminator 3 view .LVU109
- 539 0034 A4B2     		uxth	r4, r4
- 540              	.LVL39:
- 541              	.L38:
- 144:Core/Src/device/w25q64.c ****         SPI_SendByte(pBuf[i]);
- 542              		.loc 1 144 28 is_stmt 1 discriminator 1 view .LVU110
- 543 0036 AC42     		cmp	r4, r5
- 544 0038 F8D3     		bcc	.L39
- 545              	.LBE3:
- 146:Core/Src/device/w25q64.c ****     }
- 147:Core/Src/device/w25q64.c ****     CS_HIGH();
- 546              		.loc 1 147 5 view .LVU111
- 547 003a 034B     		ldr	r3, .L45
- 548 003c 1022     		movs	r2, #16
- 549 003e 1A61     		str	r2, [r3, #16]
- 148:Core/Src/device/w25q64.c ****     W25Q64_WaitBusy();
- 550              		.loc 1 148 5 view .LVU112
- 551 0040 FFF7FEFF 		bl	W25Q64_WaitBusy
- 552              	.LVL40:
- 149:Core/Src/device/w25q64.c **** }
- 553              		.loc 1 149 1 is_stmt 0 view .LVU113
- 554 0044 70BD     		pop	{r4, r5, r6, pc}
- 555              	.LVL41:
- 556              	.L46:
- 557              		.loc 1 149 1 view .LVU114
- 558 0046 00BF     		.align	2
- 559              	.L45:
- 560 0048 00080140 		.word	1073809408
- 561              		.cfi_endproc
- 562              	.LFE73:
- 564              		.section	.text.W25Q64_Write,"ax",%progbits
- 565              		.align	1
- 566              		.global	W25Q64_Write
- 567              		.syntax unified
- 568              		.thumb
- 569              		.thumb_func
- 571              	W25Q64_Write:
- 572              	.LVL42:
- 573              	.LFB74:
- 150:Core/Src/device/w25q64.c **** 
- 151:Core/Src/device/w25q64.c **** /* ==================================================================
- 152:Core/Src/device/w25q64.c ****  *  Write arbitrary length (handles page boundaries)
- 153:Core/Src/device/w25q64.c ****  * ================================================================== */
- 154:Core/Src/device/w25q64.c **** bool W25Q64_Write(uint32_t addr, const uint8_t *pBuf, uint32_t len)
- 155:Core/Src/device/w25q64.c **** {
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 14
+ 561 0008 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 562              	.LCFI14:
+ 563              		.cfi_def_cfa_offset 24
+ 564              		.cfi_offset 4, -24
+ 565              		.cfi_offset 5, -20
+ 566              		.cfi_offset 6, -16
+ 567              		.cfi_offset 7, -12
+ 568              		.cfi_offset 8, -8
+ 569              		.cfi_offset 14, -4
+ 570 000c 0646     		mov	r6, r0
+ 571 000e 8846     		mov	r8, r1
+ 572 0010 1746     		mov	r7, r2
+ 173:Core/Src/device/w25q64.c ****     uint32_t offset = 0;
+ 573              		.loc 1 173 14 view .LVU113
+ 574 0012 0025     		movs	r5, #0
+ 575 0014 0EE0     		b	.L49
+ 576              	.LVL42:
+ 577              	.L50:
+ 578              	.LBB4:
+ 176:Core/Src/device/w25q64.c **** 
+ 177:Core/Src/device/w25q64.c ****     while (offset < len) {
+ 178:Core/Src/device/w25q64.c ****         uint32_t page_remain = W25Q64_PAGE_SIZE - (addr % W25Q64_PAGE_SIZE);
+ 579              		.loc 1 178 9 is_stmt 1 view .LVU114
+ 580              		.loc 1 178 57 is_stmt 0 view .LVU115
+ 581 0016 F3B2     		uxtb	r3, r6
+ 582              		.loc 1 178 18 view .LVU116
+ 583 0018 C3F58073 		rsb	r3, r3, #256
+ 584              	.LVL43:
+ 179:Core/Src/device/w25q64.c ****         uint32_t chunk = (len - offset < page_remain) ? (len - offset) : page_remain;
+ 585              		.loc 1 179 9 is_stmt 1 view .LVU117
+ 586              		.loc 1 179 31 is_stmt 0 view .LVU118
+ 587 001c 7C1B     		subs	r4, r7, r5
+ 588              		.loc 1 179 18 view .LVU119
+ 589 001e 9C42     		cmp	r4, r3
+ 590 0020 28BF     		it	cs
+ 591 0022 1C46     		movcs	r4, r3
+ 592              	.LVL44:
+ 180:Core/Src/device/w25q64.c **** 
+ 181:Core/Src/device/w25q64.c ****         W25Q64_PageProgram(addr, pBuf + offset, (uint16_t)chunk);
+ 593              		.loc 1 181 9 is_stmt 1 view .LVU120
+ 594 0024 A2B2     		uxth	r2, r4
+ 595 0026 08EB0501 		add	r1, r8, r5
+ 596 002a 3046     		mov	r0, r6
+ 597 002c FFF7FEFF 		bl	W25Q64_PageProgram
+ 598              	.LVL45:
+ 182:Core/Src/device/w25q64.c **** 
+ 183:Core/Src/device/w25q64.c ****         offset += chunk;
+ 599              		.loc 1 183 9 view .LVU121
+ 600              		.loc 1 183 16 is_stmt 0 view .LVU122
+ 601 0030 2544     		add	r5, r5, r4
+ 602              	.LVL46:
+ 184:Core/Src/device/w25q64.c ****         addr   += chunk;
+ 603              		.loc 1 184 9 is_stmt 1 view .LVU123
+ 604              		.loc 1 184 16 is_stmt 0 view .LVU124
+ 605 0032 2644     		add	r6, r6, r4
+ 606              	.LVL47:
+ 607              	.L49:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s 			page 15
 
 
- 574              		.loc 1 155 1 is_stmt 1 view -0
- 575              		.cfi_startproc
- 576              		@ args = 0, pretend = 0, frame = 0
- 577              		@ frame_needed = 0, uses_anonymous_args = 0
- 156:Core/Src/device/w25q64.c ****     uint32_t offset = 0;
- 578              		.loc 1 156 5 view .LVU116
- 157:Core/Src/device/w25q64.c **** 
- 158:Core/Src/device/w25q64.c ****     if (addr + len > W25Q64_TOTAL_SIZE) return false;
- 579              		.loc 1 158 5 view .LVU117
- 580              		.loc 1 158 14 is_stmt 0 view .LVU118
- 581 0000 8318     		adds	r3, r0, r2
- 582              		.loc 1 158 8 view .LVU119
- 583 0002 B3F5000F 		cmp	r3, #8388608
- 584 0006 1AD8     		bhi	.L51
- 155:Core/Src/device/w25q64.c ****     uint32_t offset = 0;
- 585              		.loc 1 155 1 view .LVU120
- 586 0008 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
- 587              	.LCFI14:
- 588              		.cfi_def_cfa_offset 24
- 589              		.cfi_offset 4, -24
- 590              		.cfi_offset 5, -20
- 591              		.cfi_offset 6, -16
- 592              		.cfi_offset 7, -12
- 593              		.cfi_offset 8, -8
- 594              		.cfi_offset 14, -4
- 595 000c 0646     		mov	r6, r0
- 596 000e 8846     		mov	r8, r1
- 597 0010 1746     		mov	r7, r2
- 156:Core/Src/device/w25q64.c ****     uint32_t offset = 0;
- 598              		.loc 1 156 14 view .LVU121
- 599 0012 0025     		movs	r5, #0
- 600 0014 0EE0     		b	.L49
- 601              	.LVL43:
- 602              	.L50:
- 603              	.LBB4:
- 159:Core/Src/device/w25q64.c **** 
- 160:Core/Src/device/w25q64.c ****     while (offset < len) {
- 161:Core/Src/device/w25q64.c ****         uint32_t page_remain = W25Q64_PAGE_SIZE - (addr % W25Q64_PAGE_SIZE);
- 604              		.loc 1 161 9 is_stmt 1 view .LVU122
- 605              		.loc 1 161 57 is_stmt 0 view .LVU123
- 606 0016 F3B2     		uxtb	r3, r6
- 607              		.loc 1 161 18 view .LVU124
- 608 0018 C3F58073 		rsb	r3, r3, #256
- 609              	.LVL44:
- 162:Core/Src/device/w25q64.c ****         uint32_t chunk = (len - offset < page_remain) ? (len - offset) : page_remain;
- 610              		.loc 1 162 9 is_stmt 1 view .LVU125
- 611              		.loc 1 162 31 is_stmt 0 view .LVU126
- 612 001c 7C1B     		subs	r4, r7, r5
- 613              		.loc 1 162 18 view .LVU127
- 614 001e 9C42     		cmp	r4, r3
- 615 0020 28BF     		it	cs
- 616 0022 1C46     		movcs	r4, r3
- 617              	.LVL45:
- 163:Core/Src/device/w25q64.c **** 
- 164:Core/Src/device/w25q64.c ****         W25Q64_PageProgram(addr, pBuf + offset, (uint16_t)chunk);
- 618              		.loc 1 164 9 is_stmt 1 view .LVU128
- 619 0024 A2B2     		uxth	r2, r4
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 15
+ 608              		.loc 1 184 16 view .LVU125
+ 609              	.LBE4:
+ 177:Core/Src/device/w25q64.c ****         uint32_t page_remain = W25Q64_PAGE_SIZE - (addr % W25Q64_PAGE_SIZE);
+ 610              		.loc 1 177 19 is_stmt 1 view .LVU126
+ 611 0034 BD42     		cmp	r5, r7
+ 612 0036 EED3     		bcc	.L50
+ 185:Core/Src/device/w25q64.c ****     }
+ 186:Core/Src/device/w25q64.c ****     return true;
+ 613              		.loc 1 186 12 is_stmt 0 view .LVU127
+ 614 0038 0120     		movs	r0, #1
+ 187:Core/Src/device/w25q64.c **** }
+ 615              		.loc 1 187 1 view .LVU128
+ 616 003a BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 617              	.LVL48:
+ 618              	.L51:
+ 619              	.LCFI15:
+ 620              		.cfi_def_cfa_offset 0
+ 621              		.cfi_restore 4
+ 622              		.cfi_restore 5
+ 623              		.cfi_restore 6
+ 624              		.cfi_restore 7
+ 625              		.cfi_restore 8
+ 626              		.cfi_restore 14
+ 175:Core/Src/device/w25q64.c **** 
+ 627              		.loc 1 175 48 discriminator 1 view .LVU129
+ 628 003e 0020     		movs	r0, #0
+ 629              	.LVL49:
+ 630              		.loc 1 187 1 view .LVU130
+ 631 0040 7047     		bx	lr
+ 632              		.cfi_endproc
+ 633              	.LFE74:
+ 635              		.section	.text.W25Q64_SectorErase,"ax",%progbits
+ 636              		.align	1
+ 637              		.global	W25Q64_SectorErase
+ 638              		.syntax unified
+ 639              		.thumb
+ 640              		.thumb_func
+ 642              	W25Q64_SectorErase:
+ 643              	.LVL50:
+ 644              	.LFB75:
+ 188:Core/Src/device/w25q64.c **** 
+ 189:Core/Src/device/w25q64.c **** /* ==================================================================
+ 190:Core/Src/device/w25q64.c ****  *  Erase operations
+ 191:Core/Src/device/w25q64.c ****  * ================================================================== */
+ 192:Core/Src/device/w25q64.c **** void W25Q64_SectorErase(uint32_t addr)
+ 193:Core/Src/device/w25q64.c **** {
+ 645              		.loc 1 193 1 is_stmt 1 view -0
+ 646              		.cfi_startproc
+ 647              		@ args = 0, pretend = 0, frame = 0
+ 648              		@ frame_needed = 0, uses_anonymous_args = 0
+ 649              		.loc 1 193 1 is_stmt 0 view .LVU132
+ 650 0000 70B5     		push	{r4, r5, r6, lr}
+ 651              	.LCFI16:
+ 652              		.cfi_def_cfa_offset 16
+ 653              		.cfi_offset 4, -16
+ 654              		.cfi_offset 5, -12
+ 655              		.cfi_offset 6, -8
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s 			page 16
 
 
- 620 0026 08EB0501 		add	r1, r8, r5
- 621 002a 3046     		mov	r0, r6
- 622 002c FFF7FEFF 		bl	W25Q64_PageProgram
- 623              	.LVL46:
- 165:Core/Src/device/w25q64.c **** 
- 166:Core/Src/device/w25q64.c ****         offset += chunk;
- 624              		.loc 1 166 9 view .LVU129
- 625              		.loc 1 166 16 is_stmt 0 view .LVU130
- 626 0030 2544     		add	r5, r5, r4
- 627              	.LVL47:
- 167:Core/Src/device/w25q64.c ****         addr   += chunk;
- 628              		.loc 1 167 9 is_stmt 1 view .LVU131
- 629              		.loc 1 167 16 is_stmt 0 view .LVU132
- 630 0032 2644     		add	r6, r6, r4
- 631              	.LVL48:
- 632              	.L49:
- 633              		.loc 1 167 16 view .LVU133
- 634              	.LBE4:
- 160:Core/Src/device/w25q64.c ****         uint32_t page_remain = W25Q64_PAGE_SIZE - (addr % W25Q64_PAGE_SIZE);
- 635              		.loc 1 160 19 is_stmt 1 view .LVU134
- 636 0034 BD42     		cmp	r5, r7
- 637 0036 EED3     		bcc	.L50
- 168:Core/Src/device/w25q64.c ****     }
- 169:Core/Src/device/w25q64.c ****     return true;
- 638              		.loc 1 169 12 is_stmt 0 view .LVU135
- 639 0038 0120     		movs	r0, #1
- 170:Core/Src/device/w25q64.c **** }
- 640              		.loc 1 170 1 view .LVU136
- 641 003a BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
- 642              	.LVL49:
- 643              	.L51:
- 644              	.LCFI15:
- 645              		.cfi_def_cfa_offset 0
- 646              		.cfi_restore 4
- 647              		.cfi_restore 5
- 648              		.cfi_restore 6
- 649              		.cfi_restore 7
- 650              		.cfi_restore 8
- 651              		.cfi_restore 14
- 158:Core/Src/device/w25q64.c **** 
- 652              		.loc 1 158 48 discriminator 1 view .LVU137
- 653 003e 0020     		movs	r0, #0
- 654              	.LVL50:
- 655              		.loc 1 170 1 view .LVU138
- 656 0040 7047     		bx	lr
- 657              		.cfi_endproc
- 658              	.LFE74:
- 660              		.section	.text.W25Q64_SectorErase,"ax",%progbits
- 661              		.align	1
- 662              		.global	W25Q64_SectorErase
- 663              		.syntax unified
- 664              		.thumb
- 665              		.thumb_func
- 667              	W25Q64_SectorErase:
- 668              	.LVL51:
- 669              	.LFB75:
- 171:Core/Src/device/w25q64.c **** 
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 16
+ 656              		.cfi_offset 14, -4
+ 657 0002 0446     		mov	r4, r0
+ 194:Core/Src/device/w25q64.c ****     W25Q64_WriteEnable();
+ 658              		.loc 1 194 5 is_stmt 1 view .LVU133
+ 659 0004 FFF7FEFF 		bl	W25Q64_WriteEnable
+ 660              	.LVL51:
+ 195:Core/Src/device/w25q64.c ****     CS_LOW();
+ 661              		.loc 1 195 5 view .LVU134
+ 662 0008 064D     		ldr	r5, .L58
+ 663 000a 1026     		movs	r6, #16
+ 664 000c 6E61     		str	r6, [r5, #20]
+ 196:Core/Src/device/w25q64.c ****     SPI_SendByte(CMD_SECTOR_ERASE);
+ 665              		.loc 1 196 5 view .LVU135
+ 666 000e 2020     		movs	r0, #32
+ 667 0010 FFF7FEFF 		bl	SPI_SendByte
+ 668              	.LVL52:
+ 197:Core/Src/device/w25q64.c ****     SPI_SendAddr(addr);
+ 669              		.loc 1 197 5 view .LVU136
+ 670 0014 2046     		mov	r0, r4
+ 671 0016 FFF7FEFF 		bl	SPI_SendAddr
+ 672              	.LVL53:
+ 198:Core/Src/device/w25q64.c ****     CS_HIGH();
+ 673              		.loc 1 198 5 view .LVU137
+ 674 001a 2E61     		str	r6, [r5, #16]
+ 199:Core/Src/device/w25q64.c ****     W25Q64_WaitBusy();  /* max ~400ms for 4KB sector */
+ 675              		.loc 1 199 5 view .LVU138
+ 676 001c FFF7FEFF 		bl	W25Q64_WaitBusy
+ 677              	.LVL54:
+ 200:Core/Src/device/w25q64.c **** }
+ 678              		.loc 1 200 1 is_stmt 0 view .LVU139
+ 679 0020 70BD     		pop	{r4, r5, r6, pc}
+ 680              	.LVL55:
+ 681              	.L59:
+ 682              		.loc 1 200 1 view .LVU140
+ 683 0022 00BF     		.align	2
+ 684              	.L58:
+ 685 0024 00080140 		.word	1073809408
+ 686              		.cfi_endproc
+ 687              	.LFE75:
+ 689              		.section	.text.W25Q64_BlockErase,"ax",%progbits
+ 690              		.align	1
+ 691              		.global	W25Q64_BlockErase
+ 692              		.syntax unified
+ 693              		.thumb
+ 694              		.thumb_func
+ 696              	W25Q64_BlockErase:
+ 697              	.LVL56:
+ 698              	.LFB76:
+ 201:Core/Src/device/w25q64.c **** 
+ 202:Core/Src/device/w25q64.c **** void W25Q64_BlockErase(uint32_t addr)
+ 203:Core/Src/device/w25q64.c **** {
+ 699              		.loc 1 203 1 is_stmt 1 view -0
+ 700              		.cfi_startproc
+ 701              		@ args = 0, pretend = 0, frame = 0
+ 702              		@ frame_needed = 0, uses_anonymous_args = 0
+ 703              		.loc 1 203 1 is_stmt 0 view .LVU142
+ 704 0000 70B5     		push	{r4, r5, r6, lr}
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s 			page 17
 
 
- 172:Core/Src/device/w25q64.c **** /* ==================================================================
- 173:Core/Src/device/w25q64.c ****  *  Erase operations
- 174:Core/Src/device/w25q64.c ****  * ================================================================== */
- 175:Core/Src/device/w25q64.c **** void W25Q64_SectorErase(uint32_t addr)
- 176:Core/Src/device/w25q64.c **** {
- 670              		.loc 1 176 1 is_stmt 1 view -0
- 671              		.cfi_startproc
- 672              		@ args = 0, pretend = 0, frame = 0
- 673              		@ frame_needed = 0, uses_anonymous_args = 0
- 674              		.loc 1 176 1 is_stmt 0 view .LVU140
- 675 0000 70B5     		push	{r4, r5, r6, lr}
- 676              	.LCFI16:
- 677              		.cfi_def_cfa_offset 16
- 678              		.cfi_offset 4, -16
- 679              		.cfi_offset 5, -12
- 680              		.cfi_offset 6, -8
- 681              		.cfi_offset 14, -4
- 682 0002 0446     		mov	r4, r0
- 177:Core/Src/device/w25q64.c ****     W25Q64_WriteEnable();
- 683              		.loc 1 177 5 is_stmt 1 view .LVU141
- 684 0004 FFF7FEFF 		bl	W25Q64_WriteEnable
- 685              	.LVL52:
- 178:Core/Src/device/w25q64.c ****     CS_LOW();
- 686              		.loc 1 178 5 view .LVU142
- 687 0008 064D     		ldr	r5, .L58
- 688 000a 1026     		movs	r6, #16
- 689 000c 6E61     		str	r6, [r5, #20]
- 179:Core/Src/device/w25q64.c ****     SPI_SendByte(CMD_SECTOR_ERASE);
- 690              		.loc 1 179 5 view .LVU143
- 691 000e 2020     		movs	r0, #32
- 692 0010 FFF7FEFF 		bl	SPI_SendByte
- 693              	.LVL53:
- 180:Core/Src/device/w25q64.c ****     SPI_SendAddr(addr);
- 694              		.loc 1 180 5 view .LVU144
- 695 0014 2046     		mov	r0, r4
- 696 0016 FFF7FEFF 		bl	SPI_SendAddr
- 697              	.LVL54:
- 181:Core/Src/device/w25q64.c ****     CS_HIGH();
- 698              		.loc 1 181 5 view .LVU145
- 699 001a 2E61     		str	r6, [r5, #16]
- 182:Core/Src/device/w25q64.c ****     W25Q64_WaitBusy();  /* max ~400ms for 4KB sector */
- 700              		.loc 1 182 5 view .LVU146
- 701 001c FFF7FEFF 		bl	W25Q64_WaitBusy
- 702              	.LVL55:
- 183:Core/Src/device/w25q64.c **** }
- 703              		.loc 1 183 1 is_stmt 0 view .LVU147
- 704 0020 70BD     		pop	{r4, r5, r6, pc}
- 705              	.LVL56:
- 706              	.L59:
- 707              		.loc 1 183 1 view .LVU148
- 708 0022 00BF     		.align	2
- 709              	.L58:
- 710 0024 00080140 		.word	1073809408
- 711              		.cfi_endproc
- 712              	.LFE75:
- 714              		.section	.text.W25Q64_BlockErase,"ax",%progbits
- 715              		.align	1
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 17
+ 705              	.LCFI17:
+ 706              		.cfi_def_cfa_offset 16
+ 707              		.cfi_offset 4, -16
+ 708              		.cfi_offset 5, -12
+ 709              		.cfi_offset 6, -8
+ 710              		.cfi_offset 14, -4
+ 711 0002 0446     		mov	r4, r0
+ 204:Core/Src/device/w25q64.c ****     W25Q64_WriteEnable();
+ 712              		.loc 1 204 5 is_stmt 1 view .LVU143
+ 713 0004 FFF7FEFF 		bl	W25Q64_WriteEnable
+ 714              	.LVL57:
+ 205:Core/Src/device/w25q64.c ****     CS_LOW();
+ 715              		.loc 1 205 5 view .LVU144
+ 716 0008 064D     		ldr	r5, .L62
+ 717 000a 1026     		movs	r6, #16
+ 718 000c 6E61     		str	r6, [r5, #20]
+ 206:Core/Src/device/w25q64.c ****     SPI_SendByte(CMD_BLOCK_ERASE);
+ 719              		.loc 1 206 5 view .LVU145
+ 720 000e D820     		movs	r0, #216
+ 721 0010 FFF7FEFF 		bl	SPI_SendByte
+ 722              	.LVL58:
+ 207:Core/Src/device/w25q64.c ****     SPI_SendAddr(addr);
+ 723              		.loc 1 207 5 view .LVU146
+ 724 0014 2046     		mov	r0, r4
+ 725 0016 FFF7FEFF 		bl	SPI_SendAddr
+ 726              	.LVL59:
+ 208:Core/Src/device/w25q64.c ****     CS_HIGH();
+ 727              		.loc 1 208 5 view .LVU147
+ 728 001a 2E61     		str	r6, [r5, #16]
+ 209:Core/Src/device/w25q64.c ****     W25Q64_WaitBusy();  /* max ~2s for 64KB block */
+ 729              		.loc 1 209 5 view .LVU148
+ 730 001c FFF7FEFF 		bl	W25Q64_WaitBusy
+ 731              	.LVL60:
+ 210:Core/Src/device/w25q64.c **** }
+ 732              		.loc 1 210 1 is_stmt 0 view .LVU149
+ 733 0020 70BD     		pop	{r4, r5, r6, pc}
+ 734              	.LVL61:
+ 735              	.L63:
+ 736              		.loc 1 210 1 view .LVU150
+ 737 0022 00BF     		.align	2
+ 738              	.L62:
+ 739 0024 00080140 		.word	1073809408
+ 740              		.cfi_endproc
+ 741              	.LFE76:
+ 743              		.section	.text.W25Q64_ChipErase,"ax",%progbits
+ 744              		.align	1
+ 745              		.global	W25Q64_ChipErase
+ 746              		.syntax unified
+ 747              		.thumb
+ 748              		.thumb_func
+ 750              	W25Q64_ChipErase:
+ 751              	.LFB77:
+ 211:Core/Src/device/w25q64.c **** 
+ 212:Core/Src/device/w25q64.c **** void W25Q64_ChipErase(void)
+ 213:Core/Src/device/w25q64.c **** {
+ 752              		.loc 1 213 1 is_stmt 1 view -0
+ 753              		.cfi_startproc
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s 			page 18
 
 
- 716              		.global	W25Q64_BlockErase
- 717              		.syntax unified
- 718              		.thumb
- 719              		.thumb_func
- 721              	W25Q64_BlockErase:
- 722              	.LVL57:
- 723              	.LFB76:
- 184:Core/Src/device/w25q64.c **** 
- 185:Core/Src/device/w25q64.c **** void W25Q64_BlockErase(uint32_t addr)
- 186:Core/Src/device/w25q64.c **** {
- 724              		.loc 1 186 1 is_stmt 1 view -0
- 725              		.cfi_startproc
- 726              		@ args = 0, pretend = 0, frame = 0
- 727              		@ frame_needed = 0, uses_anonymous_args = 0
- 728              		.loc 1 186 1 is_stmt 0 view .LVU150
- 729 0000 70B5     		push	{r4, r5, r6, lr}
- 730              	.LCFI17:
- 731              		.cfi_def_cfa_offset 16
- 732              		.cfi_offset 4, -16
- 733              		.cfi_offset 5, -12
- 734              		.cfi_offset 6, -8
- 735              		.cfi_offset 14, -4
- 736 0002 0446     		mov	r4, r0
- 187:Core/Src/device/w25q64.c ****     W25Q64_WriteEnable();
- 737              		.loc 1 187 5 is_stmt 1 view .LVU151
- 738 0004 FFF7FEFF 		bl	W25Q64_WriteEnable
- 739              	.LVL58:
- 188:Core/Src/device/w25q64.c ****     CS_LOW();
- 740              		.loc 1 188 5 view .LVU152
- 741 0008 064D     		ldr	r5, .L62
- 742 000a 1026     		movs	r6, #16
- 743 000c 6E61     		str	r6, [r5, #20]
- 189:Core/Src/device/w25q64.c ****     SPI_SendByte(CMD_BLOCK_ERASE);
- 744              		.loc 1 189 5 view .LVU153
- 745 000e D820     		movs	r0, #216
- 746 0010 FFF7FEFF 		bl	SPI_SendByte
- 747              	.LVL59:
- 190:Core/Src/device/w25q64.c ****     SPI_SendAddr(addr);
- 748              		.loc 1 190 5 view .LVU154
- 749 0014 2046     		mov	r0, r4
- 750 0016 FFF7FEFF 		bl	SPI_SendAddr
- 751              	.LVL60:
- 191:Core/Src/device/w25q64.c ****     CS_HIGH();
- 752              		.loc 1 191 5 view .LVU155
- 753 001a 2E61     		str	r6, [r5, #16]
- 192:Core/Src/device/w25q64.c ****     W25Q64_WaitBusy();  /* max ~2s for 64KB block */
- 754              		.loc 1 192 5 view .LVU156
- 755 001c FFF7FEFF 		bl	W25Q64_WaitBusy
- 756              	.LVL61:
- 193:Core/Src/device/w25q64.c **** }
- 757              		.loc 1 193 1 is_stmt 0 view .LVU157
- 758 0020 70BD     		pop	{r4, r5, r6, pc}
- 759              	.LVL62:
- 760              	.L63:
- 761              		.loc 1 193 1 view .LVU158
- 762 0022 00BF     		.align	2
- 763              	.L62:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 18
+ 754              		@ args = 0, pretend = 0, frame = 0
+ 755              		@ frame_needed = 0, uses_anonymous_args = 0
+ 756 0000 38B5     		push	{r3, r4, r5, lr}
+ 757              	.LCFI18:
+ 758              		.cfi_def_cfa_offset 16
+ 759              		.cfi_offset 3, -16
+ 760              		.cfi_offset 4, -12
+ 761              		.cfi_offset 5, -8
+ 762              		.cfi_offset 14, -4
+ 214:Core/Src/device/w25q64.c ****     W25Q64_WriteEnable();
+ 763              		.loc 1 214 5 view .LVU152
+ 764 0002 FFF7FEFF 		bl	W25Q64_WriteEnable
+ 765              	.LVL62:
+ 215:Core/Src/device/w25q64.c ****     CS_LOW();
+ 766              		.loc 1 215 5 view .LVU153
+ 767 0006 054C     		ldr	r4, .L66
+ 768 0008 1025     		movs	r5, #16
+ 769 000a 6561     		str	r5, [r4, #20]
+ 216:Core/Src/device/w25q64.c ****     SPI_SendByte(CMD_CHIP_ERASE);
+ 770              		.loc 1 216 5 view .LVU154
+ 771 000c C720     		movs	r0, #199
+ 772 000e FFF7FEFF 		bl	SPI_SendByte
+ 773              	.LVL63:
+ 217:Core/Src/device/w25q64.c ****     CS_HIGH();
+ 774              		.loc 1 217 5 view .LVU155
+ 775 0012 2561     		str	r5, [r4, #16]
+ 218:Core/Src/device/w25q64.c ****     W25Q64_WaitBusy();  /* max ~40s for 8MB chip */
+ 776              		.loc 1 218 5 view .LVU156
+ 777 0014 FFF7FEFF 		bl	W25Q64_WaitBusy
+ 778              	.LVL64:
+ 219:Core/Src/device/w25q64.c **** }
+ 779              		.loc 1 219 1 is_stmt 0 view .LVU157
+ 780 0018 38BD     		pop	{r3, r4, r5, pc}
+ 781              	.L67:
+ 782 001a 00BF     		.align	2
+ 783              	.L66:
+ 784 001c 00080140 		.word	1073809408
+ 785              		.cfi_endproc
+ 786              	.LFE77:
+ 788              		.section	.text.W25Q64_CRC32,"ax",%progbits
+ 789              		.align	1
+ 790              		.global	W25Q64_CRC32
+ 791              		.syntax unified
+ 792              		.thumb
+ 793              		.thumb_func
+ 795              	W25Q64_CRC32:
+ 796              	.LVL65:
+ 797              	.LFB78:
+ 220:Core/Src/device/w25q64.c **** 
+ 221:Core/Src/device/w25q64.c **** /* ==================================================================
+ 222:Core/Src/device/w25q64.c ****  *  CRC32 (software, used to verify OTA firmware integrity)
+ 223:Core/Src/device/w25q64.c ****  *  Polynomial: 0xEDB88320 (standard Ethernet/zip CRC32)
+ 224:Core/Src/device/w25q64.c ****  * ================================================================== */
+ 225:Core/Src/device/w25q64.c **** uint32_t W25Q64_CRC32(uint32_t addr, uint32_t len)
+ 226:Core/Src/device/w25q64.c **** {
+ 798              		.loc 1 226 1 is_stmt 1 view -0
+ 799              		.cfi_startproc
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s 			page 19
 
 
- 764 0024 00080140 		.word	1073809408
- 765              		.cfi_endproc
- 766              	.LFE76:
- 768              		.section	.text.W25Q64_ChipErase,"ax",%progbits
- 769              		.align	1
- 770              		.global	W25Q64_ChipErase
- 771              		.syntax unified
- 772              		.thumb
- 773              		.thumb_func
- 775              	W25Q64_ChipErase:
- 776              	.LFB77:
- 194:Core/Src/device/w25q64.c **** 
- 195:Core/Src/device/w25q64.c **** void W25Q64_ChipErase(void)
- 196:Core/Src/device/w25q64.c **** {
- 777              		.loc 1 196 1 is_stmt 1 view -0
- 778              		.cfi_startproc
- 779              		@ args = 0, pretend = 0, frame = 0
- 780              		@ frame_needed = 0, uses_anonymous_args = 0
- 781 0000 38B5     		push	{r3, r4, r5, lr}
- 782              	.LCFI18:
- 783              		.cfi_def_cfa_offset 16
- 784              		.cfi_offset 3, -16
- 785              		.cfi_offset 4, -12
- 786              		.cfi_offset 5, -8
- 787              		.cfi_offset 14, -4
- 197:Core/Src/device/w25q64.c ****     W25Q64_WriteEnable();
- 788              		.loc 1 197 5 view .LVU160
- 789 0002 FFF7FEFF 		bl	W25Q64_WriteEnable
- 790              	.LVL63:
- 198:Core/Src/device/w25q64.c ****     CS_LOW();
- 791              		.loc 1 198 5 view .LVU161
- 792 0006 054C     		ldr	r4, .L66
- 793 0008 1025     		movs	r5, #16
- 794 000a 6561     		str	r5, [r4, #20]
- 199:Core/Src/device/w25q64.c ****     SPI_SendByte(CMD_CHIP_ERASE);
- 795              		.loc 1 199 5 view .LVU162
- 796 000c C720     		movs	r0, #199
- 797 000e FFF7FEFF 		bl	SPI_SendByte
- 798              	.LVL64:
- 200:Core/Src/device/w25q64.c ****     CS_HIGH();
- 799              		.loc 1 200 5 view .LVU163
- 800 0012 2561     		str	r5, [r4, #16]
- 201:Core/Src/device/w25q64.c ****     W25Q64_WaitBusy();  /* max ~40s for 8MB chip */
- 801              		.loc 1 201 5 view .LVU164
- 802 0014 FFF7FEFF 		bl	W25Q64_WaitBusy
- 803              	.LVL65:
- 202:Core/Src/device/w25q64.c **** }
- 804              		.loc 1 202 1 is_stmt 0 view .LVU165
- 805 0018 38BD     		pop	{r3, r4, r5, pc}
- 806              	.L67:
- 807 001a 00BF     		.align	2
- 808              	.L66:
- 809 001c 00080140 		.word	1073809408
- 810              		.cfi_endproc
- 811              	.LFE77:
- 813              		.section	.text.W25Q64_CRC32,"ax",%progbits
- 814              		.align	1
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 19
+ 800              		@ args = 0, pretend = 0, frame = 256
+ 801              		@ frame_needed = 0, uses_anonymous_args = 0
+ 802              		.loc 1 226 1 is_stmt 0 view .LVU159
+ 803 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 804              	.LCFI19:
+ 805              		.cfi_def_cfa_offset 20
+ 806              		.cfi_offset 4, -20
+ 807              		.cfi_offset 5, -16
+ 808              		.cfi_offset 6, -12
+ 809              		.cfi_offset 7, -8
+ 810              		.cfi_offset 14, -4
+ 811 0002 C1B0     		sub	sp, sp, #260
+ 812              	.LCFI20:
+ 813              		.cfi_def_cfa_offset 280
+ 814 0004 0746     		mov	r7, r0
+ 815 0006 0E46     		mov	r6, r1
+ 227:Core/Src/device/w25q64.c ****     static const uint32_t crc32_table[256] = {
+ 816              		.loc 1 227 5 is_stmt 1 view .LVU160
+ 228:Core/Src/device/w25q64.c ****         0x00000000,0x77073096,0xEE0E612C,0x990951BA,0x076DC419,0x706AF48F,
+ 229:Core/Src/device/w25q64.c ****         0xE963A535,0x9E6495A3,0x0EDB8832,0x79DCB8A4,0xE0D5E91E,0x97D2D988,
+ 230:Core/Src/device/w25q64.c ****         0x09B64C2B,0x7EB17CBD,0xE7B82D07,0x90BF1D91,0x1DB71064,0x6AB020F2,
+ 231:Core/Src/device/w25q64.c ****         0xF3B97148,0x84BE41DE,0x1ADAD47D,0x6DDDE4EB,0xF4D4B551,0x83D385C7,
+ 232:Core/Src/device/w25q64.c ****         0x136C9856,0x646BA8C0,0xFD62F97A,0x8A65C9EC,0x14015C4F,0x63066CD9,
+ 233:Core/Src/device/w25q64.c ****         0xFA0F3D63,0x8D080DF5,0x3B6E20C8,0x4C69105E,0xD56041E4,0xA2677172,
+ 234:Core/Src/device/w25q64.c ****         0x3C03E4D1,0x4B04D447,0xD20D85FD,0xA50AB56B,0x35B5A8FA,0x42B2986C,
+ 235:Core/Src/device/w25q64.c ****         0xDBBBC9D6,0xACBCF940,0x32D86CE3,0x45DF5C75,0xDCD60DCF,0xABD13D59,
+ 236:Core/Src/device/w25q64.c ****         0x26D930AC,0x51DE003A,0xC8D75180,0xBFD06116,0x21B4F4B5,0x56B3C423,
+ 237:Core/Src/device/w25q64.c ****         0xCFBA9599,0xB8BDA50F,0x2802B89E,0x5F058808,0xC60CD9B2,0xB10BE924,
+ 238:Core/Src/device/w25q64.c ****         0x2F6F7C87,0x58684C11,0xC1611DAB,0xB6662D3D,0x76DC4190,0x01DB7106,
+ 239:Core/Src/device/w25q64.c ****         0x98D220BC,0xEFD5102A,0x71B18589,0x06B6B51F,0x9FBFE4A5,0xE8B8D433,
+ 240:Core/Src/device/w25q64.c ****         0x7807C9A2,0x0F00F934,0x9609A88E,0xE10E9818,0x7F6A0DBB,0x086D3D2D,
+ 241:Core/Src/device/w25q64.c ****         0x91646C97,0xE6635C01,0x6B6B51F4,0x1C6C6162,0x856530D8,0xF262004E,
+ 242:Core/Src/device/w25q64.c ****         0x6C0695ED,0x1B01A57B,0x8208F4C1,0xF50FC457,0x65B0D9C6,0x12B7E950,
+ 243:Core/Src/device/w25q64.c ****         0x8BBEB8EA,0xFCB9887C,0x62DD1DDF,0x15DA2D49,0x8CD37CF3,0xFBD44C65,
+ 244:Core/Src/device/w25q64.c ****         0x4DB26158,0x3AB551CE,0xA3BC0074,0xD4BB30E2,0x4ADFA541,0x3DD895D7,
+ 245:Core/Src/device/w25q64.c ****         0xA4D1C46D,0xD3D6F4FB,0x4369E96A,0x346ED9FC,0xAD678846,0xDA60B8D0,
+ 246:Core/Src/device/w25q64.c ****         0x44042D73,0x33031DE5,0xAA0A4C5F,0xDD0D7CC9,0x5005713C,0x270241AA,
+ 247:Core/Src/device/w25q64.c ****         0xBE0B1010,0xC90C2086,0x5768B525,0x206F85B3,0xB966D409,0xCE61E49F,
+ 248:Core/Src/device/w25q64.c ****         0x5EDEF90E,0x29D9C998,0xB0D09822,0xC7D7A8B4,0x59B33D17,0x2EB40D81,
+ 249:Core/Src/device/w25q64.c ****         0xB7BD5C3B,0xC0BA6CAD,0xEDB88320,0x9ABFB3B6,0x03B6E20C,0x74B1D29A,
+ 250:Core/Src/device/w25q64.c ****         0xEAD54739,0x9DD277AF,0x04DB2615,0x73DC1683,0xE3630B12,0x94643B84,
+ 251:Core/Src/device/w25q64.c ****         0x0D6D6A3E,0x7A6A5AA8,0xE40ECF0B,0x9309FF9D,0x0A00AE27,0x7D079EB1,
+ 252:Core/Src/device/w25q64.c ****         0xF00F9344,0x8708A3D2,0x1E01F268,0x6906C2FE,0xF762575D,0x806567CB,
+ 253:Core/Src/device/w25q64.c ****         0x196C3671,0x6E6B06E7,0xFED41B76,0x89D32BE0,0x10DA7A5A,0x67DD4ACC,
+ 254:Core/Src/device/w25q64.c ****         0xF9B9DF6F,0x8EBEEFF9,0x17B7BE43,0x60B08ED5,0xD6D6A3E8,0xA1D1937E,
+ 255:Core/Src/device/w25q64.c ****         0x38D8C2C4,0x4FDFF252,0xD1BB67F1,0xA6BC5767,0x3FB506DD,0x48B2364B,
+ 256:Core/Src/device/w25q64.c ****         0xD80D2BDA,0xAF0A1B4C,0x36034AF6,0x41047A60,0xDF60EFC3,0xA867DF55,
+ 257:Core/Src/device/w25q64.c ****         0x316E8EEF,0x4669BE79,0xCB61B38C,0xBC66831A,0x256FD2A0,0x5268E236,
+ 258:Core/Src/device/w25q64.c ****         0xCC0C7795,0xBB0B4703,0x220216B9,0x5505262F,0xC5BA3BBE,0xB2BD0B28,
+ 259:Core/Src/device/w25q64.c ****         0x2BB45A92,0x5CB30A04,0xC2D7FFA7,0xB5D0CF31,0x2CD99E8B,0x5BDEAE1D,
+ 260:Core/Src/device/w25q64.c ****         0x9B64C2B0,0xEC63F226,0x756AA39C,0x026D930A,0x9C0906A9,0xEB0E363F,
+ 261:Core/Src/device/w25q64.c ****         0x72076785,0x05005713,0x95BF4A82,0xE2B87A14,0x7BB12BAE,0x0CB61B38,
+ 262:Core/Src/device/w25q64.c ****         0x92D28E9B,0xE5D5BE0D,0x7CDCEFB7,0x0BDBDF21,0x86D3D2D4,0xF1D4E242,
+ 263:Core/Src/device/w25q64.c ****         0x68DDB3F8,0x1FDA836E,0x81BE16CD,0xF6B9265B,0x6FB077E1,0x18B74777,
+ 264:Core/Src/device/w25q64.c ****         0x88085AE6,0xFF0F6A70,0x66063BCA,0x11010B5C,0x8F659EFF,0xF862AE69,
+ 265:Core/Src/device/w25q64.c ****         0x616BFFD3,0x166CCF45,0xA00AE278,0xD70DD2EE,0x4E048354,0x3903B3C2,
+ 266:Core/Src/device/w25q64.c ****         0xA7672661,0xD06016F7,0x4969474D,0x3E6E77DB,0xAED16A4A,0xD9D65ADC,
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s 			page 20
 
 
- 815              		.global	W25Q64_CRC32
- 816              		.syntax unified
- 817              		.thumb
- 818              		.thumb_func
- 820              	W25Q64_CRC32:
- 821              	.LVL66:
- 822              	.LFB78:
- 203:Core/Src/device/w25q64.c **** 
- 204:Core/Src/device/w25q64.c **** /* ==================================================================
- 205:Core/Src/device/w25q64.c ****  *  CRC32 (software, used to verify OTA firmware integrity)
- 206:Core/Src/device/w25q64.c ****  *  Polynomial: 0xEDB88320 (standard Ethernet/zip CRC32)
- 207:Core/Src/device/w25q64.c ****  * ================================================================== */
- 208:Core/Src/device/w25q64.c **** uint32_t W25Q64_CRC32(uint32_t addr, uint32_t len)
- 209:Core/Src/device/w25q64.c **** {
- 823              		.loc 1 209 1 is_stmt 1 view -0
- 824              		.cfi_startproc
- 825              		@ args = 0, pretend = 0, frame = 256
- 826              		@ frame_needed = 0, uses_anonymous_args = 0
- 827              		.loc 1 209 1 is_stmt 0 view .LVU167
- 828 0000 F0B5     		push	{r4, r5, r6, r7, lr}
- 829              	.LCFI19:
- 830              		.cfi_def_cfa_offset 20
- 831              		.cfi_offset 4, -20
- 832              		.cfi_offset 5, -16
- 833              		.cfi_offset 6, -12
- 834              		.cfi_offset 7, -8
- 835              		.cfi_offset 14, -4
- 836 0002 C1B0     		sub	sp, sp, #260
- 837              	.LCFI20:
- 838              		.cfi_def_cfa_offset 280
- 839 0004 0746     		mov	r7, r0
- 840 0006 0E46     		mov	r6, r1
- 210:Core/Src/device/w25q64.c ****     static const uint32_t crc32_table[256] = {
- 841              		.loc 1 210 5 is_stmt 1 view .LVU168
- 211:Core/Src/device/w25q64.c ****         0x00000000,0x77073096,0xEE0E612C,0x990951BA,0x076DC419,0x706AF48F,
- 212:Core/Src/device/w25q64.c ****         0xE963A535,0x9E6495A3,0x0EDB8832,0x79DCB8A4,0xE0D5E91E,0x97D2D988,
- 213:Core/Src/device/w25q64.c ****         0x09B64C2B,0x7EB17CBD,0xE7B82D07,0x90BF1D91,0x1DB71064,0x6AB020F2,
- 214:Core/Src/device/w25q64.c ****         0xF3B97148,0x84BE41DE,0x1ADAD47D,0x6DDDE4EB,0xF4D4B551,0x83D385C7,
- 215:Core/Src/device/w25q64.c ****         0x136C9856,0x646BA8C0,0xFD62F97A,0x8A65C9EC,0x14015C4F,0x63066CD9,
- 216:Core/Src/device/w25q64.c ****         0xFA0F3D63,0x8D080DF5,0x3B6E20C8,0x4C69105E,0xD56041E4,0xA2677172,
- 217:Core/Src/device/w25q64.c ****         0x3C03E4D1,0x4B04D447,0xD20D85FD,0xA50AB56B,0x35B5A8FA,0x42B2986C,
- 218:Core/Src/device/w25q64.c ****         0xDBBBC9D6,0xACBCF940,0x32D86CE3,0x45DF5C75,0xDCD60DCF,0xABD13D59,
- 219:Core/Src/device/w25q64.c ****         0x26D930AC,0x51DE003A,0xC8D75180,0xBFD06116,0x21B4F4B5,0x56B3C423,
- 220:Core/Src/device/w25q64.c ****         0xCFBA9599,0xB8BDA50F,0x2802B89E,0x5F058808,0xC60CD9B2,0xB10BE924,
- 221:Core/Src/device/w25q64.c ****         0x2F6F7C87,0x58684C11,0xC1611DAB,0xB6662D3D,0x76DC4190,0x01DB7106,
- 222:Core/Src/device/w25q64.c ****         0x98D220BC,0xEFD5102A,0x71B18589,0x06B6B51F,0x9FBFE4A5,0xE8B8D433,
- 223:Core/Src/device/w25q64.c ****         0x7807C9A2,0x0F00F934,0x9609A88E,0xE10E9818,0x7F6A0DBB,0x086D3D2D,
- 224:Core/Src/device/w25q64.c ****         0x91646C97,0xE6635C01,0x6B6B51F4,0x1C6C6162,0x856530D8,0xF262004E,
- 225:Core/Src/device/w25q64.c ****         0x6C0695ED,0x1B01A57B,0x8208F4C1,0xF50FC457,0x65B0D9C6,0x12B7E950,
- 226:Core/Src/device/w25q64.c ****         0x8BBEB8EA,0xFCB9887C,0x62DD1DDF,0x15DA2D49,0x8CD37CF3,0xFBD44C65,
- 227:Core/Src/device/w25q64.c ****         0x4DB26158,0x3AB551CE,0xA3BC0074,0xD4BB30E2,0x4ADFA541,0x3DD895D7,
- 228:Core/Src/device/w25q64.c ****         0xA4D1C46D,0xD3D6F4FB,0x4369E96A,0x346ED9FC,0xAD678846,0xDA60B8D0,
- 229:Core/Src/device/w25q64.c ****         0x44042D73,0x33031DE5,0xAA0A4C5F,0xDD0D7CC9,0x5005713C,0x270241AA,
- 230:Core/Src/device/w25q64.c ****         0xBE0B1010,0xC90C2086,0x5768B525,0x206F85B3,0xB966D409,0xCE61E49F,
- 231:Core/Src/device/w25q64.c ****         0x5EDEF90E,0x29D9C998,0xB0D09822,0xC7D7A8B4,0x59B33D17,0x2EB40D81,
- 232:Core/Src/device/w25q64.c ****         0xB7BD5C3B,0xC0BA6CAD,0xEDB88320,0x9ABFB3B6,0x03B6E20C,0x74B1D29A,
- 233:Core/Src/device/w25q64.c ****         0xEAD54739,0x9DD277AF,0x04DB2615,0x73DC1683,0xE3630B12,0x94643B84,
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 20
+ 267:Core/Src/device/w25q64.c ****         0x40DF0B66,0x37D83BF0,0xA9BCAE53,0xDEBB9EC5,0x47B2CF7F,0x30B5FFE9,
+ 268:Core/Src/device/w25q64.c ****         0xBDBDF21C,0xCABAC28A,0x53B39330,0x24B4A3A6,0xBAD03605,0xCDD70693,
+ 269:Core/Src/device/w25q64.c ****         0x54DE5729,0x23D967BF,0xB3667A2E,0xC4614AB8,0x5D681B02,0x2A6F2B94,
+ 270:Core/Src/device/w25q64.c ****         0xB40BBE37,0xC30C8EA1,0x5A05DF1B,0x2D02EF8D
+ 271:Core/Src/device/w25q64.c ****     };
+ 272:Core/Src/device/w25q64.c **** 
+ 273:Core/Src/device/w25q64.c ****     uint32_t crc = 0xFFFFFFFF;
+ 817              		.loc 1 273 5 view .LVU161
+ 818              	.LVL66:
+ 274:Core/Src/device/w25q64.c ****     uint8_t buf[256];
+ 819              		.loc 1 274 5 view .LVU162
+ 275:Core/Src/device/w25q64.c **** 
+ 276:Core/Src/device/w25q64.c ****     while (len > 0) {
+ 820              		.loc 1 276 5 view .LVU163
+ 273:Core/Src/device/w25q64.c ****     uint8_t buf[256];
+ 821              		.loc 1 273 14 is_stmt 0 view .LVU164
+ 822 0008 4FF0FF34 		mov	r4, #-1
+ 823              		.loc 1 276 11 view .LVU165
+ 824 000c 0DE0     		b	.L69
+ 825              	.LVL67:
+ 826              	.L71:
+ 827              	.LBB5:
+ 828              	.LBB6:
+ 277:Core/Src/device/w25q64.c ****         uint32_t chunk = (len > sizeof(buf)) ? sizeof(buf) : len;
+ 278:Core/Src/device/w25q64.c ****         W25Q64_Read(addr, buf, chunk);
+ 279:Core/Src/device/w25q64.c ****         for (uint32_t i = 0; i < chunk; i++) {
+ 280:Core/Src/device/w25q64.c ****             crc = crc32_table[(crc ^ buf[i]) & 0xFF] ^ (crc >> 8);
+ 829              		.loc 1 280 13 is_stmt 1 view .LVU166
+ 830              		.loc 1 280 41 is_stmt 0 view .LVU167
+ 831 000e 1DF80230 		ldrb	r3, [sp, r2]	@ zero_extendqisi2
+ 832              		.loc 1 280 36 view .LVU168
+ 833 0012 6340     		eors	r3, r3, r4
+ 834              		.loc 1 280 46 view .LVU169
+ 835 0014 DBB2     		uxtb	r3, r3
+ 836              		.loc 1 280 30 view .LVU170
+ 837 0016 0D49     		ldr	r1, .L75
+ 838 0018 51F82330 		ldr	r3, [r1, r3, lsl #2]
+ 839              		.loc 1 280 17 view .LVU171
+ 840 001c 83EA1424 		eor	r4, r3, r4, lsr #8
+ 841              	.LVL68:
+ 279:Core/Src/device/w25q64.c ****             crc = crc32_table[(crc ^ buf[i]) & 0xFF] ^ (crc >> 8);
+ 842              		.loc 1 279 42 is_stmt 1 discriminator 3 view .LVU172
+ 843 0020 0132     		adds	r2, r2, #1
+ 844              	.LVL69:
+ 845              	.L70:
+ 279:Core/Src/device/w25q64.c ****             crc = crc32_table[(crc ^ buf[i]) & 0xFF] ^ (crc >> 8);
+ 846              		.loc 1 279 32 discriminator 1 view .LVU173
+ 847 0022 AA42     		cmp	r2, r5
+ 848 0024 F3D3     		bcc	.L71
+ 279:Core/Src/device/w25q64.c ****             crc = crc32_table[(crc ^ buf[i]) & 0xFF] ^ (crc >> 8);
+ 849              		.loc 1 279 32 is_stmt 0 discriminator 1 view .LVU174
+ 850              	.LBE6:
+ 281:Core/Src/device/w25q64.c ****         }
+ 282:Core/Src/device/w25q64.c ****         addr += chunk;
+ 851              		.loc 1 282 9 is_stmt 1 view .LVU175
+ 852              		.loc 1 282 14 is_stmt 0 view .LVU176
+ 853 0026 2F44     		add	r7, r7, r5
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s 			page 21
 
 
- 234:Core/Src/device/w25q64.c ****         0x0D6D6A3E,0x7A6A5AA8,0xE40ECF0B,0x9309FF9D,0x0A00AE27,0x7D079EB1,
- 235:Core/Src/device/w25q64.c ****         0xF00F9344,0x8708A3D2,0x1E01F268,0x6906C2FE,0xF762575D,0x806567CB,
- 236:Core/Src/device/w25q64.c ****         0x196C3671,0x6E6B06E7,0xFED41B76,0x89D32BE0,0x10DA7A5A,0x67DD4ACC,
- 237:Core/Src/device/w25q64.c ****         0xF9B9DF6F,0x8EBEEFF9,0x17B7BE43,0x60B08ED5,0xD6D6A3E8,0xA1D1937E,
- 238:Core/Src/device/w25q64.c ****         0x38D8C2C4,0x4FDFF252,0xD1BB67F1,0xA6BC5767,0x3FB506DD,0x48B2364B,
- 239:Core/Src/device/w25q64.c ****         0xD80D2BDA,0xAF0A1B4C,0x36034AF6,0x41047A60,0xDF60EFC3,0xA867DF55,
- 240:Core/Src/device/w25q64.c ****         0x316E8EEF,0x4669BE79,0xCB61B38C,0xBC66831A,0x256FD2A0,0x5268E236,
- 241:Core/Src/device/w25q64.c ****         0xCC0C7795,0xBB0B4703,0x220216B9,0x5505262F,0xC5BA3BBE,0xB2BD0B28,
- 242:Core/Src/device/w25q64.c ****         0x2BB45A92,0x5CB30A04,0xC2D7FFA7,0xB5D0CF31,0x2CD99E8B,0x5BDEAE1D,
- 243:Core/Src/device/w25q64.c ****         0x9B64C2B0,0xEC63F226,0x756AA39C,0x026D930A,0x9C0906A9,0xEB0E363F,
- 244:Core/Src/device/w25q64.c ****         0x72076785,0x05005713,0x95BF4A82,0xE2B87A14,0x7BB12BAE,0x0CB61B38,
- 245:Core/Src/device/w25q64.c ****         0x92D28E9B,0xE5D5BE0D,0x7CDCEFB7,0x0BDBDF21,0x86D3D2D4,0xF1D4E242,
- 246:Core/Src/device/w25q64.c ****         0x68DDB3F8,0x1FDA836E,0x81BE16CD,0xF6B9265B,0x6FB077E1,0x18B74777,
- 247:Core/Src/device/w25q64.c ****         0x88085AE6,0xFF0F6A70,0x66063BCA,0x11010B5C,0x8F659EFF,0xF862AE69,
- 248:Core/Src/device/w25q64.c ****         0x616BFFD3,0x166CCF45,0xA00AE278,0xD70DD2EE,0x4E048354,0x3903B3C2,
- 249:Core/Src/device/w25q64.c ****         0xA7672661,0xD06016F7,0x4969474D,0x3E6E77DB,0xAED16A4A,0xD9D65ADC,
- 250:Core/Src/device/w25q64.c ****         0x40DF0B66,0x37D83BF0,0xA9BCAE53,0xDEBB9EC5,0x47B2CF7F,0x30B5FFE9,
- 251:Core/Src/device/w25q64.c ****         0xBDBDF21C,0xCABAC28A,0x53B39330,0x24B4A3A6,0xBAD03605,0xCDD70693,
- 252:Core/Src/device/w25q64.c ****         0x54DE5729,0x23D967BF,0xB3667A2E,0xC4614AB8,0x5D681B02,0x2A6F2B94,
- 253:Core/Src/device/w25q64.c ****         0xB40BBE37,0xC30C8EA1,0x5A05DF1B,0x2D02EF8D
- 254:Core/Src/device/w25q64.c ****     };
- 255:Core/Src/device/w25q64.c **** 
- 256:Core/Src/device/w25q64.c ****     uint32_t crc = 0xFFFFFFFF;
- 842              		.loc 1 256 5 view .LVU169
- 843              	.LVL67:
- 257:Core/Src/device/w25q64.c ****     uint8_t buf[256];
- 844              		.loc 1 257 5 view .LVU170
- 258:Core/Src/device/w25q64.c **** 
- 259:Core/Src/device/w25q64.c ****     while (len > 0) {
- 845              		.loc 1 259 5 view .LVU171
- 256:Core/Src/device/w25q64.c ****     uint8_t buf[256];
- 846              		.loc 1 256 14 is_stmt 0 view .LVU172
- 847 0008 4FF0FF34 		mov	r4, #-1
- 848              		.loc 1 259 11 view .LVU173
- 849 000c 0DE0     		b	.L69
- 850              	.LVL68:
- 851              	.L71:
- 852              	.LBB5:
- 853              	.LBB6:
- 260:Core/Src/device/w25q64.c ****         uint32_t chunk = (len > sizeof(buf)) ? sizeof(buf) : len;
- 261:Core/Src/device/w25q64.c ****         W25Q64_Read(addr, buf, chunk);
- 262:Core/Src/device/w25q64.c ****         for (uint32_t i = 0; i < chunk; i++) {
- 263:Core/Src/device/w25q64.c ****             crc = crc32_table[(crc ^ buf[i]) & 0xFF] ^ (crc >> 8);
- 854              		.loc 1 263 13 is_stmt 1 view .LVU174
- 855              		.loc 1 263 41 is_stmt 0 view .LVU175
- 856 000e 1DF80230 		ldrb	r3, [sp, r2]	@ zero_extendqisi2
- 857              		.loc 1 263 36 view .LVU176
- 858 0012 6340     		eors	r3, r3, r4
- 859              		.loc 1 263 46 view .LVU177
- 860 0014 DBB2     		uxtb	r3, r3
- 861              		.loc 1 263 30 view .LVU178
- 862 0016 0D49     		ldr	r1, .L75
- 863 0018 51F82330 		ldr	r3, [r1, r3, lsl #2]
- 864              		.loc 1 263 17 view .LVU179
- 865 001c 83EA1424 		eor	r4, r3, r4, lsr #8
- 866              	.LVL69:
- 262:Core/Src/device/w25q64.c ****             crc = crc32_table[(crc ^ buf[i]) & 0xFF] ^ (crc >> 8);
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 21
+ 854              	.LVL70:
+ 283:Core/Src/device/w25q64.c ****         len  -= chunk;
+ 855              		.loc 1 283 9 is_stmt 1 view .LVU177
+ 856              		.loc 1 283 14 is_stmt 0 view .LVU178
+ 857 0028 761B     		subs	r6, r6, r5
+ 858              	.LVL71:
+ 859              	.L69:
+ 860              		.loc 1 283 14 view .LVU179
+ 861              	.LBE5:
+ 276:Core/Src/device/w25q64.c ****         uint32_t chunk = (len > sizeof(buf)) ? sizeof(buf) : len;
+ 862              		.loc 1 276 16 is_stmt 1 view .LVU180
+ 863 002a 66B1     		cbz	r6, .L74
+ 864              	.LBB8:
+ 277:Core/Src/device/w25q64.c ****         W25Q64_Read(addr, buf, chunk);
+ 865              		.loc 1 277 9 view .LVU181
+ 277:Core/Src/device/w25q64.c ****         W25Q64_Read(addr, buf, chunk);
+ 866              		.loc 1 277 18 is_stmt 0 view .LVU182
+ 867 002c 3546     		mov	r5, r6
+ 868 002e B6F5807F 		cmp	r6, #256
+ 869 0032 28BF     		it	cs
+ 870 0034 4FF48075 		movcs	r5, #256
+ 871              	.LVL72:
+ 278:Core/Src/device/w25q64.c ****         for (uint32_t i = 0; i < chunk; i++) {
+ 872              		.loc 1 278 9 is_stmt 1 view .LVU183
+ 873 0038 2A46     		mov	r2, r5
+ 874 003a 6946     		mov	r1, sp
+ 875 003c 3846     		mov	r0, r7
+ 876 003e FFF7FEFF 		bl	W25Q64_Read
+ 877              	.LVL73:
+ 279:Core/Src/device/w25q64.c ****             crc = crc32_table[(crc ^ buf[i]) & 0xFF] ^ (crc >> 8);
+ 878              		.loc 1 279 9 view .LVU184
+ 879              	.LBB7:
+ 279:Core/Src/device/w25q64.c ****             crc = crc32_table[(crc ^ buf[i]) & 0xFF] ^ (crc >> 8);
+ 880              		.loc 1 279 14 view .LVU185
+ 279:Core/Src/device/w25q64.c ****             crc = crc32_table[(crc ^ buf[i]) & 0xFF] ^ (crc >> 8);
+ 881              		.loc 1 279 23 is_stmt 0 view .LVU186
+ 882 0042 0022     		movs	r2, #0
+ 279:Core/Src/device/w25q64.c ****             crc = crc32_table[(crc ^ buf[i]) & 0xFF] ^ (crc >> 8);
+ 883              		.loc 1 279 9 view .LVU187
+ 884 0044 EDE7     		b	.L70
+ 885              	.LVL74:
+ 886              	.L74:
+ 279:Core/Src/device/w25q64.c ****             crc = crc32_table[(crc ^ buf[i]) & 0xFF] ^ (crc >> 8);
+ 887              		.loc 1 279 9 view .LVU188
+ 888              	.LBE7:
+ 889              	.LBE8:
+ 284:Core/Src/device/w25q64.c ****     }
+ 285:Core/Src/device/w25q64.c ****     return crc ^ 0xFFFFFFFF;
+ 890              		.loc 1 285 5 is_stmt 1 view .LVU189
+ 286:Core/Src/device/w25q64.c **** }
+ 891              		.loc 1 286 1 is_stmt 0 view .LVU190
+ 892 0046 E043     		mvns	r0, r4
+ 893 0048 41B0     		add	sp, sp, #260
+ 894              	.LCFI21:
+ 895              		.cfi_def_cfa_offset 20
+ 896              		@ sp needed
+ 897 004a F0BD     		pop	{r4, r5, r6, r7, pc}
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s 			page 22
 
 
- 867              		.loc 1 262 42 is_stmt 1 discriminator 3 view .LVU180
- 868 0020 0132     		adds	r2, r2, #1
- 869              	.LVL70:
- 870              	.L70:
- 262:Core/Src/device/w25q64.c ****             crc = crc32_table[(crc ^ buf[i]) & 0xFF] ^ (crc >> 8);
- 871              		.loc 1 262 32 discriminator 1 view .LVU181
- 872 0022 AA42     		cmp	r2, r5
- 873 0024 F3D3     		bcc	.L71
- 262:Core/Src/device/w25q64.c ****             crc = crc32_table[(crc ^ buf[i]) & 0xFF] ^ (crc >> 8);
- 874              		.loc 1 262 32 is_stmt 0 discriminator 1 view .LVU182
- 875              	.LBE6:
- 264:Core/Src/device/w25q64.c ****         }
- 265:Core/Src/device/w25q64.c ****         addr += chunk;
- 876              		.loc 1 265 9 is_stmt 1 view .LVU183
- 877              		.loc 1 265 14 is_stmt 0 view .LVU184
- 878 0026 2F44     		add	r7, r7, r5
- 879              	.LVL71:
- 266:Core/Src/device/w25q64.c ****         len  -= chunk;
- 880              		.loc 1 266 9 is_stmt 1 view .LVU185
- 881              		.loc 1 266 14 is_stmt 0 view .LVU186
- 882 0028 761B     		subs	r6, r6, r5
- 883              	.LVL72:
- 884              	.L69:
- 885              		.loc 1 266 14 view .LVU187
- 886              	.LBE5:
- 259:Core/Src/device/w25q64.c ****         uint32_t chunk = (len > sizeof(buf)) ? sizeof(buf) : len;
- 887              		.loc 1 259 16 is_stmt 1 view .LVU188
- 888 002a 66B1     		cbz	r6, .L74
- 889              	.LBB8:
- 260:Core/Src/device/w25q64.c ****         W25Q64_Read(addr, buf, chunk);
- 890              		.loc 1 260 9 view .LVU189
- 260:Core/Src/device/w25q64.c ****         W25Q64_Read(addr, buf, chunk);
- 891              		.loc 1 260 18 is_stmt 0 view .LVU190
- 892 002c 3546     		mov	r5, r6
- 893 002e B6F5807F 		cmp	r6, #256
- 894 0032 28BF     		it	cs
- 895 0034 4FF48075 		movcs	r5, #256
- 896              	.LVL73:
- 261:Core/Src/device/w25q64.c ****         for (uint32_t i = 0; i < chunk; i++) {
- 897              		.loc 1 261 9 is_stmt 1 view .LVU191
- 898 0038 2A46     		mov	r2, r5
- 899 003a 6946     		mov	r1, sp
- 900 003c 3846     		mov	r0, r7
- 901 003e FFF7FEFF 		bl	W25Q64_Read
- 902              	.LVL74:
- 262:Core/Src/device/w25q64.c ****             crc = crc32_table[(crc ^ buf[i]) & 0xFF] ^ (crc >> 8);
- 903              		.loc 1 262 9 view .LVU192
- 904              	.LBB7:
- 262:Core/Src/device/w25q64.c ****             crc = crc32_table[(crc ^ buf[i]) & 0xFF] ^ (crc >> 8);
- 905              		.loc 1 262 14 view .LVU193
- 262:Core/Src/device/w25q64.c ****             crc = crc32_table[(crc ^ buf[i]) & 0xFF] ^ (crc >> 8);
- 906              		.loc 1 262 23 is_stmt 0 view .LVU194
- 907 0042 0022     		movs	r2, #0
- 262:Core/Src/device/w25q64.c ****             crc = crc32_table[(crc ^ buf[i]) & 0xFF] ^ (crc >> 8);
- 908              		.loc 1 262 9 view .LVU195
- 909 0044 EDE7     		b	.L70
- 910              	.LVL75:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 22
+ 898              	.LVL75:
+ 899              	.L76:
+ 900              		.loc 1 286 1 view .LVU191
+ 901              		.align	2
+ 902              	.L75:
+ 903 004c 00000000 		.word	crc32_table.0
+ 904              		.cfi_endproc
+ 905              	.LFE78:
+ 907              		.section	.rodata.crc32_table.0,"a"
+ 908              		.align	2
+ 911              	crc32_table.0:
+ 912 0000 00000000 		.word	0
+ 913 0004 96300777 		.word	1996959894
+ 914 0008 2C610EEE 		.word	-301047508
+ 915 000c BA510999 		.word	-1727442502
+ 916 0010 19C46D07 		.word	124634137
+ 917 0014 8FF46A70 		.word	1886057615
+ 918 0018 35A563E9 		.word	-379345611
+ 919 001c A395649E 		.word	-1637575261
+ 920 0020 3288DB0E 		.word	249268274
+ 921 0024 A4B8DC79 		.word	2044508324
+ 922 0028 1EE9D5E0 		.word	-522852066
+ 923 002c 88D9D297 		.word	-1747789432
+ 924 0030 2B4CB609 		.word	162941995
+ 925 0034 BD7CB17E 		.word	2125561021
+ 926 0038 072DB8E7 		.word	-407360249
+ 927 003c 911DBF90 		.word	-1866523247
+ 928 0040 6410B71D 		.word	498536548
+ 929 0044 F220B06A 		.word	1789927666
+ 930 0048 4871B9F3 		.word	-205950648
+ 931 004c DE41BE84 		.word	-2067906082
+ 932 0050 7DD4DA1A 		.word	450548861
+ 933 0054 EBE4DD6D 		.word	1843258603
+ 934 0058 51B5D4F4 		.word	-187386543
+ 935 005c C785D383 		.word	-2083289657
+ 936 0060 56986C13 		.word	325883990
+ 937 0064 C0A86B64 		.word	1684777152
+ 938 0068 7AF962FD 		.word	-43845254
+ 939 006c ECC9658A 		.word	-1973040660
+ 940 0070 4F5C0114 		.word	335633487
+ 941 0074 D96C0663 		.word	1661365465
+ 942 0078 633D0FFA 		.word	-99664541
+ 943 007c F50D088D 		.word	-1928851979
+ 944 0080 C8206E3B 		.word	997073096
+ 945 0084 5E10694C 		.word	1281953886
+ 946 0088 E44160D5 		.word	-715111964
+ 947 008c 727167A2 		.word	-1570279054
+ 948 0090 D1E4033C 		.word	1006888145
+ 949 0094 47D4044B 		.word	1258607687
+ 950 0098 FD850DD2 		.word	-770865667
+ 951 009c 6BB50AA5 		.word	-1526024853
+ 952 00a0 FAA8B535 		.word	901097722
+ 953 00a4 6C98B242 		.word	1119000684
+ 954 00a8 D6C9BBDB 		.word	-608450090
+ 955 00ac 40F9BCAC 		.word	-1396901568
+ 956 00b0 E36CD832 		.word	853044451
+ 957 00b4 755CDF45 		.word	1172266101
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s 			page 23
 
 
- 911              	.L74:
- 262:Core/Src/device/w25q64.c ****             crc = crc32_table[(crc ^ buf[i]) & 0xFF] ^ (crc >> 8);
- 912              		.loc 1 262 9 view .LVU196
- 913              	.LBE7:
- 914              	.LBE8:
- 267:Core/Src/device/w25q64.c ****     }
- 268:Core/Src/device/w25q64.c ****     return crc ^ 0xFFFFFFFF;
- 915              		.loc 1 268 5 is_stmt 1 view .LVU197
- 269:Core/Src/device/w25q64.c **** }
- 916              		.loc 1 269 1 is_stmt 0 view .LVU198
- 917 0046 E043     		mvns	r0, r4
- 918 0048 41B0     		add	sp, sp, #260
- 919              	.LCFI21:
- 920              		.cfi_def_cfa_offset 20
- 921              		@ sp needed
- 922 004a F0BD     		pop	{r4, r5, r6, r7, pc}
- 923              	.LVL76:
- 924              	.L76:
- 925              		.loc 1 269 1 view .LVU199
- 926              		.align	2
- 927              	.L75:
- 928 004c 00000000 		.word	crc32_table.0
- 929              		.cfi_endproc
- 930              	.LFE78:
- 932              		.section	.rodata.crc32_table.0,"a"
- 933              		.align	2
- 936              	crc32_table.0:
- 937 0000 00000000 		.word	0
- 938 0004 96300777 		.word	1996959894
- 939 0008 2C610EEE 		.word	-301047508
- 940 000c BA510999 		.word	-1727442502
- 941 0010 19C46D07 		.word	124634137
- 942 0014 8FF46A70 		.word	1886057615
- 943 0018 35A563E9 		.word	-379345611
- 944 001c A395649E 		.word	-1637575261
- 945 0020 3288DB0E 		.word	249268274
- 946 0024 A4B8DC79 		.word	2044508324
- 947 0028 1EE9D5E0 		.word	-522852066
- 948 002c 88D9D297 		.word	-1747789432
- 949 0030 2B4CB609 		.word	162941995
- 950 0034 BD7CB17E 		.word	2125561021
- 951 0038 072DB8E7 		.word	-407360249
- 952 003c 911DBF90 		.word	-1866523247
- 953 0040 6410B71D 		.word	498536548
- 954 0044 F220B06A 		.word	1789927666
- 955 0048 4871B9F3 		.word	-205950648
- 956 004c DE41BE84 		.word	-2067906082
- 957 0050 7DD4DA1A 		.word	450548861
- 958 0054 EBE4DD6D 		.word	1843258603
- 959 0058 51B5D4F4 		.word	-187386543
- 960 005c C785D383 		.word	-2083289657
- 961 0060 56986C13 		.word	325883990
- 962 0064 C0A86B64 		.word	1684777152
- 963 0068 7AF962FD 		.word	-43845254
- 964 006c ECC9658A 		.word	-1973040660
- 965 0070 4F5C0114 		.word	335633487
- 966 0074 D96C0663 		.word	1661365465
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 23
+ 958 00b8 CF0DD6DC 		.word	-589951537
+ 959 00bc 593DD1AB 		.word	-1412350631
+ 960 00c0 AC30D926 		.word	651767980
+ 961 00c4 3A00DE51 		.word	1373503546
+ 962 00c8 8051D7C8 		.word	-925412992
+ 963 00cc 1661D0BF 		.word	-1076862698
+ 964 00d0 B5F4B421 		.word	565507253
+ 965 00d4 23C4B356 		.word	1454621731
+ 966 00d8 9995BACF 		.word	-809855591
+ 967 00dc 0FA5BDB8 		.word	-1195530993
+ 968 00e0 9EB80228 		.word	671266974
+ 969 00e4 0888055F 		.word	1594198024
+ 970 00e8 B2D90CC6 		.word	-972236366
+ 971 00ec 24E90BB1 		.word	-1324619484
+ 972 00f0 877C6F2F 		.word	795835527
+ 973 00f4 114C6858 		.word	1483230225
+ 974 00f8 AB1D61C1 		.word	-1050600021
+ 975 00fc 3D2D66B6 		.word	-1234817731
+ 976 0100 9041DC76 		.word	1994146192
+ 977 0104 0671DB01 		.word	31158534
+ 978 0108 BC20D298 		.word	-1731059524
+ 979 010c 2A10D5EF 		.word	-271249366
+ 980 0110 8985B171 		.word	1907459465
+ 981 0114 1FB5B606 		.word	112637215
+ 982 0118 A5E4BF9F 		.word	-1614814043
+ 983 011c 33D4B8E8 		.word	-390540237
+ 984 0120 A2C90778 		.word	2013776290
+ 985 0124 34F9000F 		.word	251722036
+ 986 0128 8EA80996 		.word	-1777751922
+ 987 012c 18980EE1 		.word	-519137256
+ 988 0130 BB0D6A7F 		.word	2137656763
+ 989 0134 2D3D6D08 		.word	141376813
+ 990 0138 976C6491 		.word	-1855689577
+ 991 013c 015C63E6 		.word	-429695999
+ 992 0140 F4516B6B 		.word	1802195444
+ 993 0144 62616C1C 		.word	476864866
+ 994 0148 D8306585 		.word	-2056965928
+ 995 014c 4E0062F2 		.word	-228458418
+ 996 0150 ED95066C 		.word	1812370925
+ 997 0154 7BA5011B 		.word	453092731
+ 998 0158 C1F40882 		.word	-2113342271
+ 999 015c 57C40FF5 		.word	-183516073
+ 1000 0160 C6D9B065 		.word	1706088902
+ 1001 0164 50E9B712 		.word	314042704
+ 1002 0168 EAB8BE8B 		.word	-1950435094
+ 1003 016c 7C88B9FC 		.word	-54949764
+ 1004 0170 DF1DDD62 		.word	1658658271
+ 1005 0174 492DDA15 		.word	366619977
+ 1006 0178 F37CD38C 		.word	-1932296973
+ 1007 017c 654CD4FB 		.word	-69972891
+ 1008 0180 5861B24D 		.word	1303535960
+ 1009 0184 CE51B53A 		.word	984961486
+ 1010 0188 7400BCA3 		.word	-1547960204
+ 1011 018c E230BBD4 		.word	-725929758
+ 1012 0190 41A5DF4A 		.word	1256170817
+ 1013 0194 D795D83D 		.word	1037604311
+ 1014 0198 6DC4D1A4 		.word	-1529756563
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s 			page 24
 
 
- 967 0078 633D0FFA 		.word	-99664541
- 968 007c F50D088D 		.word	-1928851979
- 969 0080 C8206E3B 		.word	997073096
- 970 0084 5E10694C 		.word	1281953886
- 971 0088 E44160D5 		.word	-715111964
- 972 008c 727167A2 		.word	-1570279054
- 973 0090 D1E4033C 		.word	1006888145
- 974 0094 47D4044B 		.word	1258607687
- 975 0098 FD850DD2 		.word	-770865667
- 976 009c 6BB50AA5 		.word	-1526024853
- 977 00a0 FAA8B535 		.word	901097722
- 978 00a4 6C98B242 		.word	1119000684
- 979 00a8 D6C9BBDB 		.word	-608450090
- 980 00ac 40F9BCAC 		.word	-1396901568
- 981 00b0 E36CD832 		.word	853044451
- 982 00b4 755CDF45 		.word	1172266101
- 983 00b8 CF0DD6DC 		.word	-589951537
- 984 00bc 593DD1AB 		.word	-1412350631
- 985 00c0 AC30D926 		.word	651767980
- 986 00c4 3A00DE51 		.word	1373503546
- 987 00c8 8051D7C8 		.word	-925412992
- 988 00cc 1661D0BF 		.word	-1076862698
- 989 00d0 B5F4B421 		.word	565507253
- 990 00d4 23C4B356 		.word	1454621731
- 991 00d8 9995BACF 		.word	-809855591
- 992 00dc 0FA5BDB8 		.word	-1195530993
- 993 00e0 9EB80228 		.word	671266974
- 994 00e4 0888055F 		.word	1594198024
- 995 00e8 B2D90CC6 		.word	-972236366
- 996 00ec 24E90BB1 		.word	-1324619484
- 997 00f0 877C6F2F 		.word	795835527
- 998 00f4 114C6858 		.word	1483230225
- 999 00f8 AB1D61C1 		.word	-1050600021
- 1000 00fc 3D2D66B6 		.word	-1234817731
- 1001 0100 9041DC76 		.word	1994146192
- 1002 0104 0671DB01 		.word	31158534
- 1003 0108 BC20D298 		.word	-1731059524
- 1004 010c 2A10D5EF 		.word	-271249366
- 1005 0110 8985B171 		.word	1907459465
- 1006 0114 1FB5B606 		.word	112637215
- 1007 0118 A5E4BF9F 		.word	-1614814043
- 1008 011c 33D4B8E8 		.word	-390540237
- 1009 0120 A2C90778 		.word	2013776290
- 1010 0124 34F9000F 		.word	251722036
- 1011 0128 8EA80996 		.word	-1777751922
- 1012 012c 18980EE1 		.word	-519137256
- 1013 0130 BB0D6A7F 		.word	2137656763
- 1014 0134 2D3D6D08 		.word	141376813
- 1015 0138 976C6491 		.word	-1855689577
- 1016 013c 015C63E6 		.word	-429695999
- 1017 0140 F4516B6B 		.word	1802195444
- 1018 0144 62616C1C 		.word	476864866
- 1019 0148 D8306585 		.word	-2056965928
- 1020 014c 4E0062F2 		.word	-228458418
- 1021 0150 ED95066C 		.word	1812370925
- 1022 0154 7BA5011B 		.word	453092731
- 1023 0158 C1F40882 		.word	-2113342271
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 24
+ 1015 019c FBF4D6D3 		.word	-740887301
+ 1016 01a0 6AE96943 		.word	1131014506
+ 1017 01a4 FCD96E34 		.word	879679996
+ 1018 01a8 468867AD 		.word	-1385723834
+ 1019 01ac D0B860DA 		.word	-631195440
+ 1020 01b0 732D0444 		.word	1141124467
+ 1021 01b4 E51D0333 		.word	855842277
+ 1022 01b8 5F4C0AAA 		.word	-1442165665
+ 1023 01bc C97C0DDD 		.word	-586318647
+ 1024 01c0 3C710550 		.word	1342533948
+ 1025 01c4 AA410227 		.word	654459306
+ 1026 01c8 10100BBE 		.word	-1106571248
+ 1027 01cc 86200CC9 		.word	-921952122
+ 1028 01d0 25B56857 		.word	1466479909
+ 1029 01d4 B3856F20 		.word	544179635
+ 1030 01d8 09D466B9 		.word	-1184443383
+ 1031 01dc 9FE461CE 		.word	-832445281
+ 1032 01e0 0EF9DE5E 		.word	1591671054
+ 1033 01e4 98C9D929 		.word	702138776
+ 1034 01e8 2298D0B0 		.word	-1328506846
+ 1035 01ec B4A8D7C7 		.word	-942167884
+ 1036 01f0 173DB359 		.word	1504918807
+ 1037 01f4 810DB42E 		.word	783551873
+ 1038 01f8 3B5CBDB7 		.word	-1212326853
+ 1039 01fc AD6CBAC0 		.word	-1061524307
+ 1040 0200 2083B8ED 		.word	-306674912
+ 1041 0204 B6B3BF9A 		.word	-1698712650
+ 1042 0208 0CE2B603 		.word	62317068
+ 1043 020c 9AD2B174 		.word	1957810842
+ 1044 0210 3947D5EA 		.word	-355121351
+ 1045 0214 AF77D29D 		.word	-1647151185
+ 1046 0218 1526DB04 		.word	81470997
+ 1047 021c 8316DC73 		.word	1943803523
+ 1048 0220 120B63E3 		.word	-480048366
+ 1049 0224 843B6494 		.word	-1805370492
+ 1050 0228 3E6A6D0D 		.word	225274430
+ 1051 022c A85A6A7A 		.word	2053790376
+ 1052 0230 0BCF0EE4 		.word	-468791541
+ 1053 0234 9DFF0993 		.word	-1828061283
+ 1054 0238 27AE000A 		.word	167816743
+ 1055 023c B19E077D 		.word	2097651377
+ 1056 0240 44930FF0 		.word	-267414716
+ 1057 0244 D2A30887 		.word	-2029476910
+ 1058 0248 68F2011E 		.word	503444072
+ 1059 024c FEC20669 		.word	1762050814
+ 1060 0250 5D5762F7 		.word	-144550051
+ 1061 0254 CB676580 		.word	-2140837941
+ 1062 0258 71366C19 		.word	426522225
+ 1063 025c E7066B6E 		.word	1852507879
+ 1064 0260 761BD4FE 		.word	-19653770
+ 1065 0264 E02BD389 		.word	-1982649376
+ 1066 0268 5A7ADA10 		.word	282753626
+ 1067 026c CC4ADD67 		.word	1742555852
+ 1068 0270 6FDFB9F9 		.word	-105259153
+ 1069 0274 F9EFBE8E 		.word	-1900089351
+ 1070 0278 43BEB717 		.word	397917763
+ 1071 027c D58EB060 		.word	1622183637
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s 			page 25
 
 
- 1024 015c 57C40FF5 		.word	-183516073
- 1025 0160 C6D9B065 		.word	1706088902
- 1026 0164 50E9B712 		.word	314042704
- 1027 0168 EAB8BE8B 		.word	-1950435094
- 1028 016c 7C88B9FC 		.word	-54949764
- 1029 0170 DF1DDD62 		.word	1658658271
- 1030 0174 492DDA15 		.word	366619977
- 1031 0178 F37CD38C 		.word	-1932296973
- 1032 017c 654CD4FB 		.word	-69972891
- 1033 0180 5861B24D 		.word	1303535960
- 1034 0184 CE51B53A 		.word	984961486
- 1035 0188 7400BCA3 		.word	-1547960204
- 1036 018c E230BBD4 		.word	-725929758
- 1037 0190 41A5DF4A 		.word	1256170817
- 1038 0194 D795D83D 		.word	1037604311
- 1039 0198 6DC4D1A4 		.word	-1529756563
- 1040 019c FBF4D6D3 		.word	-740887301
- 1041 01a0 6AE96943 		.word	1131014506
- 1042 01a4 FCD96E34 		.word	879679996
- 1043 01a8 468867AD 		.word	-1385723834
- 1044 01ac D0B860DA 		.word	-631195440
- 1045 01b0 732D0444 		.word	1141124467
- 1046 01b4 E51D0333 		.word	855842277
- 1047 01b8 5F4C0AAA 		.word	-1442165665
- 1048 01bc C97C0DDD 		.word	-586318647
- 1049 01c0 3C710550 		.word	1342533948
- 1050 01c4 AA410227 		.word	654459306
- 1051 01c8 10100BBE 		.word	-1106571248
- 1052 01cc 86200CC9 		.word	-921952122
- 1053 01d0 25B56857 		.word	1466479909
- 1054 01d4 B3856F20 		.word	544179635
- 1055 01d8 09D466B9 		.word	-1184443383
- 1056 01dc 9FE461CE 		.word	-832445281
- 1057 01e0 0EF9DE5E 		.word	1591671054
- 1058 01e4 98C9D929 		.word	702138776
- 1059 01e8 2298D0B0 		.word	-1328506846
- 1060 01ec B4A8D7C7 		.word	-942167884
- 1061 01f0 173DB359 		.word	1504918807
- 1062 01f4 810DB42E 		.word	783551873
- 1063 01f8 3B5CBDB7 		.word	-1212326853
- 1064 01fc AD6CBAC0 		.word	-1061524307
- 1065 0200 2083B8ED 		.word	-306674912
- 1066 0204 B6B3BF9A 		.word	-1698712650
- 1067 0208 0CE2B603 		.word	62317068
- 1068 020c 9AD2B174 		.word	1957810842
- 1069 0210 3947D5EA 		.word	-355121351
- 1070 0214 AF77D29D 		.word	-1647151185
- 1071 0218 1526DB04 		.word	81470997
- 1072 021c 8316DC73 		.word	1943803523
- 1073 0220 120B63E3 		.word	-480048366
- 1074 0224 843B6494 		.word	-1805370492
- 1075 0228 3E6A6D0D 		.word	225274430
- 1076 022c A85A6A7A 		.word	2053790376
- 1077 0230 0BCF0EE4 		.word	-468791541
- 1078 0234 9DFF0993 		.word	-1828061283
- 1079 0238 27AE000A 		.word	167816743
- 1080 023c B19E077D 		.word	2097651377
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 25
+ 1072 0280 E8A3D6D6 		.word	-690576408
+ 1073 0284 7E93D1A1 		.word	-1580100738
+ 1074 0288 C4C2D838 		.word	953729732
+ 1075 028c 52F2DF4F 		.word	1340076626
+ 1076 0290 F167BBD1 		.word	-776247311
+ 1077 0294 6757BCA6 		.word	-1497606297
+ 1078 0298 DD06B53F 		.word	1068828381
+ 1079 029c 4B36B248 		.word	1219638859
+ 1080 02a0 DA2B0DD8 		.word	-670225446
+ 1081 02a4 4C1B0AAF 		.word	-1358292148
+ 1082 02a8 F64A0336 		.word	906185462
+ 1083 02ac 607A0441 		.word	1090812512
+ 1084 02b0 C3EF60DF 		.word	-547295293
+ 1085 02b4 55DF67A8 		.word	-1469587627
+ 1086 02b8 EF8E6E31 		.word	829329135
+ 1087 02bc 79BE6946 		.word	1181335161
+ 1088 02c0 8CB361CB 		.word	-882789492
+ 1089 02c4 1A8366BC 		.word	-1134132454
+ 1090 02c8 A0D26F25 		.word	628085408
+ 1091 02cc 36E26852 		.word	1382605366
+ 1092 02d0 95770CCC 		.word	-871598187
+ 1093 02d4 03470BBB 		.word	-1156888829
+ 1094 02d8 B9160222 		.word	570562233
+ 1095 02dc 2F260555 		.word	1426400815
+ 1096 02e0 BE3BBAC5 		.word	-977650754
+ 1097 02e4 280BBDB2 		.word	-1296233688
+ 1098 02e8 925AB42B 		.word	733239954
+ 1099 02ec 040AB35C 		.word	1555237380
+ 1100 02f0 A7FFD7C2 		.word	-1026031705
+ 1101 02f4 31CFD0B5 		.word	-1244606671
+ 1102 02f8 8B9ED92C 		.word	752459403
+ 1103 02fc 1DAEDE5B 		.word	1541320221
+ 1104 0300 B0C2649B 		.word	-1687895376
+ 1105 0304 26F263EC 		.word	-328994266
+ 1106 0308 9CA36A75 		.word	1969922972
+ 1107 030c 0A936D02 		.word	40735498
+ 1108 0310 A906099C 		.word	-1677130071
+ 1109 0314 3F360EEB 		.word	-351390145
+ 1110 0318 85670772 		.word	1913087877
+ 1111 031c 13570005 		.word	83908371
+ 1112 0320 824ABF95 		.word	-1782625662
+ 1113 0324 147AB8E2 		.word	-491226604
+ 1114 0328 AE2BB17B 		.word	2075208622
+ 1115 032c 381BB60C 		.word	213261112
+ 1116 0330 9B8ED292 		.word	-1831694693
+ 1117 0334 0DBED5E5 		.word	-438977011
+ 1118 0338 B7EFDC7C 		.word	2094854071
+ 1119 033c 21DFDB0B 		.word	198958881
+ 1120 0340 D4D2D386 		.word	-2032938284
+ 1121 0344 42E2D4F1 		.word	-237706686
+ 1122 0348 F8B3DD68 		.word	1759359992
+ 1123 034c 6E83DA1F 		.word	534414190
+ 1124 0350 CD16BE81 		.word	-2118248755
+ 1125 0354 5B26B9F6 		.word	-155638181
+ 1126 0358 E177B06F 		.word	1873836001
+ 1127 035c 7747B718 		.word	414664567
+ 1128 0360 E65A0888 		.word	-2012718362
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s 			page 26
 
 
- 1081 0240 44930FF0 		.word	-267414716
- 1082 0244 D2A30887 		.word	-2029476910
- 1083 0248 68F2011E 		.word	503444072
- 1084 024c FEC20669 		.word	1762050814
- 1085 0250 5D5762F7 		.word	-144550051
- 1086 0254 CB676580 		.word	-2140837941
- 1087 0258 71366C19 		.word	426522225
- 1088 025c E7066B6E 		.word	1852507879
- 1089 0260 761BD4FE 		.word	-19653770
- 1090 0264 E02BD389 		.word	-1982649376
- 1091 0268 5A7ADA10 		.word	282753626
- 1092 026c CC4ADD67 		.word	1742555852
- 1093 0270 6FDFB9F9 		.word	-105259153
- 1094 0274 F9EFBE8E 		.word	-1900089351
- 1095 0278 43BEB717 		.word	397917763
- 1096 027c D58EB060 		.word	1622183637
- 1097 0280 E8A3D6D6 		.word	-690576408
- 1098 0284 7E93D1A1 		.word	-1580100738
- 1099 0288 C4C2D838 		.word	953729732
- 1100 028c 52F2DF4F 		.word	1340076626
- 1101 0290 F167BBD1 		.word	-776247311
- 1102 0294 6757BCA6 		.word	-1497606297
- 1103 0298 DD06B53F 		.word	1068828381
- 1104 029c 4B36B248 		.word	1219638859
- 1105 02a0 DA2B0DD8 		.word	-670225446
- 1106 02a4 4C1B0AAF 		.word	-1358292148
- 1107 02a8 F64A0336 		.word	906185462
- 1108 02ac 607A0441 		.word	1090812512
- 1109 02b0 C3EF60DF 		.word	-547295293
- 1110 02b4 55DF67A8 		.word	-1469587627
- 1111 02b8 EF8E6E31 		.word	829329135
- 1112 02bc 79BE6946 		.word	1181335161
- 1113 02c0 8CB361CB 		.word	-882789492
- 1114 02c4 1A8366BC 		.word	-1134132454
- 1115 02c8 A0D26F25 		.word	628085408
- 1116 02cc 36E26852 		.word	1382605366
- 1117 02d0 95770CCC 		.word	-871598187
- 1118 02d4 03470BBB 		.word	-1156888829
- 1119 02d8 B9160222 		.word	570562233
- 1120 02dc 2F260555 		.word	1426400815
- 1121 02e0 BE3BBAC5 		.word	-977650754
- 1122 02e4 280BBDB2 		.word	-1296233688
- 1123 02e8 925AB42B 		.word	733239954
- 1124 02ec 040AB35C 		.word	1555237380
- 1125 02f0 A7FFD7C2 		.word	-1026031705
- 1126 02f4 31CFD0B5 		.word	-1244606671
- 1127 02f8 8B9ED92C 		.word	752459403
- 1128 02fc 1DAEDE5B 		.word	1541320221
- 1129 0300 B0C2649B 		.word	-1687895376
- 1130 0304 26F263EC 		.word	-328994266
- 1131 0308 9CA36A75 		.word	1969922972
- 1132 030c 0A936D02 		.word	40735498
- 1133 0310 A906099C 		.word	-1677130071
- 1134 0314 3F360EEB 		.word	-351390145
- 1135 0318 85670772 		.word	1913087877
- 1136 031c 13570005 		.word	83908371
- 1137 0320 824ABF95 		.word	-1782625662
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 26
-
-
- 1138 0324 147AB8E2 		.word	-491226604
- 1139 0328 AE2BB17B 		.word	2075208622
- 1140 032c 381BB60C 		.word	213261112
- 1141 0330 9B8ED292 		.word	-1831694693
- 1142 0334 0DBED5E5 		.word	-438977011
- 1143 0338 B7EFDC7C 		.word	2094854071
- 1144 033c 21DFDB0B 		.word	198958881
- 1145 0340 D4D2D386 		.word	-2032938284
- 1146 0344 42E2D4F1 		.word	-237706686
- 1147 0348 F8B3DD68 		.word	1759359992
- 1148 034c 6E83DA1F 		.word	534414190
- 1149 0350 CD16BE81 		.word	-2118248755
- 1150 0354 5B26B9F6 		.word	-155638181
- 1151 0358 E177B06F 		.word	1873836001
- 1152 035c 7747B718 		.word	414664567
- 1153 0360 E65A0888 		.word	-2012718362
- 1154 0364 706A0FFF 		.word	-15766928
- 1155 0368 CA3B0666 		.word	1711684554
- 1156 036c 5C0B0111 		.word	285281116
- 1157 0370 FF9E658F 		.word	-1889165569
- 1158 0374 69AE62F8 		.word	-127750551
- 1159 0378 D3FF6B61 		.word	1634467795
- 1160 037c 45CF6C16 		.word	376229701
- 1161 0380 78E20AA0 		.word	-1609899400
- 1162 0384 EED20DD7 		.word	-686959890
- 1163 0388 5483044E 		.word	1308918612
- 1164 038c C2B30339 		.word	956543938
- 1165 0390 612667A7 		.word	-1486412191
- 1166 0394 F71660D0 		.word	-799009033
- 1167 0398 4D476949 		.word	1231636301
- 1168 039c DB776E3E 		.word	1047427035
- 1169 03a0 4A6AD1AE 		.word	-1362007478
- 1170 03a4 DC5AD6D9 		.word	-640263460
- 1171 03a8 660BDF40 		.word	1088359270
- 1172 03ac F03BD837 		.word	936918000
- 1173 03b0 53AEBCA9 		.word	-1447252397
- 1174 03b4 C59EBBDE 		.word	-558129467
- 1175 03b8 7FCFB247 		.word	1202900863
- 1176 03bc E9FFB530 		.word	817233897
- 1177 03c0 1CF2BDBD 		.word	-1111625188
- 1178 03c4 8AC2BACA 		.word	-893730166
- 1179 03c8 3093B353 		.word	1404277552
- 1180 03cc A6A3B424 		.word	615818150
- 1181 03d0 0536D0BA 		.word	-1160759803
- 1182 03d4 9306D7CD 		.word	-841546093
- 1183 03d8 2957DE54 		.word	1423857449
- 1184 03dc BF67D923 		.word	601450431
- 1185 03e0 2E7A66B3 		.word	-1285129682
- 1186 03e4 B84A61C4 		.word	-1000256840
- 1187 03e8 021B685D 		.word	1567103746
- 1188 03ec 942B6F2A 		.word	711928724
- 1189 03f0 37BE0BB4 		.word	-1274298825
- 1190 03f4 A18E0CC3 		.word	-1022587231
- 1191 03f8 1BDF055A 		.word	1510334235
- 1192 03fc 8DEF022D 		.word	755167117
- 1193              		.text
- 1194              	.Letext0:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 27
-
-
- 1195              		.file 2 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_defa
- 1196              		.file 3 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h
- 1197              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h"
- 1198              		.file 5 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h"
- 1199              		.file 6 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio.h"
- 1200              		.file 7 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h"
- 1201              		.file 8 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h"
- 1202              		.file 9 "Core/Inc/spi.h"
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s 			page 28
+ 1129 0364 706A0FFF 		.word	-15766928
+ 1130 0368 CA3B0666 		.word	1711684554
+ 1131 036c 5C0B0111 		.word	285281116
+ 1132 0370 FF9E658F 		.word	-1889165569
+ 1133 0374 69AE62F8 		.word	-127750551
+ 1134 0378 D3FF6B61 		.word	1634467795
+ 1135 037c 45CF6C16 		.word	376229701
+ 1136 0380 78E20AA0 		.word	-1609899400
+ 1137 0384 EED20DD7 		.word	-686959890
+ 1138 0388 5483044E 		.word	1308918612
+ 1139 038c C2B30339 		.word	956543938
+ 1140 0390 612667A7 		.word	-1486412191
+ 1141 0394 F71660D0 		.word	-799009033
+ 1142 0398 4D476949 		.word	1231636301
+ 1143 039c DB776E3E 		.word	1047427035
+ 1144 03a0 4A6AD1AE 		.word	-1362007478
+ 1145 03a4 DC5AD6D9 		.word	-640263460
+ 1146 03a8 660BDF40 		.word	1088359270
+ 1147 03ac F03BD837 		.word	936918000
+ 1148 03b0 53AEBCA9 		.word	-1447252397
+ 1149 03b4 C59EBBDE 		.word	-558129467
+ 1150 03b8 7FCFB247 		.word	1202900863
+ 1151 03bc E9FFB530 		.word	817233897
+ 1152 03c0 1CF2BDBD 		.word	-1111625188
+ 1153 03c4 8AC2BACA 		.word	-893730166
+ 1154 03c8 3093B353 		.word	1404277552
+ 1155 03cc A6A3B424 		.word	615818150
+ 1156 03d0 0536D0BA 		.word	-1160759803
+ 1157 03d4 9306D7CD 		.word	-841546093
+ 1158 03d8 2957DE54 		.word	1423857449
+ 1159 03dc BF67D923 		.word	601450431
+ 1160 03e0 2E7A66B3 		.word	-1285129682
+ 1161 03e4 B84A61C4 		.word	-1000256840
+ 1162 03e8 021B685D 		.word	1567103746
+ 1163 03ec 942B6F2A 		.word	711928724
+ 1164 03f0 37BE0BB4 		.word	-1274298825
+ 1165 03f4 A18E0CC3 		.word	-1022587231
+ 1166 03f8 1BDF055A 		.word	1510334235
+ 1167 03fc 8DEF022D 		.word	755167117
+ 1168              		.text
+ 1169              	.Letext0:
+ 1170              		.file 2 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_defa
+ 1171              		.file 3 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h
+ 1172              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h"
+ 1173              		.file 5 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h"
+ 1174              		.file 6 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h"
+ 1175              		.file 7 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h"
+ 1176              		.file 8 "Core/Inc/spi.h"
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s 			page 27
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 w25q64.c
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:19     .text.SPI_SendByte:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:24     .text.SPI_SendByte:00000000 SPI_SendByte
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:63     .text.SPI_SendByte:00000028 $d
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:68     .text.SPI_SendAddr:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:73     .text.SPI_SendAddr:00000000 SPI_SendAddr
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:108    .text.W25Q64_ReadJEDEC_ID:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:114    .text.W25Q64_ReadJEDEC_ID:00000000 W25Q64_ReadJEDEC_ID
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:170    .text.W25Q64_ReadJEDEC_ID:0000002c $d
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:175    .text.W25Q64_Init:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:181    .text.W25Q64_Init:00000000 W25Q64_Init
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:273    .text.W25Q64_Init:00000058 $d
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:278    .text.W25Q64_ReadSR:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:284    .text.W25Q64_ReadSR:00000000 W25Q64_ReadSR
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:319    .text.W25Q64_ReadSR:00000018 $d
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:324    .text.W25Q64_WaitBusy:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:330    .text.W25Q64_WaitBusy:00000000 W25Q64_WaitBusy
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:353    .text.W25Q64_WriteEnable:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:359    .text.W25Q64_WriteEnable:00000000 W25Q64_WriteEnable
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:387    .text.W25Q64_WriteEnable:00000014 $d
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:392    .text.W25Q64_Read:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:398    .text.W25Q64_Read:00000000 W25Q64_Read
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:468    .text.W25Q64_Read:00000034 $d
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:473    .text.W25Q64_PageProgram:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:479    .text.W25Q64_PageProgram:00000000 W25Q64_PageProgram
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:560    .text.W25Q64_PageProgram:00000048 $d
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:565    .text.W25Q64_Write:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:571    .text.W25Q64_Write:00000000 W25Q64_Write
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:661    .text.W25Q64_SectorErase:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:667    .text.W25Q64_SectorErase:00000000 W25Q64_SectorErase
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:710    .text.W25Q64_SectorErase:00000024 $d
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:715    .text.W25Q64_BlockErase:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:721    .text.W25Q64_BlockErase:00000000 W25Q64_BlockErase
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:764    .text.W25Q64_BlockErase:00000024 $d
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:769    .text.W25Q64_ChipErase:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:775    .text.W25Q64_ChipErase:00000000 W25Q64_ChipErase
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:809    .text.W25Q64_ChipErase:0000001c $d
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:814    .text.W25Q64_CRC32:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:820    .text.W25Q64_CRC32:00000000 W25Q64_CRC32
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:928    .text.W25Q64_CRC32:0000004c $d
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:936    .rodata.crc32_table.0:00000000 crc32_table.0
-C:\Users\airforce\AppData\Local\Temp\ccDHGl9K.s:933    .rodata.crc32_table.0:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:19     .text.SPI_SendByte:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:24     .text.SPI_SendByte:00000000 SPI_SendByte
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:63     .text.SPI_SendByte:00000028 $d
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:68     .text.SPI_SendAddr:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:73     .text.SPI_SendAddr:00000000 SPI_SendAddr
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:108    .text.W25Q64_ReadJEDEC_ID:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:114    .text.W25Q64_ReadJEDEC_ID:00000000 W25Q64_ReadJEDEC_ID
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:170    .text.W25Q64_ReadJEDEC_ID:0000002c $d
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:175    .text.W25Q64_Init:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:181    .text.W25Q64_Init:00000000 W25Q64_Init
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:248    .text.W25Q64_Init:0000003c $d
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:253    .text.W25Q64_ReadSR:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:259    .text.W25Q64_ReadSR:00000000 W25Q64_ReadSR
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:294    .text.W25Q64_ReadSR:00000018 $d
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:299    .text.W25Q64_WaitBusy:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:305    .text.W25Q64_WaitBusy:00000000 W25Q64_WaitBusy
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:328    .text.W25Q64_WriteEnable:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:334    .text.W25Q64_WriteEnable:00000000 W25Q64_WriteEnable
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:362    .text.W25Q64_WriteEnable:00000014 $d
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:367    .text.W25Q64_Read:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:373    .text.W25Q64_Read:00000000 W25Q64_Read
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:443    .text.W25Q64_Read:00000034 $d
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:448    .text.W25Q64_PageProgram:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:454    .text.W25Q64_PageProgram:00000000 W25Q64_PageProgram
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:535    .text.W25Q64_PageProgram:00000048 $d
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:540    .text.W25Q64_Write:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:546    .text.W25Q64_Write:00000000 W25Q64_Write
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:636    .text.W25Q64_SectorErase:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:642    .text.W25Q64_SectorErase:00000000 W25Q64_SectorErase
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:685    .text.W25Q64_SectorErase:00000024 $d
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:690    .text.W25Q64_BlockErase:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:696    .text.W25Q64_BlockErase:00000000 W25Q64_BlockErase
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:739    .text.W25Q64_BlockErase:00000024 $d
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:744    .text.W25Q64_ChipErase:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:750    .text.W25Q64_ChipErase:00000000 W25Q64_ChipErase
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:784    .text.W25Q64_ChipErase:0000001c $d
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:789    .text.W25Q64_CRC32:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:795    .text.W25Q64_CRC32:00000000 W25Q64_CRC32
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:903    .text.W25Q64_CRC32:0000004c $d
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:911    .rodata.crc32_table.0:00000000 crc32_table.0
+C:\Users\airforce\AppData\Local\Temp\ccjCbiFB.s:908    .rodata.crc32_table.0:00000000 $d
 
 UNDEFINED SYMBOLS
 HAL_SPI_TransmitReceive
 hspi1
-HAL_GPIO_Init
