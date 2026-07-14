@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -49,7 +49,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
   12:Core/Src/main.c **** #include "i2c.h"
   13:Core/Src/main.c **** #include "usart.h"
   14:Core/Src/main.c **** #include "gpio.h"
-  15:Core/Src/main.c **** 
+  15:Core/Src/main.c **** #include "spi.h"
   16:Core/Src/main.c **** /* Private includes ----------------------------------------------------------*/
   17:Core/Src/main.c **** /* USER CODE BEGIN Includes */
   18:Core/Src/main.c **** #include "FreeRTOS.h"
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
   21:Core/Src/main.c **** #include <stdio.h>
   22:Core/Src/main.c **** #include <string.h>
   23:Core/Src/main.c **** #include "debug_uart.h"
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 2
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 2
 
 
   24:Core/Src/main.c **** #include "mpu6050.h"
@@ -69,299 +69,320 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
   29:Core/Src/main.c **** #include <stdbool.h>
   30:Core/Src/main.c **** #include "esp8266.h"
   31:Core/Src/main.c **** #include "onenet.h"
-  32:Core/Src/main.c **** /* USER CODE END Includes */
-  33:Core/Src/main.c **** 
-  34:Core/Src/main.c **** /* Private typedef -----------------------------------------------------------*/
-  35:Core/Src/main.c **** /* USER CODE BEGIN PTD */
-  36:Core/Src/main.c **** /* USER CODE END PTD */
-  37:Core/Src/main.c **** 
-  38:Core/Src/main.c **** /* Private define ------------------------------------------------------------*/
-  39:Core/Src/main.c **** /* USER CODE BEGIN PD */
-  40:Core/Src/main.c **** /* USER CODE END PD */
-  41:Core/Src/main.c **** 
-  42:Core/Src/main.c **** /* Private macro -------------------------------------------------------------*/
-  43:Core/Src/main.c **** /* USER CODE BEGIN PM */
-  44:Core/Src/main.c **** /* USER CODE END PM */
-  45:Core/Src/main.c **** 
-  46:Core/Src/main.c **** /* Private variables ---------------------------------------------------------*/
+  32:Core/Src/main.c **** #include "at24c02.h"
+  33:Core/Src/main.c **** #include "w25q64.h"
+  34:Core/Src/main.c **** /* USER CODE END Includes */
+  35:Core/Src/main.c **** 
+  36:Core/Src/main.c **** /* Private typedef -----------------------------------------------------------*/
+  37:Core/Src/main.c **** /* USER CODE BEGIN PTD */
+  38:Core/Src/main.c **** /* USER CODE END PTD */
+  39:Core/Src/main.c **** 
+  40:Core/Src/main.c **** /* Private define ------------------------------------------------------------*/
+  41:Core/Src/main.c **** /* USER CODE BEGIN PD */
+  42:Core/Src/main.c **** /* USER CODE END PD */
+  43:Core/Src/main.c **** 
+  44:Core/Src/main.c **** /* Private macro -------------------------------------------------------------*/
+  45:Core/Src/main.c **** /* USER CODE BEGIN PM */
+  46:Core/Src/main.c **** /* USER CODE END PM */
   47:Core/Src/main.c **** 
-  48:Core/Src/main.c **** /* USER CODE BEGIN PV */
-  49:Core/Src/main.c **** #define EVENT_ACCEL_READY    (1 << 0)
-  50:Core/Src/main.c **** #define EVENT_GYRO_READY     (1 << 1)
-  51:Core/Src/main.c **** QueueHandle_t xSensorQueue = NULL;   /* MPU6050_Data_t: 生产者→消费�?? */
-  52:Core/Src/main.c **** QueueHandle_t xCookedQueue = NULL;   /* Cooked_Data_t: 消费者→消费�?? */
-  53:Core/Src/main.c **** SemaphoreHandle_t xI2CMutex = NULL;  /* 保护�?? I2C 总线 (MPU6050 & OLED 共享) */
-  54:Core/Src/main.c **** EventGroupHandle_t xSensorEvent;
-  55:Core/Src/main.c **** SemaphoreHandle_t MPU_Sem;
-  56:Core/Src/main.c **** /* WiFi 配置见 esp8266.h 中的 ESP8266_WIFI_SSID / ESP8266_WIFI_PWD */
-  57:Core/Src/main.c **** 
-  58:Core/Src/main.c **** /* OneNET 上报数据（onenet.c 引用，调用 OneNet_SendData 前更新） */
-  59:Core/Src/main.c **** float onenet_ax_g, onenet_ay_g, onenet_az_g;
-  60:Core/Src/main.c **** uint32_t onenet_count;
-  61:Core/Src/main.c **** typedef struct
-  62:Core/Src/main.c **** {
-  63:Core/Src/main.c ****     QueueHandle_t xSensorQueue;
-  64:Core/Src/main.c ****     QueueHandle_t xCookedQueue;
-  65:Core/Src/main.c ****     int16_t ax_offset;
-  66:Core/Src/main.c ****     int16_t ay_offset;
-  67:Core/Src/main.c ****     int16_t az_offset;
-  68:Core/Src/main.c **** } TaskParam_t;
-  69:Core/Src/main.c **** TaskParam_t ProcessTaskParam;
-  70:Core/Src/main.c **** /* USER CODE END PV */
-  71:Core/Src/main.c **** 
-  72:Core/Src/main.c **** /* Private function prototypes -----------------------------------------------*/
-  73:Core/Src/main.c **** void SystemClock_Config(void);
-  74:Core/Src/main.c **** /* USER CODE BEGIN PFP */
-  75:Core/Src/main.c **** void Task_MPU6050_Read(void *argument);
-  76:Core/Src/main.c **** void Task_OLED_Display(void *argument);
-  77:Core/Src/main.c **** void Task_DataProcess(void *argument);
-  78:Core/Src/main.c **** void Task_OneNET_Upload(void *argument);
-  79:Core/Src/main.c **** 
-  80:Core/Src/main.c **** /* USER CODE END PFP */
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 3
+  48:Core/Src/main.c **** /* Private variables ---------------------------------------------------------*/
+  49:Core/Src/main.c **** 
+  50:Core/Src/main.c **** /* USER CODE BEGIN PV */
+  51:Core/Src/main.c **** #define EVENT_ACCEL_READY    (1 << 0)
+  52:Core/Src/main.c **** #define EVENT_GYRO_READY     (1 << 1)
+  53:Core/Src/main.c **** QueueHandle_t xSensorQueue = NULL;   /* MPU6050_Data_t: 生产者→消费�?? */
+  54:Core/Src/main.c **** QueueHandle_t xCookedQueue = NULL;   /* Cooked_Data_t: 消费者→消费�?? */
+  55:Core/Src/main.c **** SemaphoreHandle_t xI2CMutex = NULL;  /* 保护�?? I2C 总线 (MPU6050 & OLED 共享) */
+  56:Core/Src/main.c **** EventGroupHandle_t xSensorEvent;
+  57:Core/Src/main.c **** SemaphoreHandle_t MPU_Sem;
+  58:Core/Src/main.c **** /* WiFi 配置见 esp8266.h 中的 ESP8266_WIFI_SSID / ESP8266_WIFI_PWD */
+  59:Core/Src/main.c **** 
+  60:Core/Src/main.c **** /* OneNET 上报数据（onenet.c 引用，调用 OneNet_SendData 前更新） */
+  61:Core/Src/main.c **** float onenet_ax_g, onenet_ay_g, onenet_az_g;
+  62:Core/Src/main.c **** uint32_t onenet_count;
+  63:Core/Src/main.c **** typedef struct
+  64:Core/Src/main.c **** {
+  65:Core/Src/main.c ****     QueueHandle_t xSensorQueue;
+  66:Core/Src/main.c ****     QueueHandle_t xCookedQueue;
+  67:Core/Src/main.c ****     int16_t ax_offset;
+  68:Core/Src/main.c ****     int16_t ay_offset;
+  69:Core/Src/main.c ****     int16_t az_offset;
+  70:Core/Src/main.c **** } TaskParam_t;
+  71:Core/Src/main.c **** TaskParam_t ProcessTaskParam;
+  72:Core/Src/main.c **** /* USER CODE END PV */
+  73:Core/Src/main.c **** 
+  74:Core/Src/main.c **** /* Private function prototypes -----------------------------------------------*/
+  75:Core/Src/main.c **** void SystemClock_Config(void);
+  76:Core/Src/main.c **** /* USER CODE BEGIN PFP */
+  77:Core/Src/main.c **** void Task_MPU6050_Read(void *argument);
+  78:Core/Src/main.c **** void Task_OLED_Display(void *argument);
+  79:Core/Src/main.c **** void Task_DataProcess(void *argument);
+  80:Core/Src/main.c **** void Task_OneNET_Upload(void *argument);
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 3
 
 
   81:Core/Src/main.c **** 
-  82:Core/Src/main.c **** /* Private user code ---------------------------------------------------------*/
-  83:Core/Src/main.c **** /* USER CODE BEGIN 0 */
-  84:Core/Src/main.c **** uint8_t rebyte = 0;
-  85:Core/Src/main.c **** /* USER CODE END 0 */
-  86:Core/Src/main.c **** 
-  87:Core/Src/main.c **** /**
-  88:Core/Src/main.c ****   * @brief  The application entry point.
-  89:Core/Src/main.c ****   * @retval int
-  90:Core/Src/main.c ****   */
-  91:Core/Src/main.c **** int main(void)
-  92:Core/Src/main.c **** {
-  93:Core/Src/main.c ****   /* USER CODE BEGIN 1 */
-  94:Core/Src/main.c ****   /* 此处可放少量初始化代码（CubeMX 会在 HAL_Init() 之前执行�?? */
-  95:Core/Src/main.c ****   /* USER CODE END 1 */
-  96:Core/Src/main.c **** 
-  97:Core/Src/main.c ****   /* MCU Configuration--------------------------------------------------------*/
+  82:Core/Src/main.c **** /* USER CODE END PFP */
+  83:Core/Src/main.c **** 
+  84:Core/Src/main.c **** /* Private user code ---------------------------------------------------------*/
+  85:Core/Src/main.c **** /* USER CODE BEGIN 0 */
+  86:Core/Src/main.c **** uint8_t rebyte = 0;
+  87:Core/Src/main.c **** /* USER CODE END 0 */
+  88:Core/Src/main.c **** 
+  89:Core/Src/main.c **** /**
+  90:Core/Src/main.c ****   * @brief  The application entry point.
+  91:Core/Src/main.c ****   * @retval int
+  92:Core/Src/main.c ****   */
+  93:Core/Src/main.c **** int main(void)
+  94:Core/Src/main.c **** {
+  95:Core/Src/main.c ****   /* USER CODE BEGIN 1 */
+  96:Core/Src/main.c ****   /* 此处可放少量初始化代码（CubeMX 会在 HAL_Init() 之前执行�?? */
+  97:Core/Src/main.c ****   /* USER CODE END 1 */
   98:Core/Src/main.c **** 
-  99:Core/Src/main.c ****   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
- 100:Core/Src/main.c ****   HAL_Init();
- 101:Core/Src/main.c **** 
- 102:Core/Src/main.c ****   /* USER CODE BEGIN Init */
- 103:Core/Src/main.c ****   /* USER CODE END Init */
- 104:Core/Src/main.c **** 
- 105:Core/Src/main.c ****   /* Configure the system clock */
- 106:Core/Src/main.c ****   SystemClock_Config();
- 107:Core/Src/main.c **** 
- 108:Core/Src/main.c ****   /* USER CODE BEGIN SysInit */
- 109:Core/Src/main.c ****   /* 提前创建 MPU_Sem，防�? MX_GPIO_Init 使能 EXTI0 后浮�? PA0 触发中断导致空�
- 110:Core/Src/main.c ****   MPU_Sem = xSemaphoreCreateBinary();
- 111:Core/Src/main.c ****   /* USER CODE END SysInit */
- 112:Core/Src/main.c **** 
- 113:Core/Src/main.c ****   /* Initialize all configured peripherals */
- 114:Core/Src/main.c ****   MX_GPIO_Init();
- 115:Core/Src/main.c ****   MX_USART1_UART_Init();
- 116:Core/Src/main.c ****   MX_DMA_Init();
- 117:Core/Src/main.c ****   // MX_I2C1_Init();
- 118:Core/Src/main.c ****   DebugUART_Init() ;
- 119:Core/Src/main.c ****   MX_USART2_UART_Init();
- 120:Core/Src/main.c ****   /* USER CODE BEGIN 2 */
- 121:Core/Src/main.c ****   /* ============================================================
- 122:Core/Src/main.c ****    *  以下为用户自定义初始化代�?? �?? CubeMX 生成时不会被覆盖
- 123:Core/Src/main.c ****    * ============================================================ */
- 124:Core/Src/main.c **** 
- 125:Core/Src/main.c ****   /* ---- �?? I2C 初始化（接管 PB6/PB7，释放硬�?? I2C1�?? ---- */
- 126:Core/Src/main.c ****   BSP_Init();
- 127:Core/Src/main.c ****   /* ---- OLED 初始?? ---- */
- 128:Core/Src/main.c ****   OLED_Init();
- 129:Core/Src/main.c ****   /* ---- MPU6050 初始�?? ---- */
- 130:Core/Src/main.c ****   if (MPU6050_Init() != SOFT_I2C_OK) {
- 131:Core/Src/main.c ****       printf("[ERR] MPU6050 init failed! Check wiring.\r\n");
- 132:Core/Src/main.c ****       while (1) {}
- 133:Core/Src/main.c ****   }
- 134:Core/Src/main.c ****   printf("[OK] MPU6050 WHO_AM_I = 0x%02X\r\n", MPU6050_ReadWhoAmI());
- 135:Core/Src/main.c **** 
- 136:Core/Src/main.c ****   /* ---- 零偏校准（校准时传感器需保持静止�?? ---- */
- 137:Core/Src/main.c ****   int16_t offset_ax = 0, offset_ay = 0, offset_az = 0;
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 4
+  99:Core/Src/main.c ****   /* MCU Configuration--------------------------------------------------------*/
+ 100:Core/Src/main.c **** 
+ 101:Core/Src/main.c ****   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+ 102:Core/Src/main.c ****   HAL_Init();
+ 103:Core/Src/main.c **** 
+ 104:Core/Src/main.c ****   /* USER CODE BEGIN Init */
+ 105:Core/Src/main.c ****   /* USER CODE END Init */
+ 106:Core/Src/main.c **** 
+ 107:Core/Src/main.c ****   /* Configure the system clock */
+ 108:Core/Src/main.c ****   SystemClock_Config();
+ 109:Core/Src/main.c **** 
+ 110:Core/Src/main.c ****   /* USER CODE BEGIN SysInit */
+ 111:Core/Src/main.c ****   /* 提前创建 MPU_Sem，防�? MX_GPIO_Init 使能 EXTI0 后浮�? PA0 触发中断导致空�
+ 112:Core/Src/main.c ****   MPU_Sem = xSemaphoreCreateBinary();
+ 113:Core/Src/main.c ****   /* USER CODE END SysInit */
+ 114:Core/Src/main.c **** 
+ 115:Core/Src/main.c ****   /* Initialize all configured peripherals */
+ 116:Core/Src/main.c ****   MX_GPIO_Init();
+ 117:Core/Src/main.c ****   MX_USART1_UART_Init();
+ 118:Core/Src/main.c ****   MX_DMA_Init();
+ 119:Core/Src/main.c ****   MX_SPI1_Init();
+ 120:Core/Src/main.c ****   // MX_I2C1_Init();
+ 121:Core/Src/main.c ****   DebugUART_Init() ;
+ 122:Core/Src/main.c ****   MX_USART2_UART_Init();
+ 123:Core/Src/main.c ****   /* USER CODE BEGIN 2 */
+ 124:Core/Src/main.c ****   /* ============================================================
+ 125:Core/Src/main.c ****    *  以下为用户自定义初始化代�?? �?? CubeMX 生成时不会被覆盖
+ 126:Core/Src/main.c ****    * ============================================================ */
+ 127:Core/Src/main.c **** 
+ 128:Core/Src/main.c ****   /* ---- 软 I2C 初始化（接管 PB6/PB7，释放硬件 I2C1） ---- */
+ 129:Core/Src/main.c ****   BSP_Init();
+ 130:Core/Src/main.c **** 
+ 131:Core/Src/main.c ****   
+ 132:Core/Src/main.c **** 
+ 133:Core/Src/main.c ****   /* ---- OLED 初始化 ---- */
+ 134:Core/Src/main.c ****   OLED_Init();
+ 135:Core/Src/main.c ****   /* ---- MPU6050 初始化 ---- */
+ 136:Core/Src/main.c ****   if (MPU6050_Init() != SOFT_I2C_OK) {
+ 137:Core/Src/main.c ****       printf("[ERR] MPU6050 init failed! Check wiring.\r\n");
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 4
 
 
- 138:Core/Src/main.c ****   MPU6050_Calibrate(&offset_ax, &offset_ay, &offset_az);
- 139:Core/Src/main.c **** 
- 140:Core/Src/main.c ****   /* ---- 创建 I2C 总线互斥锁（MPU6050 & OLED 共享�?? I2C�?? ---- */
- 141:Core/Src/main.c ****   xI2CMutex = xSemaphoreCreateMutex();
- 142:Core/Src/main.c ****   if (xI2CMutex == NULL) {
- 143:Core/Src/main.c ****       printf("[ERR] Failed to create I2C mutex!\r\n");
- 144:Core/Src/main.c ****       while (1) {}
- 145:Core/Src/main.c ****   }
- 146:Core/Src/main.c **** 
- 147:Core/Src/main.c ****   /* ---- 创建传感器数据管道队�?? ---- */
- 148:Core/Src/main.c ****   xSensorQueue = xQueueCreate(8, sizeof(MPU6050_Data_t));     /* 原始数据: 8 �?? */
- 149:Core/Src/main.c ****   xCookedQueue = xQueueCreate(4, sizeof(SensorCooked_t));     /* 处理后数�??: 4 �?? */
- 150:Core/Src/main.c ****   if (xSensorQueue == NULL || xCookedQueue == NULL) {
- 151:Core/Src/main.c ****       printf("[ERR] Failed to create queues!\r\n");
- 152:Core/Src/main.c ****       while (1) {}
- 153:Core/Src/main.c ****   }
- 154:Core/Src/main.c **** 
- 155:Core/Src/main.c ****   /* ---- 初始化任务参数结构体 ---- */
- 156:Core/Src/main.c ****   ProcessTaskParam.xSensorQueue = xSensorQueue;
- 157:Core/Src/main.c ****   ProcessTaskParam.xCookedQueue = xCookedQueue;
- 158:Core/Src/main.c ****   ProcessTaskParam.ax_offset = offset_ax;
- 159:Core/Src/main.c ****   ProcessTaskParam.ay_offset = offset_ay;
- 160:Core/Src/main.c ****   ProcessTaskParam.az_offset = offset_az;
- 161:Core/Src/main.c **** 
- 162:Core/Src/main.c ****   /* ---- 创建 3 级流水线任务 ---- */
- 163:Core/Src/main.c ****   /* MPU6050 读取任务（生产�?�，Prio=2�?? */
- 164:Core/Src/main.c ****   xTaskCreate(Task_MPU6050_Read, "MPU_Read", 256,
- 165:Core/Src/main.c ****               (void *)xSensorQueue, 2, NULL);
- 166:Core/Src/main.c **** 
- 167:Core/Src/main.c ****   /* 数据处理任务（处理层，Prio=2�?? */
- 168:Core/Src/main.c ****   xTaskCreate(Task_DataProcess, "DataProc", 256,
- 169:Core/Src/main.c ****               (void *)&ProcessTaskParam, 2, NULL);
- 170:Core/Src/main.c **** 
- 171:Core/Src/main.c ****   /* OLED 显示任务（消费�?�，Prio=3） */
- 172:Core/Src/main.c ****   xTaskCreate(Task_OLED_Display, "OLED_Disp", 256,
- 173:Core/Src/main.c ****               (void *)xCookedQueue, 3, NULL);
- 174:Core/Src/main.c **** 
- 175:Core/Src/main.c ****   /* OneNET 周期上传任务（Prio=1，每 5 秒上报一次） */
- 176:Core/Src/main.c ****   xTaskCreate(Task_OneNET_Upload, "OneNET_Upl", 256,
- 177:Core/Src/main.c ****               NULL, 1, NULL);
- 178:Core/Src/main.c **** 
- 179:Core/Src/main.c **** 
- 180:Core/Src/main.c **** 
- 181:Core/Src/main.c ****   printf("\r\n========== FreeRTOS + MPU6050 + OLED Data Pipeline ==========\r\n");
- 182:Core/Src/main.c ****   printf("Tasks: MPU_Read(2) -> Queue[8] -> DataProc(2) -> Queue[4] -> OLED_Disp(1)\r\n\r\n");
- 183:Core/Src/main.c **** 
- 184:Core/Src/main.c ****   /* ---- ESP8266 初始化（NET 包 API：中断逐字节接收 + 轮询等待） ---- */
- 185:Core/Src/main.c ****   printf("[ESP] Waiting for module boot (2s)...\r\n");
- 186:Core/Src/main.c ****   HAL_Delay(2000);
+ 138:Core/Src/main.c ****       while (1) {}
+ 139:Core/Src/main.c ****   }
+ 140:Core/Src/main.c ****   printf("[OK] MPU6050 WHO_AM_I = 0x%02X\r\n", MPU6050_ReadWhoAmI());
+ 141:Core/Src/main.c ****   /* ---- 零偏校准（校准时传感器需保持静止） ---- */
+ 142:Core/Src/main.c ****   int16_t offset_ax = 0, offset_ay = 0, offset_az = 0;
+ 143:Core/Src/main.c ****   MPU6050_Calibrate(&offset_ax, &offset_ay, &offset_az);
+ 144:Core/Src/main.c **** 
+ 145:Core/Src/main.c ****   /* ---- 创建 I2C 总线互斥锁（MPU6050 & OLED & AT24C02 共享） ---- */
+ 146:Core/Src/main.c ****   xI2CMutex = xSemaphoreCreateMutex();
+ 147:Core/Src/main.c ****   if (xI2CMutex == NULL) {
+ 148:Core/Src/main.c ****       printf("[ERR] Failed to create I2C mutex!\r\n");
+ 149:Core/Src/main.c ****       while (1) {}
+ 150:Core/Src/main.c ****   }
+ 151:Core/Src/main.c **** 
+ 152:Core/Src/main.c ****   /* ---- AT24C02 EEPROM 初始化（必须在 xI2CMutex 之后） ---- */
+ 153:Core/Src/main.c ****   if (!AT24C02_Init()) {
+ 154:Core/Src/main.c ****       printf("[ERR] AT24C02 init failed! Check wiring.\r\n");
+ 155:Core/Src/main.c ****   } else {
+ 156:Core/Src/main.c ****       printf("[OK] AT24C02 ready\r\n");
+ 157:Core/Src/main.c ****   }
+ 158:Core/Src/main.c **** 
+ 159:Core/Src/main.c ****   /* ---- W25Q64 SPI Flash 初始化 ---- */
+ 160:Core/Src/main.c ****   if (!W25Q64_Init()) {
+ 161:Core/Src/main.c ****       printf("[ERR] W25Q64 init failed! Check wiring.\r\n");
+ 162:Core/Src/main.c ****   } else {
+ 163:Core/Src/main.c ****       uint8_t id[3];
+ 164:Core/Src/main.c ****       W25Q64_ReadJEDEC_ID(id);
+ 165:Core/Src/main.c ****       printf("[OK] W25Q64 JEDEC ID: %02X %02X %02X\r\n", id[0], id[1], id[2]);
+ 166:Core/Src/main.c ****   }
+ 167:Core/Src/main.c **** 
+ 168:Core/Src/main.c ****   /* ---- 创建传感器数据管道队列 ---- */
+ 169:Core/Src/main.c ****   xSensorQueue = xQueueCreate(8, sizeof(MPU6050_Data_t));     /* 原始数据: 8 �?? */
+ 170:Core/Src/main.c ****   xCookedQueue = xQueueCreate(4, sizeof(SensorCooked_t));     /* 处理后数�??: 4 �?? */
+ 171:Core/Src/main.c ****   if (xSensorQueue == NULL || xCookedQueue == NULL) {
+ 172:Core/Src/main.c ****       printf("[ERR] Failed to create queues!\r\n");
+ 173:Core/Src/main.c ****       while (1) {}
+ 174:Core/Src/main.c ****   }
+ 175:Core/Src/main.c **** 
+ 176:Core/Src/main.c ****   /* ---- 初始化任务参数结构体 ---- */
+ 177:Core/Src/main.c ****   ProcessTaskParam.xSensorQueue = xSensorQueue;
+ 178:Core/Src/main.c ****   ProcessTaskParam.xCookedQueue = xCookedQueue;
+ 179:Core/Src/main.c ****   ProcessTaskParam.ax_offset = offset_ax;
+ 180:Core/Src/main.c ****   ProcessTaskParam.ay_offset = offset_ay;
+ 181:Core/Src/main.c ****   ProcessTaskParam.az_offset = offset_az;
+ 182:Core/Src/main.c **** 
+ 183:Core/Src/main.c ****   /* ---- 创建 3 级流水线任务 ---- */
+ 184:Core/Src/main.c ****   /* MPU6050 读取任务（生产�?�，Prio=2�?? */
+ 185:Core/Src/main.c ****   xTaskCreate(Task_MPU6050_Read, "MPU_Read", 256,
+ 186:Core/Src/main.c ****               (void *)xSensorQueue, 2, NULL);
  187:Core/Src/main.c **** 
- 188:Core/Src/main.c ****   /* 启动 USART2 中断逐字节接收 */
- 189:Core/Src/main.c ****   ESP8266_StartRx();
- 190:Core/Src/main.c **** 
- 191:Core/Src/main.c ****   /* 阻塞初始化：AT 检测 → 关回显 → STA 模式 → 连 WiFi */
- 192:Core/Src/main.c ****   ESP8266_Init();
- 193:Core/Src/main.c **** 
- 194:Core/Src/main.c ****   /* ---- OneNET 云平台接入 ---- */
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 5
+ 188:Core/Src/main.c ****   /* 数据处理任务（处理层，Prio=2�?? */
+ 189:Core/Src/main.c ****   xTaskCreate(Task_DataProcess, "DataProc", 256,
+ 190:Core/Src/main.c ****               (void *)&ProcessTaskParam, 2, NULL);
+ 191:Core/Src/main.c **** 
+ 192:Core/Src/main.c ****   /* OLED 显示任务（消费者，Prio=3，128w足够 OLED 写屏） */
+ 193:Core/Src/main.c ****   xTaskCreate(Task_OLED_Display, "OLED_Disp", 256,
+ 194:Core/Src/main.c ****               (void *)xCookedQueue, 3, NULL);
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 5
 
 
- 195:Core/Src/main.c ****   printf("[ONENET] Registering device...\r\n");
- 196:Core/Src/main.c ****   if (OneNET_RegisterDevice()) {
- 197:Core/Src/main.c ****       printf("[ONENET] Register OK\r\n");
- 198:Core/Src/main.c **** 
- 199:Core/Src/main.c ****       if (OneNet_DevLink() == 0) {
- 200:Core/Src/main.c ****           printf("[ONENET] MQTT Link OK\r\n");
+ 195:Core/Src/main.c **** 
+ 196:Core/Src/main.c ****   /* OneNET 周期上传任务（Prio=1，每 5 秒上报一次，128w 足够 MQTT 封包） */
+ 197:Core/Src/main.c ****   xTaskCreate(Task_OneNET_Upload, "OneNET_Upl", 256,
+ 198:Core/Src/main.c ****               NULL, 1, NULL);
+ 199:Core/Src/main.c **** 
+ 200:Core/Src/main.c **** 
  201:Core/Src/main.c **** 
- 202:Core/Src/main.c ****           onenet_ax_g = 0; onenet_ay_g = 0;
- 203:Core/Src/main.c ****           onenet_az_g = 0; onenet_count = 0;
- 204:Core/Src/main.c ****           OneNET_Subscribe();
- 205:Core/Src/main.c ****           OneNet_SendData();
- 206:Core/Src/main.c ****       } else {
- 207:Core/Src/main.c ****           printf("[ONENET] MQTT Link FAILED\r\n");
- 208:Core/Src/main.c ****       }
- 209:Core/Src/main.c ****   } else {
- 210:Core/Src/main.c ****       printf("[ONENET] Register device, using default key\r\n");
- 211:Core/Src/main.c ****       /* 若设备已注册过，直接用默认 key 连接 */
- 212:Core/Src/main.c ****       if (OneNet_DevLink() == 0) {
- 213:Core/Src/main.c ****           printf("[ONENET] MQTT Link OK\r\n");
- 214:Core/Src/main.c ****           onenet_ax_g = 0; onenet_ay_g = 0;
- 215:Core/Src/main.c ****           onenet_az_g = 0; onenet_count = 0;
- 216:Core/Src/main.c ****           OneNET_Subscribe();
- 217:Core/Src/main.c ****           OneNet_SendData();
- 218:Core/Src/main.c ****       }
- 219:Core/Src/main.c ****   }
- 220:Core/Src/main.c ****   /* ---- 启动 FreeRTOS 调度器（此调用永不返回） ---- */
- 221:Core/Src/main.c ****   printf("Starting scheduler...\r\n");
- 222:Core/Src/main.c ****   vTaskStartScheduler();
- 223:Core/Src/main.c **** 
- 224:Core/Src/main.c ****   /* 调度器永远不会返�?? */
- 225:Core/Src/main.c **** 
- 226:Core/Src/main.c ****   /* USER CODE END 2 */
- 227:Core/Src/main.c **** 
- 228:Core/Src/main.c ****   /* Infinite loop */
- 229:Core/Src/main.c ****   /* USER CODE BEGIN WHILE */
- 230:Core/Src/main.c ****   while (1)
- 231:Core/Src/main.c ****   {
- 232:Core/Src/main.c ****     /* USER CODE END WHILE */
- 233:Core/Src/main.c **** 
- 234:Core/Src/main.c ****     /* USER CODE BEGIN 3 */
- 235:Core/Src/main.c ****     /* 用户循环代码 �?? 调度器启动后不会到达此处 */
- 236:Core/Src/main.c ****   /* USER CODE END 3 */
- 237:Core/Src/main.c **** }
- 238:Core/Src/main.c **** }
- 239:Core/Src/main.c **** /**
- 240:Core/Src/main.c ****   * @brief System Clock Configuration
- 241:Core/Src/main.c ****   * @retval None
- 242:Core/Src/main.c ****   */
- 243:Core/Src/main.c **** void SystemClock_Config(void)
- 244:Core/Src/main.c **** {
- 245:Core/Src/main.c ****   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
- 246:Core/Src/main.c ****   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
- 247:Core/Src/main.c **** 
- 248:Core/Src/main.c ****   /** Initializes the RCC Oscillators according to the specified parameters
- 249:Core/Src/main.c ****   * in the RCC_OscInitTypeDef structure.
- 250:Core/Src/main.c ****   */
- 251:Core/Src/main.c ****   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 6
+ 202:Core/Src/main.c ****   printf("\r\n========== FreeRTOS + MPU6050 + OLED Data Pipeline ==========\r\n");
+ 203:Core/Src/main.c ****   printf("Tasks: MPU_Read(2) -> Queue[8] -> DataProc(2) -> Queue[4] -> OLED_Disp(1)\r\n\r\n");
+ 204:Core/Src/main.c **** 
+ 205:Core/Src/main.c ****   /* ---- ESP8266 初始化（NET 包 API：中断逐字节接收 + 轮询等待） ---- */
+ 206:Core/Src/main.c ****   printf("[ESP] Waiting for module boot (2s)...\r\n");
+ 207:Core/Src/main.c ****   HAL_Delay(2000);
+ 208:Core/Src/main.c **** 
+ 209:Core/Src/main.c ****   /* 启动 USART2 中断逐字节接收 */
+ 210:Core/Src/main.c ****   ESP8266_StartRx();
+ 211:Core/Src/main.c **** 
+ 212:Core/Src/main.c ****   /* 阻塞初始化：AT 检测 → 关回显 → STA 模式 → 连 WiFi */
+ 213:Core/Src/main.c ****   ESP8266_Init();
+ 214:Core/Src/main.c **** 
+ 215:Core/Src/main.c ****   /* ---- OneNET 云平台接入 ---- */
+ 216:Core/Src/main.c ****   printf("[ONENET] Registering device...\r\n");
+ 217:Core/Src/main.c ****   if (OneNET_RegisterDevice()) {
+ 218:Core/Src/main.c ****       printf("[ONENET] Register OK\r\n");
+ 219:Core/Src/main.c **** 
+ 220:Core/Src/main.c ****       if (OneNet_DevLink() == 0) {
+ 221:Core/Src/main.c ****           printf("[ONENET] MQTT Link OK\r\n");
+ 222:Core/Src/main.c **** 
+ 223:Core/Src/main.c ****           onenet_ax_g = 0; onenet_ay_g = 0;
+ 224:Core/Src/main.c ****           onenet_az_g = 0; onenet_count = 0;
+ 225:Core/Src/main.c ****           OneNET_Subscribe();
+ 226:Core/Src/main.c ****           OneNet_SendData();
+ 227:Core/Src/main.c ****       } else {
+ 228:Core/Src/main.c ****           printf("[ONENET] MQTT Link FAILED\r\n");
+ 229:Core/Src/main.c ****       }
+ 230:Core/Src/main.c ****   } else {
+ 231:Core/Src/main.c ****       printf("[ONENET] Register device, using default key\r\n");
+ 232:Core/Src/main.c ****       /* 若设备已注册过，直接用默认 key 连接 */
+ 233:Core/Src/main.c ****       if (OneNet_DevLink() == 0) {
+ 234:Core/Src/main.c ****           printf("[ONENET] MQTT Link OK\r\n");
+ 235:Core/Src/main.c ****           onenet_ax_g = 0; onenet_ay_g = 0;
+ 236:Core/Src/main.c ****           onenet_az_g = 0; onenet_count = 0;
+ 237:Core/Src/main.c ****           OneNET_Subscribe();
+ 238:Core/Src/main.c ****           OneNet_SendData();
+ 239:Core/Src/main.c ****       }
+ 240:Core/Src/main.c ****   }
+ 241:Core/Src/main.c ****   /* ---- 启动 FreeRTOS 调度器（此调用永不返回） ---- */
+ 242:Core/Src/main.c ****   printf("Starting scheduler...\r\n");
+ 243:Core/Src/main.c ****   vTaskStartScheduler();
+ 244:Core/Src/main.c **** 
+ 245:Core/Src/main.c ****   /* 调度器永远不会返�?? */
+ 246:Core/Src/main.c **** 
+ 247:Core/Src/main.c ****   /* USER CODE END 2 */
+ 248:Core/Src/main.c **** 
+ 249:Core/Src/main.c ****   /* Infinite loop */
+ 250:Core/Src/main.c ****   /* USER CODE BEGIN WHILE */
+ 251:Core/Src/main.c ****   while (1)
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 6
 
 
- 252:Core/Src/main.c ****   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
- 253:Core/Src/main.c ****   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
- 254:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
- 255:Core/Src/main.c ****   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
- 256:Core/Src/main.c ****   {
- 257:Core/Src/main.c ****     Error_Handler();
- 258:Core/Src/main.c ****   }
- 259:Core/Src/main.c ****   /** Initializes the CPU, AHB and APB buses clocks
- 260:Core/Src/main.c ****   */
- 261:Core/Src/main.c ****   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
- 262:Core/Src/main.c ****                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
- 263:Core/Src/main.c ****   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
- 264:Core/Src/main.c ****   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
- 265:Core/Src/main.c ****   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
- 266:Core/Src/main.c ****   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
- 267:Core/Src/main.c **** 
- 268:Core/Src/main.c ****   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
- 269:Core/Src/main.c ****   {
- 270:Core/Src/main.c ****     Error_Handler();
- 271:Core/Src/main.c ****   }
- 272:Core/Src/main.c **** }
- 273:Core/Src/main.c **** 
- 274:Core/Src/main.c **** /* USER CODE BEGIN 4 */
- 275:Core/Src/main.c **** 
- 276:Core/Src/main.c **** /* ==================================================================
- 277:Core/Src/main.c ****  *  Static allocation support for Idle task
- 278:Core/Src/main.c ****  * ================================================================== */
- 279:Core/Src/main.c **** void vApplicationGetIdleTaskMemory(StaticTask_t **ppxIdleTaskTCBBuffer,
- 280:Core/Src/main.c ****                                    StackType_t **ppxIdleTaskStackBuffer,
- 281:Core/Src/main.c ****                                    uint32_t *pulIdleTaskStackSize)
- 282:Core/Src/main.c **** {
- 283:Core/Src/main.c ****     static StaticTask_t xIdleTaskTCB;
- 284:Core/Src/main.c ****     static StackType_t  uxIdleTaskStack[configMINIMAL_STACK_SIZE];
- 285:Core/Src/main.c **** 
- 286:Core/Src/main.c ****     *ppxIdleTaskTCBBuffer   = &xIdleTaskTCB;
- 287:Core/Src/main.c ****     *ppxIdleTaskStackBuffer  = uxIdleTaskStack;
- 288:Core/Src/main.c ****     *pulIdleTaskStackSize    = configMINIMAL_STACK_SIZE;
- 289:Core/Src/main.c **** }
- 290:Core/Src/main.c **** 
- 291:Core/Src/main.c **** /* ==================================================================
- 292:Core/Src/main.c ****  *  Stack overflow hook
- 293:Core/Src/main.c ****  * ================================================================== */
- 294:Core/Src/main.c **** void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
- 295:Core/Src/main.c **** {
- 296:Core/Src/main.c ****     (void)xTask;
- 297:Core/Src/main.c ****     printf("\r\n!!! STACK OVERFLOW: %s !!!\r\n", pcTaskName);
- 298:Core/Src/main.c ****     __disable_irq();
- 299:Core/Src/main.c ****     while (1) {}
- 300:Core/Src/main.c **** }
- 301:Core/Src/main.c **** 
- 302:Core/Src/main.c **** /* ===== 2.1A: MPU6050 读取任务（生产�?�） ===== */
- 303:Core/Src/main.c **** void Task_MPU6050_Read(void *argument)
- 304:Core/Src/main.c **** {
-  32              		.loc 1 304 1 view -0
+ 252:Core/Src/main.c ****   {
+ 253:Core/Src/main.c ****     /* USER CODE END WHILE */
+ 254:Core/Src/main.c **** 
+ 255:Core/Src/main.c ****     /* USER CODE BEGIN 3 */
+ 256:Core/Src/main.c ****     /* 用户循环代码 �?? 调度器启动后不会到达此处 */
+ 257:Core/Src/main.c ****   /* USER CODE END 3 */
+ 258:Core/Src/main.c **** }
+ 259:Core/Src/main.c **** }
+ 260:Core/Src/main.c **** /**
+ 261:Core/Src/main.c ****   * @brief System Clock Configuration
+ 262:Core/Src/main.c ****   * @retval None
+ 263:Core/Src/main.c ****   */
+ 264:Core/Src/main.c **** void SystemClock_Config(void)
+ 265:Core/Src/main.c **** {
+ 266:Core/Src/main.c ****   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+ 267:Core/Src/main.c ****   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+ 268:Core/Src/main.c **** 
+ 269:Core/Src/main.c ****   /** Initializes the RCC Oscillators according to the specified parameters
+ 270:Core/Src/main.c ****   * in the RCC_OscInitTypeDef structure.
+ 271:Core/Src/main.c ****   */
+ 272:Core/Src/main.c ****   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+ 273:Core/Src/main.c ****   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+ 274:Core/Src/main.c ****   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+ 275:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+ 276:Core/Src/main.c ****   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+ 277:Core/Src/main.c ****   {
+ 278:Core/Src/main.c ****     Error_Handler();
+ 279:Core/Src/main.c ****   }
+ 280:Core/Src/main.c ****   /** Initializes the CPU, AHB and APB buses clocks
+ 281:Core/Src/main.c ****   */
+ 282:Core/Src/main.c ****   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+ 283:Core/Src/main.c ****                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+ 284:Core/Src/main.c ****   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
+ 285:Core/Src/main.c ****   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+ 286:Core/Src/main.c ****   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+ 287:Core/Src/main.c ****   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+ 288:Core/Src/main.c **** 
+ 289:Core/Src/main.c ****   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+ 290:Core/Src/main.c ****   {
+ 291:Core/Src/main.c ****     Error_Handler();
+ 292:Core/Src/main.c ****   }
+ 293:Core/Src/main.c **** }
+ 294:Core/Src/main.c **** 
+ 295:Core/Src/main.c **** /* USER CODE BEGIN 4 */
+ 296:Core/Src/main.c **** 
+ 297:Core/Src/main.c **** /* ==================================================================
+ 298:Core/Src/main.c ****  *  Static allocation support for Idle task
+ 299:Core/Src/main.c ****  * ================================================================== */
+ 300:Core/Src/main.c **** void vApplicationGetIdleTaskMemory(StaticTask_t **ppxIdleTaskTCBBuffer,
+ 301:Core/Src/main.c ****                                    StackType_t **ppxIdleTaskStackBuffer,
+ 302:Core/Src/main.c ****                                    uint32_t *pulIdleTaskStackSize)
+ 303:Core/Src/main.c **** {
+ 304:Core/Src/main.c ****     static StaticTask_t xIdleTaskTCB;
+ 305:Core/Src/main.c ****     static StackType_t  uxIdleTaskStack[configMINIMAL_STACK_SIZE];
+ 306:Core/Src/main.c **** 
+ 307:Core/Src/main.c ****     *ppxIdleTaskTCBBuffer   = &xIdleTaskTCB;
+ 308:Core/Src/main.c ****     *ppxIdleTaskStackBuffer  = uxIdleTaskStack;
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 7
+
+
+ 309:Core/Src/main.c ****     *pulIdleTaskStackSize    = configMINIMAL_STACK_SIZE;
+ 310:Core/Src/main.c **** }
+ 311:Core/Src/main.c **** 
+ 312:Core/Src/main.c **** /* ==================================================================
+ 313:Core/Src/main.c ****  *  Stack overflow hook
+ 314:Core/Src/main.c ****  * ================================================================== */
+ 315:Core/Src/main.c **** void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
+ 316:Core/Src/main.c **** {
+ 317:Core/Src/main.c ****     (void)xTask;
+ 318:Core/Src/main.c ****     printf("\r\n!!! STACK OVERFLOW: %s !!!\r\n", pcTaskName);
+ 319:Core/Src/main.c ****     __disable_irq();
+ 320:Core/Src/main.c ****     while (1) {}
+ 321:Core/Src/main.c **** }
+ 322:Core/Src/main.c **** 
+ 323:Core/Src/main.c **** /* ===== 2.1A: MPU6050 读取任务（生产�?�） ===== */
+ 324:Core/Src/main.c **** void Task_MPU6050_Read(void *argument)
+ 325:Core/Src/main.c **** {
+  32              		.loc 1 325 1 view -0
   33              		.cfi_startproc
   34              		@ args = 0, pretend = 0, frame = 16
   35              		@ frame_needed = 0, uses_anonymous_args = 0
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 7
-
-
-  36              		.loc 1 304 1 is_stmt 0 view .LVU1
+  36              		.loc 1 325 1 is_stmt 0 view .LVU1
   37 0000 30B5     		push	{r4, r5, lr}
   38              	.LCFI0:
   39              		.cfi_def_cfa_offset 12
@@ -372,40 +393,43 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
   44              	.LCFI1:
   45              		.cfi_def_cfa_offset 32
   46 0004 0546     		mov	r5, r0
- 305:Core/Src/main.c ****     QueueHandle_t q = (QueueHandle_t)argument;
-  47              		.loc 1 305 5 is_stmt 1 view .LVU2
+ 326:Core/Src/main.c ****     QueueHandle_t q = (QueueHandle_t)argument;
+  47              		.loc 1 326 5 is_stmt 1 view .LVU2
   48              	.LVL1:
- 306:Core/Src/main.c ****     MPU6050_Data_t data;
-  49              		.loc 1 306 5 view .LVU3
- 307:Core/Src/main.c ****     uint32_t count = 0;
-  50              		.loc 1 307 5 view .LVU4
-  51              		.loc 1 307 14 is_stmt 0 view .LVU5
+ 327:Core/Src/main.c ****     MPU6050_Data_t data;
+  49              		.loc 1 327 5 view .LVU3
+ 328:Core/Src/main.c ****     uint32_t count = 0;
+  50              		.loc 1 328 5 view .LVU4
+  51              		.loc 1 328 14 is_stmt 0 view .LVU5
   52 0006 0024     		movs	r4, #0
   53 0008 0BE0     		b	.L2
   54              	.LVL2:
   55              	.L5:
- 308:Core/Src/main.c **** 
- 309:Core/Src/main.c ****     while (1) {
- 310:Core/Src/main.c ****         /* 获取 I2C 总线�? */
- 311:Core/Src/main.c ****          if(xSemaphoreTake(MPU_Sem, portMAX_DELAY) == pdTRUE)
- 312:Core/Src/main.c ****         {
- 313:Core/Src/main.c ****           if (xSemaphoreTake(xI2CMutex, pdMS_TO_TICKS(200)) == pdPASS) {
- 314:Core/Src/main.c ****               if (MPU6050_ReadAll(&data) == SOFT_I2C_OK) {
- 315:Core/Src/main.c ****                   count++;
- 316:Core/Src/main.c ****                   if (xQueueSend(q, &data, pdMS_TO_TICKS(100)) != pdPASS) {
- 317:Core/Src/main.c ****                       printf("[MPU] Queue full, dropped #%lu\r\n", count);
- 318:Core/Src/main.c ****                   } else {
- 319:Core/Src/main.c ****                       HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);  /* PC13 活动指示 */
-  56              		.loc 1 319 23 is_stmt 1 view .LVU6
+ 329:Core/Src/main.c **** 
+ 330:Core/Src/main.c ****     while (1) {
+ 331:Core/Src/main.c ****         /* 获取 I2C 总线�? */
+ 332:Core/Src/main.c ****          if(xSemaphoreTake(MPU_Sem, portMAX_DELAY) == pdTRUE)
+ 333:Core/Src/main.c ****         {
+ 334:Core/Src/main.c ****           if (xSemaphoreTake(xI2CMutex, pdMS_TO_TICKS(200)) == pdPASS) {
+ 335:Core/Src/main.c ****               if (MPU6050_ReadAll(&data) == SOFT_I2C_OK) {
+ 336:Core/Src/main.c ****                   count++;
+ 337:Core/Src/main.c ****                   if (xQueueSend(q, &data, pdMS_TO_TICKS(100)) != pdPASS) {
+ 338:Core/Src/main.c ****                       printf("[MPU] Queue full, dropped #%lu\r\n", count);
+ 339:Core/Src/main.c ****                   } else {
+ 340:Core/Src/main.c ****                       HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);  /* PC13 活动指示 */
+  56              		.loc 1 340 23 is_stmt 1 view .LVU6
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 8
+
+
   57 000a 4FF40051 		mov	r1, #8192
   58 000e 1648     		ldr	r0, .L8
   59 0010 FFF7FEFF 		bl	HAL_GPIO_TogglePin
   60              	.LVL3:
   61              	.L4:
- 320:Core/Src/main.c ****                   }
- 321:Core/Src/main.c ****               }
- 322:Core/Src/main.c ****               xSemaphoreGive(xI2CMutex);
-  62              		.loc 1 322 15 view .LVU7
+ 341:Core/Src/main.c ****                   }
+ 342:Core/Src/main.c ****               }
+ 343:Core/Src/main.c ****               xSemaphoreGive(xI2CMutex);
+  62              		.loc 1 343 15 view .LVU7
   63 0014 0023     		movs	r3, #0
   64 0016 1A46     		mov	r2, r3
   65 0018 1946     		mov	r1, r3
@@ -414,73 +438,70 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
   68 001e FFF7FEFF 		bl	xQueueGenericSend
   69              	.LVL4:
   70              	.L2:
- 309:Core/Src/main.c ****         /* 获取 I2C 总线�? */
-  71              		.loc 1 309 5 view .LVU8
- 311:Core/Src/main.c ****         {
-  72              		.loc 1 311 10 view .LVU9
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 8
-
-
- 311:Core/Src/main.c ****         {
-  73              		.loc 1 311 13 is_stmt 0 view .LVU10
+ 330:Core/Src/main.c ****         /* 获取 I2C 总线�? */
+  71              		.loc 1 330 5 view .LVU8
+ 332:Core/Src/main.c ****         {
+  72              		.loc 1 332 10 view .LVU9
+ 332:Core/Src/main.c ****         {
+  73              		.loc 1 332 13 is_stmt 0 view .LVU10
   74 0022 4FF0FF31 		mov	r1, #-1
   75 0026 124B     		ldr	r3, .L8+8
   76 0028 1868     		ldr	r0, [r3]
   77 002a FFF7FEFF 		bl	xQueueSemaphoreTake
   78              	.LVL5:
- 311:Core/Src/main.c ****         {
-  79              		.loc 1 311 12 discriminator 1 view .LVU11
+ 332:Core/Src/main.c ****         {
+  79              		.loc 1 332 12 discriminator 1 view .LVU11
   80 002e 0128     		cmp	r0, #1
   81 0030 F7D1     		bne	.L2
- 313:Core/Src/main.c ****               if (MPU6050_ReadAll(&data) == SOFT_I2C_OK) {
-  82              		.loc 1 313 11 is_stmt 1 view .LVU12
- 313:Core/Src/main.c ****               if (MPU6050_ReadAll(&data) == SOFT_I2C_OK) {
-  83              		.loc 1 313 15 is_stmt 0 view .LVU13
+ 334:Core/Src/main.c ****               if (MPU6050_ReadAll(&data) == SOFT_I2C_OK) {
+  82              		.loc 1 334 11 is_stmt 1 view .LVU12
+ 334:Core/Src/main.c ****               if (MPU6050_ReadAll(&data) == SOFT_I2C_OK) {
+  83              		.loc 1 334 15 is_stmt 0 view .LVU13
   84 0032 C821     		movs	r1, #200
   85 0034 0D4B     		ldr	r3, .L8+4
   86 0036 1868     		ldr	r0, [r3]
   87 0038 FFF7FEFF 		bl	xQueueSemaphoreTake
   88              	.LVL6:
- 313:Core/Src/main.c ****               if (MPU6050_ReadAll(&data) == SOFT_I2C_OK) {
-  89              		.loc 1 313 14 discriminator 1 view .LVU14
+ 334:Core/Src/main.c ****               if (MPU6050_ReadAll(&data) == SOFT_I2C_OK) {
+  89              		.loc 1 334 14 discriminator 1 view .LVU14
   90 003c 0128     		cmp	r0, #1
   91 003e F0D1     		bne	.L2
- 314:Core/Src/main.c ****                   count++;
-  92              		.loc 1 314 15 is_stmt 1 view .LVU15
- 314:Core/Src/main.c ****                   count++;
-  93              		.loc 1 314 19 is_stmt 0 view .LVU16
+ 335:Core/Src/main.c ****                   count++;
+  92              		.loc 1 335 15 is_stmt 1 view .LVU15
+ 335:Core/Src/main.c ****                   count++;
+  93              		.loc 1 335 19 is_stmt 0 view .LVU16
   94 0040 6846     		mov	r0, sp
   95 0042 FFF7FEFF 		bl	MPU6050_ReadAll
   96              	.LVL7:
- 314:Core/Src/main.c ****                   count++;
-  97              		.loc 1 314 18 discriminator 1 view .LVU17
+ 335:Core/Src/main.c ****                   count++;
+  97              		.loc 1 335 18 discriminator 1 view .LVU17
   98 0046 0028     		cmp	r0, #0
   99 0048 E4D1     		bne	.L4
- 315:Core/Src/main.c ****                   if (xQueueSend(q, &data, pdMS_TO_TICKS(100)) != pdPASS) {
- 100              		.loc 1 315 19 is_stmt 1 view .LVU18
- 315:Core/Src/main.c ****                   if (xQueueSend(q, &data, pdMS_TO_TICKS(100)) != pdPASS) {
- 101              		.loc 1 315 24 is_stmt 0 view .LVU19
+ 336:Core/Src/main.c ****                   if (xQueueSend(q, &data, pdMS_TO_TICKS(100)) != pdPASS) {
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 9
+
+
+ 100              		.loc 1 336 19 is_stmt 1 view .LVU18
+ 336:Core/Src/main.c ****                   if (xQueueSend(q, &data, pdMS_TO_TICKS(100)) != pdPASS) {
+ 101              		.loc 1 336 24 is_stmt 0 view .LVU19
  102 004a 0134     		adds	r4, r4, #1
  103              	.LVL8:
- 316:Core/Src/main.c ****                       printf("[MPU] Queue full, dropped #%lu\r\n", count);
- 104              		.loc 1 316 19 is_stmt 1 view .LVU20
- 316:Core/Src/main.c ****                       printf("[MPU] Queue full, dropped #%lu\r\n", count);
- 105              		.loc 1 316 23 is_stmt 0 view .LVU21
+ 337:Core/Src/main.c ****                       printf("[MPU] Queue full, dropped #%lu\r\n", count);
+ 104              		.loc 1 337 19 is_stmt 1 view .LVU20
+ 337:Core/Src/main.c ****                       printf("[MPU] Queue full, dropped #%lu\r\n", count);
+ 105              		.loc 1 337 23 is_stmt 0 view .LVU21
  106 004c 0023     		movs	r3, #0
  107 004e 6422     		movs	r2, #100
  108 0050 6946     		mov	r1, sp
  109 0052 2846     		mov	r0, r5
  110 0054 FFF7FEFF 		bl	xQueueGenericSend
  111              	.LVL9:
- 316:Core/Src/main.c ****                       printf("[MPU] Queue full, dropped #%lu\r\n", count);
- 112              		.loc 1 316 22 discriminator 1 view .LVU22
+ 337:Core/Src/main.c ****                       printf("[MPU] Queue full, dropped #%lu\r\n", count);
+ 112              		.loc 1 337 22 discriminator 1 view .LVU22
  113 0058 0128     		cmp	r0, #1
  114 005a D6D0     		beq	.L5
- 317:Core/Src/main.c ****                   } else {
- 115              		.loc 1 317 23 is_stmt 1 view .LVU23
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 9
-
-
+ 338:Core/Src/main.c ****                   } else {
+ 115              		.loc 1 338 23 is_stmt 1 view .LVU23
  116 005c 2146     		mov	r1, r4
  117 005e 0548     		ldr	r0, .L8+12
  118 0060 FFF7FEFF 		bl	printf
@@ -504,50 +525,50 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
  138              	Task_DataProcess:
  139              	.LVL11:
  140              	.LFB79:
- 323:Core/Src/main.c ****           }
- 324:Core/Src/main.c ****           
- 325:Core/Src/main.c ****         }
- 326:Core/Src/main.c ****     }
- 327:Core/Src/main.c **** }
- 328:Core/Src/main.c **** 
- 329:Core/Src/main.c **** /* ===== 2.1B: OLED 显示任务（消费�?�） ===== */
- 330:Core/Src/main.c **** void Task_OLED_Display(void *argument)
- 331:Core/Src/main.c **** {
- 332:Core/Src/main.c ****     QueueHandle_t q = (QueueHandle_t)argument;
- 333:Core/Src/main.c ****     SensorCooked_t data;
- 334:Core/Src/main.c ****     uint32_t count = 0;
- 335:Core/Src/main.c ****     /* 清屏后显�?? hello */
- 336:Core/Src/main.c ****     OLED_Fill(0x00);
- 337:Core/Src/main.c ****     OLED_ShowString(0, 0, "hello");
- 338:Core/Src/main.c ****     printf("[OLED] Task started, q=%p\r\n", (void *)q);
- 339:Core/Src/main.c ****     while (1) {
- 340:Core/Src/main.c ****         if (xQueueReceive(q, &data, portMAX_DELAY) == pdPASS) {
- 341:Core/Src/main.c ****             count++;
- 342:Core/Src/main.c ****             /* 获取 I2C 总线锁，保护 OLED 写操�?? */
- 343:Core/Src/main.c ****             if (xSemaphoreTake(xI2CMutex, pdMS_TO_TICKS(100)) == pdPASS) {
- 344:Core/Src/main.c ****                 OLED_ShowNum(2, 1, data.ax_g);
- 345:Core/Src/main.c ****                 OLED_ShowNum(3, 1, data.ay_g);
- 346:Core/Src/main.c ****                 OLED_ShowNum(4, 1, data.az_g);
- 347:Core/Src/main.c ****                 OLED_ShowNum(4, 100, (float)count);
- 348:Core/Src/main.c ****                 xSemaphoreGive(xI2CMutex);
- 349:Core/Src/main.c ****             }
- 350:Core/Src/main.c ****             printf("[OLED] #%lu ax=%+.3f ay=%+.3f az=%+.3f\r\n",
- 351:Core/Src/main.c ****                    count, data.ax_g, data.ay_g, data.az_g);
- 352:Core/Src/main.c ****         }
- 353:Core/Src/main.c ****     }
- 354:Core/Src/main.c **** }
- 355:Core/Src/main.c **** 
- 356:Core/Src/main.c **** /* ===== 数据处理任务 ===== */
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 10
+ 344:Core/Src/main.c ****           }
+ 345:Core/Src/main.c ****           
+ 346:Core/Src/main.c ****         }
+ 347:Core/Src/main.c ****     }
+ 348:Core/Src/main.c **** }
+ 349:Core/Src/main.c **** 
+ 350:Core/Src/main.c **** /* ===== 2.1B: OLED 显示任务（消费�?�） ===== */
+ 351:Core/Src/main.c **** void Task_OLED_Display(void *argument)
+ 352:Core/Src/main.c **** {
+ 353:Core/Src/main.c ****     QueueHandle_t q = (QueueHandle_t)argument;
+ 354:Core/Src/main.c ****     SensorCooked_t data;
+ 355:Core/Src/main.c ****     uint32_t count = 0;
+ 356:Core/Src/main.c ****     /* 清屏后显�?? hello */
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 10
 
 
- 357:Core/Src/main.c **** void Task_DataProcess(void *argument)
- 358:Core/Src/main.c **** {
- 141              		.loc 1 358 1 view -0
+ 357:Core/Src/main.c ****     OLED_Fill(0x00);
+ 358:Core/Src/main.c ****     OLED_ShowString(0, 0, "hello");
+ 359:Core/Src/main.c ****     printf("[OLED] Task started, q=%p\r\n", (void *)q);
+ 360:Core/Src/main.c ****     while (1) {
+ 361:Core/Src/main.c ****         if (xQueueReceive(q, &data, portMAX_DELAY) == pdPASS) {
+ 362:Core/Src/main.c ****             count++;
+ 363:Core/Src/main.c ****             /* 获取 I2C 总线锁，保护 OLED 写操�?? */
+ 364:Core/Src/main.c ****             if (xSemaphoreTake(xI2CMutex, pdMS_TO_TICKS(100)) == pdPASS) {
+ 365:Core/Src/main.c ****                 OLED_ShowNum(2, 1, data.ax_g);
+ 366:Core/Src/main.c ****                 OLED_ShowNum(3, 1, data.ay_g);
+ 367:Core/Src/main.c ****                 OLED_ShowNum(4, 1, data.az_g);
+ 368:Core/Src/main.c ****                 OLED_ShowNum(4, 100, (float)count);
+ 369:Core/Src/main.c ****                 xSemaphoreGive(xI2CMutex);
+ 370:Core/Src/main.c ****             }
+ 371:Core/Src/main.c ****             printf("[OLED] #%lu ax=%+.3f ay=%+.3f az=%+.3f\r\n",
+ 372:Core/Src/main.c ****                    count, data.ax_g, data.ay_g, data.az_g);
+ 373:Core/Src/main.c ****         }
+ 374:Core/Src/main.c ****     }
+ 375:Core/Src/main.c **** }
+ 376:Core/Src/main.c **** 
+ 377:Core/Src/main.c **** /* ===== 数据处理任务 ===== */
+ 378:Core/Src/main.c **** void Task_DataProcess(void *argument)
+ 379:Core/Src/main.c **** {
+ 141              		.loc 1 379 1 view -0
  142              		.cfi_startproc
  143              		@ args = 0, pretend = 0, frame = 48
  144              		@ frame_needed = 0, uses_anonymous_args = 0
- 145              		.loc 1 358 1 is_stmt 0 view .LVU25
+ 145              		.loc 1 379 1 is_stmt 0 view .LVU25
  146 0000 70B5     		push	{r4, r5, r6, lr}
  147              	.LCFI2:
  148              		.cfi_def_cfa_offset 16
@@ -559,133 +580,133 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
  154              	.LCFI3:
  155              		.cfi_def_cfa_offset 64
  156 0004 0546     		mov	r5, r0
- 359:Core/Src/main.c ****     TaskParam_t *param = (TaskParam_t *)argument;
- 157              		.loc 1 359 5 is_stmt 1 view .LVU26
+ 380:Core/Src/main.c ****     TaskParam_t *param = (TaskParam_t *)argument;
+ 157              		.loc 1 380 5 is_stmt 1 view .LVU26
  158              	.LVL12:
- 360:Core/Src/main.c **** 
- 361:Core/Src/main.c ****     QueueHandle_t xSensorQueue = param->xSensorQueue;
- 159              		.loc 1 361 5 view .LVU27
- 160              		.loc 1 361 19 is_stmt 0 view .LVU28
+ 381:Core/Src/main.c **** 
+ 382:Core/Src/main.c ****     QueueHandle_t xSensorQueue = param->xSensorQueue;
+ 159              		.loc 1 382 5 view .LVU27
+ 160              		.loc 1 382 19 is_stmt 0 view .LVU28
  161 0006 0468     		ldr	r4, [r0]
  162              	.LVL13:
- 362:Core/Src/main.c ****     QueueHandle_t xCookedQueue = param->xCookedQueue;
- 163              		.loc 1 362 5 is_stmt 1 view .LVU29
- 164              		.loc 1 362 19 is_stmt 0 view .LVU30
+ 383:Core/Src/main.c ****     QueueHandle_t xCookedQueue = param->xCookedQueue;
+ 163              		.loc 1 383 5 is_stmt 1 view .LVU29
+ 164              		.loc 1 383 19 is_stmt 0 view .LVU30
  165 0008 4668     		ldr	r6, [r0, #4]
  166              	.LVL14:
  167              	.L11:
- 363:Core/Src/main.c ****     MPU6050_Data_t data;
- 168              		.loc 1 363 5 is_stmt 1 view .LVU31
- 364:Core/Src/main.c ****     SensorCooked_t cooked;
- 169              		.loc 1 364 5 view .LVU32
- 365:Core/Src/main.c **** 
- 366:Core/Src/main.c ****     /* 校准已在 main() 中完成，直接进入处理循环 */
- 367:Core/Src/main.c ****     while (1)
- 170              		.loc 1 367 5 view .LVU33
- 368:Core/Src/main.c ****     {
- 369:Core/Src/main.c ****         if (xQueueReceive(xSensorQueue, &data, portMAX_DELAY) == pdPASS) {
- 171              		.loc 1 369 9 view .LVU34
- 172              		.loc 1 369 13 is_stmt 0 view .LVU35
+ 384:Core/Src/main.c ****     MPU6050_Data_t data;
+ 168              		.loc 1 384 5 is_stmt 1 view .LVU31
+ 385:Core/Src/main.c ****     SensorCooked_t cooked;
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 11
+
+
+ 169              		.loc 1 385 5 view .LVU32
+ 386:Core/Src/main.c **** 
+ 387:Core/Src/main.c ****     /* 校准已在 main() 中完成，直接进入处理循环 */
+ 388:Core/Src/main.c ****     while (1)
+ 170              		.loc 1 388 5 view .LVU33
+ 389:Core/Src/main.c ****     {
+ 390:Core/Src/main.c ****         if (xQueueReceive(xSensorQueue, &data, portMAX_DELAY) == pdPASS) {
+ 171              		.loc 1 390 9 view .LVU34
+ 172              		.loc 1 390 13 is_stmt 0 view .LVU35
  173 000a 4FF0FF32 		mov	r2, #-1
  174 000e 08A9     		add	r1, sp, #32
  175 0010 2046     		mov	r0, r4
  176 0012 FFF7FEFF 		bl	xQueueReceive
  177              	.LVL15:
- 178              		.loc 1 369 12 discriminator 1 view .LVU36
+ 178              		.loc 1 390 12 discriminator 1 view .LVU36
  179 0016 0128     		cmp	r0, #1
  180 0018 F7D1     		bne	.L11
- 370:Core/Src/main.c ****             cooked.ax_g = (float)(data.ax - param->ax_offset) / 16384.0f;
- 181              		.loc 1 370 13 is_stmt 1 view .LVU37
- 182              		.loc 1 370 39 is_stmt 0 view .LVU38
+ 391:Core/Src/main.c ****             cooked.ax_g = (float)(data.ax - param->ax_offset) / 16384.0f;
+ 181              		.loc 1 391 13 is_stmt 1 view .LVU37
+ 182              		.loc 1 391 39 is_stmt 0 view .LVU38
  183 001a BDF92000 		ldrsh	r0, [sp, #32]
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 11
-
-
- 184              		.loc 1 370 50 view .LVU39
+ 184              		.loc 1 391 50 view .LVU39
  185 001e B5F90830 		ldrsh	r3, [r5, #8]
- 186              		.loc 1 370 27 view .LVU40
+ 186              		.loc 1 391 27 view .LVU40
  187 0022 C01A     		subs	r0, r0, r3
  188 0024 FFF7FEFF 		bl	__aeabi_i2f
  189              	.LVL16:
- 190              		.loc 1 370 63 view .LVU41
+ 190              		.loc 1 391 63 view .LVU41
  191 0028 4FF06251 		mov	r1, #947912704
  192 002c FFF7FEFF 		bl	__aeabi_fmul
  193              	.LVL17:
- 194              		.loc 1 370 25 view .LVU42
+ 194              		.loc 1 391 25 view .LVU42
  195 0030 0190     		str	r0, [sp, #4]	@ float
- 371:Core/Src/main.c ****             cooked.ay_g = (float)(data.ay - param->ay_offset) / 16384.0f;
- 196              		.loc 1 371 13 is_stmt 1 view .LVU43
- 197              		.loc 1 371 39 is_stmt 0 view .LVU44
+ 392:Core/Src/main.c ****             cooked.ay_g = (float)(data.ay - param->ay_offset) / 16384.0f;
+ 196              		.loc 1 392 13 is_stmt 1 view .LVU43
+ 197              		.loc 1 392 39 is_stmt 0 view .LVU44
  198 0032 BDF92200 		ldrsh	r0, [sp, #34]
- 199              		.loc 1 371 50 view .LVU45
+ 199              		.loc 1 392 50 view .LVU45
  200 0036 B5F90A30 		ldrsh	r3, [r5, #10]
- 201              		.loc 1 371 27 view .LVU46
+ 201              		.loc 1 392 27 view .LVU46
  202 003a C01A     		subs	r0, r0, r3
  203 003c FFF7FEFF 		bl	__aeabi_i2f
  204              	.LVL18:
- 205              		.loc 1 371 63 view .LVU47
+ 205              		.loc 1 392 63 view .LVU47
  206 0040 4FF06251 		mov	r1, #947912704
  207 0044 FFF7FEFF 		bl	__aeabi_fmul
  208              	.LVL19:
- 209              		.loc 1 371 25 view .LVU48
+ 209              		.loc 1 392 25 view .LVU48
  210 0048 0290     		str	r0, [sp, #8]	@ float
- 372:Core/Src/main.c ****             cooked.az_g = (float)(data.az - param->az_offset) / 16384.0f;
- 211              		.loc 1 372 13 is_stmt 1 view .LVU49
- 212              		.loc 1 372 39 is_stmt 0 view .LVU50
+ 393:Core/Src/main.c ****             cooked.az_g = (float)(data.az - param->az_offset) / 16384.0f;
+ 211              		.loc 1 393 13 is_stmt 1 view .LVU49
+ 212              		.loc 1 393 39 is_stmt 0 view .LVU50
  213 004a BDF92400 		ldrsh	r0, [sp, #36]
- 214              		.loc 1 372 50 view .LVU51
+ 214              		.loc 1 393 50 view .LVU51
  215 004e B5F90C30 		ldrsh	r3, [r5, #12]
- 216              		.loc 1 372 27 view .LVU52
+ 216              		.loc 1 393 27 view .LVU52
  217 0052 C01A     		subs	r0, r0, r3
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 12
+
+
  218 0054 FFF7FEFF 		bl	__aeabi_i2f
  219              	.LVL20:
- 220              		.loc 1 372 63 view .LVU53
+ 220              		.loc 1 393 63 view .LVU53
  221 0058 4FF06251 		mov	r1, #947912704
  222 005c FFF7FEFF 		bl	__aeabi_fmul
  223              	.LVL21:
- 224              		.loc 1 372 25 view .LVU54
+ 224              		.loc 1 393 25 view .LVU54
  225 0060 0390     		str	r0, [sp, #12]	@ float
- 373:Core/Src/main.c ****             cooked.count++;
- 226              		.loc 1 373 13 is_stmt 1 view .LVU55
- 227              		.loc 1 373 19 is_stmt 0 view .LVU56
+ 394:Core/Src/main.c ****             cooked.count++;
+ 226              		.loc 1 394 13 is_stmt 1 view .LVU55
+ 227              		.loc 1 394 19 is_stmt 0 view .LVU56
  228 0062 079B     		ldr	r3, [sp, #28]
- 229              		.loc 1 373 25 view .LVU57
+ 229              		.loc 1 394 25 view .LVU57
  230 0064 0133     		adds	r3, r3, #1
  231 0066 0793     		str	r3, [sp, #28]
- 374:Core/Src/main.c ****             xQueueSend(xCookedQueue, &cooked, pdMS_TO_TICKS(100));
- 232              		.loc 1 374 13 is_stmt 1 view .LVU58
+ 395:Core/Src/main.c ****             xQueueSend(xCookedQueue, &cooked, pdMS_TO_TICKS(100));
+ 232              		.loc 1 395 13 is_stmt 1 view .LVU58
  233 0068 0023     		movs	r3, #0
  234 006a 6422     		movs	r2, #100
  235 006c 01A9     		add	r1, sp, #4
  236 006e 3046     		mov	r0, r6
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 12
-
-
  237 0070 FFF7FEFF 		bl	xQueueGenericSend
  238              	.LVL22:
- 375:Core/Src/main.c **** 
- 376:Core/Src/main.c ****             /* 同步更新 OneNET 上报数据 */
- 377:Core/Src/main.c ****             onenet_ax_g  = cooked.ax_g;
- 239              		.loc 1 377 13 view .LVU59
- 240              		.loc 1 377 26 is_stmt 0 view .LVU60
+ 396:Core/Src/main.c **** 
+ 397:Core/Src/main.c ****             /* 同步更新 OneNET 上报数据 */
+ 398:Core/Src/main.c ****             onenet_ax_g  = cooked.ax_g;
+ 239              		.loc 1 398 13 view .LVU59
+ 240              		.loc 1 398 26 is_stmt 0 view .LVU60
  241 0074 019A     		ldr	r2, [sp, #4]	@ float
  242 0076 064B     		ldr	r3, .L14
  243 0078 1A60     		str	r2, [r3]	@ float
- 378:Core/Src/main.c ****             onenet_ay_g  = cooked.ay_g;
- 244              		.loc 1 378 13 is_stmt 1 view .LVU61
- 245              		.loc 1 378 26 is_stmt 0 view .LVU62
+ 399:Core/Src/main.c ****             onenet_ay_g  = cooked.ay_g;
+ 244              		.loc 1 399 13 is_stmt 1 view .LVU61
+ 245              		.loc 1 399 26 is_stmt 0 view .LVU62
  246 007a 029A     		ldr	r2, [sp, #8]	@ float
  247 007c 054B     		ldr	r3, .L14+4
  248 007e 1A60     		str	r2, [r3]	@ float
- 379:Core/Src/main.c ****             onenet_az_g  = cooked.az_g;
- 249              		.loc 1 379 13 is_stmt 1 view .LVU63
- 250              		.loc 1 379 26 is_stmt 0 view .LVU64
+ 400:Core/Src/main.c ****             onenet_az_g  = cooked.az_g;
+ 249              		.loc 1 400 13 is_stmt 1 view .LVU63
+ 250              		.loc 1 400 26 is_stmt 0 view .LVU64
  251 0080 039A     		ldr	r2, [sp, #12]	@ float
  252 0082 054B     		ldr	r3, .L14+8
  253 0084 1A60     		str	r2, [r3]	@ float
- 380:Core/Src/main.c ****             onenet_count = cooked.count;
- 254              		.loc 1 380 13 is_stmt 1 view .LVU65
- 255              		.loc 1 380 26 is_stmt 0 view .LVU66
+ 401:Core/Src/main.c ****             onenet_count = cooked.count;
+ 254              		.loc 1 401 13 is_stmt 1 view .LVU65
+ 255              		.loc 1 401 26 is_stmt 0 view .LVU66
  256 0086 079A     		ldr	r2, [sp, #28]
  257 0088 044B     		ldr	r3, .L14+12
  258 008a 1A60     		str	r2, [r3]
@@ -697,6 +718,9 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
  264 0094 00000000 		.word	onenet_ay_g
  265 0098 00000000 		.word	onenet_az_g
  266 009c 00000000 		.word	onenet_count
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 13
+
+
  267              		.cfi_endproc
  268              	.LFE79:
  270              		.section	.rodata.Task_OLED_Display.str1.4,"aMS",%progbits,1
@@ -718,9 +742,6 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
  279      256C7520 
  279      61783D25 
  279      2B2E3366 
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 13
-
-
  280              		.section	.text.Task_OLED_Display,"ax",%progbits
  281              		.align	1
  282              		.global	Task_OLED_Display
@@ -730,13 +751,13 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
  287              	Task_OLED_Display:
  288              	.LVL23:
  289              	.LFB78:
- 331:Core/Src/main.c ****     QueueHandle_t q = (QueueHandle_t)argument;
- 290              		.loc 1 331 1 is_stmt 1 view -0
+ 352:Core/Src/main.c ****     QueueHandle_t q = (QueueHandle_t)argument;
+ 290              		.loc 1 352 1 is_stmt 1 view -0
  291              		.cfi_startproc
  292              		@ args = 0, pretend = 0, frame = 32
  293              		@ frame_needed = 0, uses_anonymous_args = 0
- 331:Core/Src/main.c ****     QueueHandle_t q = (QueueHandle_t)argument;
- 294              		.loc 1 331 1 is_stmt 0 view .LVU68
+ 352:Core/Src/main.c ****     QueueHandle_t q = (QueueHandle_t)argument;
+ 294              		.loc 1 352 1 is_stmt 0 view .LVU68
  295 0000 F0B5     		push	{r4, r5, r6, r7, lr}
  296              	.LCFI4:
  297              		.cfi_def_cfa_offset 20
@@ -749,45 +770,45 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
  304              	.LCFI5:
  305              		.cfi_def_cfa_offset 72
  306 0004 0446     		mov	r4, r0
- 332:Core/Src/main.c ****     SensorCooked_t data;
- 307              		.loc 1 332 5 is_stmt 1 view .LVU69
+ 353:Core/Src/main.c ****     SensorCooked_t data;
+ 307              		.loc 1 353 5 is_stmt 1 view .LVU69
  308              	.LVL24:
- 333:Core/Src/main.c ****     uint32_t count = 0;
- 309              		.loc 1 333 5 view .LVU70
- 334:Core/Src/main.c ****     /* 清屏后显�?? hello */
- 310              		.loc 1 334 5 view .LVU71
- 336:Core/Src/main.c ****     OLED_ShowString(0, 0, "hello");
- 311              		.loc 1 336 5 view .LVU72
+ 354:Core/Src/main.c ****     uint32_t count = 0;
+ 309              		.loc 1 354 5 view .LVU70
+ 355:Core/Src/main.c ****     /* 清屏后显�?? hello */
+ 310              		.loc 1 355 5 view .LVU71
+ 357:Core/Src/main.c ****     OLED_ShowString(0, 0, "hello");
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 14
+
+
+ 311              		.loc 1 357 5 view .LVU72
  312 0006 0020     		movs	r0, #0
  313              	.LVL25:
- 336:Core/Src/main.c ****     OLED_ShowString(0, 0, "hello");
- 314              		.loc 1 336 5 is_stmt 0 view .LVU73
+ 357:Core/Src/main.c ****     OLED_ShowString(0, 0, "hello");
+ 314              		.loc 1 357 5 is_stmt 0 view .LVU73
  315 0008 FFF7FEFF 		bl	OLED_Fill
  316              	.LVL26:
- 337:Core/Src/main.c ****     printf("[OLED] Task started, q=%p\r\n", (void *)q);
- 317              		.loc 1 337 5 is_stmt 1 view .LVU74
+ 358:Core/Src/main.c ****     printf("[OLED] Task started, q=%p\r\n", (void *)q);
+ 317              		.loc 1 358 5 is_stmt 1 view .LVU74
  318 000c 274A     		ldr	r2, .L21
  319 000e 0021     		movs	r1, #0
  320 0010 0846     		mov	r0, r1
  321 0012 FFF7FEFF 		bl	OLED_ShowString
  322              	.LVL27:
- 338:Core/Src/main.c ****     while (1) {
- 323              		.loc 1 338 5 view .LVU75
+ 359:Core/Src/main.c ****     while (1) {
+ 323              		.loc 1 359 5 view .LVU75
  324 0016 2146     		mov	r1, r4
  325 0018 2548     		ldr	r0, .L21+4
  326 001a FFF7FEFF 		bl	printf
  327              	.LVL28:
- 334:Core/Src/main.c ****     /* 清屏后显�?? hello */
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 14
-
-
- 328              		.loc 1 334 14 is_stmt 0 view .LVU76
+ 355:Core/Src/main.c ****     /* 清屏后显�?? hello */
+ 328              		.loc 1 355 14 is_stmt 0 view .LVU76
  329 001e 0025     		movs	r5, #0
  330 0020 14E0     		b	.L17
  331              	.LVL29:
  332              	.L18:
- 350:Core/Src/main.c ****                    count, data.ax_g, data.ay_g, data.az_g);
- 333              		.loc 1 350 13 is_stmt 1 view .LVU77
+ 371:Core/Src/main.c ****                    count, data.ax_g, data.ay_g, data.az_g);
+ 333              		.loc 1 371 13 is_stmt 1 view .LVU77
  334 0022 0598     		ldr	r0, [sp, #20]	@ float
  335 0024 FFF7FEFF 		bl	__aeabi_f2d
  336              	.LVL30:
@@ -808,66 +829,66 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
  351 0048 FFF7FEFF 		bl	printf
  352              	.LVL33:
  353              	.L17:
- 339:Core/Src/main.c ****         if (xQueueReceive(q, &data, portMAX_DELAY) == pdPASS) {
- 354              		.loc 1 339 5 view .LVU78
- 340:Core/Src/main.c ****             count++;
- 355              		.loc 1 340 9 view .LVU79
- 340:Core/Src/main.c ****             count++;
- 356              		.loc 1 340 13 is_stmt 0 view .LVU80
+ 360:Core/Src/main.c ****         if (xQueueReceive(q, &data, portMAX_DELAY) == pdPASS) {
+ 354              		.loc 1 360 5 view .LVU78
+ 361:Core/Src/main.c ****             count++;
+ 355              		.loc 1 361 9 view .LVU79
+ 361:Core/Src/main.c ****             count++;
+ 356              		.loc 1 361 13 is_stmt 0 view .LVU80
  357 004c 4FF0FF32 		mov	r2, #-1
  358 0050 05A9     		add	r1, sp, #20
  359 0052 2046     		mov	r0, r4
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 15
+
+
  360 0054 FFF7FEFF 		bl	xQueueReceive
  361              	.LVL34:
- 340:Core/Src/main.c ****             count++;
- 362              		.loc 1 340 12 discriminator 1 view .LVU81
+ 361:Core/Src/main.c ****             count++;
+ 362              		.loc 1 361 12 discriminator 1 view .LVU81
  363 0058 0128     		cmp	r0, #1
  364 005a F7D1     		bne	.L17
- 341:Core/Src/main.c ****             /* 获取 I2C 总线锁，保护 OLED 写操�?? */
- 365              		.loc 1 341 13 is_stmt 1 view .LVU82
- 341:Core/Src/main.c ****             /* 获取 I2C 总线锁，保护 OLED 写操�?? */
- 366              		.loc 1 341 18 is_stmt 0 view .LVU83
+ 362:Core/Src/main.c ****             /* 获取 I2C 总线锁，保护 OLED 写操�?? */
+ 365              		.loc 1 362 13 is_stmt 1 view .LVU82
+ 362:Core/Src/main.c ****             /* 获取 I2C 总线锁，保护 OLED 写操�?? */
+ 366              		.loc 1 362 18 is_stmt 0 view .LVU83
  367 005c 0135     		adds	r5, r5, #1
  368              	.LVL35:
- 343:Core/Src/main.c ****                 OLED_ShowNum(2, 1, data.ax_g);
- 369              		.loc 1 343 13 is_stmt 1 view .LVU84
- 343:Core/Src/main.c ****                 OLED_ShowNum(2, 1, data.ax_g);
- 370              		.loc 1 343 17 is_stmt 0 view .LVU85
+ 364:Core/Src/main.c ****                 OLED_ShowNum(2, 1, data.ax_g);
+ 369              		.loc 1 364 13 is_stmt 1 view .LVU84
+ 364:Core/Src/main.c ****                 OLED_ShowNum(2, 1, data.ax_g);
+ 370              		.loc 1 364 17 is_stmt 0 view .LVU85
  371 005e 6421     		movs	r1, #100
  372 0060 154B     		ldr	r3, .L21+12
  373 0062 1868     		ldr	r0, [r3]
  374 0064 FFF7FEFF 		bl	xQueueSemaphoreTake
  375              	.LVL36:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 15
-
-
- 343:Core/Src/main.c ****                 OLED_ShowNum(2, 1, data.ax_g);
- 376              		.loc 1 343 16 discriminator 1 view .LVU86
+ 364:Core/Src/main.c ****                 OLED_ShowNum(2, 1, data.ax_g);
+ 376              		.loc 1 364 16 discriminator 1 view .LVU86
  377 0068 0128     		cmp	r0, #1
  378 006a DAD1     		bne	.L18
- 344:Core/Src/main.c ****                 OLED_ShowNum(3, 1, data.ay_g);
- 379              		.loc 1 344 17 is_stmt 1 view .LVU87
+ 365:Core/Src/main.c ****                 OLED_ShowNum(3, 1, data.ay_g);
+ 379              		.loc 1 365 17 is_stmt 1 view .LVU87
  380 006c 059A     		ldr	r2, [sp, #20]	@ float
  381 006e 0121     		movs	r1, #1
  382 0070 0220     		movs	r0, #2
  383 0072 FFF7FEFF 		bl	OLED_ShowNum
  384              	.LVL37:
- 345:Core/Src/main.c ****                 OLED_ShowNum(4, 1, data.az_g);
- 385              		.loc 1 345 17 view .LVU88
+ 366:Core/Src/main.c ****                 OLED_ShowNum(4, 1, data.az_g);
+ 385              		.loc 1 366 17 view .LVU88
  386 0076 069A     		ldr	r2, [sp, #24]	@ float
  387 0078 0121     		movs	r1, #1
  388 007a 0320     		movs	r0, #3
  389 007c FFF7FEFF 		bl	OLED_ShowNum
  390              	.LVL38:
- 346:Core/Src/main.c ****                 OLED_ShowNum(4, 100, (float)count);
- 391              		.loc 1 346 17 view .LVU89
+ 367:Core/Src/main.c ****                 OLED_ShowNum(4, 100, (float)count);
+ 391              		.loc 1 367 17 view .LVU89
  392 0080 079A     		ldr	r2, [sp, #28]	@ float
  393 0082 0121     		movs	r1, #1
  394 0084 0420     		movs	r0, #4
  395 0086 FFF7FEFF 		bl	OLED_ShowNum
  396              	.LVL39:
- 347:Core/Src/main.c ****                 xSemaphoreGive(xI2CMutex);
- 397              		.loc 1 347 17 view .LVU90
+ 368:Core/Src/main.c ****                 xSemaphoreGive(xI2CMutex);
+ 397              		.loc 1 368 17 view .LVU90
  398 008a 2846     		mov	r0, r5
  399 008c FFF7FEFF 		bl	__aeabi_ui2f
  400              	.LVL40:
@@ -876,8 +897,11 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
  403 0094 0420     		movs	r0, #4
  404 0096 FFF7FEFF 		bl	OLED_ShowNum
  405              	.LVL41:
- 348:Core/Src/main.c ****             }
- 406              		.loc 1 348 17 view .LVU91
+ 369:Core/Src/main.c ****             }
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 16
+
+
+ 406              		.loc 1 369 17 view .LVU91
  407 009a 0023     		movs	r3, #0
  408 009c 1A46     		mov	r2, r3
  409 009e 1946     		mov	r1, r3
@@ -898,9 +922,6 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
  425              		.section	.rodata.Task_OneNET_Upload.str1.4,"aMS",%progbits,1
  426              		.align	2
  427              	.LC4:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 16
-
-
  428 0000 5B4F4E45 		.ascii	"[ONENET] Uploading...\015\000"
  428      4E45545D 
  428      2055706C 
@@ -914,19 +935,19 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
  434              		.thumb_func
  436              	Task_OneNET_Upload:
  437              	.LFB80:
- 381:Core/Src/main.c ****         }
- 382:Core/Src/main.c ****     }
- 383:Core/Src/main.c **** }
- 384:Core/Src/main.c **** /* ===== OneNET 周期上传任务 ===== */
- 385:Core/Src/main.c **** void Task_OneNET_Upload(void *argument)
- 386:Core/Src/main.c **** {
- 438              		.loc 1 386 1 view -0
+ 402:Core/Src/main.c ****         }
+ 403:Core/Src/main.c ****     }
+ 404:Core/Src/main.c **** }
+ 405:Core/Src/main.c **** /* ===== OneNET 周期上传任务 ===== */
+ 406:Core/Src/main.c **** void Task_OneNET_Upload(void *argument)
+ 407:Core/Src/main.c **** {
+ 438              		.loc 1 407 1 view -0
  439              		.cfi_startproc
  440              		@ Volatile: function does not return.
  441              		@ args = 0, pretend = 0, frame = 0
  442              		@ frame_needed = 0, uses_anonymous_args = 0
  443              	.LVL43:
- 444              		.loc 1 386 1 is_stmt 0 view .LVU93
+ 444              		.loc 1 407 1 is_stmt 0 view .LVU93
  445 0000 08B5     		push	{r3, lr}
  446              	.LCFI6:
  447              		.cfi_def_cfa_offset 8
@@ -934,33 +955,33 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
  449              		.cfi_offset 14, -4
  450              	.LVL44:
  451              	.L24:
- 387:Core/Src/main.c ****     (void)argument;
- 452              		.loc 1 387 5 is_stmt 1 view .LVU94
- 388:Core/Src/main.c ****     while (1) {
- 453              		.loc 1 388 5 view .LVU95
- 389:Core/Src/main.c ****         vTaskDelay(pdMS_TO_TICKS(5000));
- 454              		.loc 1 389 9 view .LVU96
+ 408:Core/Src/main.c ****     (void)argument;
+ 452              		.loc 1 408 5 is_stmt 1 view .LVU94
+ 409:Core/Src/main.c ****     while (1) {
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 17
+
+
+ 453              		.loc 1 409 5 view .LVU95
+ 410:Core/Src/main.c ****         vTaskDelay(pdMS_TO_TICKS(5000));
+ 454              		.loc 1 410 9 view .LVU96
  455 0002 41F28830 		movw	r0, #5000
  456 0006 FFF7FEFF 		bl	vTaskDelay
  457              	.LVL45:
- 390:Core/Src/main.c ****         printf("[ONENET] Uploading...\r\n");
- 458              		.loc 1 390 9 view .LVU97
+ 411:Core/Src/main.c ****         printf("[ONENET] Uploading...\r\n");
+ 458              		.loc 1 411 9 view .LVU97
  459 000a 0348     		ldr	r0, .L26
  460 000c FFF7FEFF 		bl	puts
  461              	.LVL46:
- 391:Core/Src/main.c ****         OneNet_SendData();
- 462              		.loc 1 391 9 discriminator 1 view .LVU98
+ 412:Core/Src/main.c ****         OneNet_SendData();
+ 462              		.loc 1 412 9 discriminator 1 view .LVU98
  463 0010 FFF7FEFF 		bl	OneNet_SendData
  464              	.LVL47:
- 388:Core/Src/main.c ****         vTaskDelay(pdMS_TO_TICKS(5000));
- 465              		.loc 1 388 11 view .LVU99
+ 409:Core/Src/main.c ****         vTaskDelay(pdMS_TO_TICKS(5000));
+ 465              		.loc 1 409 11 view .LVU99
  466 0014 F5E7     		b	.L24
  467              	.L27:
  468 0016 00BF     		.align	2
  469              	.L26:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 17
-
-
  470 0018 00000000 		.word	.LC4
  471              		.cfi_endproc
  472              	.LFE80:
@@ -973,36 +994,39 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
  481              	vApplicationGetIdleTaskMemory:
  482              	.LVL48:
  483              	.LFB75:
- 282:Core/Src/main.c ****     static StaticTask_t xIdleTaskTCB;
- 484              		.loc 1 282 1 view -0
+ 303:Core/Src/main.c ****     static StaticTask_t xIdleTaskTCB;
+ 484              		.loc 1 303 1 view -0
  485              		.cfi_startproc
  486              		@ args = 0, pretend = 0, frame = 0
  487              		@ frame_needed = 0, uses_anonymous_args = 0
  488              		@ link register save eliminated.
- 283:Core/Src/main.c ****     static StackType_t  uxIdleTaskStack[configMINIMAL_STACK_SIZE];
- 489              		.loc 1 283 5 view .LVU101
- 284:Core/Src/main.c **** 
- 490              		.loc 1 284 5 view .LVU102
- 286:Core/Src/main.c ****     *ppxIdleTaskStackBuffer  = uxIdleTaskStack;
- 491              		.loc 1 286 5 view .LVU103
- 286:Core/Src/main.c ****     *ppxIdleTaskStackBuffer  = uxIdleTaskStack;
- 492              		.loc 1 286 29 is_stmt 0 view .LVU104
+ 304:Core/Src/main.c ****     static StackType_t  uxIdleTaskStack[configMINIMAL_STACK_SIZE];
+ 489              		.loc 1 304 5 view .LVU101
+ 305:Core/Src/main.c **** 
+ 490              		.loc 1 305 5 view .LVU102
+ 307:Core/Src/main.c ****     *ppxIdleTaskStackBuffer  = uxIdleTaskStack;
+ 491              		.loc 1 307 5 view .LVU103
+ 307:Core/Src/main.c ****     *ppxIdleTaskStackBuffer  = uxIdleTaskStack;
+ 492              		.loc 1 307 29 is_stmt 0 view .LVU104
  493 0000 034B     		ldr	r3, .L29
  494 0002 0360     		str	r3, [r0]
- 287:Core/Src/main.c ****     *pulIdleTaskStackSize    = configMINIMAL_STACK_SIZE;
- 495              		.loc 1 287 5 is_stmt 1 view .LVU105
- 287:Core/Src/main.c ****     *pulIdleTaskStackSize    = configMINIMAL_STACK_SIZE;
- 496              		.loc 1 287 30 is_stmt 0 view .LVU106
+ 308:Core/Src/main.c ****     *pulIdleTaskStackSize    = configMINIMAL_STACK_SIZE;
+ 495              		.loc 1 308 5 is_stmt 1 view .LVU105
+ 308:Core/Src/main.c ****     *pulIdleTaskStackSize    = configMINIMAL_STACK_SIZE;
+ 496              		.loc 1 308 30 is_stmt 0 view .LVU106
  497 0004 034B     		ldr	r3, .L29+4
  498 0006 0B60     		str	r3, [r1]
- 288:Core/Src/main.c **** }
- 499              		.loc 1 288 5 is_stmt 1 view .LVU107
- 288:Core/Src/main.c **** }
- 500              		.loc 1 288 30 is_stmt 0 view .LVU108
+ 309:Core/Src/main.c **** }
+ 499              		.loc 1 309 5 is_stmt 1 view .LVU107
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 18
+
+
+ 309:Core/Src/main.c **** }
+ 500              		.loc 1 309 30 is_stmt 0 view .LVU108
  501 0008 8023     		movs	r3, #128
  502 000a 1360     		str	r3, [r2]
- 289:Core/Src/main.c **** 
- 503              		.loc 1 289 1 view .LVU109
+ 310:Core/Src/main.c **** 
+ 503              		.loc 1 310 1 view .LVU109
  504 000c 7047     		bx	lr
  505              	.L30:
  506 000e 00BF     		.align	2
@@ -1018,9 +1042,6 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
  516      21205354 
  516      41434B20 
  516      4F564552 
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 18
-
-
  516      464C4F57 
  517              		.section	.text.vApplicationStackOverflowHook,"ax",%progbits
  518              		.align	1
@@ -1031,32 +1052,35 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
  524              	vApplicationStackOverflowHook:
  525              	.LVL49:
  526              	.LFB76:
- 295:Core/Src/main.c ****     (void)xTask;
- 527              		.loc 1 295 1 is_stmt 1 view -0
+ 316:Core/Src/main.c ****     (void)xTask;
+ 527              		.loc 1 316 1 is_stmt 1 view -0
  528              		.cfi_startproc
  529              		@ Volatile: function does not return.
  530              		@ args = 0, pretend = 0, frame = 0
  531              		@ frame_needed = 0, uses_anonymous_args = 0
- 295:Core/Src/main.c ****     (void)xTask;
- 532              		.loc 1 295 1 is_stmt 0 view .LVU111
+ 316:Core/Src/main.c ****     (void)xTask;
+ 532              		.loc 1 316 1 is_stmt 0 view .LVU111
  533 0000 08B5     		push	{r3, lr}
  534              	.LCFI7:
  535              		.cfi_def_cfa_offset 8
  536              		.cfi_offset 3, -8
  537              		.cfi_offset 14, -4
- 296:Core/Src/main.c ****     printf("\r\n!!! STACK OVERFLOW: %s !!!\r\n", pcTaskName);
- 538              		.loc 1 296 5 is_stmt 1 view .LVU112
- 297:Core/Src/main.c ****     __disable_irq();
- 539              		.loc 1 297 5 view .LVU113
+ 317:Core/Src/main.c ****     printf("\r\n!!! STACK OVERFLOW: %s !!!\r\n", pcTaskName);
+ 538              		.loc 1 317 5 is_stmt 1 view .LVU112
+ 318:Core/Src/main.c ****     __disable_irq();
+ 539              		.loc 1 318 5 view .LVU113
  540 0002 0248     		ldr	r0, .L34
  541              	.LVL50:
- 297:Core/Src/main.c ****     __disable_irq();
- 542              		.loc 1 297 5 is_stmt 0 view .LVU114
+ 318:Core/Src/main.c ****     __disable_irq();
+ 542              		.loc 1 318 5 is_stmt 0 view .LVU114
  543 0004 FFF7FEFF 		bl	printf
  544              	.LVL51:
- 298:Core/Src/main.c ****     while (1) {}
- 545              		.loc 1 298 5 is_stmt 1 view .LVU115
+ 319:Core/Src/main.c ****     while (1) {}
+ 545              		.loc 1 319 5 is_stmt 1 view .LVU115
  546              	.LBB6:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 19
+
+
  547              	.LBI6:
  548              		.file 2 "Drivers/CMSIS/Include/cmsis_gcc.h"
    1:Drivers/CMSIS/Include/cmsis_gcc.h **** /**************************************************************************//**
@@ -1078,9 +1102,6 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
   17:Drivers/CMSIS/Include/cmsis_gcc.h ****  *
   18:Drivers/CMSIS/Include/cmsis_gcc.h ****  * Unless required by applicable law or agreed to in writing, software
   19:Drivers/CMSIS/Include/cmsis_gcc.h ****  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 19
-
-
   20:Drivers/CMSIS/Include/cmsis_gcc.h ****  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   21:Drivers/CMSIS/Include/cmsis_gcc.h ****  * See the License for the specific language governing permissions and
   22:Drivers/CMSIS/Include/cmsis_gcc.h ****  * limitations under the License.
@@ -1117,6 +1138,9 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
   53:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __NO_RETURN                            __attribute__((__noreturn__))
   54:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
   55:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __USED
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 20
+
+
   56:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __USED                                 __attribute__((used))
   57:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
   58:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __WEAK
@@ -1138,9 +1162,6 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
   74:Drivers/CMSIS/Include/cmsis_gcc.h ****   struct __attribute__((packed)) T_UINT32 { uint32_t v; };
   75:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
   76:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT32(x)                  (((struct T_UINT32 *)(x))->v)
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 20
-
-
   77:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
   78:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT16_WRITE
   79:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
@@ -1177,6 +1198,9 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
  110:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __ALIGNED
  111:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __ALIGNED(x)                           __attribute__((aligned(x)))
  112:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 21
+
+
  113:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __RESTRICT
  114:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __RESTRICT                             __restrict
  115:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
@@ -1198,9 +1222,6 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
  131:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("cpsie i" : : : "memory");
  132:Drivers/CMSIS/Include/cmsis_gcc.h **** }
  133:Drivers/CMSIS/Include/cmsis_gcc.h **** 
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 21
-
-
  134:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  135:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
  136:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Disable IRQ Interrupts
@@ -1222,12 +1243,12 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
  558              	.L32:
  559              	.LBE7:
  560              	.LBE6:
- 299:Core/Src/main.c **** }
- 561              		.loc 1 299 5 view .LVU118
- 299:Core/Src/main.c **** }
- 562              		.loc 1 299 16 view .LVU119
- 299:Core/Src/main.c **** }
- 563              		.loc 1 299 11 view .LVU120
+ 320:Core/Src/main.c **** }
+ 561              		.loc 1 320 5 view .LVU118
+ 320:Core/Src/main.c **** }
+ 562              		.loc 1 320 16 view .LVU119
+ 320:Core/Src/main.c **** }
+ 563              		.loc 1 320 11 view .LVU120
  564 000a FEE7     		b	.L32
  565              	.L35:
  566              		.align	2
@@ -1237,6 +1258,9 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
  570              	.LFE76:
  572              		.section	.text.HAL_TIM_PeriodElapsedCallback,"ax",%progbits
  573              		.align	1
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 22
+
+
  574              		.global	HAL_TIM_PeriodElapsedCallback
  575              		.syntax unified
  576              		.thumb
@@ -1244,59 +1268,59 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
  579              	HAL_TIM_PeriodElapsedCallback:
  580              	.LVL52:
  581              	.LFB81:
- 392:Core/Src/main.c ****     }
- 393:Core/Src/main.c **** }
- 394:Core/Src/main.c **** /* USER CODE END 4 */
- 395:Core/Src/main.c **** 
- 396:Core/Src/main.c **** /**
- 397:Core/Src/main.c ****   * @brief  Period elapsed callback in non blocking mode
- 398:Core/Src/main.c ****   * @note   This function is called  when TIM2 interrupt took place, inside
- 399:Core/Src/main.c ****   * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
- 400:Core/Src/main.c ****   * a global variable "uwTick" used as application time base.
- 401:Core/Src/main.c ****   * @param  htim : TIM handle
- 402:Core/Src/main.c ****   * @retval None
- 403:Core/Src/main.c ****   */
- 404:Core/Src/main.c **** void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
- 405:Core/Src/main.c **** {
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 22
-
-
- 582              		.loc 1 405 1 view -0
+ 413:Core/Src/main.c ****     }
+ 414:Core/Src/main.c **** }
+ 415:Core/Src/main.c **** /* USER CODE END 4 */
+ 416:Core/Src/main.c **** 
+ 417:Core/Src/main.c **** /**
+ 418:Core/Src/main.c ****   * @brief  Period elapsed callback in non blocking mode
+ 419:Core/Src/main.c ****   * @note   This function is called  when TIM2 interrupt took place, inside
+ 420:Core/Src/main.c ****   * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+ 421:Core/Src/main.c ****   * a global variable "uwTick" used as application time base.
+ 422:Core/Src/main.c ****   * @param  htim : TIM handle
+ 423:Core/Src/main.c ****   * @retval None
+ 424:Core/Src/main.c ****   */
+ 425:Core/Src/main.c **** void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+ 426:Core/Src/main.c **** {
+ 582              		.loc 1 426 1 view -0
  583              		.cfi_startproc
  584              		@ args = 0, pretend = 0, frame = 0
  585              		@ frame_needed = 0, uses_anonymous_args = 0
- 586              		.loc 1 405 1 is_stmt 0 view .LVU122
+ 586              		.loc 1 426 1 is_stmt 0 view .LVU122
  587 0000 08B5     		push	{r3, lr}
  588              	.LCFI8:
  589              		.cfi_def_cfa_offset 8
  590              		.cfi_offset 3, -8
  591              		.cfi_offset 14, -4
- 406:Core/Src/main.c ****   /* USER CODE BEGIN Callback 0 */
- 407:Core/Src/main.c ****   /* USER CODE END Callback 0 */
- 408:Core/Src/main.c ****   if (htim->Instance == TIM2) {
- 592              		.loc 1 408 3 is_stmt 1 view .LVU123
- 593              		.loc 1 408 11 is_stmt 0 view .LVU124
+ 427:Core/Src/main.c ****   /* USER CODE BEGIN Callback 0 */
+ 428:Core/Src/main.c ****   /* USER CODE END Callback 0 */
+ 429:Core/Src/main.c ****   if (htim->Instance == TIM2) {
+ 592              		.loc 1 429 3 is_stmt 1 view .LVU123
+ 593              		.loc 1 429 11 is_stmt 0 view .LVU124
  594 0002 0368     		ldr	r3, [r0]
- 595              		.loc 1 408 6 view .LVU125
+ 595              		.loc 1 429 6 view .LVU125
  596 0004 B3F1804F 		cmp	r3, #1073741824
  597 0008 00D0     		beq	.L39
  598              	.LVL53:
  599              	.L36:
- 409:Core/Src/main.c ****     HAL_IncTick();
- 410:Core/Src/main.c ****   }
- 411:Core/Src/main.c ****   /* USER CODE BEGIN Callback 1 */
- 412:Core/Src/main.c ****   /* USER CODE END Callback 1 */
- 413:Core/Src/main.c **** }
- 600              		.loc 1 413 1 view .LVU126
+ 430:Core/Src/main.c ****     HAL_IncTick();
+ 431:Core/Src/main.c ****   }
+ 432:Core/Src/main.c ****   /* USER CODE BEGIN Callback 1 */
+ 433:Core/Src/main.c ****   /* USER CODE END Callback 1 */
+ 434:Core/Src/main.c **** }
+ 600              		.loc 1 434 1 view .LVU126
  601 000a 08BD     		pop	{r3, pc}
  602              	.LVL54:
  603              	.L39:
- 409:Core/Src/main.c ****     HAL_IncTick();
- 604              		.loc 1 409 5 is_stmt 1 view .LVU127
+ 430:Core/Src/main.c ****     HAL_IncTick();
+ 604              		.loc 1 430 5 is_stmt 1 view .LVU127
  605 000c FFF7FEFF 		bl	HAL_IncTick
  606              	.LVL55:
- 607              		.loc 1 413 1 is_stmt 0 view .LVU128
+ 607              		.loc 1 434 1 is_stmt 0 view .LVU128
  608 0010 FBE7     		b	.L36
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 23
+
+
  609              		.cfi_endproc
  610              	.LFE81:
  612              		.section	.text.Error_Handler,"ax",%progbits
@@ -1307,25 +1331,22 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
  617              		.thumb_func
  619              	Error_Handler:
  620              	.LFB82:
- 414:Core/Src/main.c **** 
- 415:Core/Src/main.c **** /**
- 416:Core/Src/main.c ****   * @brief  This function is executed in case of error occurrence.
- 417:Core/Src/main.c ****   * @retval None
- 418:Core/Src/main.c ****   */
- 419:Core/Src/main.c **** void Error_Handler(void)
- 420:Core/Src/main.c **** {
- 621              		.loc 1 420 1 is_stmt 1 view -0
+ 435:Core/Src/main.c **** 
+ 436:Core/Src/main.c **** /**
+ 437:Core/Src/main.c ****   * @brief  This function is executed in case of error occurrence.
+ 438:Core/Src/main.c ****   * @retval None
+ 439:Core/Src/main.c ****   */
+ 440:Core/Src/main.c **** void Error_Handler(void)
+ 441:Core/Src/main.c **** {
+ 621              		.loc 1 441 1 is_stmt 1 view -0
  622              		.cfi_startproc
  623              		@ Volatile: function does not return.
  624              		@ args = 0, pretend = 0, frame = 0
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 23
-
-
  625              		@ frame_needed = 0, uses_anonymous_args = 0
  626              		@ link register save eliminated.
- 421:Core/Src/main.c ****   /* USER CODE BEGIN Error_Handler_Debug */
- 422:Core/Src/main.c ****   __disable_irq();
- 627              		.loc 1 422 3 view .LVU130
+ 442:Core/Src/main.c ****   /* USER CODE BEGIN Error_Handler_Debug */
+ 443:Core/Src/main.c ****   __disable_irq();
+ 627              		.loc 1 443 3 view .LVU130
  628              	.LBB8:
  629              	.LBI8:
  140:Drivers/CMSIS/Include/cmsis_gcc.h **** {
@@ -1341,13 +1362,13 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
  639              	.L41:
  640              	.LBE9:
  641              	.LBE8:
- 423:Core/Src/main.c ****   while (1)
- 642              		.loc 1 423 3 view .LVU133
- 424:Core/Src/main.c ****   {
- 425:Core/Src/main.c ****   }
- 643              		.loc 1 425 3 view .LVU134
- 423:Core/Src/main.c ****   while (1)
- 644              		.loc 1 423 9 view .LVU135
+ 444:Core/Src/main.c ****   while (1)
+ 642              		.loc 1 444 3 view .LVU133
+ 445:Core/Src/main.c ****   {
+ 446:Core/Src/main.c ****   }
+ 643              		.loc 1 446 3 view .LVU134
+ 444:Core/Src/main.c ****   while (1)
+ 644              		.loc 1 444 9 view .LVU135
  645 0002 FEE7     		b	.L41
  646              		.cfi_endproc
  647              	.LFE82:
@@ -1357,10 +1378,13 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
  652              		.syntax unified
  653              		.thumb
  654              		.thumb_func
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 24
+
+
  656              	SystemClock_Config:
  657              	.LFB74:
- 244:Core/Src/main.c ****   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
- 658              		.loc 1 244 1 view -0
+ 265:Core/Src/main.c ****   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+ 658              		.loc 1 265 1 view -0
  659              		.cfi_startproc
  660              		@ args = 0, pretend = 0, frame = 64
  661              		@ frame_needed = 0, uses_anonymous_args = 0
@@ -1372,101 +1396,98 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
  667 0002 90B0     		sub	sp, sp, #64
  668              	.LCFI10:
  669              		.cfi_def_cfa_offset 72
- 245:Core/Src/main.c ****   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
- 670              		.loc 1 245 3 view .LVU137
- 245:Core/Src/main.c ****   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
- 671              		.loc 1 245 22 is_stmt 0 view .LVU138
+ 266:Core/Src/main.c ****   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+ 670              		.loc 1 266 3 view .LVU137
+ 266:Core/Src/main.c ****   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+ 671              		.loc 1 266 22 is_stmt 0 view .LVU138
  672 0004 06AC     		add	r4, sp, #24
  673 0006 2822     		movs	r2, #40
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 24
-
-
  674 0008 0021     		movs	r1, #0
  675 000a 2046     		mov	r0, r4
  676 000c FFF7FEFF 		bl	memset
  677              	.LVL56:
- 246:Core/Src/main.c **** 
- 678              		.loc 1 246 3 is_stmt 1 view .LVU139
- 246:Core/Src/main.c **** 
- 679              		.loc 1 246 22 is_stmt 0 view .LVU140
+ 267:Core/Src/main.c **** 
+ 678              		.loc 1 267 3 is_stmt 1 view .LVU139
+ 267:Core/Src/main.c **** 
+ 679              		.loc 1 267 22 is_stmt 0 view .LVU140
  680 0010 0023     		movs	r3, #0
  681 0012 0193     		str	r3, [sp, #4]
  682 0014 0293     		str	r3, [sp, #8]
  683 0016 0393     		str	r3, [sp, #12]
  684 0018 0493     		str	r3, [sp, #16]
  685 001a 0593     		str	r3, [sp, #20]
- 251:Core/Src/main.c ****   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
- 686              		.loc 1 251 3 is_stmt 1 view .LVU141
- 251:Core/Src/main.c ****   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
- 687              		.loc 1 251 36 is_stmt 0 view .LVU142
+ 272:Core/Src/main.c ****   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+ 686              		.loc 1 272 3 is_stmt 1 view .LVU141
+ 272:Core/Src/main.c ****   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+ 687              		.loc 1 272 36 is_stmt 0 view .LVU142
  688 001c 0223     		movs	r3, #2
  689 001e 0693     		str	r3, [sp, #24]
- 252:Core/Src/main.c ****   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
- 690              		.loc 1 252 3 is_stmt 1 view .LVU143
- 252:Core/Src/main.c ****   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
- 691              		.loc 1 252 30 is_stmt 0 view .LVU144
+ 273:Core/Src/main.c ****   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+ 690              		.loc 1 273 3 is_stmt 1 view .LVU143
+ 273:Core/Src/main.c ****   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+ 691              		.loc 1 273 30 is_stmt 0 view .LVU144
  692 0020 0123     		movs	r3, #1
  693 0022 0A93     		str	r3, [sp, #40]
- 253:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
- 694              		.loc 1 253 3 is_stmt 1 view .LVU145
- 253:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
- 695              		.loc 1 253 41 is_stmt 0 view .LVU146
+ 274:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+ 694              		.loc 1 274 3 is_stmt 1 view .LVU145
+ 274:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+ 695              		.loc 1 274 41 is_stmt 0 view .LVU146
  696 0024 1023     		movs	r3, #16
  697 0026 0B93     		str	r3, [sp, #44]
- 254:Core/Src/main.c ****   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
- 698              		.loc 1 254 3 is_stmt 1 view .LVU147
- 255:Core/Src/main.c ****   {
- 699              		.loc 1 255 3 view .LVU148
- 255:Core/Src/main.c ****   {
- 700              		.loc 1 255 7 is_stmt 0 view .LVU149
+ 275:Core/Src/main.c ****   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+ 698              		.loc 1 275 3 is_stmt 1 view .LVU147
+ 276:Core/Src/main.c ****   {
+ 699              		.loc 1 276 3 view .LVU148
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 25
+
+
+ 276:Core/Src/main.c ****   {
+ 700              		.loc 1 276 7 is_stmt 0 view .LVU149
  701 0028 2046     		mov	r0, r4
  702 002a FFF7FEFF 		bl	HAL_RCC_OscConfig
  703              	.LVL57:
- 255:Core/Src/main.c ****   {
- 704              		.loc 1 255 6 discriminator 1 view .LVU150
+ 276:Core/Src/main.c ****   {
+ 704              		.loc 1 276 6 discriminator 1 view .LVU150
  705 002e 60B9     		cbnz	r0, .L46
- 261:Core/Src/main.c ****                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
- 706              		.loc 1 261 3 is_stmt 1 view .LVU151
- 261:Core/Src/main.c ****                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
- 707              		.loc 1 261 31 is_stmt 0 view .LVU152
+ 282:Core/Src/main.c ****                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+ 706              		.loc 1 282 3 is_stmt 1 view .LVU151
+ 282:Core/Src/main.c ****                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+ 707              		.loc 1 282 31 is_stmt 0 view .LVU152
  708 0030 0F23     		movs	r3, #15
  709 0032 0193     		str	r3, [sp, #4]
- 263:Core/Src/main.c ****   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
- 710              		.loc 1 263 3 is_stmt 1 view .LVU153
- 263:Core/Src/main.c ****   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
- 711              		.loc 1 263 34 is_stmt 0 view .LVU154
+ 284:Core/Src/main.c ****   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+ 710              		.loc 1 284 3 is_stmt 1 view .LVU153
+ 284:Core/Src/main.c ****   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+ 711              		.loc 1 284 34 is_stmt 0 view .LVU154
  712 0034 0021     		movs	r1, #0
  713 0036 0291     		str	r1, [sp, #8]
- 264:Core/Src/main.c ****   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 25
-
-
- 714              		.loc 1 264 3 is_stmt 1 view .LVU155
- 264:Core/Src/main.c ****   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
- 715              		.loc 1 264 35 is_stmt 0 view .LVU156
+ 285:Core/Src/main.c ****   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+ 714              		.loc 1 285 3 is_stmt 1 view .LVU155
+ 285:Core/Src/main.c ****   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+ 715              		.loc 1 285 35 is_stmt 0 view .LVU156
  716 0038 0391     		str	r1, [sp, #12]
- 265:Core/Src/main.c ****   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
- 717              		.loc 1 265 3 is_stmt 1 view .LVU157
- 265:Core/Src/main.c ****   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
- 718              		.loc 1 265 36 is_stmt 0 view .LVU158
+ 286:Core/Src/main.c ****   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+ 717              		.loc 1 286 3 is_stmt 1 view .LVU157
+ 286:Core/Src/main.c ****   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+ 718              		.loc 1 286 36 is_stmt 0 view .LVU158
  719 003a 0491     		str	r1, [sp, #16]
- 266:Core/Src/main.c **** 
- 720              		.loc 1 266 3 is_stmt 1 view .LVU159
- 266:Core/Src/main.c **** 
- 721              		.loc 1 266 36 is_stmt 0 view .LVU160
+ 287:Core/Src/main.c **** 
+ 720              		.loc 1 287 3 is_stmt 1 view .LVU159
+ 287:Core/Src/main.c **** 
+ 721              		.loc 1 287 36 is_stmt 0 view .LVU160
  722 003c 0591     		str	r1, [sp, #20]
- 268:Core/Src/main.c ****   {
- 723              		.loc 1 268 3 is_stmt 1 view .LVU161
- 268:Core/Src/main.c ****   {
- 724              		.loc 1 268 7 is_stmt 0 view .LVU162
+ 289:Core/Src/main.c ****   {
+ 723              		.loc 1 289 3 is_stmt 1 view .LVU161
+ 289:Core/Src/main.c ****   {
+ 724              		.loc 1 289 7 is_stmt 0 view .LVU162
  725 003e 01A8     		add	r0, sp, #4
  726 0040 FFF7FEFF 		bl	HAL_RCC_ClockConfig
  727              	.LVL58:
- 268:Core/Src/main.c ****   {
- 728              		.loc 1 268 6 discriminator 1 view .LVU163
+ 289:Core/Src/main.c ****   {
+ 728              		.loc 1 289 6 discriminator 1 view .LVU163
  729 0044 18B9     		cbnz	r0, .L47
- 272:Core/Src/main.c **** 
- 730              		.loc 1 272 1 view .LVU164
+ 293:Core/Src/main.c **** 
+ 730              		.loc 1 293 1 view .LVU164
  731 0046 10B0     		add	sp, sp, #64
  732              	.LCFI11:
  733              		.cfi_remember_state
@@ -1476,13 +1497,16 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
  737              	.L46:
  738              	.LCFI12:
  739              		.cfi_restore_state
- 257:Core/Src/main.c ****   }
- 740              		.loc 1 257 5 is_stmt 1 view .LVU165
+ 278:Core/Src/main.c ****   }
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 26
+
+
+ 740              		.loc 1 278 5 is_stmt 1 view .LVU165
  741 004a FFF7FEFF 		bl	Error_Handler
  742              	.LVL59:
  743              	.L47:
- 270:Core/Src/main.c ****   }
- 744              		.loc 1 270 5 view .LVU166
+ 291:Core/Src/main.c ****   }
+ 744              		.loc 1 291 5 view .LVU166
  745 004e FFF7FEFF 		bl	Error_Handler
  746              	.LVL60:
  747              		.cfi_endproc
@@ -1498,9 +1522,6 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
  754 002a 0000     		.align	2
  755              	.LC7:
  756 002c 5B4F4B5D 		.ascii	"[OK] MPU6050 WHO_AM_I = 0x%02X\015\012\000"
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 26
-
-
  756      204D5055 
  756      36303530 
  756      2057484F 
@@ -1514,802 +1535,906 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 1
  759      63726561 
  760 0073 00       		.align	2
  761              	.LC9:
- 762 0074 5B455252 		.ascii	"[ERR] Failed to create queues!\015\000"
- 762      5D204661 
- 762      696C6564 
- 762      20746F20 
- 762      63726561 
- 763              		.align	2
+ 762 0074 5B455252 		.ascii	"[ERR] AT24C02 init failed! Check wiring.\015\000"
+ 762      5D204154 
+ 762      32344330 
+ 762      3220696E 
+ 762      69742066 
+ 763 009e 0000     		.align	2
  764              	.LC10:
- 765 0094 4D50555F 		.ascii	"MPU_Read\000"
- 765      52656164 
- 765      00
- 766 009d 000000   		.align	2
+ 765 00a0 5B4F4B5D 		.ascii	"[OK] AT24C02 ready\015\000"
+ 765      20415432 
+ 765      34433032 
+ 765      20726561 
+ 765      64790D00 
+ 766              		.align	2
  767              	.LC11:
- 768 00a0 44617461 		.ascii	"DataProc\000"
- 768      50726F63 
- 768      00
- 769 00a9 000000   		.align	2
+ 768 00b4 5B455252 		.ascii	"[ERR] W25Q64 init failed! Check wiring.\015\000"
+ 768      5D205732 
+ 768      35513634 
+ 768      20696E69 
+ 768      74206661 
+ 769 00dd 000000   		.align	2
  770              	.LC12:
- 771 00ac 4F4C4544 		.ascii	"OLED_Disp\000"
- 771      5F446973 
- 771      7000
- 772 00b6 0000     		.align	2
+ 771 00e0 5B4F4B5D 		.ascii	"[OK] W25Q64 JEDEC ID: %02X %02X %02X\015\012\000"
+ 771      20573235 
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 27
+
+
+ 771      51363420 
+ 771      4A454445 
+ 771      43204944 
+ 772 0107 00       		.align	2
  773              	.LC13:
- 774 00b8 4F6E654E 		.ascii	"OneNET_Upl\000"
- 774      45545F55 
- 774      706C00
- 775 00c3 00       		.align	2
+ 774 0108 5B455252 		.ascii	"[ERR] Failed to create queues!\015\000"
+ 774      5D204661 
+ 774      696C6564 
+ 774      20746F20 
+ 774      63726561 
+ 775              		.align	2
  776              	.LC14:
- 777 00c4 0D0A3D3D 		.ascii	"\015\012========== FreeRTOS + MPU6050 + OLED Data P"
- 777      3D3D3D3D 
- 777      3D3D3D3D 
- 777      20467265 
- 777      6552544F 
- 778 00f1 6970656C 		.ascii	"ipeline ==========\015\000"
- 778      696E6520 
- 778      3D3D3D3D 
- 778      3D3D3D3D 
- 778      3D3D0D00 
- 779 0105 000000   		.align	2
- 780              	.LC15:
- 781 0108 5461736B 		.ascii	"Tasks: MPU_Read(2) -> Queue[8] -> DataProc(2) -> Qu"
- 781      733A204D 
- 781      50555F52 
- 781      65616428 
- 781      3229202D 
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 27
-
-
- 782 013b 6575655B 		.ascii	"eue[4] -> OLED_Disp(1)\015\012\015\000"
- 782      345D202D 
- 782      3E204F4C 
- 782      45445F44 
- 782      69737028 
- 783 0155 000000   		.align	2
- 784              	.LC16:
- 785 0158 5B455350 		.ascii	"[ESP] Waiting for module boot (2s)...\015\000"
- 785      5D205761 
- 785      6974696E 
- 785      6720666F 
- 785      72206D6F 
- 786 017f 00       		.align	2
- 787              	.LC17:
- 788 0180 5B4F4E45 		.ascii	"[ONENET] Registering device...\015\000"
- 788      4E45545D 
- 788      20526567 
- 788      69737465 
- 788      72696E67 
- 789              		.align	2
- 790              	.LC18:
- 791 01a0 5B4F4E45 		.ascii	"[ONENET] Register OK\015\000"
- 791      4E45545D 
- 791      20526567 
- 791      69737465 
- 791      72204F4B 
- 792 01b6 0000     		.align	2
- 793              	.LC19:
- 794 01b8 5B4F4E45 		.ascii	"[ONENET] MQTT Link OK\015\000"
- 794      4E45545D 
- 794      204D5154 
- 794      54204C69 
- 794      6E6B204F 
- 795 01cf 00       		.align	2
+ 777 0128 4D50555F 		.ascii	"MPU_Read\000"
+ 777      52656164 
+ 777      00
+ 778 0131 000000   		.align	2
+ 779              	.LC15:
+ 780 0134 44617461 		.ascii	"DataProc\000"
+ 780      50726F63 
+ 780      00
+ 781 013d 000000   		.align	2
+ 782              	.LC16:
+ 783 0140 4F4C4544 		.ascii	"OLED_Disp\000"
+ 783      5F446973 
+ 783      7000
+ 784 014a 0000     		.align	2
+ 785              	.LC17:
+ 786 014c 4F6E654E 		.ascii	"OneNET_Upl\000"
+ 786      45545F55 
+ 786      706C00
+ 787 0157 00       		.align	2
+ 788              	.LC18:
+ 789 0158 0D0A3D3D 		.ascii	"\015\012========== FreeRTOS + MPU6050 + OLED Data P"
+ 789      3D3D3D3D 
+ 789      3D3D3D3D 
+ 789      20467265 
+ 789      6552544F 
+ 790 0185 6970656C 		.ascii	"ipeline ==========\015\000"
+ 790      696E6520 
+ 790      3D3D3D3D 
+ 790      3D3D3D3D 
+ 790      3D3D0D00 
+ 791 0199 000000   		.align	2
+ 792              	.LC19:
+ 793 019c 5461736B 		.ascii	"Tasks: MPU_Read(2) -> Queue[8] -> DataProc(2) -> Qu"
+ 793      733A204D 
+ 793      50555F52 
+ 793      65616428 
+ 793      3229202D 
+ 794 01cf 6575655B 		.ascii	"eue[4] -> OLED_Disp(1)\015\012\015\000"
+ 794      345D202D 
+ 794      3E204F4C 
+ 794      45445F44 
+ 794      69737028 
+ 795 01e9 000000   		.align	2
  796              	.LC20:
- 797 01d0 5B4F4E45 		.ascii	"[ONENET] MQTT Link FAILED\015\000"
- 797      4E45545D 
- 797      204D5154 
- 797      54204C69 
- 797      6E6B2046 
- 798 01eb 00       		.align	2
+ 797 01ec 5B455350 		.ascii	"[ESP] Waiting for module boot (2s)...\015\000"
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 28
+
+
+ 797      5D205761 
+ 797      6974696E 
+ 797      6720666F 
+ 797      72206D6F 
+ 798 0213 00       		.align	2
  799              	.LC21:
- 800 01ec 5B4F4E45 		.ascii	"[ONENET] Register device, using default key\015\000"
+ 800 0214 5B4F4E45 		.ascii	"[ONENET] Registering device...\015\000"
  800      4E45545D 
  800      20526567 
  800      69737465 
- 800      72206465 
- 801 0219 000000   		.align	2
+ 800      72696E67 
+ 801              		.align	2
  802              	.LC22:
- 803 021c 53746172 		.ascii	"Starting scheduler...\015\000"
- 803      74696E67 
- 803      20736368 
- 803      6564756C 
- 803      65722E2E 
- 804              		.section	.text.main,"ax",%progbits
- 805              		.align	1
- 806              		.global	main
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 28
+ 803 0234 5B4F4E45 		.ascii	"[ONENET] Register OK\015\000"
+ 803      4E45545D 
+ 803      20526567 
+ 803      69737465 
+ 803      72204F4B 
+ 804 024a 0000     		.align	2
+ 805              	.LC23:
+ 806 024c 5B4F4E45 		.ascii	"[ONENET] MQTT Link OK\015\000"
+ 806      4E45545D 
+ 806      204D5154 
+ 806      54204C69 
+ 806      6E6B204F 
+ 807 0263 00       		.align	2
+ 808              	.LC24:
+ 809 0264 5B4F4E45 		.ascii	"[ONENET] MQTT Link FAILED\015\000"
+ 809      4E45545D 
+ 809      204D5154 
+ 809      54204C69 
+ 809      6E6B2046 
+ 810 027f 00       		.align	2
+ 811              	.LC25:
+ 812 0280 5B4F4E45 		.ascii	"[ONENET] Register device, using default key\015\000"
+ 812      4E45545D 
+ 812      20526567 
+ 812      69737465 
+ 812      72206465 
+ 813 02ad 000000   		.align	2
+ 814              	.LC26:
+ 815 02b0 53746172 		.ascii	"Starting scheduler...\015\000"
+ 815      74696E67 
+ 815      20736368 
+ 815      6564756C 
+ 815      65722E2E 
+ 816              		.section	.text.main,"ax",%progbits
+ 817              		.align	1
+ 818              		.global	main
+ 819              		.syntax unified
+ 820              		.thumb
+ 821              		.thumb_func
+ 823              	main:
+ 824              	.LFB73:
+  94:Core/Src/main.c ****   /* USER CODE BEGIN 1 */
+ 825              		.loc 1 94 1 view -0
+ 826              		.cfi_startproc
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 29
 
 
- 807              		.syntax unified
- 808              		.thumb
- 809              		.thumb_func
- 811              	main:
- 812              	.LFB73:
-  92:Core/Src/main.c ****   /* USER CODE BEGIN 1 */
- 813              		.loc 1 92 1 view -0
- 814              		.cfi_startproc
- 815              		@ Volatile: function does not return.
- 816              		@ args = 0, pretend = 0, frame = 8
- 817              		@ frame_needed = 0, uses_anonymous_args = 0
- 818 0000 00B5     		push	{lr}
- 819              	.LCFI13:
- 820              		.cfi_def_cfa_offset 4
- 821              		.cfi_offset 14, -4
- 822 0002 85B0     		sub	sp, sp, #20
- 823              	.LCFI14:
- 824              		.cfi_def_cfa_offset 24
- 100:Core/Src/main.c **** 
- 825              		.loc 1 100 3 view .LVU168
- 826 0004 FFF7FEFF 		bl	HAL_Init
- 827              	.LVL61:
- 106:Core/Src/main.c **** 
- 828              		.loc 1 106 3 view .LVU169
- 829 0008 FFF7FEFF 		bl	SystemClock_Config
- 830              	.LVL62:
- 110:Core/Src/main.c ****   /* USER CODE END SysInit */
- 831              		.loc 1 110 3 view .LVU170
- 110:Core/Src/main.c ****   /* USER CODE END SysInit */
- 832              		.loc 1 110 13 is_stmt 0 view .LVU171
- 833 000c 0322     		movs	r2, #3
- 834 000e 0021     		movs	r1, #0
- 835 0010 0120     		movs	r0, #1
- 836 0012 FFF7FEFF 		bl	xQueueGenericCreate
- 837              	.LVL63:
- 110:Core/Src/main.c ****   /* USER CODE END SysInit */
- 838              		.loc 1 110 11 discriminator 1 view .LVU172
- 839 0016 684B     		ldr	r3, .L63
- 840 0018 1860     		str	r0, [r3]
- 114:Core/Src/main.c ****   MX_USART1_UART_Init();
- 841              		.loc 1 114 3 is_stmt 1 view .LVU173
- 842 001a FFF7FEFF 		bl	MX_GPIO_Init
- 843              	.LVL64:
- 115:Core/Src/main.c ****   MX_DMA_Init();
- 844              		.loc 1 115 3 view .LVU174
- 845 001e FFF7FEFF 		bl	MX_USART1_UART_Init
- 846              	.LVL65:
- 116:Core/Src/main.c ****   // MX_I2C1_Init();
- 847              		.loc 1 116 3 view .LVU175
- 848 0022 FFF7FEFF 		bl	MX_DMA_Init
- 849              	.LVL66:
- 118:Core/Src/main.c ****   MX_USART2_UART_Init();
- 850              		.loc 1 118 3 view .LVU176
- 851 0026 FFF7FEFF 		bl	DebugUART_Init
- 852              	.LVL67:
- 119:Core/Src/main.c ****   /* USER CODE BEGIN 2 */
- 853              		.loc 1 119 3 view .LVU177
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 29
+ 827              		@ Volatile: function does not return.
+ 828              		@ args = 0, pretend = 0, frame = 16
+ 829              		@ frame_needed = 0, uses_anonymous_args = 0
+ 830 0000 00B5     		push	{lr}
+ 831              	.LCFI13:
+ 832              		.cfi_def_cfa_offset 4
+ 833              		.cfi_offset 14, -4
+ 834 0002 87B0     		sub	sp, sp, #28
+ 835              	.LCFI14:
+ 836              		.cfi_def_cfa_offset 32
+ 102:Core/Src/main.c **** 
+ 837              		.loc 1 102 3 view .LVU168
+ 838 0004 FFF7FEFF 		bl	HAL_Init
+ 839              	.LVL61:
+ 108:Core/Src/main.c **** 
+ 840              		.loc 1 108 3 view .LVU169
+ 841 0008 FFF7FEFF 		bl	SystemClock_Config
+ 842              	.LVL62:
+ 112:Core/Src/main.c ****   /* USER CODE END SysInit */
+ 843              		.loc 1 112 3 view .LVU170
+ 112:Core/Src/main.c ****   /* USER CODE END SysInit */
+ 844              		.loc 1 112 13 is_stmt 0 view .LVU171
+ 845 000c 0322     		movs	r2, #3
+ 846 000e 0021     		movs	r1, #0
+ 847 0010 0120     		movs	r0, #1
+ 848 0012 FFF7FEFF 		bl	xQueueGenericCreate
+ 849              	.LVL63:
+ 112:Core/Src/main.c ****   /* USER CODE END SysInit */
+ 850              		.loc 1 112 11 discriminator 1 view .LVU172
+ 851 0016 7B4B     		ldr	r3, .L67
+ 852 0018 1860     		str	r0, [r3]
+ 116:Core/Src/main.c ****   MX_USART1_UART_Init();
+ 853              		.loc 1 116 3 is_stmt 1 view .LVU173
+ 854 001a FFF7FEFF 		bl	MX_GPIO_Init
+ 855              	.LVL64:
+ 117:Core/Src/main.c ****   MX_DMA_Init();
+ 856              		.loc 1 117 3 view .LVU174
+ 857 001e FFF7FEFF 		bl	MX_USART1_UART_Init
+ 858              	.LVL65:
+ 118:Core/Src/main.c ****   MX_SPI1_Init();
+ 859              		.loc 1 118 3 view .LVU175
+ 860 0022 FFF7FEFF 		bl	MX_DMA_Init
+ 861              	.LVL66:
+ 119:Core/Src/main.c ****   // MX_I2C1_Init();
+ 862              		.loc 1 119 3 view .LVU176
+ 863 0026 FFF7FEFF 		bl	MX_SPI1_Init
+ 864              	.LVL67:
+ 121:Core/Src/main.c ****   MX_USART2_UART_Init();
+ 865              		.loc 1 121 3 view .LVU177
+ 866 002a FFF7FEFF 		bl	DebugUART_Init
+ 867              	.LVL68:
+ 122:Core/Src/main.c ****   /* USER CODE BEGIN 2 */
+ 868              		.loc 1 122 3 view .LVU178
+ 869 002e FFF7FEFF 		bl	MX_USART2_UART_Init
+ 870              	.LVL69:
+ 129:Core/Src/main.c **** 
+ 871              		.loc 1 129 3 view .LVU179
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 30
 
 
- 854 002a FFF7FEFF 		bl	MX_USART2_UART_Init
- 855              	.LVL68:
- 126:Core/Src/main.c ****   /* ---- OLED 初始?? ---- */
- 856              		.loc 1 126 3 view .LVU178
- 857 002e FFF7FEFF 		bl	BSP_Init
- 858              	.LVL69:
- 128:Core/Src/main.c ****   /* ---- MPU6050 初始�?? ---- */
- 859              		.loc 1 128 3 view .LVU179
- 860 0032 FFF7FEFF 		bl	OLED_Init
- 861              	.LVL70:
- 130:Core/Src/main.c ****       printf("[ERR] MPU6050 init failed! Check wiring.\r\n");
- 862              		.loc 1 130 3 view .LVU180
- 130:Core/Src/main.c ****       printf("[ERR] MPU6050 init failed! Check wiring.\r\n");
- 863              		.loc 1 130 7 is_stmt 0 view .LVU181
- 864 0036 FFF7FEFF 		bl	MPU6050_Init
- 865              	.LVL71:
- 130:Core/Src/main.c ****       printf("[ERR] MPU6050 init failed! Check wiring.\r\n");
- 866              		.loc 1 130 6 discriminator 1 view .LVU182
- 867 003a 18B1     		cbz	r0, .L49
- 131:Core/Src/main.c ****       while (1) {}
- 868              		.loc 1 131 7 is_stmt 1 view .LVU183
- 869 003c 5F48     		ldr	r0, .L63+4
- 870 003e FFF7FEFF 		bl	puts
- 871              	.LVL72:
- 872              	.L50:
- 132:Core/Src/main.c ****   }
- 873              		.loc 1 132 7 view .LVU184
- 132:Core/Src/main.c ****   }
- 874              		.loc 1 132 18 view .LVU185
- 132:Core/Src/main.c ****   }
- 875              		.loc 1 132 13 view .LVU186
- 876 0042 FEE7     		b	.L50
- 877              	.L49:
- 134:Core/Src/main.c **** 
- 878              		.loc 1 134 3 view .LVU187
- 134:Core/Src/main.c **** 
- 879              		.loc 1 134 48 is_stmt 0 view .LVU188
- 880 0044 FFF7FEFF 		bl	MPU6050_ReadWhoAmI
- 881              	.LVL73:
- 882 0048 0146     		mov	r1, r0
- 134:Core/Src/main.c **** 
- 883              		.loc 1 134 3 discriminator 1 view .LVU189
- 884 004a 5D48     		ldr	r0, .L63+8
- 885 004c FFF7FEFF 		bl	printf
- 886              	.LVL74:
- 137:Core/Src/main.c ****   MPU6050_Calibrate(&offset_ax, &offset_ay, &offset_az);
- 887              		.loc 1 137 3 is_stmt 1 view .LVU190
- 137:Core/Src/main.c ****   MPU6050_Calibrate(&offset_ax, &offset_ay, &offset_az);
- 888              		.loc 1 137 11 is_stmt 0 view .LVU191
- 889 0050 0023     		movs	r3, #0
- 890 0052 ADF80E30 		strh	r3, [sp, #14]	@ movhi
- 137:Core/Src/main.c ****   MPU6050_Calibrate(&offset_ax, &offset_ay, &offset_az);
- 891              		.loc 1 137 26 view .LVU192
- 892 0056 ADF80C30 		strh	r3, [sp, #12]	@ movhi
- 137:Core/Src/main.c ****   MPU6050_Calibrate(&offset_ax, &offset_ay, &offset_az);
- 893              		.loc 1 137 41 view .LVU193
- 894 005a ADF80A30 		strh	r3, [sp, #10]	@ movhi
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 30
+ 872 0032 FFF7FEFF 		bl	BSP_Init
+ 873              	.LVL70:
+ 134:Core/Src/main.c ****   /* ---- MPU6050 初始化 ---- */
+ 874              		.loc 1 134 3 view .LVU180
+ 875 0036 FFF7FEFF 		bl	OLED_Init
+ 876              	.LVL71:
+ 136:Core/Src/main.c ****       printf("[ERR] MPU6050 init failed! Check wiring.\r\n");
+ 877              		.loc 1 136 3 view .LVU181
+ 136:Core/Src/main.c ****       printf("[ERR] MPU6050 init failed! Check wiring.\r\n");
+ 878              		.loc 1 136 7 is_stmt 0 view .LVU182
+ 879 003a FFF7FEFF 		bl	MPU6050_Init
+ 880              	.LVL72:
+ 136:Core/Src/main.c ****       printf("[ERR] MPU6050 init failed! Check wiring.\r\n");
+ 881              		.loc 1 136 6 discriminator 1 view .LVU183
+ 882 003e 18B1     		cbz	r0, .L49
+ 137:Core/Src/main.c ****       while (1) {}
+ 883              		.loc 1 137 7 is_stmt 1 view .LVU184
+ 884 0040 7148     		ldr	r0, .L67+4
+ 885 0042 FFF7FEFF 		bl	puts
+ 886              	.LVL73:
+ 887              	.L50:
+ 138:Core/Src/main.c ****   }
+ 888              		.loc 1 138 7 view .LVU185
+ 138:Core/Src/main.c ****   }
+ 889              		.loc 1 138 18 view .LVU186
+ 138:Core/Src/main.c ****   }
+ 890              		.loc 1 138 13 view .LVU187
+ 891 0046 FEE7     		b	.L50
+ 892              	.L49:
+ 140:Core/Src/main.c ****   /* ---- 零偏校准（校准时传感器需保持静止） ---- */
+ 893              		.loc 1 140 3 view .LVU188
+ 140:Core/Src/main.c ****   /* ---- 零偏校准（校准时传感器需保持静止） ---- */
+ 894              		.loc 1 140 48 is_stmt 0 view .LVU189
+ 895 0048 FFF7FEFF 		bl	MPU6050_ReadWhoAmI
+ 896              	.LVL74:
+ 897 004c 0146     		mov	r1, r0
+ 140:Core/Src/main.c ****   /* ---- 零偏校准（校准时传感器需保持静止） ---- */
+ 898              		.loc 1 140 3 discriminator 1 view .LVU190
+ 899 004e 6F48     		ldr	r0, .L67+8
+ 900 0050 FFF7FEFF 		bl	printf
+ 901              	.LVL75:
+ 142:Core/Src/main.c ****   MPU6050_Calibrate(&offset_ax, &offset_ay, &offset_az);
+ 902              		.loc 1 142 3 is_stmt 1 view .LVU191
+ 142:Core/Src/main.c ****   MPU6050_Calibrate(&offset_ax, &offset_ay, &offset_az);
+ 903              		.loc 1 142 11 is_stmt 0 view .LVU192
+ 904 0054 0023     		movs	r3, #0
+ 905 0056 ADF81630 		strh	r3, [sp, #22]	@ movhi
+ 142:Core/Src/main.c ****   MPU6050_Calibrate(&offset_ax, &offset_ay, &offset_az);
+ 906              		.loc 1 142 26 view .LVU193
+ 907 005a ADF81430 		strh	r3, [sp, #20]	@ movhi
+ 142:Core/Src/main.c ****   MPU6050_Calibrate(&offset_ax, &offset_ay, &offset_az);
+ 908              		.loc 1 142 41 view .LVU194
+ 909 005e ADF81230 		strh	r3, [sp, #18]	@ movhi
+ 143:Core/Src/main.c **** 
+ 910              		.loc 1 143 3 is_stmt 1 view .LVU195
+ 911 0062 0DF11202 		add	r2, sp, #18
+ 912 0066 05A9     		add	r1, sp, #20
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 31
 
 
- 138:Core/Src/main.c **** 
- 895              		.loc 1 138 3 is_stmt 1 view .LVU194
- 896 005e 0DF10A02 		add	r2, sp, #10
- 897 0062 03A9     		add	r1, sp, #12
- 898 0064 0DF10E00 		add	r0, sp, #14
- 899 0068 FFF7FEFF 		bl	MPU6050_Calibrate
- 900              	.LVL75:
- 141:Core/Src/main.c ****   if (xI2CMutex == NULL) {
- 901              		.loc 1 141 3 view .LVU195
- 141:Core/Src/main.c ****   if (xI2CMutex == NULL) {
- 902              		.loc 1 141 15 is_stmt 0 view .LVU196
- 903 006c 0120     		movs	r0, #1
- 904 006e FFF7FEFF 		bl	xQueueCreateMutex
- 905              	.LVL76:
- 141:Core/Src/main.c ****   if (xI2CMutex == NULL) {
- 906              		.loc 1 141 13 discriminator 1 view .LVU197
- 907 0072 544B     		ldr	r3, .L63+12
- 908 0074 1860     		str	r0, [r3]
- 142:Core/Src/main.c ****       printf("[ERR] Failed to create I2C mutex!\r\n");
- 909              		.loc 1 142 3 is_stmt 1 view .LVU198
- 142:Core/Src/main.c ****       printf("[ERR] Failed to create I2C mutex!\r\n");
- 910              		.loc 1 142 6 is_stmt 0 view .LVU199
- 911 0076 0028     		cmp	r0, #0
- 912 0078 74D0     		beq	.L61
- 148:Core/Src/main.c ****   xCookedQueue = xQueueCreate(4, sizeof(SensorCooked_t));     /* 处理后数�??: 4 �?? */
- 913              		.loc 1 148 3 is_stmt 1 view .LVU200
- 148:Core/Src/main.c ****   xCookedQueue = xQueueCreate(4, sizeof(SensorCooked_t));     /* 处理后数�??: 4 �?? */
- 914              		.loc 1 148 18 is_stmt 0 view .LVU201
- 915 007a 0022     		movs	r2, #0
- 916 007c 0E21     		movs	r1, #14
- 917 007e 0820     		movs	r0, #8
- 918 0080 FFF7FEFF 		bl	xQueueGenericCreate
- 919              	.LVL77:
- 148:Core/Src/main.c ****   xCookedQueue = xQueueCreate(4, sizeof(SensorCooked_t));     /* 处理后数�??: 4 �?? */
- 920              		.loc 1 148 16 discriminator 1 view .LVU202
- 921 0084 504C     		ldr	r4, .L63+16
- 922 0086 2060     		str	r0, [r4]
- 149:Core/Src/main.c ****   if (xSensorQueue == NULL || xCookedQueue == NULL) {
- 923              		.loc 1 149 3 is_stmt 1 view .LVU203
- 149:Core/Src/main.c ****   if (xSensorQueue == NULL || xCookedQueue == NULL) {
- 924              		.loc 1 149 18 is_stmt 0 view .LVU204
- 925 0088 0022     		movs	r2, #0
- 926 008a 1C21     		movs	r1, #28
- 927 008c 0420     		movs	r0, #4
- 928 008e FFF7FEFF 		bl	xQueueGenericCreate
- 929              	.LVL78:
- 149:Core/Src/main.c ****   if (xSensorQueue == NULL || xCookedQueue == NULL) {
- 930              		.loc 1 149 16 discriminator 1 view .LVU205
- 931 0092 4E4B     		ldr	r3, .L63+20
- 932 0094 1860     		str	r0, [r3]
- 150:Core/Src/main.c ****       printf("[ERR] Failed to create queues!\r\n");
- 933              		.loc 1 150 3 is_stmt 1 view .LVU206
- 150:Core/Src/main.c ****       printf("[ERR] Failed to create queues!\r\n");
- 934              		.loc 1 150 20 is_stmt 0 view .LVU207
- 935 0096 2368     		ldr	r3, [r4]
- 150:Core/Src/main.c ****       printf("[ERR] Failed to create queues!\r\n");
- 936              		.loc 1 150 6 view .LVU208
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 31
+ 913 0068 0DF11600 		add	r0, sp, #22
+ 914 006c FFF7FEFF 		bl	MPU6050_Calibrate
+ 915              	.LVL76:
+ 146:Core/Src/main.c ****   if (xI2CMutex == NULL) {
+ 916              		.loc 1 146 3 view .LVU196
+ 146:Core/Src/main.c ****   if (xI2CMutex == NULL) {
+ 917              		.loc 1 146 15 is_stmt 0 view .LVU197
+ 918 0070 0120     		movs	r0, #1
+ 919 0072 FFF7FEFF 		bl	xQueueCreateMutex
+ 920              	.LVL77:
+ 146:Core/Src/main.c ****   if (xI2CMutex == NULL) {
+ 921              		.loc 1 146 13 discriminator 1 view .LVU198
+ 922 0076 664B     		ldr	r3, .L67+12
+ 923 0078 1860     		str	r0, [r3]
+ 147:Core/Src/main.c ****       printf("[ERR] Failed to create I2C mutex!\r\n");
+ 924              		.loc 1 147 3 is_stmt 1 view .LVU199
+ 147:Core/Src/main.c ****       printf("[ERR] Failed to create I2C mutex!\r\n");
+ 925              		.loc 1 147 6 is_stmt 0 view .LVU200
+ 926 007a 0028     		cmp	r0, #0
+ 927 007c 00F08680 		beq	.L65
+ 153:Core/Src/main.c ****       printf("[ERR] AT24C02 init failed! Check wiring.\r\n");
+ 928              		.loc 1 153 3 is_stmt 1 view .LVU201
+ 153:Core/Src/main.c ****       printf("[ERR] AT24C02 init failed! Check wiring.\r\n");
+ 929              		.loc 1 153 8 is_stmt 0 view .LVU202
+ 930 0080 FFF7FEFF 		bl	AT24C02_Init
+ 931              	.LVL78:
+ 153:Core/Src/main.c ****       printf("[ERR] AT24C02 init failed! Check wiring.\r\n");
+ 932              		.loc 1 153 6 discriminator 1 view .LVU203
+ 933 0084 0028     		cmp	r0, #0
+ 934 0086 40F08580 		bne	.L53
+ 154:Core/Src/main.c ****   } else {
+ 935              		.loc 1 154 7 is_stmt 1 view .LVU204
+ 936 008a 6248     		ldr	r0, .L67+16
+ 937 008c FFF7FEFF 		bl	puts
+ 938              	.LVL79:
+ 939              	.L54:
+ 160:Core/Src/main.c ****       printf("[ERR] W25Q64 init failed! Check wiring.\r\n");
+ 940              		.loc 1 160 3 view .LVU205
+ 160:Core/Src/main.c ****       printf("[ERR] W25Q64 init failed! Check wiring.\r\n");
+ 941              		.loc 1 160 8 is_stmt 0 view .LVU206
+ 942 0090 FFF7FEFF 		bl	W25Q64_Init
+ 943              	.LVL80:
+ 160:Core/Src/main.c ****       printf("[ERR] W25Q64 init failed! Check wiring.\r\n");
+ 944              		.loc 1 160 6 discriminator 1 view .LVU207
+ 945 0094 0028     		cmp	r0, #0
+ 946 0096 40F08180 		bne	.L55
+ 161:Core/Src/main.c ****   } else {
+ 947              		.loc 1 161 7 is_stmt 1 view .LVU208
+ 948 009a 5F48     		ldr	r0, .L67+20
+ 949 009c FFF7FEFF 		bl	puts
+ 950              	.LVL81:
+ 951              	.L56:
+ 169:Core/Src/main.c ****   xCookedQueue = xQueueCreate(4, sizeof(SensorCooked_t));     /* 处理后数�??: 4 �?? */
+ 952              		.loc 1 169 3 view .LVU209
+ 169:Core/Src/main.c ****   xCookedQueue = xQueueCreate(4, sizeof(SensorCooked_t));     /* 处理后数�??: 4 �?? */
+ 953              		.loc 1 169 18 is_stmt 0 view .LVU210
+ 954 00a0 0022     		movs	r2, #0
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 32
 
 
- 937 0098 002B     		cmp	r3, #0
- 938 009a 67D0     		beq	.L53
- 150:Core/Src/main.c ****       printf("[ERR] Failed to create queues!\r\n");
- 939              		.loc 1 150 28 discriminator 1 view .LVU209
- 940 009c 0028     		cmp	r0, #0
- 941 009e 65D0     		beq	.L53
- 156:Core/Src/main.c ****   ProcessTaskParam.xCookedQueue = xCookedQueue;
- 942              		.loc 1 156 3 is_stmt 1 view .LVU210
- 156:Core/Src/main.c ****   ProcessTaskParam.xCookedQueue = xCookedQueue;
- 943              		.loc 1 156 33 is_stmt 0 view .LVU211
- 944 00a0 4B4C     		ldr	r4, .L63+24
- 945 00a2 2360     		str	r3, [r4]
- 157:Core/Src/main.c ****   ProcessTaskParam.ax_offset = offset_ax;
- 946              		.loc 1 157 3 is_stmt 1 view .LVU212
- 157:Core/Src/main.c ****   ProcessTaskParam.ax_offset = offset_ax;
- 947              		.loc 1 157 33 is_stmt 0 view .LVU213
- 948 00a4 6060     		str	r0, [r4, #4]
- 158:Core/Src/main.c ****   ProcessTaskParam.ay_offset = offset_ay;
- 949              		.loc 1 158 3 is_stmt 1 view .LVU214
- 158:Core/Src/main.c ****   ProcessTaskParam.ay_offset = offset_ay;
- 950              		.loc 1 158 30 is_stmt 0 view .LVU215
- 951 00a6 BDF80E20 		ldrh	r2, [sp, #14]
- 952 00aa 2281     		strh	r2, [r4, #8]	@ movhi
- 159:Core/Src/main.c ****   ProcessTaskParam.az_offset = offset_az;
- 953              		.loc 1 159 3 is_stmt 1 view .LVU216
- 159:Core/Src/main.c ****   ProcessTaskParam.az_offset = offset_az;
- 954              		.loc 1 159 30 is_stmt 0 view .LVU217
- 955 00ac BDF80C20 		ldrh	r2, [sp, #12]
- 956 00b0 6281     		strh	r2, [r4, #10]	@ movhi
- 160:Core/Src/main.c **** 
- 957              		.loc 1 160 3 is_stmt 1 view .LVU218
- 160:Core/Src/main.c **** 
- 958              		.loc 1 160 30 is_stmt 0 view .LVU219
- 959 00b2 BDF80A20 		ldrh	r2, [sp, #10]
- 960 00b6 A281     		strh	r2, [r4, #12]	@ movhi
- 164:Core/Src/main.c ****               (void *)xSensorQueue, 2, NULL);
- 961              		.loc 1 164 3 is_stmt 1 view .LVU220
- 962 00b8 0025     		movs	r5, #0
- 963 00ba 0195     		str	r5, [sp, #4]
- 964 00bc 0226     		movs	r6, #2
- 965 00be 0096     		str	r6, [sp]
- 966 00c0 4FF48072 		mov	r2, #256
- 967 00c4 4349     		ldr	r1, .L63+28
- 968 00c6 4448     		ldr	r0, .L63+32
- 969 00c8 FFF7FEFF 		bl	xTaskCreate
- 970              	.LVL79:
- 168:Core/Src/main.c ****               (void *)&ProcessTaskParam, 2, NULL);
- 971              		.loc 1 168 3 view .LVU221
- 972 00cc 0195     		str	r5, [sp, #4]
- 973 00ce 0096     		str	r6, [sp]
- 974 00d0 2346     		mov	r3, r4
- 975 00d2 4FF48072 		mov	r2, #256
- 976 00d6 4149     		ldr	r1, .L63+36
- 977 00d8 4148     		ldr	r0, .L63+40
- 978 00da FFF7FEFF 		bl	xTaskCreate
- 979              	.LVL80:
- 172:Core/Src/main.c ****               (void *)xCookedQueue, 3, NULL);
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 32
+ 955 00a2 0E21     		movs	r1, #14
+ 956 00a4 0820     		movs	r0, #8
+ 957 00a6 FFF7FEFF 		bl	xQueueGenericCreate
+ 958              	.LVL82:
+ 169:Core/Src/main.c ****   xCookedQueue = xQueueCreate(4, sizeof(SensorCooked_t));     /* 处理后数�??: 4 �?? */
+ 959              		.loc 1 169 16 discriminator 1 view .LVU211
+ 960 00aa 5C4C     		ldr	r4, .L67+24
+ 961 00ac 2060     		str	r0, [r4]
+ 170:Core/Src/main.c ****   if (xSensorQueue == NULL || xCookedQueue == NULL) {
+ 962              		.loc 1 170 3 is_stmt 1 view .LVU212
+ 170:Core/Src/main.c ****   if (xSensorQueue == NULL || xCookedQueue == NULL) {
+ 963              		.loc 1 170 18 is_stmt 0 view .LVU213
+ 964 00ae 0022     		movs	r2, #0
+ 965 00b0 1C21     		movs	r1, #28
+ 966 00b2 0420     		movs	r0, #4
+ 967 00b4 FFF7FEFF 		bl	xQueueGenericCreate
+ 968              	.LVL83:
+ 170:Core/Src/main.c ****   if (xSensorQueue == NULL || xCookedQueue == NULL) {
+ 969              		.loc 1 170 16 discriminator 1 view .LVU214
+ 970 00b8 594B     		ldr	r3, .L67+28
+ 971 00ba 1860     		str	r0, [r3]
+ 171:Core/Src/main.c ****       printf("[ERR] Failed to create queues!\r\n");
+ 972              		.loc 1 171 3 is_stmt 1 view .LVU215
+ 171:Core/Src/main.c ****       printf("[ERR] Failed to create queues!\r\n");
+ 973              		.loc 1 171 20 is_stmt 0 view .LVU216
+ 974 00bc 2368     		ldr	r3, [r4]
+ 171:Core/Src/main.c ****       printf("[ERR] Failed to create queues!\r\n");
+ 975              		.loc 1 171 6 view .LVU217
+ 976 00be 002B     		cmp	r3, #0
+ 977 00c0 79D0     		beq	.L57
+ 171:Core/Src/main.c ****       printf("[ERR] Failed to create queues!\r\n");
+ 978              		.loc 1 171 28 discriminator 1 view .LVU218
+ 979 00c2 0028     		cmp	r0, #0
+ 980 00c4 77D0     		beq	.L57
+ 177:Core/Src/main.c ****   ProcessTaskParam.xCookedQueue = xCookedQueue;
+ 981              		.loc 1 177 3 is_stmt 1 view .LVU219
+ 177:Core/Src/main.c ****   ProcessTaskParam.xCookedQueue = xCookedQueue;
+ 982              		.loc 1 177 33 is_stmt 0 view .LVU220
+ 983 00c6 574C     		ldr	r4, .L67+32
+ 984 00c8 2360     		str	r3, [r4]
+ 178:Core/Src/main.c ****   ProcessTaskParam.ax_offset = offset_ax;
+ 985              		.loc 1 178 3 is_stmt 1 view .LVU221
+ 178:Core/Src/main.c ****   ProcessTaskParam.ax_offset = offset_ax;
+ 986              		.loc 1 178 33 is_stmt 0 view .LVU222
+ 987 00ca 6060     		str	r0, [r4, #4]
+ 179:Core/Src/main.c ****   ProcessTaskParam.ay_offset = offset_ay;
+ 988              		.loc 1 179 3 is_stmt 1 view .LVU223
+ 179:Core/Src/main.c ****   ProcessTaskParam.ay_offset = offset_ay;
+ 989              		.loc 1 179 30 is_stmt 0 view .LVU224
+ 990 00cc BDF81620 		ldrh	r2, [sp, #22]
+ 991 00d0 2281     		strh	r2, [r4, #8]	@ movhi
+ 180:Core/Src/main.c ****   ProcessTaskParam.az_offset = offset_az;
+ 992              		.loc 1 180 3 is_stmt 1 view .LVU225
+ 180:Core/Src/main.c ****   ProcessTaskParam.az_offset = offset_az;
+ 993              		.loc 1 180 30 is_stmt 0 view .LVU226
+ 994 00d2 BDF81420 		ldrh	r2, [sp, #20]
+ 995 00d6 6281     		strh	r2, [r4, #10]	@ movhi
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 33
 
 
- 980              		.loc 1 172 3 view .LVU222
- 981 00de 0195     		str	r5, [sp, #4]
- 982 00e0 0323     		movs	r3, #3
- 983 00e2 0093     		str	r3, [sp]
- 984 00e4 394B     		ldr	r3, .L63+20
- 985 00e6 1B68     		ldr	r3, [r3]
- 986 00e8 4FF48072 		mov	r2, #256
- 987 00ec 3D49     		ldr	r1, .L63+44
- 988 00ee 3E48     		ldr	r0, .L63+48
- 989 00f0 FFF7FEFF 		bl	xTaskCreate
- 990              	.LVL81:
- 176:Core/Src/main.c ****               NULL, 1, NULL);
- 991              		.loc 1 176 3 view .LVU223
- 992 00f4 0195     		str	r5, [sp, #4]
- 993 00f6 0123     		movs	r3, #1
- 994 00f8 0093     		str	r3, [sp]
- 995 00fa 2B46     		mov	r3, r5
- 996 00fc 4FF48072 		mov	r2, #256
- 997 0100 3A49     		ldr	r1, .L63+52
- 998 0102 3B48     		ldr	r0, .L63+56
- 999 0104 FFF7FEFF 		bl	xTaskCreate
- 1000              	.LVL82:
- 181:Core/Src/main.c ****   printf("Tasks: MPU_Read(2) -> Queue[8] -> DataProc(2) -> Queue[4] -> OLED_Disp(1)\r\n\r\n");
- 1001              		.loc 1 181 3 view .LVU224
- 1002 0108 3A48     		ldr	r0, .L63+60
- 1003 010a FFF7FEFF 		bl	puts
- 1004              	.LVL83:
- 182:Core/Src/main.c **** 
- 1005              		.loc 1 182 3 view .LVU225
- 1006 010e 3A48     		ldr	r0, .L63+64
- 1007 0110 FFF7FEFF 		bl	puts
- 1008              	.LVL84:
- 185:Core/Src/main.c ****   HAL_Delay(2000);
- 1009              		.loc 1 185 3 view .LVU226
- 1010 0114 3948     		ldr	r0, .L63+68
- 1011 0116 FFF7FEFF 		bl	puts
- 1012              	.LVL85:
- 186:Core/Src/main.c **** 
- 1013              		.loc 1 186 3 view .LVU227
- 1014 011a 4FF4FA60 		mov	r0, #2000
- 1015 011e FFF7FEFF 		bl	HAL_Delay
- 1016              	.LVL86:
- 189:Core/Src/main.c **** 
- 1017              		.loc 1 189 3 view .LVU228
- 1018 0122 FFF7FEFF 		bl	ESP8266_StartRx
- 1019              	.LVL87:
- 192:Core/Src/main.c **** 
- 1020              		.loc 1 192 3 view .LVU229
- 1021 0126 FFF7FEFF 		bl	ESP8266_Init
- 1022              	.LVL88:
- 195:Core/Src/main.c ****   if (OneNET_RegisterDevice()) {
- 1023              		.loc 1 195 3 view .LVU230
- 1024 012a 3548     		ldr	r0, .L63+72
- 1025 012c FFF7FEFF 		bl	puts
- 1026              	.LVL89:
- 196:Core/Src/main.c ****       printf("[ONENET] Register OK\r\n");
- 1027              		.loc 1 196 3 view .LVU231
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 33
+ 181:Core/Src/main.c **** 
+ 996              		.loc 1 181 3 is_stmt 1 view .LVU227
+ 181:Core/Src/main.c **** 
+ 997              		.loc 1 181 30 is_stmt 0 view .LVU228
+ 998 00d8 BDF81220 		ldrh	r2, [sp, #18]
+ 999 00dc A281     		strh	r2, [r4, #12]	@ movhi
+ 185:Core/Src/main.c ****               (void *)xSensorQueue, 2, NULL);
+ 1000              		.loc 1 185 3 is_stmt 1 view .LVU229
+ 1001 00de 0025     		movs	r5, #0
+ 1002 00e0 0195     		str	r5, [sp, #4]
+ 1003 00e2 0226     		movs	r6, #2
+ 1004 00e4 0096     		str	r6, [sp]
+ 1005 00e6 4FF48072 		mov	r2, #256
+ 1006 00ea 4F49     		ldr	r1, .L67+36
+ 1007 00ec 4F48     		ldr	r0, .L67+40
+ 1008 00ee FFF7FEFF 		bl	xTaskCreate
+ 1009              	.LVL84:
+ 189:Core/Src/main.c ****               (void *)&ProcessTaskParam, 2, NULL);
+ 1010              		.loc 1 189 3 view .LVU230
+ 1011 00f2 0195     		str	r5, [sp, #4]
+ 1012 00f4 0096     		str	r6, [sp]
+ 1013 00f6 2346     		mov	r3, r4
+ 1014 00f8 4FF48072 		mov	r2, #256
+ 1015 00fc 4C49     		ldr	r1, .L67+44
+ 1016 00fe 4D48     		ldr	r0, .L67+48
+ 1017 0100 FFF7FEFF 		bl	xTaskCreate
+ 1018              	.LVL85:
+ 193:Core/Src/main.c ****               (void *)xCookedQueue, 3, NULL);
+ 1019              		.loc 1 193 3 view .LVU231
+ 1020 0104 0195     		str	r5, [sp, #4]
+ 1021 0106 0323     		movs	r3, #3
+ 1022 0108 0093     		str	r3, [sp]
+ 1023 010a 454B     		ldr	r3, .L67+28
+ 1024 010c 1B68     		ldr	r3, [r3]
+ 1025 010e 4FF48072 		mov	r2, #256
+ 1026 0112 4949     		ldr	r1, .L67+52
+ 1027 0114 4948     		ldr	r0, .L67+56
+ 1028 0116 FFF7FEFF 		bl	xTaskCreate
+ 1029              	.LVL86:
+ 197:Core/Src/main.c ****               NULL, 1, NULL);
+ 1030              		.loc 1 197 3 view .LVU232
+ 1031 011a 0195     		str	r5, [sp, #4]
+ 1032 011c 0123     		movs	r3, #1
+ 1033 011e 0093     		str	r3, [sp]
+ 1034 0120 2B46     		mov	r3, r5
+ 1035 0122 4FF48072 		mov	r2, #256
+ 1036 0126 4649     		ldr	r1, .L67+60
+ 1037 0128 4648     		ldr	r0, .L67+64
+ 1038 012a FFF7FEFF 		bl	xTaskCreate
+ 1039              	.LVL87:
+ 202:Core/Src/main.c ****   printf("Tasks: MPU_Read(2) -> Queue[8] -> DataProc(2) -> Queue[4] -> OLED_Disp(1)\r\n\r\n");
+ 1040              		.loc 1 202 3 view .LVU233
+ 1041 012e 4648     		ldr	r0, .L67+68
+ 1042 0130 FFF7FEFF 		bl	puts
+ 1043              	.LVL88:
+ 203:Core/Src/main.c **** 
+ 1044              		.loc 1 203 3 view .LVU234
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 34
 
 
- 196:Core/Src/main.c ****       printf("[ONENET] Register OK\r\n");
- 1028              		.loc 1 196 7 is_stmt 0 view .LVU232
- 1029 0130 FFF7FEFF 		bl	OneNET_RegisterDevice
- 1030              	.LVL90:
- 196:Core/Src/main.c ****       printf("[ONENET] Register OK\r\n");
- 1031              		.loc 1 196 6 discriminator 1 view .LVU233
- 1032 0134 10B3     		cbz	r0, .L56
- 197:Core/Src/main.c **** 
- 1033              		.loc 1 197 7 is_stmt 1 view .LVU234
- 1034 0136 3348     		ldr	r0, .L63+76
- 1035 0138 FFF7FEFF 		bl	puts
- 1036              	.LVL91:
- 199:Core/Src/main.c ****           printf("[ONENET] MQTT Link OK\r\n");
- 1037              		.loc 1 199 7 view .LVU235
- 199:Core/Src/main.c ****           printf("[ONENET] MQTT Link OK\r\n");
- 1038              		.loc 1 199 11 is_stmt 0 view .LVU236
- 1039 013c FFF7FEFF 		bl	OneNet_DevLink
- 1040              	.LVL92:
- 199:Core/Src/main.c ****           printf("[ONENET] MQTT Link OK\r\n");
- 1041              		.loc 1 199 10 discriminator 1 view .LVU237
- 1042 0140 C0B9     		cbnz	r0, .L57
- 200:Core/Src/main.c **** 
- 1043              		.loc 1 200 11 is_stmt 1 view .LVU238
- 1044 0142 3148     		ldr	r0, .L63+80
- 1045 0144 FFF7FEFF 		bl	puts
- 1046              	.LVL93:
- 202:Core/Src/main.c ****           onenet_az_g = 0; onenet_count = 0;
- 1047              		.loc 1 202 11 view .LVU239
- 202:Core/Src/main.c ****           onenet_az_g = 0; onenet_count = 0;
- 1048              		.loc 1 202 23 is_stmt 0 view .LVU240
- 1049 0148 0023     		movs	r3, #0
- 1050 014a 304A     		ldr	r2, .L63+84
- 1051 014c 1360     		str	r3, [r2]	@ float
- 202:Core/Src/main.c ****           onenet_az_g = 0; onenet_count = 0;
- 1052              		.loc 1 202 28 is_stmt 1 view .LVU241
- 202:Core/Src/main.c ****           onenet_az_g = 0; onenet_count = 0;
- 1053              		.loc 1 202 40 is_stmt 0 view .LVU242
- 1054 014e 304A     		ldr	r2, .L63+88
- 1055 0150 1360     		str	r3, [r2]	@ float
- 203:Core/Src/main.c ****           OneNET_Subscribe();
- 1056              		.loc 1 203 11 is_stmt 1 view .LVU243
- 203:Core/Src/main.c ****           OneNET_Subscribe();
- 1057              		.loc 1 203 23 is_stmt 0 view .LVU244
- 1058 0152 304A     		ldr	r2, .L63+92
- 1059 0154 1360     		str	r3, [r2]	@ float
- 203:Core/Src/main.c ****           OneNET_Subscribe();
- 1060              		.loc 1 203 28 is_stmt 1 view .LVU245
- 203:Core/Src/main.c ****           OneNET_Subscribe();
- 1061              		.loc 1 203 41 is_stmt 0 view .LVU246
- 1062 0156 304B     		ldr	r3, .L63+96
- 1063 0158 1D60     		str	r5, [r3]
- 204:Core/Src/main.c ****           OneNet_SendData();
- 1064              		.loc 1 204 11 is_stmt 1 view .LVU247
- 1065 015a FFF7FEFF 		bl	OneNET_Subscribe
- 1066              	.LVL94:
- 205:Core/Src/main.c ****       } else {
- 1067              		.loc 1 205 11 view .LVU248
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 34
-
-
- 1068 015e FFF7FEFF 		bl	OneNet_SendData
+ 1045 0134 4548     		ldr	r0, .L67+72
+ 1046 0136 FFF7FEFF 		bl	puts
+ 1047              	.LVL89:
+ 206:Core/Src/main.c ****   HAL_Delay(2000);
+ 1048              		.loc 1 206 3 view .LVU235
+ 1049 013a 4548     		ldr	r0, .L67+76
+ 1050 013c FFF7FEFF 		bl	puts
+ 1051              	.LVL90:
+ 207:Core/Src/main.c **** 
+ 1052              		.loc 1 207 3 view .LVU236
+ 1053 0140 4FF4FA60 		mov	r0, #2000
+ 1054 0144 FFF7FEFF 		bl	HAL_Delay
+ 1055              	.LVL91:
+ 210:Core/Src/main.c **** 
+ 1056              		.loc 1 210 3 view .LVU237
+ 1057 0148 FFF7FEFF 		bl	ESP8266_StartRx
+ 1058              	.LVL92:
+ 213:Core/Src/main.c **** 
+ 1059              		.loc 1 213 3 view .LVU238
+ 1060 014c FFF7FEFF 		bl	ESP8266_Init
+ 1061              	.LVL93:
+ 216:Core/Src/main.c ****   if (OneNET_RegisterDevice()) {
+ 1062              		.loc 1 216 3 view .LVU239
+ 1063 0150 4048     		ldr	r0, .L67+80
+ 1064 0152 FFF7FEFF 		bl	puts
+ 1065              	.LVL94:
+ 217:Core/Src/main.c ****       printf("[ONENET] Register OK\r\n");
+ 1066              		.loc 1 217 3 view .LVU240
+ 217:Core/Src/main.c ****       printf("[ONENET] Register OK\r\n");
+ 1067              		.loc 1 217 7 is_stmt 0 view .LVU241
+ 1068 0156 FFF7FEFF 		bl	OneNET_RegisterDevice
  1069              	.LVL95:
- 1070 0162 11E0     		b	.L58
- 1071              	.L61:
- 143:Core/Src/main.c ****       while (1) {}
- 1072              		.loc 1 143 7 view .LVU249
- 1073 0164 2D48     		ldr	r0, .L63+100
- 1074 0166 FFF7FEFF 		bl	puts
- 1075              	.LVL96:
- 1076              	.L52:
- 144:Core/Src/main.c ****   }
- 1077              		.loc 1 144 7 view .LVU250
- 144:Core/Src/main.c ****   }
- 1078              		.loc 1 144 18 view .LVU251
- 144:Core/Src/main.c ****   }
- 1079              		.loc 1 144 13 view .LVU252
- 1080 016a FEE7     		b	.L52
- 1081              	.L53:
- 151:Core/Src/main.c ****       while (1) {}
- 1082              		.loc 1 151 7 view .LVU253
- 1083 016c 2C48     		ldr	r0, .L63+104
- 1084 016e FFF7FEFF 		bl	puts
- 1085              	.LVL97:
- 1086              	.L55:
- 152:Core/Src/main.c ****   }
- 1087              		.loc 1 152 7 view .LVU254
- 152:Core/Src/main.c ****   }
- 1088              		.loc 1 152 18 view .LVU255
- 152:Core/Src/main.c ****   }
- 1089              		.loc 1 152 13 view .LVU256
- 1090 0172 FEE7     		b	.L55
- 1091              	.L57:
- 207:Core/Src/main.c ****       }
- 1092              		.loc 1 207 11 view .LVU257
- 1093 0174 2B48     		ldr	r0, .L63+108
- 1094 0176 FFF7FEFF 		bl	puts
- 1095              	.LVL98:
- 1096 017a 05E0     		b	.L58
- 1097              	.L56:
- 210:Core/Src/main.c ****       /* 若设备已注册过，直接用默认 key 连接 */
- 1098              		.loc 1 210 7 view .LVU258
- 1099 017c 2A48     		ldr	r0, .L63+112
- 1100 017e FFF7FEFF 		bl	puts
- 1101              	.LVL99:
- 212:Core/Src/main.c ****           printf("[ONENET] MQTT Link OK\r\n");
- 1102              		.loc 1 212 7 view .LVU259
- 212:Core/Src/main.c ****           printf("[ONENET] MQTT Link OK\r\n");
- 1103              		.loc 1 212 11 is_stmt 0 view .LVU260
- 1104 0182 FFF7FEFF 		bl	OneNet_DevLink
- 1105              	.LVL100:
- 212:Core/Src/main.c ****           printf("[ONENET] MQTT Link OK\r\n");
- 1106              		.loc 1 212 10 discriminator 1 view .LVU261
- 1107 0186 28B1     		cbz	r0, .L62
- 1108              	.L58:
- 221:Core/Src/main.c ****   vTaskStartScheduler();
- 1109              		.loc 1 221 3 is_stmt 1 view .LVU262
- 1110 0188 2848     		ldr	r0, .L63+116
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 35
+ 217:Core/Src/main.c ****       printf("[ONENET] Register OK\r\n");
+ 1070              		.loc 1 217 6 discriminator 1 view .LVU242
+ 1071 015a 0028     		cmp	r0, #0
+ 1072 015c 33D0     		beq	.L60
+ 218:Core/Src/main.c **** 
+ 1073              		.loc 1 218 7 is_stmt 1 view .LVU243
+ 1074 015e 3E48     		ldr	r0, .L67+84
+ 1075 0160 FFF7FEFF 		bl	puts
+ 1076              	.LVL96:
+ 220:Core/Src/main.c ****           printf("[ONENET] MQTT Link OK\r\n");
+ 1077              		.loc 1 220 7 view .LVU244
+ 220:Core/Src/main.c ****           printf("[ONENET] MQTT Link OK\r\n");
+ 1078              		.loc 1 220 11 is_stmt 0 view .LVU245
+ 1079 0164 FFF7FEFF 		bl	OneNet_DevLink
+ 1080              	.LVL97:
+ 220:Core/Src/main.c ****           printf("[ONENET] MQTT Link OK\r\n");
+ 1081              		.loc 1 220 10 discriminator 1 view .LVU246
+ 1082 0168 48BB     		cbnz	r0, .L61
+ 221:Core/Src/main.c **** 
+ 1083              		.loc 1 221 11 is_stmt 1 view .LVU247
+ 1084 016a 3C48     		ldr	r0, .L67+88
+ 1085 016c FFF7FEFF 		bl	puts
+ 1086              	.LVL98:
+ 223:Core/Src/main.c ****           onenet_az_g = 0; onenet_count = 0;
+ 1087              		.loc 1 223 11 view .LVU248
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 35
 
 
- 1111 018a FFF7FEFF 		bl	puts
- 1112              	.LVL101:
- 222:Core/Src/main.c **** 
- 1113              		.loc 1 222 3 view .LVU263
- 1114 018e FFF7FEFF 		bl	vTaskStartScheduler
- 1115              	.LVL102:
- 1116              	.L59:
- 230:Core/Src/main.c ****   {
- 1117              		.loc 1 230 3 view .LVU264
- 237:Core/Src/main.c **** }
- 1118              		.loc 1 237 1 view .LVU265
- 230:Core/Src/main.c ****   {
- 1119              		.loc 1 230 9 view .LVU266
- 1120 0192 FEE7     		b	.L59
- 1121              	.L62:
- 213:Core/Src/main.c ****           onenet_ax_g = 0; onenet_ay_g = 0;
- 1122              		.loc 1 213 11 view .LVU267
- 1123 0194 1C48     		ldr	r0, .L63+80
+ 223:Core/Src/main.c ****           onenet_az_g = 0; onenet_count = 0;
+ 1088              		.loc 1 223 23 is_stmt 0 view .LVU249
+ 1089 0170 0023     		movs	r3, #0
+ 1090 0172 3B4A     		ldr	r2, .L67+92
+ 1091 0174 1360     		str	r3, [r2]	@ float
+ 223:Core/Src/main.c ****           onenet_az_g = 0; onenet_count = 0;
+ 1092              		.loc 1 223 28 is_stmt 1 view .LVU250
+ 223:Core/Src/main.c ****           onenet_az_g = 0; onenet_count = 0;
+ 1093              		.loc 1 223 40 is_stmt 0 view .LVU251
+ 1094 0176 3B4A     		ldr	r2, .L67+96
+ 1095 0178 1360     		str	r3, [r2]	@ float
+ 224:Core/Src/main.c ****           OneNET_Subscribe();
+ 1096              		.loc 1 224 11 is_stmt 1 view .LVU252
+ 224:Core/Src/main.c ****           OneNET_Subscribe();
+ 1097              		.loc 1 224 23 is_stmt 0 view .LVU253
+ 1098 017a 3B4A     		ldr	r2, .L67+100
+ 1099 017c 1360     		str	r3, [r2]	@ float
+ 224:Core/Src/main.c ****           OneNET_Subscribe();
+ 1100              		.loc 1 224 28 is_stmt 1 view .LVU254
+ 224:Core/Src/main.c ****           OneNET_Subscribe();
+ 1101              		.loc 1 224 41 is_stmt 0 view .LVU255
+ 1102 017e 3B4B     		ldr	r3, .L67+104
+ 1103 0180 1D60     		str	r5, [r3]
+ 225:Core/Src/main.c ****           OneNet_SendData();
+ 1104              		.loc 1 225 11 is_stmt 1 view .LVU256
+ 1105 0182 FFF7FEFF 		bl	OneNET_Subscribe
+ 1106              	.LVL99:
+ 226:Core/Src/main.c ****       } else {
+ 1107              		.loc 1 226 11 view .LVU257
+ 1108 0186 FFF7FEFF 		bl	OneNet_SendData
+ 1109              	.LVL100:
+ 1110 018a 22E0     		b	.L62
+ 1111              	.L65:
+ 148:Core/Src/main.c ****       while (1) {}
+ 1112              		.loc 1 148 7 view .LVU258
+ 1113 018c 3848     		ldr	r0, .L67+108
+ 1114 018e FFF7FEFF 		bl	puts
+ 1115              	.LVL101:
+ 1116              	.L52:
+ 149:Core/Src/main.c ****   }
+ 1117              		.loc 1 149 7 view .LVU259
+ 149:Core/Src/main.c ****   }
+ 1118              		.loc 1 149 18 view .LVU260
+ 149:Core/Src/main.c ****   }
+ 1119              		.loc 1 149 13 view .LVU261
+ 1120 0192 FEE7     		b	.L52
+ 1121              	.L53:
+ 156:Core/Src/main.c ****   }
+ 1122              		.loc 1 156 7 view .LVU262
+ 1123 0194 3748     		ldr	r0, .L67+112
  1124 0196 FFF7FEFF 		bl	puts
- 1125              	.LVL103:
- 214:Core/Src/main.c ****           onenet_az_g = 0; onenet_count = 0;
- 1126              		.loc 1 214 11 view .LVU268
- 214:Core/Src/main.c ****           onenet_az_g = 0; onenet_count = 0;
- 1127              		.loc 1 214 23 is_stmt 0 view .LVU269
- 1128 019a 0023     		movs	r3, #0
- 1129 019c 1B4A     		ldr	r2, .L63+84
- 1130 019e 1360     		str	r3, [r2]	@ float
- 214:Core/Src/main.c ****           onenet_az_g = 0; onenet_count = 0;
- 1131              		.loc 1 214 28 is_stmt 1 view .LVU270
- 214:Core/Src/main.c ****           onenet_az_g = 0; onenet_count = 0;
- 1132              		.loc 1 214 40 is_stmt 0 view .LVU271
- 1133 01a0 1B4A     		ldr	r2, .L63+88
- 1134 01a2 1360     		str	r3, [r2]	@ float
- 215:Core/Src/main.c ****           OneNET_Subscribe();
- 1135              		.loc 1 215 11 is_stmt 1 view .LVU272
- 215:Core/Src/main.c ****           OneNET_Subscribe();
- 1136              		.loc 1 215 23 is_stmt 0 view .LVU273
- 1137 01a4 1B4A     		ldr	r2, .L63+92
- 1138 01a6 1360     		str	r3, [r2]	@ float
- 215:Core/Src/main.c ****           OneNET_Subscribe();
- 1139              		.loc 1 215 28 is_stmt 1 view .LVU274
- 215:Core/Src/main.c ****           OneNET_Subscribe();
- 1140              		.loc 1 215 41 is_stmt 0 view .LVU275
- 1141 01a8 1B4B     		ldr	r3, .L63+96
- 1142 01aa 0022     		movs	r2, #0
- 1143 01ac 1A60     		str	r2, [r3]
- 216:Core/Src/main.c ****           OneNet_SendData();
- 1144              		.loc 1 216 11 is_stmt 1 view .LVU276
- 1145 01ae FFF7FEFF 		bl	OneNET_Subscribe
- 1146              	.LVL104:
- 217:Core/Src/main.c ****       }
- 1147              		.loc 1 217 11 view .LVU277
- 1148 01b2 FFF7FEFF 		bl	OneNet_SendData
- 1149              	.LVL105:
- 1150 01b6 E7E7     		b	.L58
- 1151              	.L64:
- 1152              		.align	2
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 36
+ 1125              	.LVL102:
+ 1126 019a 79E7     		b	.L54
+ 1127              	.L55:
+ 1128              	.LBB10:
+ 163:Core/Src/main.c ****       W25Q64_ReadJEDEC_ID(id);
+ 1129              		.loc 1 163 7 view .LVU263
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 36
 
 
- 1153              	.L63:
- 1154 01b8 00000000 		.word	MPU_Sem
- 1155 01bc 00000000 		.word	.LC6
- 1156 01c0 2C000000 		.word	.LC7
- 1157 01c4 00000000 		.word	xI2CMutex
- 1158 01c8 00000000 		.word	xSensorQueue
- 1159 01cc 00000000 		.word	xCookedQueue
- 1160 01d0 00000000 		.word	ProcessTaskParam
- 1161 01d4 94000000 		.word	.LC10
- 1162 01d8 00000000 		.word	Task_MPU6050_Read
- 1163 01dc A0000000 		.word	.LC11
- 1164 01e0 00000000 		.word	Task_DataProcess
- 1165 01e4 AC000000 		.word	.LC12
- 1166 01e8 00000000 		.word	Task_OLED_Display
- 1167 01ec B8000000 		.word	.LC13
- 1168 01f0 00000000 		.word	Task_OneNET_Upload
- 1169 01f4 C4000000 		.word	.LC14
- 1170 01f8 08010000 		.word	.LC15
- 1171 01fc 58010000 		.word	.LC16
- 1172 0200 80010000 		.word	.LC17
- 1173 0204 A0010000 		.word	.LC18
- 1174 0208 B8010000 		.word	.LC19
- 1175 020c 00000000 		.word	onenet_ax_g
- 1176 0210 00000000 		.word	onenet_ay_g
- 1177 0214 00000000 		.word	onenet_az_g
- 1178 0218 00000000 		.word	onenet_count
- 1179 021c 50000000 		.word	.LC8
- 1180 0220 74000000 		.word	.LC9
- 1181 0224 D0010000 		.word	.LC20
- 1182 0228 EC010000 		.word	.LC21
- 1183 022c 1C020000 		.word	.LC22
- 1184              		.cfi_endproc
- 1185              	.LFE73:
- 1187              		.section	.bss.uxIdleTaskStack.0,"aw",%nobits
- 1188              		.align	2
- 1191              	uxIdleTaskStack.0:
- 1192 0000 00000000 		.space	512
- 1192      00000000 
- 1192      00000000 
- 1192      00000000 
- 1192      00000000 
- 1193              		.section	.bss.xIdleTaskTCB.1,"aw",%nobits
- 1194              		.align	2
- 1197              	xIdleTaskTCB.1:
- 1198 0000 00000000 		.space	92
- 1198      00000000 
- 1198      00000000 
- 1198      00000000 
- 1198      00000000 
- 1199              		.global	rebyte
- 1200              		.section	.bss.rebyte,"aw",%nobits
- 1203              	rebyte:
- 1204 0000 00       		.space	1
- 1205              		.global	ProcessTaskParam
- 1206              		.section	.bss.ProcessTaskParam,"aw",%nobits
- 1207              		.align	2
- 1210              	ProcessTaskParam:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 37
+ 164:Core/Src/main.c ****       printf("[OK] W25Q64 JEDEC ID: %02X %02X %02X\r\n", id[0], id[1], id[2]);
+ 1130              		.loc 1 164 7 view .LVU264
+ 1131 019c 03A8     		add	r0, sp, #12
+ 1132 019e FFF7FEFF 		bl	W25Q64_ReadJEDEC_ID
+ 1133              	.LVL103:
+ 165:Core/Src/main.c ****   }
+ 1134              		.loc 1 165 7 view .LVU265
+ 1135 01a2 9DF80E30 		ldrb	r3, [sp, #14]	@ zero_extendqisi2
+ 1136 01a6 9DF80D20 		ldrb	r2, [sp, #13]	@ zero_extendqisi2
+ 1137 01aa 9DF80C10 		ldrb	r1, [sp, #12]	@ zero_extendqisi2
+ 1138 01ae 3248     		ldr	r0, .L67+116
+ 1139 01b0 FFF7FEFF 		bl	printf
+ 1140              	.LVL104:
+ 1141 01b4 74E7     		b	.L56
+ 1142              	.L57:
+ 1143              	.LBE10:
+ 172:Core/Src/main.c ****       while (1) {}
+ 1144              		.loc 1 172 7 view .LVU266
+ 1145 01b6 3148     		ldr	r0, .L67+120
+ 1146 01b8 FFF7FEFF 		bl	puts
+ 1147              	.LVL105:
+ 1148              	.L59:
+ 173:Core/Src/main.c ****   }
+ 1149              		.loc 1 173 7 view .LVU267
+ 173:Core/Src/main.c ****   }
+ 1150              		.loc 1 173 18 view .LVU268
+ 173:Core/Src/main.c ****   }
+ 1151              		.loc 1 173 13 view .LVU269
+ 1152 01bc FEE7     		b	.L59
+ 1153              	.L61:
+ 228:Core/Src/main.c ****       }
+ 1154              		.loc 1 228 11 view .LVU270
+ 1155 01be 3048     		ldr	r0, .L67+124
+ 1156 01c0 FFF7FEFF 		bl	puts
+ 1157              	.LVL106:
+ 1158 01c4 05E0     		b	.L62
+ 1159              	.L60:
+ 231:Core/Src/main.c ****       /* 若设备已注册过，直接用默认 key 连接 */
+ 1160              		.loc 1 231 7 view .LVU271
+ 1161 01c6 2F48     		ldr	r0, .L67+128
+ 1162 01c8 FFF7FEFF 		bl	puts
+ 1163              	.LVL107:
+ 233:Core/Src/main.c ****           printf("[ONENET] MQTT Link OK\r\n");
+ 1164              		.loc 1 233 7 view .LVU272
+ 233:Core/Src/main.c ****           printf("[ONENET] MQTT Link OK\r\n");
+ 1165              		.loc 1 233 11 is_stmt 0 view .LVU273
+ 1166 01cc FFF7FEFF 		bl	OneNet_DevLink
+ 1167              	.LVL108:
+ 233:Core/Src/main.c ****           printf("[ONENET] MQTT Link OK\r\n");
+ 1168              		.loc 1 233 10 discriminator 1 view .LVU274
+ 1169 01d0 28B1     		cbz	r0, .L66
+ 1170              	.L62:
+ 242:Core/Src/main.c ****   vTaskStartScheduler();
+ 1171              		.loc 1 242 3 is_stmt 1 view .LVU275
+ 1172 01d2 2D48     		ldr	r0, .L67+132
+ 1173 01d4 FFF7FEFF 		bl	puts
+ 1174              	.LVL109:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 37
 
 
- 1211 0000 00000000 		.space	16
- 1211      00000000 
- 1211      00000000 
- 1211      00000000 
- 1212              		.global	onenet_count
- 1213              		.section	.bss.onenet_count,"aw",%nobits
- 1214              		.align	2
- 1217              	onenet_count:
- 1218 0000 00000000 		.space	4
- 1219              		.global	onenet_az_g
- 1220              		.section	.bss.onenet_az_g,"aw",%nobits
- 1221              		.align	2
- 1224              	onenet_az_g:
- 1225 0000 00000000 		.space	4
- 1226              		.global	onenet_ay_g
- 1227              		.section	.bss.onenet_ay_g,"aw",%nobits
- 1228              		.align	2
- 1231              	onenet_ay_g:
- 1232 0000 00000000 		.space	4
- 1233              		.global	onenet_ax_g
- 1234              		.section	.bss.onenet_ax_g,"aw",%nobits
- 1235              		.align	2
- 1238              	onenet_ax_g:
- 1239 0000 00000000 		.space	4
- 1240              		.global	MPU_Sem
- 1241              		.section	.bss.MPU_Sem,"aw",%nobits
- 1242              		.align	2
- 1245              	MPU_Sem:
- 1246 0000 00000000 		.space	4
- 1247              		.global	xSensorEvent
- 1248              		.section	.bss.xSensorEvent,"aw",%nobits
- 1249              		.align	2
- 1252              	xSensorEvent:
- 1253 0000 00000000 		.space	4
- 1254              		.global	xI2CMutex
- 1255              		.section	.bss.xI2CMutex,"aw",%nobits
- 1256              		.align	2
- 1259              	xI2CMutex:
- 1260 0000 00000000 		.space	4
- 1261              		.global	xCookedQueue
- 1262              		.section	.bss.xCookedQueue,"aw",%nobits
- 1263              		.align	2
- 1266              	xCookedQueue:
- 1267 0000 00000000 		.space	4
- 1268              		.global	xSensorQueue
- 1269              		.section	.bss.xSensorQueue,"aw",%nobits
- 1270              		.align	2
- 1273              	xSensorQueue:
- 1274 0000 00000000 		.space	4
- 1275              		.text
- 1276              	.Letext0:
- 1277              		.file 3 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_defa
- 1278              		.file 4 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h
- 1279              		.file 5 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h"
- 1280              		.file 6 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h"
- 1281              		.file 7 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h"
- 1282              		.file 8 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc_ex.h"
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 38
+ 243:Core/Src/main.c **** 
+ 1175              		.loc 1 243 3 view .LVU276
+ 1176 01d8 FFF7FEFF 		bl	vTaskStartScheduler
+ 1177              	.LVL110:
+ 1178              	.L63:
+ 251:Core/Src/main.c ****   {
+ 1179              		.loc 1 251 3 view .LVU277
+ 258:Core/Src/main.c **** }
+ 1180              		.loc 1 258 1 view .LVU278
+ 251:Core/Src/main.c ****   {
+ 1181              		.loc 1 251 9 view .LVU279
+ 1182 01dc FEE7     		b	.L63
+ 1183              	.L66:
+ 234:Core/Src/main.c ****           onenet_ax_g = 0; onenet_ay_g = 0;
+ 1184              		.loc 1 234 11 view .LVU280
+ 1185 01de 1F48     		ldr	r0, .L67+88
+ 1186 01e0 FFF7FEFF 		bl	puts
+ 1187              	.LVL111:
+ 235:Core/Src/main.c ****           onenet_az_g = 0; onenet_count = 0;
+ 1188              		.loc 1 235 11 view .LVU281
+ 235:Core/Src/main.c ****           onenet_az_g = 0; onenet_count = 0;
+ 1189              		.loc 1 235 23 is_stmt 0 view .LVU282
+ 1190 01e4 0023     		movs	r3, #0
+ 1191 01e6 1E4A     		ldr	r2, .L67+92
+ 1192 01e8 1360     		str	r3, [r2]	@ float
+ 235:Core/Src/main.c ****           onenet_az_g = 0; onenet_count = 0;
+ 1193              		.loc 1 235 28 is_stmt 1 view .LVU283
+ 235:Core/Src/main.c ****           onenet_az_g = 0; onenet_count = 0;
+ 1194              		.loc 1 235 40 is_stmt 0 view .LVU284
+ 1195 01ea 1E4A     		ldr	r2, .L67+96
+ 1196 01ec 1360     		str	r3, [r2]	@ float
+ 236:Core/Src/main.c ****           OneNET_Subscribe();
+ 1197              		.loc 1 236 11 is_stmt 1 view .LVU285
+ 236:Core/Src/main.c ****           OneNET_Subscribe();
+ 1198              		.loc 1 236 23 is_stmt 0 view .LVU286
+ 1199 01ee 1E4A     		ldr	r2, .L67+100
+ 1200 01f0 1360     		str	r3, [r2]	@ float
+ 236:Core/Src/main.c ****           OneNET_Subscribe();
+ 1201              		.loc 1 236 28 is_stmt 1 view .LVU287
+ 236:Core/Src/main.c ****           OneNET_Subscribe();
+ 1202              		.loc 1 236 41 is_stmt 0 view .LVU288
+ 1203 01f2 1E4B     		ldr	r3, .L67+104
+ 1204 01f4 0022     		movs	r2, #0
+ 1205 01f6 1A60     		str	r2, [r3]
+ 237:Core/Src/main.c ****           OneNet_SendData();
+ 1206              		.loc 1 237 11 is_stmt 1 view .LVU289
+ 1207 01f8 FFF7FEFF 		bl	OneNET_Subscribe
+ 1208              	.LVL112:
+ 238:Core/Src/main.c ****       }
+ 1209              		.loc 1 238 11 view .LVU290
+ 1210 01fc FFF7FEFF 		bl	OneNet_SendData
+ 1211              	.LVL113:
+ 1212 0200 E7E7     		b	.L62
+ 1213              	.L68:
+ 1214 0202 00BF     		.align	2
+ 1215              	.L67:
+ 1216 0204 00000000 		.word	MPU_Sem
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 38
 
 
- 1283              		.file 9 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h"
- 1284              		.file 10 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h"
- 1285              		.file 11 "Middlewares/FreeRTOS/Source/include/projdefs.h"
- 1286              		.file 12 "Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h"
- 1287              		.file 13 "Middlewares/FreeRTOS/Source/include/FreeRTOS.h"
- 1288              		.file 14 "Middlewares/FreeRTOS/Source/include/task.h"
- 1289              		.file 15 "Middlewares/FreeRTOS/Source/include/queue.h"
- 1290              		.file 16 "Middlewares/FreeRTOS/Source/include/semphr.h"
- 1291              		.file 17 "Core/Inc/bsp/bsp_i2c.h"
- 1292              		.file 18 "Core/Inc/device/mpu6050.h"
- 1293              		.file 19 "Middlewares/FreeRTOS/Source/include/event_groups.h"
- 1294              		.file 20 "Core/Inc/device/oled.h"
- 1295              		.file 21 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio.h"
- 1296              		.file 22 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h"
- 1297              		.file 23 "Core/Inc/device/onenet.h"
- 1298              		.file 24 "Core/Inc/device/esp8266.h"
- 1299              		.file 25 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/stdio.h"
- 1300              		.file 26 "Core/Inc/bsp/bsp_init.h"
- 1301              		.file 27 "Core/Inc/usart.h"
- 1302              		.file 28 "Core/Inc/device/debug_uart.h"
- 1303              		.file 29 "Core/Inc/dma.h"
- 1304              		.file 30 "Core/Inc/gpio.h"
- 1305              		.file 31 "<built-in>"
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 39
+ 1217 0208 00000000 		.word	.LC6
+ 1218 020c 2C000000 		.word	.LC7
+ 1219 0210 00000000 		.word	xI2CMutex
+ 1220 0214 74000000 		.word	.LC9
+ 1221 0218 B4000000 		.word	.LC11
+ 1222 021c 00000000 		.word	xSensorQueue
+ 1223 0220 00000000 		.word	xCookedQueue
+ 1224 0224 00000000 		.word	ProcessTaskParam
+ 1225 0228 28010000 		.word	.LC14
+ 1226 022c 00000000 		.word	Task_MPU6050_Read
+ 1227 0230 34010000 		.word	.LC15
+ 1228 0234 00000000 		.word	Task_DataProcess
+ 1229 0238 40010000 		.word	.LC16
+ 1230 023c 00000000 		.word	Task_OLED_Display
+ 1231 0240 4C010000 		.word	.LC17
+ 1232 0244 00000000 		.word	Task_OneNET_Upload
+ 1233 0248 58010000 		.word	.LC18
+ 1234 024c 9C010000 		.word	.LC19
+ 1235 0250 EC010000 		.word	.LC20
+ 1236 0254 14020000 		.word	.LC21
+ 1237 0258 34020000 		.word	.LC22
+ 1238 025c 4C020000 		.word	.LC23
+ 1239 0260 00000000 		.word	onenet_ax_g
+ 1240 0264 00000000 		.word	onenet_ay_g
+ 1241 0268 00000000 		.word	onenet_az_g
+ 1242 026c 00000000 		.word	onenet_count
+ 1243 0270 50000000 		.word	.LC8
+ 1244 0274 A0000000 		.word	.LC10
+ 1245 0278 E0000000 		.word	.LC12
+ 1246 027c 08010000 		.word	.LC13
+ 1247 0280 64020000 		.word	.LC24
+ 1248 0284 80020000 		.word	.LC25
+ 1249 0288 B0020000 		.word	.LC26
+ 1250              		.cfi_endproc
+ 1251              	.LFE73:
+ 1253              		.section	.bss.uxIdleTaskStack.0,"aw",%nobits
+ 1254              		.align	2
+ 1257              	uxIdleTaskStack.0:
+ 1258 0000 00000000 		.space	512
+ 1258      00000000 
+ 1258      00000000 
+ 1258      00000000 
+ 1258      00000000 
+ 1259              		.section	.bss.xIdleTaskTCB.1,"aw",%nobits
+ 1260              		.align	2
+ 1263              	xIdleTaskTCB.1:
+ 1264 0000 00000000 		.space	92
+ 1264      00000000 
+ 1264      00000000 
+ 1264      00000000 
+ 1264      00000000 
+ 1265              		.global	rebyte
+ 1266              		.section	.bss.rebyte,"aw",%nobits
+ 1269              	rebyte:
+ 1270 0000 00       		.space	1
+ 1271              		.global	ProcessTaskParam
+ 1272              		.section	.bss.ProcessTaskParam,"aw",%nobits
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 39
+
+
+ 1273              		.align	2
+ 1276              	ProcessTaskParam:
+ 1277 0000 00000000 		.space	16
+ 1277      00000000 
+ 1277      00000000 
+ 1277      00000000 
+ 1278              		.global	onenet_count
+ 1279              		.section	.bss.onenet_count,"aw",%nobits
+ 1280              		.align	2
+ 1283              	onenet_count:
+ 1284 0000 00000000 		.space	4
+ 1285              		.global	onenet_az_g
+ 1286              		.section	.bss.onenet_az_g,"aw",%nobits
+ 1287              		.align	2
+ 1290              	onenet_az_g:
+ 1291 0000 00000000 		.space	4
+ 1292              		.global	onenet_ay_g
+ 1293              		.section	.bss.onenet_ay_g,"aw",%nobits
+ 1294              		.align	2
+ 1297              	onenet_ay_g:
+ 1298 0000 00000000 		.space	4
+ 1299              		.global	onenet_ax_g
+ 1300              		.section	.bss.onenet_ax_g,"aw",%nobits
+ 1301              		.align	2
+ 1304              	onenet_ax_g:
+ 1305 0000 00000000 		.space	4
+ 1306              		.global	MPU_Sem
+ 1307              		.section	.bss.MPU_Sem,"aw",%nobits
+ 1308              		.align	2
+ 1311              	MPU_Sem:
+ 1312 0000 00000000 		.space	4
+ 1313              		.global	xSensorEvent
+ 1314              		.section	.bss.xSensorEvent,"aw",%nobits
+ 1315              		.align	2
+ 1318              	xSensorEvent:
+ 1319 0000 00000000 		.space	4
+ 1320              		.global	xI2CMutex
+ 1321              		.section	.bss.xI2CMutex,"aw",%nobits
+ 1322              		.align	2
+ 1325              	xI2CMutex:
+ 1326 0000 00000000 		.space	4
+ 1327              		.global	xCookedQueue
+ 1328              		.section	.bss.xCookedQueue,"aw",%nobits
+ 1329              		.align	2
+ 1332              	xCookedQueue:
+ 1333 0000 00000000 		.space	4
+ 1334              		.global	xSensorQueue
+ 1335              		.section	.bss.xSensorQueue,"aw",%nobits
+ 1336              		.align	2
+ 1339              	xSensorQueue:
+ 1340 0000 00000000 		.space	4
+ 1341              		.text
+ 1342              	.Letext0:
+ 1343              		.file 3 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_defa
+ 1344              		.file 4 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h
+ 1345              		.file 5 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h"
+ 1346              		.file 6 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h"
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 40
+
+
+ 1347              		.file 7 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h"
+ 1348              		.file 8 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc_ex.h"
+ 1349              		.file 9 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h"
+ 1350              		.file 10 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h"
+ 1351              		.file 11 "Middlewares/FreeRTOS/Source/include/projdefs.h"
+ 1352              		.file 12 "Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h"
+ 1353              		.file 13 "Middlewares/FreeRTOS/Source/include/FreeRTOS.h"
+ 1354              		.file 14 "Middlewares/FreeRTOS/Source/include/task.h"
+ 1355              		.file 15 "Middlewares/FreeRTOS/Source/include/queue.h"
+ 1356              		.file 16 "Middlewares/FreeRTOS/Source/include/semphr.h"
+ 1357              		.file 17 "Core/Inc/bsp/bsp_i2c.h"
+ 1358              		.file 18 "Core/Inc/device/mpu6050.h"
+ 1359              		.file 19 "Middlewares/FreeRTOS/Source/include/event_groups.h"
+ 1360              		.file 20 "Core/Inc/device/oled.h"
+ 1361              		.file 21 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio.h"
+ 1362              		.file 22 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h"
+ 1363              		.file 23 "Core/Inc/device/onenet.h"
+ 1364              		.file 24 "Core/Inc/device/esp8266.h"
+ 1365              		.file 25 "Core/Inc/device/w25q64.h"
+ 1366              		.file 26 "Core/Inc/device/at24c02.h"
+ 1367              		.file 27 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/stdio.h"
+ 1368              		.file 28 "Core/Inc/bsp/bsp_init.h"
+ 1369              		.file 29 "Core/Inc/usart.h"
+ 1370              		.file 30 "Core/Inc/device/debug_uart.h"
+ 1371              		.file 31 "Core/Inc/spi.h"
+ 1372              		.file 32 "Core/Inc/dma.h"
+ 1373              		.file 33 "Core/Inc/gpio.h"
+ 1374              		.file 34 "<built-in>"
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 41
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 main.c
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:19     .rodata.Task_MPU6050_Read.str1.4:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:23     .text.Task_MPU6050_Read:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:29     .text.Task_MPU6050_Read:00000000 Task_MPU6050_Read
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:124    .text.Task_MPU6050_Read:00000068 $d
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:1259   .bss.xI2CMutex:00000000 xI2CMutex
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:1245   .bss.MPU_Sem:00000000 MPU_Sem
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:132    .text.Task_DataProcess:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:138    .text.Task_DataProcess:00000000 Task_DataProcess
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:263    .text.Task_DataProcess:00000090 $d
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:1238   .bss.onenet_ax_g:00000000 onenet_ax_g
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:1231   .bss.onenet_ay_g:00000000 onenet_ay_g
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:1224   .bss.onenet_az_g:00000000 onenet_az_g
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:1217   .bss.onenet_count:00000000 onenet_count
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:271    .rodata.Task_OLED_Display.str1.4:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:281    .text.Task_OLED_Display:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:287    .text.Task_OLED_Display:00000000 Task_OLED_Display
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:418    .text.Task_OLED_Display:000000ac $d
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:426    .rodata.Task_OneNET_Upload.str1.4:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:430    .text.Task_OneNET_Upload:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:436    .text.Task_OneNET_Upload:00000000 Task_OneNET_Upload
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:470    .text.Task_OneNET_Upload:00000018 $d
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:475    .text.vApplicationGetIdleTaskMemory:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:481    .text.vApplicationGetIdleTaskMemory:00000000 vApplicationGetIdleTaskMemory
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:508    .text.vApplicationGetIdleTaskMemory:00000010 $d
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:1197   .bss.xIdleTaskTCB.1:00000000 xIdleTaskTCB.1
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:1191   .bss.uxIdleTaskStack.0:00000000 uxIdleTaskStack.0
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:514    .rodata.vApplicationStackOverflowHook.str1.4:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:518    .text.vApplicationStackOverflowHook:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:524    .text.vApplicationStackOverflowHook:00000000 vApplicationStackOverflowHook
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:568    .text.vApplicationStackOverflowHook:0000000c $d
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:573    .text.HAL_TIM_PeriodElapsedCallback:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:579    .text.HAL_TIM_PeriodElapsedCallback:00000000 HAL_TIM_PeriodElapsedCallback
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:613    .text.Error_Handler:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:619    .text.Error_Handler:00000000 Error_Handler
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:650    .text.SystemClock_Config:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:656    .text.SystemClock_Config:00000000 SystemClock_Config
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:751    .rodata.main.str1.4:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:805    .text.main:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:811    .text.main:00000000 main
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:1154   .text.main:000001b8 $d
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:1273   .bss.xSensorQueue:00000000 xSensorQueue
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:1266   .bss.xCookedQueue:00000000 xCookedQueue
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:1210   .bss.ProcessTaskParam:00000000 ProcessTaskParam
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:1188   .bss.uxIdleTaskStack.0:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:1194   .bss.xIdleTaskTCB.1:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:1203   .bss.rebyte:00000000 rebyte
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:1204   .bss.rebyte:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:1207   .bss.ProcessTaskParam:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:1214   .bss.onenet_count:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:1221   .bss.onenet_az_g:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:1228   .bss.onenet_ay_g:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:1235   .bss.onenet_ax_g:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:1242   .bss.MPU_Sem:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:1252   .bss.xSensorEvent:00000000 xSensorEvent
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:1249   .bss.xSensorEvent:00000000 $d
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s 			page 40
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:19     .rodata.Task_MPU6050_Read.str1.4:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:23     .text.Task_MPU6050_Read:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:29     .text.Task_MPU6050_Read:00000000 Task_MPU6050_Read
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:124    .text.Task_MPU6050_Read:00000068 $d
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:1325   .bss.xI2CMutex:00000000 xI2CMutex
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:1311   .bss.MPU_Sem:00000000 MPU_Sem
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:132    .text.Task_DataProcess:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:138    .text.Task_DataProcess:00000000 Task_DataProcess
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:263    .text.Task_DataProcess:00000090 $d
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:1304   .bss.onenet_ax_g:00000000 onenet_ax_g
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:1297   .bss.onenet_ay_g:00000000 onenet_ay_g
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:1290   .bss.onenet_az_g:00000000 onenet_az_g
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:1283   .bss.onenet_count:00000000 onenet_count
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:271    .rodata.Task_OLED_Display.str1.4:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:281    .text.Task_OLED_Display:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:287    .text.Task_OLED_Display:00000000 Task_OLED_Display
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:418    .text.Task_OLED_Display:000000ac $d
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:426    .rodata.Task_OneNET_Upload.str1.4:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:430    .text.Task_OneNET_Upload:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:436    .text.Task_OneNET_Upload:00000000 Task_OneNET_Upload
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:470    .text.Task_OneNET_Upload:00000018 $d
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:475    .text.vApplicationGetIdleTaskMemory:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:481    .text.vApplicationGetIdleTaskMemory:00000000 vApplicationGetIdleTaskMemory
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:508    .text.vApplicationGetIdleTaskMemory:00000010 $d
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:1263   .bss.xIdleTaskTCB.1:00000000 xIdleTaskTCB.1
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:1257   .bss.uxIdleTaskStack.0:00000000 uxIdleTaskStack.0
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:514    .rodata.vApplicationStackOverflowHook.str1.4:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:518    .text.vApplicationStackOverflowHook:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:524    .text.vApplicationStackOverflowHook:00000000 vApplicationStackOverflowHook
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:568    .text.vApplicationStackOverflowHook:0000000c $d
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:573    .text.HAL_TIM_PeriodElapsedCallback:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:579    .text.HAL_TIM_PeriodElapsedCallback:00000000 HAL_TIM_PeriodElapsedCallback
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:613    .text.Error_Handler:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:619    .text.Error_Handler:00000000 Error_Handler
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:650    .text.SystemClock_Config:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:656    .text.SystemClock_Config:00000000 SystemClock_Config
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:751    .rodata.main.str1.4:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:817    .text.main:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:823    .text.main:00000000 main
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:1216   .text.main:00000204 $d
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:1339   .bss.xSensorQueue:00000000 xSensorQueue
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:1332   .bss.xCookedQueue:00000000 xCookedQueue
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:1276   .bss.ProcessTaskParam:00000000 ProcessTaskParam
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:1254   .bss.uxIdleTaskStack.0:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:1260   .bss.xIdleTaskTCB.1:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:1269   .bss.rebyte:00000000 rebyte
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:1270   .bss.rebyte:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:1273   .bss.ProcessTaskParam:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:1280   .bss.onenet_count:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:1287   .bss.onenet_az_g:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:1294   .bss.onenet_ay_g:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:1301   .bss.onenet_ax_g:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:1308   .bss.MPU_Sem:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:1318   .bss.xSensorEvent:00000000 xSensorEvent
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:1315   .bss.xSensorEvent:00000000 $d
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s 			page 42
 
 
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:1256   .bss.xI2CMutex:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:1263   .bss.xCookedQueue:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\ccxCjyff.s:1270   .bss.xSensorQueue:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:1322   .bss.xI2CMutex:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:1329   .bss.xCookedQueue:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccWZQKbu.s:1336   .bss.xSensorQueue:00000000 $d
 
 UNDEFINED SYMBOLS
 HAL_GPIO_TogglePin
@@ -2337,6 +2462,7 @@ xQueueGenericCreate
 MX_GPIO_Init
 MX_USART1_UART_Init
 MX_DMA_Init
+MX_SPI1_Init
 DebugUART_Init
 MX_USART2_UART_Init
 BSP_Init
@@ -2345,6 +2471,8 @@ MPU6050_Init
 MPU6050_ReadWhoAmI
 MPU6050_Calibrate
 xQueueCreateMutex
+AT24C02_Init
+W25Q64_Init
 xTaskCreate
 HAL_Delay
 ESP8266_StartRx
@@ -2352,4 +2480,5 @@ ESP8266_Init
 OneNET_RegisterDevice
 OneNet_DevLink
 OneNET_Subscribe
+W25Q64_ReadJEDEC_ID
 vTaskStartScheduler

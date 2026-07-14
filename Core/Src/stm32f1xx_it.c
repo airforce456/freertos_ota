@@ -299,9 +299,10 @@ void USART1_IRQHandler(void)
 void USART2_IRQHandler(void)
 {
   /* USER CODE BEGIN USART2_IRQn 0 */
-  /* 中断逐字节接收模式 — 必须调 HAL_UART_IRQHandler 触发 RxCpltCallback */
+  /* 中断逐字节接收模�? �? 必须�? HAL_UART_IRQHandler 触发 RxCpltCallback */
   HAL_UART_IRQHandler(&huart2);
   /* USER CODE END USART2_IRQn 0 */
+  HAL_UART_IRQHandler(&huart2);
   /* USER CODE BEGIN USART2_IRQn 1 */
   /* USER CODE END USART2_IRQn 1 */
 }

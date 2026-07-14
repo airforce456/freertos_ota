@@ -12,7 +12,7 @@
 #include "i2c.h"
 #include "usart.h"
 #include "gpio.h"
-
+#include "spi.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "FreeRTOS.h"
@@ -29,6 +29,8 @@
 #include <stdbool.h>
 #include "esp8266.h"
 #include "onenet.h"
+#include "at24c02.h"
+#include "w25q64.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -114,6 +116,7 @@ int main(void)
   MX_GPIO_Init();
   MX_USART1_UART_Init();
   MX_DMA_Init();
+  MX_SPI1_Init();
   // MX_I2C1_Init();
   DebugUART_Init() ;
   MX_USART2_UART_Init();
@@ -122,29 +125,47 @@ int main(void)
    *  以下为用户自定义初始化代�?? �?? CubeMX 生成时不会被覆盖
    * ============================================================ */
 
-  /* ---- �?? I2C 初始化（接管 PB6/PB7，释放硬�?? I2C1�?? ---- */
+  /* ---- 软 I2C 初始化（接管 PB6/PB7，释放硬件 I2C1） ---- */
   BSP_Init();
-  /* ---- OLED 初始?? ---- */
+
+  
+
+  /* ---- OLED 初始化 ---- */
   OLED_Init();
-  /* ---- MPU6050 初始�?? ---- */
+  /* ---- MPU6050 初始化 ---- */
   if (MPU6050_Init() != SOFT_I2C_OK) {
       printf("[ERR] MPU6050 init failed! Check wiring.\r\n");
       while (1) {}
   }
   printf("[OK] MPU6050 WHO_AM_I = 0x%02X\r\n", MPU6050_ReadWhoAmI());
-
-  /* ---- 零偏校准（校准时传感器需保持静止�?? ---- */
+  /* ---- 零偏校准（校准时传感器需保持静止） ---- */
   int16_t offset_ax = 0, offset_ay = 0, offset_az = 0;
   MPU6050_Calibrate(&offset_ax, &offset_ay, &offset_az);
 
-  /* ---- 创建 I2C 总线互斥锁（MPU6050 & OLED 共享�?? I2C�?? ---- */
+  /* ---- 创建 I2C 总线互斥锁（MPU6050 & OLED & AT24C02 共享） ---- */
   xI2CMutex = xSemaphoreCreateMutex();
   if (xI2CMutex == NULL) {
       printf("[ERR] Failed to create I2C mutex!\r\n");
       while (1) {}
   }
 
-  /* ---- 创建传感器数据管道队�?? ---- */
+  /* ---- AT24C02 EEPROM 初始化（必须在 xI2CMutex 之后） ---- */
+  if (!AT24C02_Init()) {
+      printf("[ERR] AT24C02 init failed! Check wiring.\r\n");
+  } else {
+      printf("[OK] AT24C02 ready\r\n");
+  }
+
+  /* ---- W25Q64 SPI Flash 初始化 ---- */
+  if (!W25Q64_Init()) {
+      printf("[ERR] W25Q64 init failed! Check wiring.\r\n");
+  } else {
+      uint8_t id[3];
+      W25Q64_ReadJEDEC_ID(id);
+      printf("[OK] W25Q64 JEDEC ID: %02X %02X %02X\r\n", id[0], id[1], id[2]);
+  }
+
+  /* ---- 创建传感器数据管道队列 ---- */
   xSensorQueue = xQueueCreate(8, sizeof(MPU6050_Data_t));     /* 原始数据: 8 �?? */
   xCookedQueue = xQueueCreate(4, sizeof(SensorCooked_t));     /* 处理后数�??: 4 �?? */
   if (xSensorQueue == NULL || xCookedQueue == NULL) {
@@ -168,11 +189,11 @@ int main(void)
   xTaskCreate(Task_DataProcess, "DataProc", 256,
               (void *)&ProcessTaskParam, 2, NULL);
 
-  /* OLED 显示任务（消费�?�，Prio=3） */
+  /* OLED 显示任务（消费者，Prio=3，128w足够 OLED 写屏） */
   xTaskCreate(Task_OLED_Display, "OLED_Disp", 256,
               (void *)xCookedQueue, 3, NULL);
 
-  /* OneNET 周期上传任务（Prio=1，每 5 秒上报一次） */
+  /* OneNET 周期上传任务（Prio=1，每 5 秒上报一次，128w 足够 MQTT 封包） */
   xTaskCreate(Task_OneNET_Upload, "OneNET_Upl", 256,
               NULL, 1, NULL);
 

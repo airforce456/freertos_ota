@@ -43,12 +43,12 @@ void DebugUART_Init(void)
 
     xUartTxQueue = xQueueCreate(UART_TX_QUEUE_LEN, sizeof(UartTxMsg_t));
     if (xUartTxQueue != NULL) {
-        xTaskCreate(vUartTxTask, "UartTX", 256, NULL, 2, NULL);
+        xTaskCreate(vUartTxTask, "UartTX", 128, NULL, 2, NULL);
     }
 
     xUartRxQueue = xQueueCreate(UART_RX_QUEUE_LEN, sizeof(UartRxMsg_t));
     if (xUartRxQueue != NULL) {
-        xTaskCreate(vUartRxTask, "UartRX", 256, NULL, 2, NULL);
+        xTaskCreate(vUartRxTask, "UartRX", 128, NULL, 2, NULL);
     }
     /* RX DMA is started in vUartRxTask to avoid DMA conflict with initial TX */
 }
