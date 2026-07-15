@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
   30:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       (#) Declare a SPI_HandleTypeDef handle structure, for example:
   31:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****           SPI_HandleTypeDef  hspi;
   32:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 2
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 2
 
 
   33:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       (#)Initialize the SPI low level resources by implementing the HAL_SPI_MspInit() API:
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
   87:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****             (++) MspInitCallback       : SPI Msp Init callback
   88:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****             (++) MspDeInitCallback     : SPI Msp DeInit callback
   89:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****           This function takes as parameters the HAL peripheral handle, the Callback ID
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 3
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 3
 
 
   90:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****           and a pointer to the user callback function.
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  144:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****        |         |                | 2Lines Fullduplex   |     2Lines RxOnly    |         1Line     
  145:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****        | Process | Transfer mode  |---------------------|----------------------|-------------------
  146:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****        |         |                |  Master  |  Slave   |  Master   |  Slave   |  Master   |  Slave
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 4
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 4
 
 
  147:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****        |===========================================================================================
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  201:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** /* Includes ------------------------------------------------------------------*/
  202:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** #include "stm32f1xx_hal.h"
  203:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 5
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 5
 
 
  204:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** /** @addtogroup STM32F1xx_HAL_Driver
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  258:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** static void SPI_DMAHalfTransmitReceiveCplt(DMA_HandleTypeDef *hdma);
  259:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** static void SPI_DMAError(DMA_HandleTypeDef *hdma);
  260:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** static void SPI_DMAAbortOnError(DMA_HandleTypeDef *hdma);
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 6
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 6
 
 
  261:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** static void SPI_DMATxAbortCallback(DMA_HandleTypeDef *hdma);
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  315:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****         (++) BaudRate Prescaler
  316:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****         (++) FirstBit
  317:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****         (++) TIMode
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 7
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 7
 
 
  318:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****         (++) CRC Calculation
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  372:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
  373:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     /* Force polarity and phase to TI protocaol requirements */
  374:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     hspi->Init.CLKPolarity = SPI_POLARITY_LOW;
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 8
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 8
 
 
  375:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     hspi->Init.CLKPhase    = SPI_PHASE_1EDGE;
@@ -478,7 +478,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  429:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****                                   (hspi->Init.NSS & SPI_CR1_SSM) |
  430:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****                                   (hspi->Init.BaudRatePrescaler & SPI_CR1_BR_Msk) |
  431:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****                                   (hspi->Init.FirstBit  & SPI_CR1_LSBFIRST) |
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 9
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 9
 
 
  432:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****                                   (hspi->Init.CRCCalculation & SPI_CR1_CRCEN)));
@@ -538,7 +538,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  486:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->MspDeInitCallback(hspi);
  487:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** #else
  488:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   /* DeInit the low level hardware: GPIO, CLOCK, NVIC... */
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 10
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 10
 
 
  489:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   HAL_SPI_MspDeInit(hspi);
@@ -598,7 +598,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  543:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** HAL_StatusTypeDef HAL_SPI_RegisterCallback(SPI_HandleTypeDef *hspi, HAL_SPI_CallbackIDTypeDef Callb
  544:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****                                            pSPI_CallbackTypeDef pCallback)
  545:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** {
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 11
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 11
 
 
  546:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   HAL_StatusTypeDef status = HAL_OK;
@@ -658,7 +658,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  600:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****         break;
  601:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
  602:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       default :
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 12
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 12
 
 
  603:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****         /* Update the error code */
@@ -718,7 +718,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  657:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
  658:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   /* Process locked */
  659:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   __HAL_LOCK(hspi);
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 13
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 13
 
 
  660:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
@@ -778,7 +778,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  714:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   else if (HAL_SPI_STATE_RESET == hspi->State)
  715:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   {
  716:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     switch (CallbackID)
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 14
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 14
 
 
  717:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     {
@@ -838,7 +838,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  771:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****             or DMA, These APIs return the HAL status.
  772:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****             The end of the data processing will be indicated through the
  773:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****             dedicated SPI IRQ when using Interrupt mode or the DMA IRQ when
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 15
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 15
 
 
  774:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****             using DMA mode.
@@ -898,7 +898,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  828:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->pRxBuffPtr  = (uint8_t *)NULL;
  829:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->RxXferSize  = 0U;
  830:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->RxXferCount = 0U;
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 16
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 16
 
 
  831:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->TxISR       = NULL;
@@ -958,7 +958,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  885:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       }
  886:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     }
  887:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   }
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 17
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 17
 
 
  888:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   /* Transmit data in 8 Bit mode */
@@ -1018,7 +1018,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  942:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   if (hspi->ErrorCode != HAL_SPI_ERROR_NONE)
  943:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   {
  944:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     return HAL_ERROR;
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 18
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 18
 
 
  945:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   }
@@ -1078,7 +1078,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  999:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->pTxBuffPtr  = (uint8_t *)NULL;
 1000:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->TxXferSize  = 0U;
 1001:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->TxXferCount = 0U;
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 19
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 19
 
 
 1002:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->RxISR       = NULL;
@@ -1138,7 +1138,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 1056:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   else
 1057:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   {
 1058:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     /* Transfer loop */
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 20
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 20
 
 
 1059:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     while (hspi->RxXferCount > 0U)
@@ -1198,7 +1198,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 1113:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     /* Wait the CRC data */
 1114:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     if (SPI_WaitFlagStateUntilTimeout(hspi, SPI_FLAG_RXNE, SET, Timeout, tickstart) != HAL_OK)
 1115:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     {
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 21
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 21
 
 
 1116:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       SET_BIT(hspi->ErrorCode, HAL_SPI_ERROR_CRC);
@@ -1258,7 +1258,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 1170:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   *               the configuration information for SPI module.
 1171:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   * @param  pTxData pointer to transmission data buffer
 1172:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   * @param  pRxData pointer to reception data buffer
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 22
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 22
 
 
 1173:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   * @param  Size amount of data to be sent and received
@@ -1318,7 +1318,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 1227:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->RxXferSize  = Size;
 1228:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->pTxBuffPtr  = (const uint8_t *)pTxData;
 1229:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->TxXferCount = Size;
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 23
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 23
 
 
 1230:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->TxXferSize  = Size;
@@ -1378,7 +1378,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 1284:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****           SET_BIT(hspi->Instance->CR1, SPI_CR1_CRCNEXT);
 1285:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****         }
 1286:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** #endif /* USE_SPI_CRC */
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 24
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 24
 
 
 1287:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       }
@@ -1438,7 +1438,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 1341:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       }
 1342:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
 1343:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       /* Wait until RXNE flag is reset */
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 25
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 25
 
 
 1344:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       if ((__HAL_SPI_GET_FLAG(hspi, SPI_FLAG_RXNE)) && (hspi->RxXferCount > 0U))
@@ -1498,7 +1498,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 1398:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** #endif /* USE_SPI_CRC */
 1399:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
 1400:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   /* Check the end of the transaction */
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 26
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 26
 
 
 1401:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   if (SPI_EndRxTxTransaction(hspi, Timeout, tickstart) != HAL_OK)
@@ -1558,7 +1558,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 1455:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   __HAL_LOCK(hspi);
 1456:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
 1457:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   /* Set the transaction information */
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 27
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 27
 
 
 1458:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->State       = HAL_SPI_STATE_BUSY_TX;
@@ -1618,7 +1618,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 1512:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   * @brief  Receive an amount of data in non-blocking mode with Interrupt.
 1513:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   * @param  hspi pointer to a SPI_HandleTypeDef structure that contains
 1514:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   *               the configuration information for SPI module.
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 28
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 28
 
 
 1515:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   * @param  pData pointer to data buffer
@@ -1678,7 +1678,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 1569:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     /* Disable SPI Peripheral before set 1Line direction (BIDIOE bit) */
 1570:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     __HAL_SPI_DISABLE(hspi);
 1571:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     SPI_1LINE_RX(hspi);
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 29
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 29
 
 
 1572:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   }
@@ -1738,7 +1738,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 1626:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   {
 1627:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     return HAL_BUSY;
 1628:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   }
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 30
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 30
 
 
 1629:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
@@ -1798,7 +1798,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 1683:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   /* Enable TXE, RXNE and ERR interrupt */
 1684:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   __HAL_SPI_ENABLE_IT(hspi, (SPI_IT_TXE | SPI_IT_RXNE | SPI_IT_ERR));
 1685:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 31
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 31
 
 
 1686:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   return HAL_OK;
@@ -1858,7 +1858,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 1740:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
 1741:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** #if (USE_SPI_CRC != 0U)
 1742:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   /* Reset CRC Calculation */
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 32
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 32
 
 
 1743:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   if (hspi->Init.CRCCalculation == SPI_CRCCALCULATION_ENABLE)
@@ -1918,7 +1918,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 1797:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   * @note   When the CRC feature is enabled the pData Length must be Size + 1.
 1798:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   * @param  Size amount of data to be sent
 1799:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   * @retval HAL status
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 33
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 33
 
 
 1800:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   */
@@ -1978,7 +1978,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 1854:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   {
 1855:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     SPI_RESET_CRC(hspi);
 1856:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   }
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 34
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 34
 
 
 1857:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** #endif /* USE_SPI_CRC */
@@ -2038,7 +2038,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 1911:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** HAL_StatusTypeDef HAL_SPI_TransmitReceive_DMA(SPI_HandleTypeDef *hspi, const uint8_t *pTxData, uint
 1912:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****                                               uint16_t Size)
 1913:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** {
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 35
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 35
 
 
 1914:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   uint32_t             tmp_mode;
@@ -2098,7 +2098,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 1968:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** #endif /* USE_SPI_CRC */
 1969:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
 1970:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   /* Check if we are in Rx only or in Rx/Tx Mode and configure the DMA transfer complete callback *
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 36
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 36
 
 
 1971:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   if (hspi->State == HAL_SPI_STATE_BUSY_RX)
@@ -2158,7 +2158,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 2025:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     /* Enable SPI peripheral */
 2026:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     __HAL_SPI_ENABLE(hspi);
 2027:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   }
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 37
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 37
 
 
 2028:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
@@ -2218,7 +2218,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 2082:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     /* Reset Timeout Counter */
 2083:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     count = resetcount;
 2084:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   }
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 38
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 38
 
 
 2085:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
@@ -2278,7 +2278,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 2139:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     if (hspi->hdmarx != NULL)
 2140:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     {
 2141:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       /* Set the SPI DMA Abort callback :
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 39
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 39
 
 
 2142:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       will lead to call HAL_SPI_AbortCpltCallback() at end of DMA abort procedure */
@@ -2338,7 +2338,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 2196:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   * @retval HAL status
 2197:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   */
 2198:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** HAL_StatusTypeDef HAL_SPI_Abort_IT(SPI_HandleTypeDef *hspi)
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 40
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 40
 
 
 2199:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** {
@@ -2398,7 +2398,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 2253:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   {
 2254:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     /* Set DMA Abort Complete callback if UART DMA Tx request if enabled.
 2255:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****        Otherwise, set it to NULL */
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 41
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 41
 
 
 2256:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     if (HAL_IS_BIT_SET(hspi->Instance->CR2, SPI_CR2_TXDMAEN))
@@ -2458,7 +2458,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 2310:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       else
 2311:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       {
 2312:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****         abortcplt = 0U;
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 42
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 42
 
 
 2313:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       }
@@ -2518,7 +2518,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 2367:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   __HAL_UNLOCK(hspi);
 2368:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
 2369:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   return HAL_OK;
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 43
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 43
 
 
 2370:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** }
@@ -2578,7 +2578,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 2424:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       errorcode = HAL_ERROR;
 2425:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     }
 2426:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   }
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 44
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 44
 
 
 2427:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
@@ -2638,7 +2638,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 2481:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     {
 2482:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       SET_BIT(hspi->ErrorCode, HAL_SPI_ERROR_MODF);
 2483:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       __HAL_SPI_CLEAR_MODFFLAG(hspi);
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 45
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 45
 
 
 2484:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     }
@@ -2698,7 +2698,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 2538:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   * @param  hspi pointer to a SPI_HandleTypeDef structure that contains
 2539:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   *               the configuration information for SPI module.
 2540:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   * @retval None
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 46
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 46
 
 
 2541:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   */
@@ -2758,7 +2758,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 2595:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   /* NOTE : This function should not be modified, when the callback is needed,
 2596:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****             the HAL_SPI_TxHalfCpltCallback should be implemented in the user file
 2597:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****    */
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 47
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 47
 
 
 2598:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** }
@@ -2818,7 +2818,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 2652:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   * @brief  SPI Abort Complete callback.
 2653:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   * @param  hspi SPI handle.
 2654:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   * @retval None
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 48
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 48
 
 
 2655:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   */
@@ -2878,7 +2878,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 2709:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** /**
 2710:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   * @}
 2711:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   */
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 49
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 49
 
 
 2712:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
@@ -2938,7 +2938,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 2766:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       HAL_SPI_ErrorCallback(hspi);
 2767:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** #endif /* USE_HAL_SPI_REGISTER_CALLBACKS */
 2768:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       return;
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 50
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 50
 
 
 2769:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     }
@@ -2998,7 +2998,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 2823:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       CLEAR_BIT(hspi->Instance->CR2, SPI_CR2_TXDMAEN | SPI_CR2_RXDMAEN);
 2824:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     }
 2825:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     else
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 51
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 51
 
 
 2826:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     {
@@ -3058,7 +3058,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 2880:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   * @param  hdma pointer to a DMA_HandleTypeDef structure that contains
 2881:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   *               the configuration information for the specified DMA module.
 2882:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   * @retval None
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 52
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 52
 
 
 2883:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   */
@@ -3118,7 +3118,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 2937:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****         SET_BIT(hspi->ErrorCode, HAL_SPI_ERROR_CRC);
 2938:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
 2939:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****         /* Reset CRC Calculation */
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 53
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 53
 
 
 2940:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****         SPI_RESET_CRC(hspi);
@@ -3178,7 +3178,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 2994:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   SPI_HandleTypeDef *hspi = (SPI_HandleTypeDef *)(((DMA_HandleTypeDef *)hdma)->Parent);
 2995:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
 2996:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   /* Call user Rx half complete callback */
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 54
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 54
 
 
 2997:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** #if (USE_HAL_SPI_REGISTER_CALLBACKS == 1U)
@@ -3238,7 +3238,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 3051:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** static void SPI_DMAAbortOnError(DMA_HandleTypeDef *hdma)
 3052:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** {
 3053:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   SPI_HandleTypeDef *hspi = (SPI_HandleTypeDef *)(((DMA_HandleTypeDef *)hdma)->Parent);
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 55
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 55
 
 
 3054:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->RxXferCount = 0U;
@@ -3298,7 +3298,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 3108:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   /* Check no error during Abort procedure */
 3109:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   if (hspi->ErrorCode != HAL_SPI_ERROR_ABORT)
 3110:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   {
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 56
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 56
 
 
 3111:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     /* Reset errorCode */
@@ -3358,7 +3358,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 3165:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->RxXferCount = 0U;
 3166:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->TxXferCount = 0U;
 3167:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 57
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 57
 
 
 3168:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   /* Check no error during Abort procedure */
@@ -3418,7 +3418,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 3222:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
 3223:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** #if (USE_SPI_CRC != 0U)
 3224:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** /**
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 58
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 58
 
 
 3225:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   * @brief  Rx 8-bit handler for Transmit and Receive in Interrupt mode.
@@ -3478,7 +3478,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 3279:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     __HAL_SPI_DISABLE_IT(hspi, SPI_IT_TXE);
 3280:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
 3281:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     if (hspi->RxXferCount == 0U)
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 59
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 59
 
 
 3282:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     {
@@ -3538,7 +3538,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 3336:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
 3337:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   /* Disable RXNE interrupt */
 3338:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   __HAL_SPI_DISABLE_IT(hspi, SPI_IT_RXNE);
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 60
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 60
 
 
 3339:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
@@ -3598,7 +3598,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 3393:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   /* Initialize the 8bit temporary pointer */
 3394:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   ptmpreg8 = (__IO uint8_t *)&hspi->Instance->DR;
 3395:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   /* Read 8bit CRC to flush Data Register */
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 61
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 61
 
 
 3396:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   tmpreg8 = *ptmpreg8;
@@ -3658,7 +3658,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 3450:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   */
 3451:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** static void SPI_RxISR_16BITCRC(struct __SPI_HandleTypeDef *hspi)
 3452:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** {
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 62
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 62
 
 
 3453:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   __IO uint32_t tmpreg = 0U;
@@ -3718,7 +3718,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 3507:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** /**
 3508:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   * @brief  Handle the data 8-bit transmit in Interrupt mode.
 3509:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   * @param  hspi pointer to a SPI_HandleTypeDef structure that contains
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 63
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 63
 
 
 3510:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   *               the configuration information for SPI module.
@@ -3778,7 +3778,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 3564:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   * @param  Timeout Timeout duration
 3565:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   * @param  Tickstart tick start value
 3566:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   * @retval HAL status
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 64
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 64
 
 
 3567:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   */
@@ -3838,7 +3838,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 3621:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     }
 3622:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   }
 3623:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 65
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 65
 
 
 3624:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   return HAL_OK;
@@ -3898,7 +3898,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 3678:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     return HAL_TIMEOUT;
 3679:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   }
 3680:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 66
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 66
 
 
 3681:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   /* Control the BSY flag */
@@ -3958,7 +3958,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 3735:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     if (SPI_ISCRCErrorValid(hspi) == SPI_VALID_CRC_ERROR)
 3736:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     {
 3737:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       hspi->State = HAL_SPI_STATE_READY;
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 67
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 67
 
 
 3738:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       SET_BIT(hspi->ErrorCode, HAL_SPI_ERROR_CRC);
@@ -4018,7 +4018,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 3792:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   }
 3793:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** #endif /* USE_SPI_CRC */
 3794:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** }
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 68
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 68
 
 
 3795:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
@@ -4078,7 +4078,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 3849:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       /* Call user Rx complete callback */
 3850:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** #if (USE_HAL_SPI_REGISTER_CALLBACKS == 1U)
 3851:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       hspi->RxCpltCallback(hspi);
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 69
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 69
 
 
 3852:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** #else
@@ -4138,7 +4138,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 3906:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   {
 3907:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     __HAL_SPI_CLEAR_OVRFLAG(hspi);
 3908:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   }
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 70
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 70
 
 
 3909:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
@@ -4198,7 +4198,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
   47 000e B3FBF2F3 		udiv	r3, r3, r2
   48              		.loc 1 3940 45 view .LVU8
   49 0012 6422     		movs	r2, #100
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 71
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 71
 
 
   50 0014 5343     		muls	r3, r2, r3
@@ -4258,7 +4258,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
   78 0036 DB68     		ldr	r3, [r3, #12]
   79              		.loc 1 3960 10 view .LVU21
   80 0038 0093     		str	r3, [sp]
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 72
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 72
 
 
 3961:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   /* To avoid GCC warning */
@@ -4318,7 +4318,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 3968:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   * @brief  Handle abort a Tx or Rx/Tx transaction.
 3969:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   * @param  hspi pointer to a SPI_HandleTypeDef structure that contains
 3970:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   *               the configuration information for SPI module.
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 73
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 73
 
 
 3971:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   * @retval None
@@ -4378,7 +4378,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  164              		.loc 1 3576 3 view .LVU41
 3570:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   __IO uint32_t count;
  165              		.loc 1 3570 1 is_stmt 0 view .LVU42
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 74
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 74
 
 
  166 0000 2DE9F347 		push	{r0, r1, r4, r5, r6, r7, r8, r9, r10, lr}
@@ -4438,7 +4438,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 3582:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   {
  209              		.loc 1 3582 11 is_stmt 0 view .LVU54
  210 0028 2268     		ldr	r2, [r4]
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 75
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 75
 
 
  211              	.L12:
@@ -4498,7 +4498,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  250              		.loc 1 3595 65 discriminator 1 view .LVU69
  251 0060 A268     		ldr	r2, [r4, #8]
 3595:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****                                                      || (hspi->Init.Direction == SPI_DIRECTION_2LIN
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 76
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 76
 
 
  252              		.loc 1 3595 50 discriminator 1 view .LVU70
@@ -4558,7 +4558,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  291              		.loc 1 3611 9 is_stmt 1 view .LVU85
 3613:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       }
  292              		.loc 1 3613 9 view .LVU86
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 77
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 77
 
 
  293              	.L17:
@@ -4618,7 +4618,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  340              		@ args = 0, pretend = 0, frame = 0
  341              		@ frame_needed = 0, uses_anonymous_args = 0
 3675:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   {
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 78
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 78
 
 
  342              		.loc 1 3675 3 view .LVU96
@@ -4678,7 +4678,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 3682:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   {
  383              		.loc 1 3682 7 is_stmt 0 view .LVU110
  384 0024 2B46     		mov	r3, r5
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 79
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 79
 
 
  385 0026 8021     		movs	r1, #128
@@ -4738,7 +4738,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 3637:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****                                                || (hspi->Init.Direction == SPI_DIRECTION_2LINES_RXO
  432              		.loc 1 3637 6 view .LVU120
  433 0008 B1F5827F 		cmp	r1, #260
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 80
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 80
 
 
  434 000c 18D1     		bne	.L38
@@ -4798,7 +4798,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  473              		.loc 1 3663 1 view .LVU135
  474 003c 03B0     		add	sp, sp, #12
  475              	.LCFI9:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 81
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 81
 
 
  476              		.cfi_remember_state
@@ -4858,7 +4858,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  522              		.loc 1 515 1 is_stmt 0 view .LVU145
  523 0000 7047     		bx	lr
  524              		.cfi_endproc
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 82
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 82
 
 
  525              	.LFE67:
@@ -4918,7 +4918,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  357:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
  566              		.loc 1 357 5 view .LVU161
  359:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     {
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 83
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 83
 
 
  567              		.loc 1 359 5 view .LVU162
@@ -4978,7 +4978,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  604 0038 1368     		ldr	r3, [r2]
  424:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****                                   (hspi->Init.Direction & (SPI_CR1_RXONLY | SPI_CR1_BIDIMODE)) |
  605              		.loc 1 424 3 is_stmt 0 view .LVU180
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 84
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 84
 
 
  606 003a A068     		ldr	r0, [r4, #8]
@@ -5038,7 +5038,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  650 0094 23F40063 		bic	r3, r3, #2048
  651 0098 D361     		str	r3, [r2, #28]
  451:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->State     = HAL_SPI_STATE_READY;
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 85
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 85
 
 
  652              		.loc 1 451 3 is_stmt 1 view .LVU191
@@ -5098,7 +5098,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  695              		@ link register save eliminated.
  696 0000 7047     		bx	lr
  697              		.cfi_endproc
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 86
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 86
 
 
  698              	.LFE125:
@@ -5158,7 +5158,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  741 001a 0020     		movs	r0, #0
  742 001c 6065     		str	r0, [r4, #84]
  493:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 87
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 87
 
 
  743              		.loc 1 493 3 is_stmt 1 view .LVU218
@@ -5218,7 +5218,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  784 0000 2DE9F743 		push	{r0, r1, r2, r4, r5, r6, r7, r8, r9, lr}
  785              	.LCFI13:
  786              		.cfi_def_cfa_offset 40
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 88
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 88
 
 
  787              		.cfi_offset 4, -28
@@ -5278,7 +5278,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  827 002e 00F09580 		beq	.L89
  818:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
  828              		.loc 1 818 3 discriminator 2 view .LVU248
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 89
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 89
 
 
  821:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->ErrorCode   = HAL_SPI_ERROR_NONE;
@@ -5338,7 +5338,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  863              		.loc 1 828 3 view .LVU268
  829:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->RxXferCount = 0U;
  864              		.loc 1 829 3 view .LVU269
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 90
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 90
 
 
  830:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->TxISR       = NULL;
@@ -5398,7 +5398,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  901              		.loc 1 860 45 discriminator 1 view .LVU287
  902 0088 B8F1010F 		cmp	r8, #1
  903 008c 07D1     		bne	.L75
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 91
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 91
 
 
  904              	.L71:
@@ -5458,7 +5458,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  933:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   {
  943              		.loc 1 933 3 is_stmt 1 view .LVU303
  933:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   {
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 92
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 92
 
 
  944              		.loc 1 933 6 is_stmt 0 view .LVU304
@@ -5518,7 +5518,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  982              		.loc 1 870 7 is_stmt 1 view .LVU320
  870:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       {
  983              		.loc 1 870 11 is_stmt 0 view .LVU321
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 93
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 93
 
 
  984 00da 2268     		ldr	r2, [r4]
@@ -5578,7 +5578,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  882:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****           return HAL_TIMEOUT;
  1021              		.loc 1 882 11 is_stmt 0 view .LVU339
  1022 0104 0023     		movs	r3, #0
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 94
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 94
 
 
  883:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****         }
@@ -5638,7 +5638,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  1062 0126 013B     		subs	r3, r3, #1
  1063 0128 9BB2     		uxth	r3, r3
  1064 012a E386     		strh	r3, [r4, #54]	@ movhi
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 95
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 95
 
 
  1065              	.L84:
@@ -5698,7 +5698,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  929:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   }
  1104              		.loc 1 929 21 is_stmt 0 view .LVU370
  1105 0156 2023     		movs	r3, #32
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 96
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 96
 
 
  1106 0158 6365     		str	r3, [r4, #84]
@@ -5758,7 +5758,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  1151 0008 9146     		mov	r9, r2
  1152 000a 1E46     		mov	r6, r3
  1153 000c DDF82880 		ldr	r8, [sp, #40]
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 97
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 97
 
 
 1195:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
@@ -5818,7 +5818,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  1191 003c B9F1000F 		cmp	r9, #0
  1192 0040 48D0     		beq	.L114
 1209:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   {
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 98
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 98
 
 
  1193              		.loc 1 1209 46 discriminator 2 view .LVU399
@@ -5878,7 +5878,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  1229              		.loc 1 1227 3 is_stmt 1 view .LVU417
 1229:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->TxXferSize  = Size;
  1230              		.loc 1 1229 21 is_stmt 0 view .LVU418
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 99
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 99
 
 
  1231 0074 E686     		strh	r6, [r4, #54]	@ movhi
@@ -5938,7 +5938,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  1267 009a 07D1     		bne	.L119
  1268              	.L118:
 1256:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       hspi->pTxBuffPtr += sizeof(uint16_t);
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 100
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 100
 
 
  1269              		.loc 1 1256 7 is_stmt 1 view .LVU437
@@ -5998,7 +5998,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  1308 00be 2046     		mov	r0, r4
  1309 00c0 FFF7FEFF 		bl	SPI_EndRxTxTransaction
  1310              	.LVL56:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 101
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 101
 
 
 1401:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   {
@@ -6058,7 +6058,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 1274:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****         hspi->pTxBuffPtr += sizeof(uint16_t);
  1349              		.loc 1 1274 28 view .LVU469
  1350 00ee CA60     		str	r2, [r1, #12]
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 102
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 102
 
 
 1275:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****         hspi->TxXferCount--;
@@ -6118,7 +6118,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  1388              		.loc 1 1293 9 is_stmt 1 view .LVU486
 1293:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****         hspi->RxXferCount--;
  1389              		.loc 1 1293 26 is_stmt 0 view .LVU487
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 103
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 103
 
 
  1390 0114 A363     		str	r3, [r4, #56]
@@ -6178,7 +6178,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 1301:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****         return HAL_TIMEOUT;
  1427              		.loc 1 1301 9 view .LVU505
  1428 0138 84F85030 		strb	r3, [r4, #80]
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 104
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 104
 
 
  1429              	.LVL65:
@@ -6238,7 +6238,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  1470 015a 0125     		movs	r5, #1
  1471              	.LVL69:
 1350:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       }
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 105
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 105
 
 
  1472              		.loc 1 1350 19 view .LVU519
@@ -6298,7 +6298,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 1296:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       }
  1511              		.loc 1 1296 19 is_stmt 0 view .LVU535
  1512 0182 0025     		movs	r5, #0
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 106
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 106
 
 
  1513              	.L129:
@@ -6358,7 +6358,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  1551              	.L131:
 1352:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       {
  1552              		.loc 1 1352 7 view .LVU552
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 107
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 107
 
 
 1352:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       {
@@ -6418,7 +6418,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 1411:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   }
  1593              		.loc 1 1411 5 view .LVU567
  1594 01d8 9B68     		ldr	r3, [r3, #8]
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 108
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 108
 
 
  1595 01da 0193     		str	r3, [sp, #4]
@@ -6478,7 +6478,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  1638              	.LFB70:
  962:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** #if (USE_SPI_CRC != 0U)
  1639              		.loc 1 962 1 is_stmt 1 view -0
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 109
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 109
 
 
  1640              		.cfi_startproc
@@ -6538,7 +6538,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  1682              		.cfi_def_cfa_offset 28
  1683              		@ sp needed
  1684 001c BDE8F083 		pop	{r4, r5, r6, r7, r8, r9, pc}
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 110
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 110
 
 
  1685              	.LVL82:
@@ -6598,7 +6598,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  1725 004a E5D0     		beq	.L196
  983:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   {
  1726              		.loc 1 983 23 discriminator 1 view .LVU608
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 111
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 111
 
 
  1727 004c 002F     		cmp	r7, #0
@@ -6658,7 +6658,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  1762              		.loc 1 995 3 is_stmt 1 view .LVU627
  995:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->RxXferCount = Size;
  1763              		.loc 1 995 21 is_stmt 0 view .LVU628
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 112
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 112
 
 
  1764 007a A787     		strh	r7, [r4, #60]	@ movhi
@@ -6718,7 +6718,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  1800 00a2 E368     		ldr	r3, [r4, #12]
  1801 00a4 F3B1     		cbz	r3, .L201
  1802              	.LVL88:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 113
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 113
 
 
  1803              	.L202:
@@ -6778,7 +6778,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  1840 00cc D007     		lsls	r0, r2, #31
  1841 00ce 1ED5     		bpl	.L203
 1040:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****         hspi->pRxBuffPtr += sizeof(uint8_t);
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 114
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 114
 
 
  1842              		.loc 1 1040 9 is_stmt 1 view .LVU664
@@ -6838,7 +6838,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 1154:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   /* Unlock the process */
  1881              		.loc 1 1154 15 is_stmt 0 view .LVU680
  1882 00f8 0123     		movs	r3, #1
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 115
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 115
 
 
  1883 00fa 84F85130 		strb	r3, [r4, #81]
@@ -6898,7 +6898,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  1919              		.loc 1 1075 11 view .LVU698
 1074:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****           return HAL_TIMEOUT;
  1920              		.loc 1 1074 11 is_stmt 0 view .LVU699
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 116
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 116
 
 
  1921 0124 0023     		movs	r3, #0
@@ -6958,7 +6958,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  1965              		.loc 1 1444 3 view .LVU711
 1438:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
  1966              		.loc 1 1438 1 is_stmt 0 view .LVU712
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 117
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 117
 
 
  1967 0000 0346     		mov	r3, r0
@@ -7018,7 +7018,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  2006              	.LVL94:
 1462:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
  2007              		.loc 1 1462 21 view .LVU728
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 118
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 118
 
 
  2008 002c DA86     		strh	r2, [r3, #54]	@ movhi
@@ -7078,7 +7078,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 1481:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   {
  2042              		.loc 1 1481 6 view .LVU749
  2043 0046 9968     		ldr	r1, [r3, #8]
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 119
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 119
 
 
  2044 0048 5A64     		str	r2, [r3, #68]
@@ -7138,7 +7138,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  2082 007c 5360     		str	r3, [r2, #4]
 1508:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** }
  2083              		.loc 1 1508 3 is_stmt 1 view .LVU766
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 120
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 120
 
 
  2084              	.LVL98:
@@ -7198,7 +7198,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  2130              		.cfi_offset 5, -8
  2131              		.cfi_offset 14, -4
 1612:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   uint32_t             tmp_mode;
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 121
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 121
 
 
  2132              		.loc 1 1612 1 view .LVU777
@@ -7258,7 +7258,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  2172              	.LBB7:
 1636:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
  2173              		.loc 1 1636 3 view .LVU792
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 122
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 122
 
 
 1636:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
@@ -7318,7 +7318,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  2209              		.loc 1 1647 3 is_stmt 1 view .LVU811
 1648:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->pRxBuffPtr  = (uint8_t *)pRxData;
  2210              		.loc 1 1648 3 view .LVU812
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 123
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 123
 
 
 1649:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->RxXferSize  = Size;
@@ -7378,7 +7378,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  2246 0074 5A68     		ldr	r2, [r3, #4]
  2247 0076 42F0E002 		orr	r2, r2, #224
  2248 007a 5A60     		str	r2, [r3, #4]
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 124
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 124
 
 
 1686:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** }
@@ -7438,7 +7438,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  2297              	.LVL111:
  2298              	.LFB73:
 1520:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 125
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 125
 
 
  2299              		.loc 1 1520 1 is_stmt 1 view -0
@@ -7498,7 +7498,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  2338              		.loc 1 1529 17 is_stmt 0 view .LVU855
  2339 001e 0422     		movs	r2, #4
  2340 0020 80F85120 		strb	r2, [r0, #81]
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 126
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 126
 
 
 1531:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   }
@@ -7558,7 +7558,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 1544:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->ErrorCode   = HAL_SPI_ERROR_NONE;
  2381              		.loc 1 1544 21 is_stmt 0 view .LVU870
  2382 0044 0421     		movs	r1, #4
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 127
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 127
 
 
 1547:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->RxXferCount = Size;
@@ -7618,7 +7618,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 1559:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   }
  2416              		.loc 1 1559 17 is_stmt 0 view .LVU892
  2417 0060 0028     		cmp	r0, #0
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 128
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 128
 
 
  2418 0062 18BF     		it	ne
@@ -7678,7 +7678,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 1598:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** }
  2457              		.loc 1 1598 3 view .LVU908
  2458              	.L266:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 129
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 129
 
 
 1599:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
@@ -7738,7 +7738,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  2507              		.cfi_def_cfa_offset 16
  2508              		.cfi_offset 4, -16
  2509              		.cfi_offset 5, -12
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 130
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 130
 
 
  2510              		.cfi_offset 6, -8
@@ -7798,7 +7798,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  2547              		.loc 1 1730 21 view .LVU933
  2548 0030 8387     		strh	r3, [r0, #60]	@ movhi
 1731:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 131
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 131
 
 
  2549              		.loc 1 1731 21 view .LVU934
@@ -7858,7 +7858,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  2583 0050 43F48043 		orr	r3, r3, #16384
  2584 0054 1360     		str	r3, [r2]
  2585              	.L286:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 132
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 132
 
 
 1750:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
@@ -7918,7 +7918,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  2621              		.loc 1 1768 5 is_stmt 0 view .LVU973
  2622 0076 84F85060 		strb	r6, [r4, #80]
 1766:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     /* Process Unlocked */
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 133
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 133
 
 
  2623              		.loc 1 1766 5 view .LVU974
@@ -7978,7 +7978,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  2661 00a8 5A60     		str	r2, [r3, #4]
 1788:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** }
  2662              		.loc 1 1788 3 view .LVU991
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 134
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 134
 
 
 1788:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** }
@@ -8038,7 +8038,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  2708 0002 0446     		mov	r4, r0
 1925:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   tmp_mode            = hspi->Init.Mode;
  2709              		.loc 1 1925 23 view .LVU1003
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 135
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 135
 
 
  2710 0004 90F85100 		ldrb	r0, [r0, #81]	@ zero_extendqisi2
@@ -8098,7 +8098,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  2749              		.loc 1 1941 3 view .LVU1018
  2750 002c 94F85000 		ldrb	r0, [r4, #80]	@ zero_extendqisi2
  2751 0030 0128     		cmp	r0, #1
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 136
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 136
 
 
  2752 0032 5FD0     		beq	.L308
@@ -8158,7 +8158,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 1953:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->pRxBuffPtr  = (uint8_t *)pRxData;
  2788              		.loc 1 1953 3 view .LVU1037
 1954:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->RxXferSize  = Size;
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 137
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 137
 
 
  2789              		.loc 1 1954 3 view .LVU1038
@@ -8218,7 +8218,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 1991:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****                                  hspi->RxXferCount))
  2825              		.loc 1 1991 3 is_stmt 1 view .LVU1057
 1991:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****                                  hspi->RxXferCount))
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 138
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 138
 
 
  2826              		.loc 1 1991 17 is_stmt 0 view .LVU1058
@@ -8278,7 +8278,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  2865              		.loc 1 2002 3 view .LVU1073
  2866 00a0 5368     		ldr	r3, [r2, #4]
 2012:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****                                  hspi->TxXferCount))
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 139
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 139
 
 
  2867              		.loc 1 2012 17 view .LVU1074
@@ -8338,7 +8338,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 2023:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   {
  2903              		.loc 1 2023 12 is_stmt 0 view .LVU1093
  2904 00cc 2368     		ldr	r3, [r4]
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 140
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 140
 
 
 2023:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   {
@@ -8398,7 +8398,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  2947              	.LFE77:
  2949              		.section	.text.HAL_SPI_Receive_DMA,"ax",%progbits
  2950              		.align	1
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 141
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 141
 
 
  2951              		.global	HAL_SPI_Receive_DMA
@@ -8458,7 +8458,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 1811:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   {
  2993              		.loc 1 1811 6 view .LVU1119
  2994 0016 5FB9     		cbnz	r7, .L329
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 142
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 142
 
 
 1811:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   {
@@ -8518,7 +8518,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  3036 0040 0122     		movs	r2, #1
  3037 0042 84F85020 		strb	r2, [r4, #80]
 1828:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 143
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 143
 
 
  3038              		.loc 1 1828 3 view .LVU1133
@@ -8578,7 +8578,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 1844:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   {
  3072              		.loc 1 1844 6 is_stmt 0 view .LVU1154
  3073 0064 07D1     		bne	.L332
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 144
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 144
 
 
 1847:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     SPI_1LINE_RX(hspi);
@@ -8638,7 +8638,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  3110              		.loc 1 1872 3 view .LVU1172
 1873:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   {
  3111              		.loc 1 1873 38 is_stmt 0 view .LVU1173
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 145
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 145
 
 
  3112 008c E38F     		ldrh	r3, [r4, #62]
@@ -8698,7 +8698,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 1890:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
  3150              		.loc 1 1890 3 view .LVU1190
 1890:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 146
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 146
 
 
  3151              		.loc 1 1890 3 view .LVU1191
@@ -8758,7 +8758,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  3196              		.loc 1 2061 3 view .LVU1202
 2062:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   count = resetcount;
  3197              		.loc 1 2062 3 view .LVU1203
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 147
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 147
 
 
 2055:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   HAL_StatusTypeDef errorcode;
@@ -8818,7 +8818,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  3237              		.loc 1 2073 5 is_stmt 1 view .LVU1218
 2075:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       {
  3238              		.loc 1 2075 7 view .LVU1219
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 148
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 148
 
 
 2075:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       {
@@ -8878,7 +8878,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 2095:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       }
  3277              		.loc 1 2095 9 view .LVU1236
  3278              	.L349:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 149
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 149
 
 
 2100:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   }
@@ -8938,7 +8938,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  3316 007c 5A60     		str	r2, [r3, #4]
  3317              	.L354:
 2123:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       {
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 150
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 150
 
 
  3318              		.loc 1 2123 7 view .LVU1254
@@ -8998,7 +8998,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  3354 00a0 4023     		movs	r3, #64
  3355 00a2 6365     		str	r3, [r4, #84]
  3356              	.L357:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 151
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 151
 
 
 2152:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
@@ -9058,7 +9058,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  3396 00ce 0120     		moveq	r0, #1
  3397              	.LVL148:
 2175:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 152
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 152
 
 
  3398              		.loc 1 2175 3 is_stmt 1 view .LVU1288
@@ -9118,7 +9118,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  3438              	.L348:
 2097:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     } while (hspi->State != HAL_SPI_STATE_ABORT);
  3439              		.loc 1 2097 7 is_stmt 1 view .LVU1303
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 153
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 153
 
 
 2097:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     } while (hspi->State != HAL_SPI_STATE_ABORT);
@@ -9178,7 +9178,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  3486              		@ args = 0, pretend = 0, frame = 0
  3487              		@ frame_needed = 0, uses_anonymous_args = 0
  3488              		@ link register save eliminated.
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 154
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 154
 
 
 2361:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
@@ -9238,7 +9238,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  3529              	HAL_SPI_DMAResume:
  3530              	.LVL153:
  3531              	.LFB81:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 155
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 155
 
 
 2379:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   /* Process Locked */
@@ -9298,7 +9298,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  3570              		.section	.text.HAL_SPI_DMAStop,"ax",%progbits
  3571              		.align	1
  3572              		.global	HAL_SPI_DMAStop
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 156
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 156
 
 
  3573              		.syntax unified
@@ -9358,7 +9358,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 2421:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     {
  3615              		.loc 1 2421 8 discriminator 1 view .LVU1360
  3616 0012 20B1     		cbz	r0, .L402
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 157
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 157
 
 
 2423:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       errorcode = HAL_ERROR;
@@ -9418,7 +9418,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  3655 003c 0125     		movs	r5, #1
 2414:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       errorcode = HAL_ERROR;
  3656              		.loc 1 2414 7 view .LVU1377
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 158
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 158
 
 
  3657 003e 43F01003 		orr	r3, r3, #16
@@ -9478,7 +9478,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  3712              		.loc 1 2574 13 view -0
  3713              		@ args = 0, pretend = 0, frame = 0
  3714              		@ frame_needed = 0, uses_anonymous_args = 0
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 159
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 159
 
 
  3715              		@ link register save eliminated.
@@ -9538,7 +9538,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  3765              		.loc 1 2984 1 view .LVU1390
  3766 0008 08BD     		pop	{r3, pc}
  3767              		.cfi_endproc
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 160
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 160
 
 
  3768              	.LFE97:
@@ -9598,7 +9598,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  3818              	.LFE98:
  3820              		.section	.text.HAL_SPI_TxRxHalfCpltCallback,"ax",%progbits
  3821              		.align	1
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 161
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 161
 
 
  3822              		.weak	HAL_SPI_TxRxHalfCpltCallback
@@ -9658,7 +9658,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  3872              		.weak	HAL_SPI_ErrorCallback
  3873              		.syntax unified
  3874              		.thumb
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 162
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 162
 
 
  3875              		.thumb_func
@@ -9718,7 +9718,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  3921              		.loc 1 3879 17 view .LVU1417
  3922 0014 0093     		str	r3, [sp]
 3882:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 163
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 163
 
 
  3923              		.loc 1 3882 3 is_stmt 1 view .LVU1418
@@ -9778,7 +9778,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  3961 003c 636D     		ldr	r3, [r4, #84]
  3962 003e 43F02003 		orr	r3, r3, #32
  3963 0042 6365     		str	r3, [r4, #84]
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 164
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 164
 
 
  3964              	.L423:
@@ -9838,7 +9838,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  4002 0066 02B0     		add	sp, sp, #8
  4003              	.LCFI42:
  4004              		.cfi_remember_state
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 165
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 165
 
 
  4005              		.cfi_def_cfa_offset 8
@@ -9898,7 +9898,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  4052              		.loc 1 3515 3 view .LVU1459
 3515:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->pTxBuffPtr++;
  4053              		.loc 1 3515 42 is_stmt 0 view .LVU1460
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 166
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 166
 
 
  4054 0000 016B     		ldr	r1, [r0, #48]
@@ -9958,7 +9958,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 3539:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   /* Transmit data in 16 Bit mode */
  4097              		.loc 1 3539 1 is_stmt 1 view -0
  4098              		.cfi_startproc
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 167
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 167
 
 
  4099              		@ args = 0, pretend = 0, frame = 0
@@ -10018,7 +10018,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  4137              		.cfi_restore 4
  4138              		.cfi_def_cfa_offset 0
 3554:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   }
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 168
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 168
 
 
  4139              		.loc 1 3554 5 view .LVU1491
@@ -10078,7 +10078,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 3808:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   {
  4186              		.loc 1 3808 7 discriminator 1 view .LVU1501
  4187 0012 6421     		movs	r1, #100
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 169
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 169
 
 
 3808:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   {
@@ -10138,7 +10138,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  4226              		.loc 1 3847 13 is_stmt 0 view .LVU1517
  4227 003e 636D     		ldr	r3, [r4, #84]
 3853:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** #endif /* USE_HAL_SPI_REGISTER_CALLBACKS */
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 170
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 170
 
 
  4228              		.loc 1 3853 7 view .LVU1518
@@ -10198,7 +10198,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 3412:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->pRxBuffPtr++;
  4275              		.loc 1 3412 24 view .LVU1528
  4276 0004 097B     		ldrb	r1, [r1, #12]	@ zero_extendqisi2
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 171
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 171
 
 
 3412:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->pRxBuffPtr++;
@@ -10258,7 +10258,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  4320              		.loc 1 3475 3 view .LVU1541
 3475:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->pRxBuffPtr += sizeof(uint16_t);
  4321              		.loc 1 3475 52 is_stmt 0 view .LVU1542
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 172
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 172
 
 
  4322 0000 0268     		ldr	r2, [r0]
@@ -10318,7 +10318,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  4365              		@ frame_needed = 0, uses_anonymous_args = 0
 3698:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   __IO uint32_t count = SPI_DEFAULT_TIMEOUT * (SystemCoreClock / 24U / 1000U);
  4366              		.loc 1 3698 3 view .LVU1556
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 173
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 173
 
 
 3699:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
@@ -10378,7 +10378,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  4405              		.loc 1 3710 8 view .LVU1572
  4406 0028 21BB     		cbnz	r1, .L451
 3712:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       break;
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 174
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 174
 
 
  4407              		.loc 1 3712 7 is_stmt 1 view .LVU1573
@@ -10438,7 +10438,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  4447              		.loc 1 3727 5 discriminator 1 view .LVU1587
 3758:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     {
  4448              		.loc 1 3758 5 view .LVU1588
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 175
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 175
 
 
 3758:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     {
@@ -10498,7 +10498,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  4488              		.loc 1 3716 48 is_stmt 1 view .LVU1603
 3716:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
  4489              		.loc 1 3716 27 is_stmt 0 view .LVU1604
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 176
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 176
 
 
  4490 007a 9968     		ldr	r1, [r3, #8]
@@ -10558,7 +10558,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  4535              		@ frame_needed = 0, uses_anonymous_args = 0
  4536              		@ link register save eliminated.
 3260:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->pTxBuffPtr++;
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 177
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 177
 
 
  4537              		.loc 1 3260 3 view .LVU1616
@@ -10618,7 +10618,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  4575              		.loc 1 3281 13 is_stmt 0 view .LVU1632
  4576 0026 C38F     		ldrh	r3, [r0, #62]
  4577 0028 9BB2     		uxth	r3, r3
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 178
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 178
 
 
 3281:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     {
@@ -10678,7 +10678,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 3200:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
  4621              		.loc 1 3200 7 is_stmt 0 view .LVU1646
  4622 000e C28F     		ldrh	r2, [r0, #62]
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 179
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 179
 
 
 3200:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
@@ -10738,7 +10738,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  4667              	SPI_2linesTxISR_16BIT:
  4668              	.LVL215:
  4669              	.LFB107:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 180
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 180
 
 
 3351:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   /* Transmit data in 16 Bit mode */
@@ -10798,7 +10798,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  4708 0022 4A60     		str	r2, [r1, #4]
 3374:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     {
  4709              		.loc 1 3374 5 view .LVU1675
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 181
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 181
 
 
 3374:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     {
@@ -10858,7 +10858,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  4756              	.LCFI58:
  4757              		.cfi_def_cfa_offset 4
  4758              		.cfi_offset 4, -4
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 182
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 182
 
 
 3297:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   hspi->pRxBuffPtr += sizeof(uint16_t);
@@ -10918,7 +10918,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  4796              		.cfi_restore 4
  4797              		.cfi_def_cfa_offset 0
 3316:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     }
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 183
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 183
 
 
  4798              		.loc 1 3316 7 view .LVU1703
@@ -10978,7 +10978,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 3036:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   /* Call user error callback */
  4846              		.loc 1 3036 3 view .LVU1712
 3036:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   /* Call user error callback */
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 184
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 184
 
 
  4847              		.loc 1 3036 15 is_stmt 0 view .LVU1713
@@ -11038,7 +11038,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  4891              		.loc 1 2734 15 view .LVU1725
  4892 000c 0246     		mov	r2, r0
  4893              	.LVL225:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 185
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 185
 
 
 2737:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   {
@@ -11098,7 +11098,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 2754:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     }
  4933              		.loc 1 2754 7 view .LVU1741
  4934 003e 2368     		ldr	r3, [r4]
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 186
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 186
 
 
  4935 0040 DA68     		ldr	r2, [r3, #12]
@@ -11158,7 +11158,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  4975              		.loc 1 2775 3 is_stmt 1 view .LVU1755
  4976 0062 2046     		mov	r0, r4
  4977 0064 FFF7FEFF 		bl	HAL_SPI_TxCpltCallback
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 187
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 187
 
 
  4978              	.LVL230:
@@ -11218,7 +11218,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  5022 000e 1B68     		ldr	r3, [r3]
 2797:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   {
  5023              		.loc 1 2797 6 view .LVU1768
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 188
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 188
 
 
  5024 0010 9B06     		lsls	r3, r3, #26
@@ -11278,7 +11278,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 2838:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
  5064              		.loc 1 2838 5 is_stmt 1 view .LVU1783
 2838:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 189
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 189
 
 
  5065              		.loc 1 2838 17 is_stmt 0 view .LVU1784
@@ -11338,7 +11338,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 2885:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   SPI_HandleTypeDef *hspi = (SPI_HandleTypeDef *)(((DMA_HandleTypeDef *)hdma)->Parent);
  5111              		.loc 1 2885 1 is_stmt 0 view .LVU1795
  5112 0000 38B5     		push	{r3, r4, r5, lr}
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 190
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 190
 
 
  5113              	.LCFI67:
@@ -11398,7 +11398,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  5152 0022 FFF7FEFF 		bl	SPI_EndRxTxTransaction
  5153              	.LVL246:
 2918:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     {
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 191
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 191
 
 
  5154              		.loc 1 2918 8 discriminator 1 view .LVU1811
@@ -11458,7 +11458,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  5193 0052 2046     		mov	r0, r4
  5194 0054 FFF7FEFF 		bl	HAL_SPI_TxRxCpltCallback
  5195              	.LVL249:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 192
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 192
 
 
  5196 0058 FAE7     		b	.L507
@@ -11518,7 +11518,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  5241 000c 5606     		lsls	r6, r2, #25
 2446:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       (SPI_CHECK_FLAG(itflag, SPI_FLAG_RXNE) != RESET) && (SPI_CHECK_IT_SOURCE(itsource, SPI_IT_RXN
  5242              		.loc 1 2446 8 view .LVU1838
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 193
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 193
 
 
  5243 000e 4FEA9215 		lsr	r5, r2, #6
@@ -11578,7 +11578,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  5286 0032 2046     		mov	r0, r4
  5287 0034 636C     		ldr	r3, [r4, #68]
  5288 0036 F4E7     		b	.L563
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 194
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 194
 
 
  5289              	.L519:
@@ -11638,7 +11638,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 2470:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       }
  5327              		.loc 1 2470 9 view .LVU1866
  5328 0064 019A     		ldr	r2, [sp, #4]
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 195
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 195
 
 
  5329              	.LBE31:
@@ -11698,7 +11698,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  5367              		.loc 1 2493 7 view .LVU1882
 2493:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       /* Disable the SPI DMA requests if enabled */
  5368              		.loc 1 2493 19 is_stmt 0 view .LVU1883
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 196
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 196
 
 
  5369 0090 0122     		movs	r2, #1
@@ -11758,7 +11758,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 2515:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****           if (HAL_OK != HAL_DMA_Abort_IT(hspi->hdmatx))
  5406              		.loc 1 2515 43 is_stmt 0 view .LVU1901
  5407 00bc 0A4B     		ldr	r3, .L564
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 197
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 197
 
 
  5408 00be 4363     		str	r3, [r0, #52]
@@ -11818,7 +11818,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 2528:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** #endif /* USE_HAL_SPI_REGISTER_CALLBACKS */
  5450              		.loc 1 2528 9 is_stmt 1 view .LVU1914
  5451 00e0 2046     		mov	r0, r4
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 198
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 198
 
 
  5452 00e2 FFF7FEFF 		bl	HAL_SPI_ErrorCallback
@@ -11878,7 +11878,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 3063:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
  5497              		.loc 1 3063 1 is_stmt 0 view .LVU1926
  5498 000e 08BD     		pop	{r3, pc}
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 199
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 199
 
 
  5499              		.cfi_endproc
@@ -11938,7 +11938,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  5546              	.LCFI76:
  5547              		.cfi_def_cfa_offset 12
  5548              		.cfi_offset 4, -12
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 200
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 200
 
 
  5549              		.cfi_offset 5, -8
@@ -11998,7 +11998,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  5587 002e 6264     		str	r2, [r4, #68]
  5588              	.L572:
 2219:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     {
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 201
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 201
 
 
  5589              		.loc 1 2219 5 is_stmt 1 view .LVU1954
@@ -12058,7 +12058,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  5626 0052 626D     		ldr	r2, [r4, #84]
  5627 0054 42F04002 		orr	r2, r2, #64
  5628 0058 6265     		str	r2, [r4, #84]
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 202
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 202
 
 
 2241:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****       }
@@ -12118,7 +12118,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 2272:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     }
  5664              		.loc 1 2272 7 is_stmt 1 view .LVU1991
 2272:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     }
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 203
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 203
 
 
  5665              		.loc 1 2272 39 is_stmt 0 view .LVU1992
@@ -12178,7 +12178,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
 2299:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   {
  5703              		.loc 1 2299 7 is_stmt 0 view .LVU2009
  5704 009a 2368     		ldr	r3, [r4]
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 204
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 204
 
 
  5705 009c 5B68     		ldr	r3, [r3, #4]
@@ -12238,7 +12238,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  5745 00ba 94F85120 		ldrb	r2, [r4, #81]	@ zero_extendqisi2
 2227:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     /* Reset Timeout Counter */
  5746              		.loc 1 2227 26 view .LVU2024
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 205
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 205
 
 
  5747 00be 072A     		cmp	r2, #7
@@ -12298,7 +12298,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  5786 00e6 E386     		strh	r3, [r4, #54]	@ movhi
 2324:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     {
  5787              		.loc 1 2324 5 is_stmt 1 view .LVU2040
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 206
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 206
 
 
 2324:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     {
@@ -12358,7 +12358,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  5827 0110 00000000 		.word	SystemCoreClock
  5828 0114 00000000 		.word	SPI_AbortTx_ISR
  5829 0118 00000000 		.word	SPI_AbortRx_ISR
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 207
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 207
 
 
  5830 011c 00000000 		.word	SPI_DMATxAbortCallback
@@ -12418,7 +12418,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  5875 001c FFF7FEFF 		bl	HAL_GetTick
  5876              	.LVL278:
 3150:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   {
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 208
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 208
 
 
  5877              		.loc 1 3150 7 discriminator 1 view .LVU2067
@@ -12478,7 +12478,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  5914              		.loc 1 3169 6 view .LVU2084
  5915 0046 402A     		cmp	r2, #64
 3172:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   }
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 209
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 209
 
 
  5916              		.loc 1 3172 5 is_stmt 1 view .LVU2085
@@ -12538,7 +12538,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  5960              	.LVL281:
  5961              	.LFB102:
 3074:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****   SPI_HandleTypeDef *hspi = (SPI_HandleTypeDef *)(((DMA_HandleTypeDef *)hdma)->Parent);
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 210
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 210
 
 
  5962              		.loc 1 3074 1 is_stmt 1 view -0
@@ -12598,7 +12598,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  6001              		.loc 1 3087 15 is_stmt 0 view .LVU2113
  6002 0026 009A     		ldr	r2, [sp]
 3087:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c ****     {
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 211
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 211
 
 
  6003              		.loc 1 3087 8 view .LVU2114
@@ -12658,7 +12658,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  6039              		.loc 1 3116 3 view .LVU2132
  6040 0048 0192     		str	r2, [sp, #4]
 3116:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c **** 
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 212
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 212
 
 
  6041              		.loc 1 3116 3 view .LVU2133
@@ -12718,7 +12718,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  6083 0072 00BF     		.align	2
  6084              	.L647:
  6085 0074 00000000 		.word	SystemCoreClock
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 213
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 213
 
 
  6086              		.cfi_endproc
@@ -12778,7 +12778,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  6137              		.text
  6138              	.Letext0:
  6139              		.file 2 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_defa
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 214
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 214
 
 
  6140              		.file 3 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h
@@ -12789,141 +12789,141 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 1
  6145              		.file 8 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h"
  6146              		.file 9 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/system_stm32f1xx.h"
  6147              		.file 10 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h"
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 215
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 215
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 stm32f1xx_hal_spi.c
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:19     .text.SPI_AbortRx_ISR:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:24     .text.SPI_AbortRx_ISR:00000000 SPI_AbortRx_ISR
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:112    .text.SPI_AbortRx_ISR:00000054 $d
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:117    .text.SPI_AbortTx_ISR:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:122    .text.SPI_AbortTx_ISR:00000000 SPI_AbortTx_ISR
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:149    .text.SPI_WaitFlagStateUntilTimeout:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:154    .text.SPI_WaitFlagStateUntilTimeout:00000000 SPI_WaitFlagStateUntilTimeout
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:325    .text.SPI_WaitFlagStateUntilTimeout:000000b4 $d
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:330    .text.SPI_EndRxTxTransaction:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:335    .text.SPI_EndRxTxTransaction:00000000 SPI_EndRxTxTransaction
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:405    .text.SPI_EndRxTransaction:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:410    .text.SPI_EndRxTransaction:00000000 SPI_EndRxTransaction
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:507    .text.HAL_SPI_MspInit:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:513    .text.HAL_SPI_MspInit:00000000 HAL_SPI_MspInit
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:528    .text.HAL_SPI_Init:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:534    .text.HAL_SPI_Init:00000000 HAL_SPI_Init
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:683    .text.HAL_SPI_MspDeInit:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:689    .text.HAL_SPI_MspDeInit:00000000 HAL_SPI_MspDeInit
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:701    .text.HAL_SPI_DeInit:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:707    .text.HAL_SPI_DeInit:00000000 HAL_SPI_DeInit
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:766    .text.HAL_SPI_Transmit:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:772    .text.HAL_SPI_Transmit:00000000 HAL_SPI_Transmit
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:1117   .text.HAL_SPI_TransmitReceive:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:1123   .text.HAL_SPI_TransmitReceive:00000000 HAL_SPI_TransmitReceive
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:1630   .text.HAL_SPI_Receive:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:1636   .text.HAL_SPI_Receive:00000000 HAL_SPI_Receive
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:1951   .text.HAL_SPI_Transmit_IT:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:1957   .text.HAL_SPI_Transmit_IT:00000000 HAL_SPI_Transmit_IT
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:2102   .text.HAL_SPI_Transmit_IT:00000088 $d
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:4094   .text.SPI_TxISR_16BIT:00000000 SPI_TxISR_16BIT
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:4044   .text.SPI_TxISR_8BIT:00000000 SPI_TxISR_8BIT
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:2108   .text.HAL_SPI_TransmitReceive_IT:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:2114   .text.HAL_SPI_TransmitReceive_IT:00000000 HAL_SPI_TransmitReceive_IT
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:2282   .text.HAL_SPI_TransmitReceive_IT:0000008c $d
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:4598   .text.SPI_2linesRxISR_8BIT:00000000 SPI_2linesRxISR_8BIT
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:4529   .text.SPI_2linesTxISR_8BIT:00000000 SPI_2linesTxISR_8BIT
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:4743   .text.SPI_2linesRxISR_16BIT:00000000 SPI_2linesRxISR_16BIT
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:4667   .text.SPI_2linesTxISR_16BIT:00000000 SPI_2linesTxISR_16BIT
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:2290   .text.HAL_SPI_Receive_IT:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:2296   .text.HAL_SPI_Receive_IT:00000000 HAL_SPI_Receive_IT
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:2482   .text.HAL_SPI_Receive_IT:000000a8 $d
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:4312   .text.SPI_RxISR_16BIT:00000000 SPI_RxISR_16BIT
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:4262   .text.SPI_RxISR_8BIT:00000000 SPI_RxISR_8BIT
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:2488   .text.HAL_SPI_Transmit_DMA:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:2494   .text.HAL_SPI_Transmit_DMA:00000000 HAL_SPI_Transmit_DMA
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:2673   .text.HAL_SPI_Transmit_DMA:000000b0 $d
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3744   .text.SPI_DMAHalfTransmitCplt:00000000 SPI_DMAHalfTransmitCplt
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:4864   .text.SPI_DMATransmitCplt:00000000 SPI_DMATransmitCplt
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:4819   .text.SPI_DMAError:00000000 SPI_DMAError
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:2680   .text.HAL_SPI_TransmitReceive_DMA:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:2686   .text.HAL_SPI_TransmitReceive_DMA:00000000 HAL_SPI_TransmitReceive_DMA
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:2941   .text.HAL_SPI_TransmitReceive_DMA:000000f8 $d
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3844   .text.SPI_DMAHalfTransmitReceiveCplt:00000000 SPI_DMAHalfTransmitReceiveCplt
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:5103   .text.SPI_DMATransmitReceiveCplt:00000000 SPI_DMATransmitReceiveCplt
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3794   .text.SPI_DMAHalfReceiveCplt:00000000 SPI_DMAHalfReceiveCplt
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 216
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:19     .text.SPI_AbortRx_ISR:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:24     .text.SPI_AbortRx_ISR:00000000 SPI_AbortRx_ISR
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:112    .text.SPI_AbortRx_ISR:00000054 $d
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:117    .text.SPI_AbortTx_ISR:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:122    .text.SPI_AbortTx_ISR:00000000 SPI_AbortTx_ISR
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:149    .text.SPI_WaitFlagStateUntilTimeout:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:154    .text.SPI_WaitFlagStateUntilTimeout:00000000 SPI_WaitFlagStateUntilTimeout
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:325    .text.SPI_WaitFlagStateUntilTimeout:000000b4 $d
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:330    .text.SPI_EndRxTxTransaction:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:335    .text.SPI_EndRxTxTransaction:00000000 SPI_EndRxTxTransaction
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:405    .text.SPI_EndRxTransaction:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:410    .text.SPI_EndRxTransaction:00000000 SPI_EndRxTransaction
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:507    .text.HAL_SPI_MspInit:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:513    .text.HAL_SPI_MspInit:00000000 HAL_SPI_MspInit
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:528    .text.HAL_SPI_Init:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:534    .text.HAL_SPI_Init:00000000 HAL_SPI_Init
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:683    .text.HAL_SPI_MspDeInit:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:689    .text.HAL_SPI_MspDeInit:00000000 HAL_SPI_MspDeInit
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:701    .text.HAL_SPI_DeInit:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:707    .text.HAL_SPI_DeInit:00000000 HAL_SPI_DeInit
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:766    .text.HAL_SPI_Transmit:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:772    .text.HAL_SPI_Transmit:00000000 HAL_SPI_Transmit
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:1117   .text.HAL_SPI_TransmitReceive:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:1123   .text.HAL_SPI_TransmitReceive:00000000 HAL_SPI_TransmitReceive
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:1630   .text.HAL_SPI_Receive:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:1636   .text.HAL_SPI_Receive:00000000 HAL_SPI_Receive
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:1951   .text.HAL_SPI_Transmit_IT:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:1957   .text.HAL_SPI_Transmit_IT:00000000 HAL_SPI_Transmit_IT
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:2102   .text.HAL_SPI_Transmit_IT:00000088 $d
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:4094   .text.SPI_TxISR_16BIT:00000000 SPI_TxISR_16BIT
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:4044   .text.SPI_TxISR_8BIT:00000000 SPI_TxISR_8BIT
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:2108   .text.HAL_SPI_TransmitReceive_IT:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:2114   .text.HAL_SPI_TransmitReceive_IT:00000000 HAL_SPI_TransmitReceive_IT
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:2282   .text.HAL_SPI_TransmitReceive_IT:0000008c $d
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:4598   .text.SPI_2linesRxISR_8BIT:00000000 SPI_2linesRxISR_8BIT
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:4529   .text.SPI_2linesTxISR_8BIT:00000000 SPI_2linesTxISR_8BIT
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:4743   .text.SPI_2linesRxISR_16BIT:00000000 SPI_2linesRxISR_16BIT
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:4667   .text.SPI_2linesTxISR_16BIT:00000000 SPI_2linesTxISR_16BIT
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:2290   .text.HAL_SPI_Receive_IT:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:2296   .text.HAL_SPI_Receive_IT:00000000 HAL_SPI_Receive_IT
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:2482   .text.HAL_SPI_Receive_IT:000000a8 $d
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:4312   .text.SPI_RxISR_16BIT:00000000 SPI_RxISR_16BIT
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:4262   .text.SPI_RxISR_8BIT:00000000 SPI_RxISR_8BIT
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:2488   .text.HAL_SPI_Transmit_DMA:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:2494   .text.HAL_SPI_Transmit_DMA:00000000 HAL_SPI_Transmit_DMA
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:2673   .text.HAL_SPI_Transmit_DMA:000000b0 $d
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3744   .text.SPI_DMAHalfTransmitCplt:00000000 SPI_DMAHalfTransmitCplt
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:4864   .text.SPI_DMATransmitCplt:00000000 SPI_DMATransmitCplt
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:4819   .text.SPI_DMAError:00000000 SPI_DMAError
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:2680   .text.HAL_SPI_TransmitReceive_DMA:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:2686   .text.HAL_SPI_TransmitReceive_DMA:00000000 HAL_SPI_TransmitReceive_DMA
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:2941   .text.HAL_SPI_TransmitReceive_DMA:000000f8 $d
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3844   .text.SPI_DMAHalfTransmitReceiveCplt:00000000 SPI_DMAHalfTransmitReceiveCplt
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:5103   .text.SPI_DMATransmitReceiveCplt:00000000 SPI_DMATransmitReceiveCplt
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3794   .text.SPI_DMAHalfReceiveCplt:00000000 SPI_DMAHalfReceiveCplt
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 216
 
 
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:4989   .text.SPI_DMAReceiveCplt:00000000 SPI_DMAReceiveCplt
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:2950   .text.HAL_SPI_Receive_DMA:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:2956   .text.HAL_SPI_Receive_DMA:00000000 HAL_SPI_Receive_DMA
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3173   .text.HAL_SPI_Receive_DMA:000000d4 $d
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3180   .text.HAL_SPI_Abort:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3186   .text.HAL_SPI_Abort:00000000 HAL_SPI_Abort
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3468   .text.HAL_SPI_Abort:00000110 $d
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3475   .text.HAL_SPI_DMAPause:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3481   .text.HAL_SPI_DMAPause:00000000 HAL_SPI_DMAPause
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3523   .text.HAL_SPI_DMAResume:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3529   .text.HAL_SPI_DMAResume:00000000 HAL_SPI_DMAResume
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3571   .text.HAL_SPI_DMAStop:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3577   .text.HAL_SPI_DMAStop:00000000 HAL_SPI_DMAStop
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3667   .text.HAL_SPI_TxCpltCallback:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3673   .text.HAL_SPI_TxCpltCallback:00000000 HAL_SPI_TxCpltCallback
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3685   .text.HAL_SPI_RxCpltCallback:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3691   .text.HAL_SPI_RxCpltCallback:00000000 HAL_SPI_RxCpltCallback
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3703   .text.HAL_SPI_TxRxCpltCallback:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3709   .text.HAL_SPI_TxRxCpltCallback:00000000 HAL_SPI_TxRxCpltCallback
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3721   .text.HAL_SPI_TxHalfCpltCallback:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3727   .text.HAL_SPI_TxHalfCpltCallback:00000000 HAL_SPI_TxHalfCpltCallback
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3739   .text.SPI_DMAHalfTransmitCplt:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3771   .text.HAL_SPI_RxHalfCpltCallback:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3777   .text.HAL_SPI_RxHalfCpltCallback:00000000 HAL_SPI_RxHalfCpltCallback
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3789   .text.SPI_DMAHalfReceiveCplt:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3821   .text.HAL_SPI_TxRxHalfCpltCallback:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3827   .text.HAL_SPI_TxRxHalfCpltCallback:00000000 HAL_SPI_TxRxHalfCpltCallback
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3839   .text.SPI_DMAHalfTransmitReceiveCplt:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3871   .text.HAL_SPI_ErrorCallback:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3877   .text.HAL_SPI_ErrorCallback:00000000 HAL_SPI_ErrorCallback
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3889   .text.SPI_CloseTx_ISR:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:3894   .text.SPI_CloseTx_ISR:00000000 SPI_CloseTx_ISR
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:4034   .text.SPI_CloseTx_ISR:00000080 $d
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:4039   .text.SPI_TxISR_8BIT:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:4089   .text.SPI_TxISR_16BIT:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:4155   .text.SPI_CloseRx_ISR:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:4160   .text.SPI_CloseRx_ISR:00000000 SPI_CloseRx_ISR
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:4257   .text.SPI_RxISR_8BIT:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:4307   .text.SPI_RxISR_16BIT:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:4354   .text.SPI_CloseRxTx_ISR:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:4359   .text.SPI_CloseRxTx_ISR:00000000 SPI_CloseRxTx_ISR
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:4519   .text.SPI_CloseRxTx_ISR:00000098 $d
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:4524   .text.SPI_2linesTxISR_8BIT:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:4593   .text.SPI_2linesRxISR_8BIT:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:4662   .text.SPI_2linesTxISR_16BIT:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:4738   .text.SPI_2linesRxISR_16BIT:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:4814   .text.SPI_DMAError:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:4859   .text.SPI_DMATransmitCplt:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:4984   .text.SPI_DMAReceiveCplt:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:5098   .text.SPI_DMATransmitReceiveCplt:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:5201   .text.HAL_SPI_IRQHandler:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:5207   .text.HAL_SPI_IRQHandler:00000000 HAL_SPI_IRQHandler
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:5459   .text.HAL_SPI_IRQHandler:000000e8 $d
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:5469   .text.SPI_DMAAbortOnError:00000000 SPI_DMAAbortOnError
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:5464   .text.SPI_DMAAbortOnError:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:5503   .text.HAL_SPI_AbortCpltCallback:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:5509   .text.HAL_SPI_AbortCpltCallback:00000000 HAL_SPI_AbortCpltCallback
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s 			page 217
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:4989   .text.SPI_DMAReceiveCplt:00000000 SPI_DMAReceiveCplt
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:2950   .text.HAL_SPI_Receive_DMA:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:2956   .text.HAL_SPI_Receive_DMA:00000000 HAL_SPI_Receive_DMA
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3173   .text.HAL_SPI_Receive_DMA:000000d4 $d
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3180   .text.HAL_SPI_Abort:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3186   .text.HAL_SPI_Abort:00000000 HAL_SPI_Abort
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3468   .text.HAL_SPI_Abort:00000110 $d
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3475   .text.HAL_SPI_DMAPause:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3481   .text.HAL_SPI_DMAPause:00000000 HAL_SPI_DMAPause
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3523   .text.HAL_SPI_DMAResume:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3529   .text.HAL_SPI_DMAResume:00000000 HAL_SPI_DMAResume
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3571   .text.HAL_SPI_DMAStop:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3577   .text.HAL_SPI_DMAStop:00000000 HAL_SPI_DMAStop
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3667   .text.HAL_SPI_TxCpltCallback:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3673   .text.HAL_SPI_TxCpltCallback:00000000 HAL_SPI_TxCpltCallback
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3685   .text.HAL_SPI_RxCpltCallback:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3691   .text.HAL_SPI_RxCpltCallback:00000000 HAL_SPI_RxCpltCallback
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3703   .text.HAL_SPI_TxRxCpltCallback:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3709   .text.HAL_SPI_TxRxCpltCallback:00000000 HAL_SPI_TxRxCpltCallback
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3721   .text.HAL_SPI_TxHalfCpltCallback:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3727   .text.HAL_SPI_TxHalfCpltCallback:00000000 HAL_SPI_TxHalfCpltCallback
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3739   .text.SPI_DMAHalfTransmitCplt:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3771   .text.HAL_SPI_RxHalfCpltCallback:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3777   .text.HAL_SPI_RxHalfCpltCallback:00000000 HAL_SPI_RxHalfCpltCallback
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3789   .text.SPI_DMAHalfReceiveCplt:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3821   .text.HAL_SPI_TxRxHalfCpltCallback:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3827   .text.HAL_SPI_TxRxHalfCpltCallback:00000000 HAL_SPI_TxRxHalfCpltCallback
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3839   .text.SPI_DMAHalfTransmitReceiveCplt:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3871   .text.HAL_SPI_ErrorCallback:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3877   .text.HAL_SPI_ErrorCallback:00000000 HAL_SPI_ErrorCallback
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3889   .text.SPI_CloseTx_ISR:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:3894   .text.SPI_CloseTx_ISR:00000000 SPI_CloseTx_ISR
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:4034   .text.SPI_CloseTx_ISR:00000080 $d
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:4039   .text.SPI_TxISR_8BIT:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:4089   .text.SPI_TxISR_16BIT:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:4155   .text.SPI_CloseRx_ISR:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:4160   .text.SPI_CloseRx_ISR:00000000 SPI_CloseRx_ISR
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:4257   .text.SPI_RxISR_8BIT:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:4307   .text.SPI_RxISR_16BIT:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:4354   .text.SPI_CloseRxTx_ISR:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:4359   .text.SPI_CloseRxTx_ISR:00000000 SPI_CloseRxTx_ISR
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:4519   .text.SPI_CloseRxTx_ISR:00000098 $d
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:4524   .text.SPI_2linesTxISR_8BIT:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:4593   .text.SPI_2linesRxISR_8BIT:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:4662   .text.SPI_2linesTxISR_16BIT:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:4738   .text.SPI_2linesRxISR_16BIT:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:4814   .text.SPI_DMAError:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:4859   .text.SPI_DMATransmitCplt:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:4984   .text.SPI_DMAReceiveCplt:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:5098   .text.SPI_DMATransmitReceiveCplt:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:5201   .text.HAL_SPI_IRQHandler:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:5207   .text.HAL_SPI_IRQHandler:00000000 HAL_SPI_IRQHandler
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:5459   .text.HAL_SPI_IRQHandler:000000e8 $d
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:5469   .text.SPI_DMAAbortOnError:00000000 SPI_DMAAbortOnError
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:5464   .text.SPI_DMAAbortOnError:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:5503   .text.HAL_SPI_AbortCpltCallback:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:5509   .text.HAL_SPI_AbortCpltCallback:00000000 HAL_SPI_AbortCpltCallback
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s 			page 217
 
 
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:5521   .text.HAL_SPI_Abort_IT:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:5527   .text.HAL_SPI_Abort_IT:00000000 HAL_SPI_Abort_IT
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:5827   .text.HAL_SPI_Abort_IT:00000110 $d
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:5959   .text.SPI_DMATxAbortCallback:00000000 SPI_DMATxAbortCallback
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:5841   .text.SPI_DMARxAbortCallback:00000000 SPI_DMARxAbortCallback
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:5836   .text.SPI_DMARxAbortCallback:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:5954   .text.SPI_DMATxAbortCallback:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:6085   .text.SPI_DMATxAbortCallback:00000074 $d
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:6090   .text.HAL_SPI_GetState:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:6096   .text.HAL_SPI_GetState:00000000 HAL_SPI_GetState
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:6114   .text.HAL_SPI_GetError:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccXoGeAu.s:6120   .text.HAL_SPI_GetError:00000000 HAL_SPI_GetError
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:5521   .text.HAL_SPI_Abort_IT:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:5527   .text.HAL_SPI_Abort_IT:00000000 HAL_SPI_Abort_IT
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:5827   .text.HAL_SPI_Abort_IT:00000110 $d
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:5959   .text.SPI_DMATxAbortCallback:00000000 SPI_DMATxAbortCallback
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:5841   .text.SPI_DMARxAbortCallback:00000000 SPI_DMARxAbortCallback
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:5836   .text.SPI_DMARxAbortCallback:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:5954   .text.SPI_DMATxAbortCallback:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:6085   .text.SPI_DMATxAbortCallback:00000074 $d
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:6090   .text.HAL_SPI_GetState:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:6096   .text.HAL_SPI_GetState:00000000 HAL_SPI_GetState
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:6114   .text.HAL_SPI_GetError:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoLy63o.s:6120   .text.HAL_SPI_GetError:00000000 HAL_SPI_GetError
 
 UNDEFINED SYMBOLS
 SystemCoreClock

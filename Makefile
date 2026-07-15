@@ -81,6 +81,7 @@ Core/Src/device/mqttkit.c \
 Core/Src/device/cjson.c \
 Core/Src/device/at24c02.c \
 Core/Src/device/w25q64.c \
+Core/Src/device/ota_download.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c \
 Core/Src/spi.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c
@@ -172,7 +173,7 @@ LDSCRIPT ?= STM32F103C8Tx_FLASH.ld
 # libraries
 LIBS = -lc -lm -lnosys 
 LIBDIR = 
-LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections -u _printf_float
+LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
 
 # default action: build all
 all: $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).bin

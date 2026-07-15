@@ -12,6 +12,7 @@
 #include "base64.h"
 #include "hmac_sha1.h"
 #include "cJSON.h"
+#include "ota_download.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -169,6 +170,7 @@ bool OneNet_DevLink(void)
                          ONENET_AUTH_KEY, ONENET_DEV_NAME, auth_buf, sizeof(auth_buf), 0);
 
     printf("[ONENET] DevLink: %s, %s\r\n", ONENET_DEV_NAME, ONENET_PROID);
+    printf("[ONENET] Token: %s\r\n", auth_buf);
 
     {
         int retry = 0;
@@ -275,14 +277,36 @@ void OneNet_SendData(void)
 void OneNET_Subscribe(void)
 {
     MQTT_PACKET_STRUCTURE mqtt_packet = {NULL, 0, 0, 0};
-    char topic_buf[56];
+    char topic_buf[80];
     const char *topic = topic_buf;
 
+    /* 订阅属性下发 */
     snprintf(topic_buf, sizeof(topic_buf), "$sys/%s/%s/thing/property/set",
              ONENET_PROID, ONENET_DEV_NAME);
     printf("[ONENET] Subscribe: %s\r\n", topic_buf);
-
     if (MQTT_PacketSubscribe(MQTT_SUBSCRIBE_ID, MQTT_QOS_LEVEL0,
+                             &topic, 1, &mqtt_packet) == 0) {
+        ESP8266_SendData(mqtt_packet._data, mqtt_packet._len);
+        MQTT_DeleteBuffer(&mqtt_packet);
+    }
+
+    /* 订阅 OTA 升级通知 */
+    mqtt_packet._data = NULL; mqtt_packet._len = 0;
+    snprintf(topic_buf, sizeof(topic_buf), "$sys/%s/%s/ota/firmware/get",
+             ONENET_PROID, ONENET_DEV_NAME);
+    printf("[ONENET] Subscribe: %s\r\n", topic_buf);
+    if (MQTT_PacketSubscribe(MQTT_SUBSCRIBE_ID + 1, MQTT_QOS_LEVEL0,
+                             &topic, 1, &mqtt_packet) == 0) {
+        ESP8266_SendData(mqtt_packet._data, mqtt_packet._len);
+        MQTT_DeleteBuffer(&mqtt_packet);
+    }
+
+    /* 订阅 OTA 数据分片 */
+    mqtt_packet._data = NULL; mqtt_packet._len = 0;
+    snprintf(topic_buf, sizeof(topic_buf), "$sys/%s/%s/ota/firmware/data",
+             ONENET_PROID, ONENET_DEV_NAME);
+    printf("[ONENET] Subscribe: %s\r\n", topic_buf);
+    if (MQTT_PacketSubscribe(MQTT_SUBSCRIBE_ID + 2, MQTT_QOS_LEVEL0,
                              &topic, 1, &mqtt_packet) == 0) {
         ESP8266_SendData(mqtt_packet._data, mqtt_packet._len);
         MQTT_DeleteBuffer(&mqtt_packet);
@@ -305,6 +329,11 @@ void OneNet_RevPro(unsigned char *cmd)
         if (MQTT_UnPacketPublish(cmd, &cmdid_topic, &topic_len,
                                  &req_payload, &req_len, &qos, &pkt_id) == 0) {
             printf("[ONENET] Publish: topic=%s, payload=%s\r\n", cmdid_topic, req_payload);
+
+            /* 先检查是否为 OTA 升级消息 */
+            if (OTA_ProcessMessage(cmdid_topic, req_payload, req_len)) {
+                break;  /* OTA 已处理，跳过其他解析 */
+            }
 
             cJSON *raw = cJSON_Parse(req_payload);
             if (raw) {

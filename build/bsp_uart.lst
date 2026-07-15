@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s 			page 1
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -10,7 +10,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s 			page 1
    7              		.eabi_attribute 24, 1
    8              		.eabi_attribute 25, 1
    9              		.eabi_attribute 26, 1
-  10              		.eabi_attribute 30, 1
+  10              		.eabi_attribute 30, 4
   11              		.eabi_attribute 34, 1
   12              		.eabi_attribute 18, 4
   13              		.file	"bsp_uart.c"
@@ -44,446 +44,444 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s 			page 1
   29              		.cfi_startproc
   30              		@ args = 0, pretend = 0, frame = 0
   31              		@ frame_needed = 0, uses_anonymous_args = 0
-  32              		.loc 1 13 1 is_stmt 0 view .LVU1
-  33 0000 08B5     		push	{r3, lr}
-  34              	.LCFI0:
-  35              		.cfi_def_cfa_offset 8
-  36              		.cfi_offset 3, -8
-  37              		.cfi_offset 14, -4
+  32              		@ link register save eliminated.
   14:Core/Src/bsp/bsp_uart.c ****     HAL_UART_Transmit(huart, (uint8_t *)data, len, HAL_MAX_DELAY);
-  38              		.loc 1 14 5 is_stmt 1 view .LVU2
-  39 0002 4FF0FF33 		mov	r3, #-1
-  40 0006 FFF7FEFF 		bl	HAL_UART_Transmit
-  41              	.LVL1:
+  33              		.loc 1 14 5 view .LVU1
+  34 0000 4FF0FF33 		mov	r3, #-1
+  35 0004 FFF7FEBF 		b	HAL_UART_Transmit
+  36              	.LVL1:
+  37              		.loc 1 14 5 is_stmt 0 view .LVU2
+  38              		.cfi_endproc
+  39              	.LFE65:
+  41              		.section	.text.BSP_UART_RegisterRxCallback,"ax",%progbits
+  42              		.align	1
+  43              		.global	BSP_UART_RegisterRxCallback
+  44              		.syntax unified
+  45              		.thumb
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s 			page 2
+
+
+  46              		.thumb_func
+  48              	BSP_UART_RegisterRxCallback:
+  49              	.LVL2:
+  50              	.LFB66:
   15:Core/Src/bsp/bsp_uart.c **** }
-  42              		.loc 1 15 1 is_stmt 0 view .LVU3
-  43 000a 08BD     		pop	{r3, pc}
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s 			page 2
-
-
-  44              		.cfi_endproc
-  45              	.LFE65:
-  47              		.section	.text.BSP_UART_RegisterRxCallback,"ax",%progbits
-  48              		.align	1
-  49              		.global	BSP_UART_RegisterRxCallback
-  50              		.syntax unified
-  51              		.thumb
-  52              		.thumb_func
-  54              	BSP_UART_RegisterRxCallback:
-  55              	.LVL2:
-  56              	.LFB66:
   16:Core/Src/bsp/bsp_uart.c **** 
   17:Core/Src/bsp/bsp_uart.c **** /* ---- 注册接收回调 ---- */
   18:Core/Src/bsp/bsp_uart.c **** void BSP_UART_RegisterRxCallback(UART_HandleTypeDef *huart, BSP_UART_RxCallback cb)
   19:Core/Src/bsp/bsp_uart.c **** {
-  57              		.loc 1 19 1 is_stmt 1 view -0
-  58              		.cfi_startproc
-  59              		@ args = 0, pretend = 0, frame = 0
-  60              		@ frame_needed = 0, uses_anonymous_args = 0
-  61              		@ link register save eliminated.
+  51              		.loc 1 19 1 is_stmt 1 view -0
+  52              		.cfi_startproc
+  53              		@ args = 0, pretend = 0, frame = 0
+  54              		@ frame_needed = 0, uses_anonymous_args = 0
+  55              		@ link register save eliminated.
   20:Core/Src/bsp/bsp_uart.c ****     if (huart->Instance == USART1) {
-  62              		.loc 1 20 5 view .LVU5
-  63              		.loc 1 20 14 is_stmt 0 view .LVU6
-  64 0000 0368     		ldr	r3, [r0]
-  65              		.loc 1 20 8 view .LVU7
-  66 0002 064A     		ldr	r2, .L8
-  67 0004 9342     		cmp	r3, r2
-  68 0006 03D0     		beq	.L6
+  56              		.loc 1 20 5 view .LVU4
+  57              		.loc 1 20 14 is_stmt 0 view .LVU5
+  58 0000 0368     		ldr	r3, [r0]
+  59              		.loc 1 20 8 view .LVU6
+  60 0002 054A     		ldr	r2, .L6
+  61 0004 9342     		cmp	r3, r2
+  62 0006 02D1     		bne	.L3
   21:Core/Src/bsp/bsp_uart.c ****         rxCallback1 = cb;
+  63              		.loc 1 21 9 is_stmt 1 view .LVU7
+  64              		.loc 1 21 21 is_stmt 0 view .LVU8
+  65 0008 044B     		ldr	r3, .L6+4
+  66              	.L5:
   22:Core/Src/bsp/bsp_uart.c ****     } else if (huart->Instance == USART2) {
-  69              		.loc 1 22 12 is_stmt 1 view .LVU8
-  70              		.loc 1 22 15 is_stmt 0 view .LVU9
-  71 0008 054A     		ldr	r2, .L8+4
-  72 000a 9342     		cmp	r3, r2
-  73 000c 03D0     		beq	.L7
-  74              	.L3:
   23:Core/Src/bsp/bsp_uart.c ****         rxCallback2 = cb;
+  67              		.loc 1 23 21 view .LVU9
+  68 000a 1960     		str	r1, [r3]
+  69              	.L2:
   24:Core/Src/bsp/bsp_uart.c ****     }
   25:Core/Src/bsp/bsp_uart.c **** }
-  75              		.loc 1 25 1 view .LVU10
-  76 000e 7047     		bx	lr
-  77              	.L6:
-  21:Core/Src/bsp/bsp_uart.c ****         rxCallback1 = cb;
-  78              		.loc 1 21 9 is_stmt 1 view .LVU11
-  21:Core/Src/bsp/bsp_uart.c ****         rxCallback1 = cb;
-  79              		.loc 1 21 21 is_stmt 0 view .LVU12
-  80 0010 044B     		ldr	r3, .L8+8
-  81 0012 1960     		str	r1, [r3]
-  82 0014 7047     		bx	lr
-  83              	.L7:
-  23:Core/Src/bsp/bsp_uart.c ****         rxCallback2 = cb;
-  84              		.loc 1 23 9 is_stmt 1 view .LVU13
-  23:Core/Src/bsp/bsp_uart.c ****         rxCallback2 = cb;
-  85              		.loc 1 23 21 is_stmt 0 view .LVU14
-  86 0016 044B     		ldr	r3, .L8+12
-  87 0018 1960     		str	r1, [r3]
-  88              		.loc 1 25 1 view .LVU15
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s 			page 3
+  70              		.loc 1 25 1 view .LVU10
+  71 000c 7047     		bx	lr
+  72              	.L3:
+  22:Core/Src/bsp/bsp_uart.c ****     } else if (huart->Instance == USART2) {
+  73              		.loc 1 22 12 is_stmt 1 view .LVU11
+  22:Core/Src/bsp/bsp_uart.c ****     } else if (huart->Instance == USART2) {
+  74              		.loc 1 22 15 is_stmt 0 view .LVU12
+  75 000e 044A     		ldr	r2, .L6+8
+  76 0010 9342     		cmp	r3, r2
+  77 0012 FBD1     		bne	.L2
+  23:Core/Src/bsp/bsp_uart.c ****     }
+  78              		.loc 1 23 9 is_stmt 1 view .LVU13
+  23:Core/Src/bsp/bsp_uart.c ****     }
+  79              		.loc 1 23 21 is_stmt 0 view .LVU14
+  80 0014 034B     		ldr	r3, .L6+12
+  81 0016 F8E7     		b	.L5
+  82              	.L7:
+  83              		.align	2
+  84              	.L6:
+  85 0018 00380140 		.word	1073821696
+  86 001c 00000000 		.word	rxCallback1
+  87 0020 00440040 		.word	1073759232
+  88 0024 00000000 		.word	rxCallback2
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s 			page 3
 
 
-  89 001a F8E7     		b	.L3
-  90              	.L9:
-  91              		.align	2
-  92              	.L8:
-  93 001c 00380140 		.word	1073821696
-  94 0020 00440040 		.word	1073759232
-  95 0024 00000000 		.word	rxCallback1
-  96 0028 00000000 		.word	rxCallback2
-  97              		.cfi_endproc
-  98              	.LFE66:
- 100              		.section	.text.BSP_UART_StartRx_DMA,"ax",%progbits
- 101              		.align	1
- 102              		.global	BSP_UART_StartRx_DMA
- 103              		.syntax unified
- 104              		.thumb
- 105              		.thumb_func
- 107              	BSP_UART_StartRx_DMA:
- 108              	.LVL3:
- 109              	.LFB67:
+  89              		.cfi_endproc
+  90              	.LFE66:
+  92              		.section	.text.BSP_UART_StartRx_DMA,"ax",%progbits
+  93              		.align	1
+  94              		.global	BSP_UART_StartRx_DMA
+  95              		.syntax unified
+  96              		.thumb
+  97              		.thumb_func
+  99              	BSP_UART_StartRx_DMA:
+ 100              	.LVL3:
+ 101              	.LFB67:
   26:Core/Src/bsp/bsp_uart.c **** 
   27:Core/Src/bsp/bsp_uart.c **** /* ---- 启动 DMA 接收（同时记录缓冲区信息以便自动重启） ---- */
   28:Core/Src/bsp/bsp_uart.c **** void BSP_UART_StartRx_DMA(UART_HandleTypeDef *huart, uint8_t *buf, uint16_t bufSize)
   29:Core/Src/bsp/bsp_uart.c **** {
- 110              		.loc 1 29 1 is_stmt 1 view -0
- 111              		.cfi_startproc
- 112              		@ args = 0, pretend = 0, frame = 0
- 113              		@ frame_needed = 0, uses_anonymous_args = 0
- 114              		.loc 1 29 1 is_stmt 0 view .LVU17
- 115 0000 10B5     		push	{r4, lr}
- 116              	.LCFI1:
- 117              		.cfi_def_cfa_offset 8
- 118              		.cfi_offset 4, -8
- 119              		.cfi_offset 14, -4
+ 102              		.loc 1 29 1 is_stmt 1 view -0
+ 103              		.cfi_startproc
+ 104              		@ args = 0, pretend = 0, frame = 0
+ 105              		@ frame_needed = 0, uses_anonymous_args = 0
+ 106              		@ link register save eliminated.
   30:Core/Src/bsp/bsp_uart.c ****     if (huart->Instance == USART1) {
- 120              		.loc 1 30 5 is_stmt 1 view .LVU18
- 121              		.loc 1 30 14 is_stmt 0 view .LVU19
- 122 0002 0368     		ldr	r3, [r0]
- 123              		.loc 1 30 8 view .LVU20
- 124 0004 094C     		ldr	r4, .L16
- 125 0006 A342     		cmp	r3, r4
- 126 0008 05D0     		beq	.L14
+ 107              		.loc 1 30 5 view .LVU16
+  29:Core/Src/bsp/bsp_uart.c ****     if (huart->Instance == USART1) {
+ 108              		.loc 1 29 1 is_stmt 0 view .LVU17
+ 109 0000 10B4     		push	{r4}
+ 110              	.LCFI0:
+ 111              		.cfi_def_cfa_offset 4
+ 112              		.cfi_offset 4, -4
+ 113              		.loc 1 30 14 view .LVU18
+ 114 0002 0368     		ldr	r3, [r0]
+ 115              		.loc 1 30 8 view .LVU19
+ 116 0004 084C     		ldr	r4, .L12
+ 117 0006 A342     		cmp	r3, r4
+ 118 0008 06D1     		bne	.L9
   31:Core/Src/bsp/bsp_uart.c ****         dmaBuf1  = buf;
+ 119              		.loc 1 31 9 is_stmt 1 view .LVU20
+ 120              		.loc 1 31 18 is_stmt 0 view .LVU21
+ 121 000a 084B     		ldr	r3, .L12+4
+ 122 000c 1960     		str	r1, [r3]
   32:Core/Src/bsp/bsp_uart.c ****         dmaSize1 = bufSize;
+ 123              		.loc 1 32 9 is_stmt 1 view .LVU22
+ 124              		.loc 1 32 18 is_stmt 0 view .LVU23
+ 125 000e 084B     		ldr	r3, .L12+8
+ 126              	.L11:
   33:Core/Src/bsp/bsp_uart.c ****     } else if (huart->Instance == USART2) {
- 127              		.loc 1 33 12 is_stmt 1 view .LVU21
- 128              		.loc 1 33 15 is_stmt 0 view .LVU22
- 129 000a 094C     		ldr	r4, .L16+4
- 130 000c A342     		cmp	r3, r4
- 131 000e 07D0     		beq	.L15
- 132              	.L12:
   34:Core/Src/bsp/bsp_uart.c ****         dmaBuf2  = buf;
   35:Core/Src/bsp/bsp_uart.c ****         dmaSize2 = bufSize;
+ 127              		.loc 1 35 18 view .LVU24
+ 128 0010 1A80     		strh	r2, [r3]	@ movhi
+ 129              	.L10:
   36:Core/Src/bsp/bsp_uart.c ****     }
   37:Core/Src/bsp/bsp_uart.c ****     HAL_UARTEx_ReceiveToIdle_DMA(huart, buf, bufSize);
- 133              		.loc 1 37 5 is_stmt 1 view .LVU23
- 134 0010 FFF7FEFF 		bl	HAL_UARTEx_ReceiveToIdle_DMA
- 135              	.LVL4:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s 			page 4
-
-
+ 130              		.loc 1 37 5 is_stmt 1 view .LVU25
   38:Core/Src/bsp/bsp_uart.c **** }
- 136              		.loc 1 38 1 is_stmt 0 view .LVU24
- 137 0014 10BD     		pop	{r4, pc}
- 138              	.LVL5:
- 139              	.L14:
-  31:Core/Src/bsp/bsp_uart.c ****         dmaBuf1  = buf;
- 140              		.loc 1 31 9 is_stmt 1 view .LVU25
-  31:Core/Src/bsp/bsp_uart.c ****         dmaBuf1  = buf;
- 141              		.loc 1 31 18 is_stmt 0 view .LVU26
- 142 0016 074B     		ldr	r3, .L16+8
- 143 0018 1960     		str	r1, [r3]
-  32:Core/Src/bsp/bsp_uart.c ****     } else if (huart->Instance == USART2) {
- 144              		.loc 1 32 9 is_stmt 1 view .LVU27
-  32:Core/Src/bsp/bsp_uart.c ****     } else if (huart->Instance == USART2) {
- 145              		.loc 1 32 18 is_stmt 0 view .LVU28
- 146 001a 074B     		ldr	r3, .L16+12
- 147 001c 1A80     		strh	r2, [r3]	@ movhi
- 148 001e F7E7     		b	.L12
- 149              	.L15:
-  34:Core/Src/bsp/bsp_uart.c ****         dmaBuf2  = buf;
- 150              		.loc 1 34 9 is_stmt 1 view .LVU29
-  34:Core/Src/bsp/bsp_uart.c ****         dmaBuf2  = buf;
- 151              		.loc 1 34 18 is_stmt 0 view .LVU30
- 152 0020 064B     		ldr	r3, .L16+16
- 153 0022 1960     		str	r1, [r3]
+ 131              		.loc 1 38 1 is_stmt 0 view .LVU26
+ 132 0012 10BC     		pop	{r4}
+ 133              	.LCFI1:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s 			page 4
+
+
+ 134              		.cfi_remember_state
+ 135              		.cfi_restore 4
+ 136              		.cfi_def_cfa_offset 0
+  37:Core/Src/bsp/bsp_uart.c **** }
+ 137              		.loc 1 37 5 view .LVU27
+ 138 0014 FFF7FEBF 		b	HAL_UARTEx_ReceiveToIdle_DMA
+ 139              	.LVL4:
+ 140              	.L9:
+ 141              	.LCFI2:
+ 142              		.cfi_restore_state
+  33:Core/Src/bsp/bsp_uart.c ****         dmaBuf2  = buf;
+ 143              		.loc 1 33 12 is_stmt 1 view .LVU28
+  33:Core/Src/bsp/bsp_uart.c ****         dmaBuf2  = buf;
+ 144              		.loc 1 33 15 is_stmt 0 view .LVU29
+ 145 0018 064C     		ldr	r4, .L12+12
+ 146 001a A342     		cmp	r3, r4
+ 147 001c F9D1     		bne	.L10
+  34:Core/Src/bsp/bsp_uart.c ****         dmaSize2 = bufSize;
+ 148              		.loc 1 34 9 is_stmt 1 view .LVU30
+  34:Core/Src/bsp/bsp_uart.c ****         dmaSize2 = bufSize;
+ 149              		.loc 1 34 18 is_stmt 0 view .LVU31
+ 150 001e 064B     		ldr	r3, .L12+16
+ 151 0020 1960     		str	r1, [r3]
   35:Core/Src/bsp/bsp_uart.c ****     }
- 154              		.loc 1 35 9 is_stmt 1 view .LVU31
+ 152              		.loc 1 35 9 is_stmt 1 view .LVU32
   35:Core/Src/bsp/bsp_uart.c ****     }
- 155              		.loc 1 35 18 is_stmt 0 view .LVU32
- 156 0024 064B     		ldr	r3, .L16+20
- 157 0026 1A80     		strh	r2, [r3]	@ movhi
- 158 0028 F2E7     		b	.L12
- 159              	.L17:
- 160 002a 00BF     		.align	2
- 161              	.L16:
- 162 002c 00380140 		.word	1073821696
- 163 0030 00440040 		.word	1073759232
- 164 0034 00000000 		.word	dmaBuf1
- 165 0038 00000000 		.word	dmaSize1
- 166 003c 00000000 		.word	dmaBuf2
- 167 0040 00000000 		.word	dmaSize2
- 168              		.cfi_endproc
- 169              	.LFE67:
- 171              		.section	.text.BSP_UART_HandleIdle,"ax",%progbits
- 172              		.align	1
- 173              		.global	BSP_UART_HandleIdle
- 174              		.syntax unified
- 175              		.thumb
- 176              		.thumb_func
- 178              	BSP_UART_HandleIdle:
- 179              	.LVL6:
- 180              	.LFB68:
+ 153              		.loc 1 35 18 is_stmt 0 view .LVU33
+ 154 0022 064B     		ldr	r3, .L12+20
+ 155 0024 F4E7     		b	.L11
+ 156              	.L13:
+ 157 0026 00BF     		.align	2
+ 158              	.L12:
+ 159 0028 00380140 		.word	1073821696
+ 160 002c 00000000 		.word	dmaBuf1
+ 161 0030 00000000 		.word	dmaSize1
+ 162 0034 00440040 		.word	1073759232
+ 163 0038 00000000 		.word	dmaBuf2
+ 164 003c 00000000 		.word	dmaSize2
+ 165              		.cfi_endproc
+ 166              	.LFE67:
+ 168              		.section	.text.BSP_UART_HandleIdle,"ax",%progbits
+ 169              		.align	1
+ 170              		.global	BSP_UART_HandleIdle
+ 171              		.syntax unified
+ 172              		.thumb
+ 173              		.thumb_func
+ 175              	BSP_UART_HandleIdle:
+ 176              	.LVL5:
+ 177              	.LFB68:
   39:Core/Src/bsp/bsp_uart.c **** 
   40:Core/Src/bsp/bsp_uart.c **** /* ---- USART IDLE 中断处理（stm32f1xx_it.c 中调用） ---- */
   41:Core/Src/bsp/bsp_uart.c **** void BSP_UART_HandleIdle(UART_HandleTypeDef *huart, uint16_t rxLen)
   42:Core/Src/bsp/bsp_uart.c **** {
- 181              		.loc 1 42 1 is_stmt 1 view -0
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s 			page 5
+ 178              		.loc 1 42 1 is_stmt 1 view -0
+ 179              		.cfi_startproc
+ 180              		@ args = 0, pretend = 0, frame = 0
+ 181              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s 			page 5
 
 
- 182              		.cfi_startproc
- 183              		@ args = 0, pretend = 0, frame = 0
- 184              		@ frame_needed = 0, uses_anonymous_args = 0
- 185              		.loc 1 42 1 is_stmt 0 view .LVU34
- 186 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
- 187              	.LCFI2:
- 188              		.cfi_def_cfa_offset 24
- 189              		.cfi_offset 3, -24
- 190              		.cfi_offset 4, -20
- 191              		.cfi_offset 5, -16
- 192              		.cfi_offset 6, -12
- 193              		.cfi_offset 7, -8
- 194              		.cfi_offset 14, -4
- 195 0002 0446     		mov	r4, r0
- 196 0004 0F46     		mov	r7, r1
   43:Core/Src/bsp/bsp_uart.c ****     HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_14);  /* LED 确认 ISR 到达 */
- 197              		.loc 1 43 5 is_stmt 1 view .LVU35
- 198 0006 4FF48041 		mov	r1, #16384
- 199              	.LVL7:
- 200              		.loc 1 43 5 is_stmt 0 view .LVU36
- 201 000a 1548     		ldr	r0, .L28
- 202              	.LVL8:
- 203              		.loc 1 43 5 view .LVU37
- 204 000c FFF7FEFF 		bl	HAL_GPIO_TogglePin
- 205              	.LVL9:
+ 182              		.loc 1 43 5 view .LVU35
+  42:Core/Src/bsp/bsp_uart.c ****     HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_14);  /* LED 确认 ISR 到达 */
+ 183              		.loc 1 42 1 is_stmt 0 view .LVU36
+ 184 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 185              	.LCFI3:
+ 186              		.cfi_def_cfa_offset 24
+ 187              		.cfi_offset 3, -24
+ 188              		.cfi_offset 4, -20
+ 189              		.cfi_offset 5, -16
+ 190              		.cfi_offset 6, -12
+ 191              		.cfi_offset 7, -8
+ 192              		.cfi_offset 14, -4
+  42:Core/Src/bsp/bsp_uart.c ****     HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_14);  /* LED 确认 ISR 到达 */
+ 193              		.loc 1 42 1 view .LVU37
+ 194 0002 0446     		mov	r4, r0
+ 195 0004 0F46     		mov	r7, r1
+ 196              		.loc 1 43 5 view .LVU38
+ 197 0006 1448     		ldr	r0, .L31
+ 198              	.LVL6:
+ 199              		.loc 1 43 5 view .LVU39
+ 200 0008 4FF48041 		mov	r1, #16384
+ 201              	.LVL7:
+ 202              		.loc 1 43 5 view .LVU40
+ 203 000c FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 204              	.LVL8:
   44:Core/Src/bsp/bsp_uart.c ****     BSP_UART_RxCallback cb  = NULL;
- 206              		.loc 1 44 5 is_stmt 1 view .LVU38
+ 205              		.loc 1 44 5 is_stmt 1 view .LVU41
   45:Core/Src/bsp/bsp_uart.c ****     uint8_t          *restartBuf  = NULL;
- 207              		.loc 1 45 5 view .LVU39
+ 206              		.loc 1 45 5 view .LVU42
   46:Core/Src/bsp/bsp_uart.c ****     uint16_t          restartSize = 0;
- 208              		.loc 1 46 5 view .LVU40
+ 207              		.loc 1 46 5 view .LVU43
   47:Core/Src/bsp/bsp_uart.c **** 
   48:Core/Src/bsp/bsp_uart.c ****     if (huart->Instance == USART1) {
- 209              		.loc 1 48 5 view .LVU41
- 210              		.loc 1 48 14 is_stmt 0 view .LVU42
- 211 0010 2368     		ldr	r3, [r4]
- 212              		.loc 1 48 8 view .LVU43
- 213 0012 144A     		ldr	r2, .L28+4
- 214 0014 9342     		cmp	r3, r2
- 215 0016 07D0     		beq	.L25
+ 208              		.loc 1 48 5 view .LVU44
+ 209              		.loc 1 48 14 is_stmt 0 view .LVU45
+ 210 0010 2368     		ldr	r3, [r4]
+ 211              		.loc 1 48 8 view .LVU46
+ 212 0012 124A     		ldr	r2, .L31+4
+ 213 0014 9342     		cmp	r3, r2
+ 214 0016 15D1     		bne	.L15
   49:Core/Src/bsp/bsp_uart.c ****         cb          = rxCallback1;
+ 215              		.loc 1 49 9 is_stmt 1 view .LVU47
   50:Core/Src/bsp/bsp_uart.c ****         restartBuf  = dmaBuf1;
+ 216              		.loc 1 50 21 is_stmt 0 view .LVU48
+ 217 0018 114A     		ldr	r2, .L31+8
+  49:Core/Src/bsp/bsp_uart.c ****         cb          = rxCallback1;
+ 218              		.loc 1 49 21 view .LVU49
+ 219 001a 124B     		ldr	r3, .L31+12
+ 220              		.loc 1 50 21 view .LVU50
+ 221 001c 1568     		ldr	r5, [r2]
+  49:Core/Src/bsp/bsp_uart.c ****         cb          = rxCallback1;
+ 222              		.loc 1 49 21 view .LVU51
+ 223 001e 1B68     		ldr	r3, [r3]
+ 224              	.LVL9:
+ 225              		.loc 1 50 9 is_stmt 1 view .LVU52
   51:Core/Src/bsp/bsp_uart.c ****         restartSize = dmaSize1;
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s 			page 6
+
+
+ 226              		.loc 1 51 9 view .LVU53
+ 227              		.loc 1 51 21 is_stmt 0 view .LVU54
+ 228 0020 114A     		ldr	r2, .L31+16
+ 229              	.L30:
   52:Core/Src/bsp/bsp_uart.c ****     } else if (huart->Instance == USART2) {
- 216              		.loc 1 52 12 is_stmt 1 view .LVU44
- 217              		.loc 1 52 15 is_stmt 0 view .LVU45
- 218 0018 134A     		ldr	r2, .L28+8
- 219 001a 9342     		cmp	r3, r2
- 220 001c 10D0     		beq	.L26
-  46:Core/Src/bsp/bsp_uart.c **** 
- 221              		.loc 1 46 23 view .LVU46
- 222 001e 0025     		movs	r5, #0
-  45:Core/Src/bsp/bsp_uart.c ****     uint16_t          restartSize = 0;
- 223              		.loc 1 45 23 view .LVU47
- 224 0020 2E46     		mov	r6, r5
- 225              	.LVL10:
- 226              	.L21:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s 			page 6
-
-
   53:Core/Src/bsp/bsp_uart.c ****         cb          = rxCallback2;
   54:Core/Src/bsp/bsp_uart.c ****         restartBuf  = dmaBuf2;
   55:Core/Src/bsp/bsp_uart.c ****         restartSize = dmaSize2;
+ 230              		.loc 1 55 21 view .LVU55
+ 231 0022 1688     		ldrh	r6, [r2]
+ 232              	.LVL10:
   56:Core/Src/bsp/bsp_uart.c ****     }
   57:Core/Src/bsp/bsp_uart.c ****     if (cb) {
+ 233              		.loc 1 57 5 is_stmt 1 view .LVU56
+ 234              		.loc 1 57 8 is_stmt 0 view .LVU57
+ 235 0024 13B1     		cbz	r3, .L19
   58:Core/Src/bsp/bsp_uart.c ****         cb(huart, rxLen);
+ 236              		.loc 1 58 9 is_stmt 1 view .LVU58
+ 237 0026 3946     		mov	r1, r7
+ 238 0028 2046     		mov	r0, r4
+ 239 002a 9847     		blx	r3
+ 240              	.LVL11:
+ 241              	.L19:
   59:Core/Src/bsp/bsp_uart.c ****     }
   60:Core/Src/bsp/bsp_uart.c ****     /* 关键：HAL_UARTEx_ReceiveToIdle_DMA 要求 RxState == READY，
   61:Core/Src/bsp/bsp_uart.c ****      * 但 IDLE 事件后 RxState 仍为 BUSY_RX，必须先复位再重启 */
   62:Core/Src/bsp/bsp_uart.c ****     if (restartBuf && restartSize > 0) {
- 227              		.loc 1 62 5 is_stmt 1 view .LVU48
- 228              		.loc 1 62 8 is_stmt 0 view .LVU49
- 229 0022 06B1     		cbz	r6, .L18
- 230              		.loc 1 62 20 discriminator 1 view .LVU50
- 231 0024 9DB9     		cbnz	r5, .L27
- 232              	.L18:
+ 242              		.loc 1 62 5 view .LVU59
+ 243              		.loc 1 62 8 is_stmt 0 view .LVU60
+ 244 002c 9DB1     		cbz	r5, .L14
+ 245              		.loc 1 62 20 discriminator 1 view .LVU61
+ 246 002e 96B1     		cbz	r6, .L14
   63:Core/Src/bsp/bsp_uart.c ****         huart->RxState = HAL_UART_STATE_READY;
+ 247              		.loc 1 63 9 is_stmt 1 view .LVU62
+ 248              		.loc 1 63 24 is_stmt 0 view .LVU63
+ 249 0030 2023     		movs	r3, #32
+ 250 0032 84F84230 		strb	r3, [r4, #66]
   64:Core/Src/bsp/bsp_uart.c ****         HAL_UARTEx_ReceiveToIdle_DMA(huart, restartBuf, restartSize);
+ 251              		.loc 1 64 9 is_stmt 1 view .LVU64
+ 252 0036 3246     		mov	r2, r6
+ 253 0038 2946     		mov	r1, r5
+ 254 003a 2046     		mov	r0, r4
   65:Core/Src/bsp/bsp_uart.c ****     }
   66:Core/Src/bsp/bsp_uart.c **** }
- 233              		.loc 1 66 1 view .LVU51
- 234 0026 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
- 235              	.LVL11:
- 236              	.L25:
-  49:Core/Src/bsp/bsp_uart.c ****         restartBuf  = dmaBuf1;
- 237              		.loc 1 49 9 is_stmt 1 view .LVU52
-  49:Core/Src/bsp/bsp_uart.c ****         restartBuf  = dmaBuf1;
- 238              		.loc 1 49 21 is_stmt 0 view .LVU53
- 239 0028 104B     		ldr	r3, .L28+12
- 240 002a 1B68     		ldr	r3, [r3]
- 241              	.LVL12:
-  50:Core/Src/bsp/bsp_uart.c ****         restartSize = dmaSize1;
- 242              		.loc 1 50 9 is_stmt 1 view .LVU54
-  50:Core/Src/bsp/bsp_uart.c ****         restartSize = dmaSize1;
- 243              		.loc 1 50 21 is_stmt 0 view .LVU55
- 244 002c 104A     		ldr	r2, .L28+16
- 245 002e 1668     		ldr	r6, [r2]
- 246              	.LVL13:
-  51:Core/Src/bsp/bsp_uart.c ****     } else if (huart->Instance == USART2) {
- 247              		.loc 1 51 9 is_stmt 1 view .LVU56
-  51:Core/Src/bsp/bsp_uart.c ****     } else if (huart->Instance == USART2) {
- 248              		.loc 1 51 21 is_stmt 0 view .LVU57
- 249 0030 104A     		ldr	r2, .L28+20
- 250 0032 1588     		ldrh	r5, [r2]
- 251              	.LVL14:
- 252              	.L20:
-  57:Core/Src/bsp/bsp_uart.c ****         cb(huart, rxLen);
- 253              		.loc 1 57 5 is_stmt 1 view .LVU58
-  57:Core/Src/bsp/bsp_uart.c ****         cb(huart, rxLen);
- 254              		.loc 1 57 8 is_stmt 0 view .LVU59
- 255 0034 002B     		cmp	r3, #0
- 256 0036 F4D0     		beq	.L21
-  58:Core/Src/bsp/bsp_uart.c ****     }
- 257              		.loc 1 58 9 is_stmt 1 view .LVU60
- 258 0038 3946     		mov	r1, r7
- 259 003a 2046     		mov	r0, r4
- 260 003c 9847     		blx	r3
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s 			page 7
+ 255              		.loc 1 66 1 is_stmt 0 view .LVU65
+ 256 003c BDE8F840 		pop	{r3, r4, r5, r6, r7, lr}
+ 257              	.LCFI4:
+ 258              		.cfi_remember_state
+ 259              		.cfi_restore 14
+ 260              		.cfi_restore 7
+ 261              		.cfi_restore 6
+ 262              		.cfi_restore 5
+ 263              		.cfi_restore 4
+ 264              		.cfi_restore 3
+ 265              		.cfi_def_cfa_offset 0
+ 266              	.LVL12:
+  64:Core/Src/bsp/bsp_uart.c ****         HAL_UARTEx_ReceiveToIdle_DMA(huart, restartBuf, restartSize);
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s 			page 7
 
 
- 261              	.LVL15:
-  58:Core/Src/bsp/bsp_uart.c ****     }
- 262              		.loc 1 58 9 is_stmt 0 view .LVU61
- 263 003e F0E7     		b	.L21
- 264              	.LVL16:
- 265              	.L26:
+ 267              		.loc 1 64 9 view .LVU66
+ 268 0040 FFF7FEBF 		b	HAL_UARTEx_ReceiveToIdle_DMA
+ 269              	.LVL13:
+ 270              	.L15:
+ 271              	.LCFI5:
+ 272              		.cfi_restore_state
+  52:Core/Src/bsp/bsp_uart.c ****         cb          = rxCallback2;
+ 273              		.loc 1 52 12 is_stmt 1 view .LVU67
+  52:Core/Src/bsp/bsp_uart.c ****         cb          = rxCallback2;
+ 274              		.loc 1 52 15 is_stmt 0 view .LVU68
+ 275 0044 094A     		ldr	r2, .L31+20
+ 276 0046 9342     		cmp	r3, r2
+ 277 0048 05D1     		bne	.L14
   53:Core/Src/bsp/bsp_uart.c ****         restartBuf  = dmaBuf2;
- 266              		.loc 1 53 9 is_stmt 1 view .LVU62
+ 278              		.loc 1 53 9 is_stmt 1 view .LVU69
+  54:Core/Src/bsp/bsp_uart.c ****         restartSize = dmaSize2;
+ 279              		.loc 1 54 21 is_stmt 0 view .LVU70
+ 280 004a 094A     		ldr	r2, .L31+24
   53:Core/Src/bsp/bsp_uart.c ****         restartBuf  = dmaBuf2;
- 267              		.loc 1 53 21 is_stmt 0 view .LVU63
- 268 0040 0D4B     		ldr	r3, .L28+24
- 269 0042 1B68     		ldr	r3, [r3]
- 270              	.LVL17:
+ 281              		.loc 1 53 21 view .LVU71
+ 282 004c 094B     		ldr	r3, .L31+28
   54:Core/Src/bsp/bsp_uart.c ****         restartSize = dmaSize2;
- 271              		.loc 1 54 9 is_stmt 1 view .LVU64
+ 283              		.loc 1 54 21 view .LVU72
+ 284 004e 1568     		ldr	r5, [r2]
+  53:Core/Src/bsp/bsp_uart.c ****         restartBuf  = dmaBuf2;
+ 285              		.loc 1 53 21 view .LVU73
+ 286 0050 1B68     		ldr	r3, [r3]
+ 287              	.LVL14:
   54:Core/Src/bsp/bsp_uart.c ****         restartSize = dmaSize2;
- 272              		.loc 1 54 21 is_stmt 0 view .LVU65
- 273 0044 0D4A     		ldr	r2, .L28+28
- 274 0046 1668     		ldr	r6, [r2]
- 275              	.LVL18:
+ 288              		.loc 1 54 9 is_stmt 1 view .LVU74
   55:Core/Src/bsp/bsp_uart.c ****     }
- 276              		.loc 1 55 9 is_stmt 1 view .LVU66
+ 289              		.loc 1 55 9 view .LVU75
   55:Core/Src/bsp/bsp_uart.c ****     }
- 277              		.loc 1 55 21 is_stmt 0 view .LVU67
- 278 0048 0D4A     		ldr	r2, .L28+32
- 279 004a 1588     		ldrh	r5, [r2]
- 280 004c F2E7     		b	.L20
- 281              	.LVL19:
- 282              	.L27:
-  63:Core/Src/bsp/bsp_uart.c ****         HAL_UARTEx_ReceiveToIdle_DMA(huart, restartBuf, restartSize);
- 283              		.loc 1 63 9 is_stmt 1 view .LVU68
-  63:Core/Src/bsp/bsp_uart.c ****         HAL_UARTEx_ReceiveToIdle_DMA(huart, restartBuf, restartSize);
- 284              		.loc 1 63 24 is_stmt 0 view .LVU69
- 285 004e 2023     		movs	r3, #32
- 286 0050 84F84230 		strb	r3, [r4, #66]
-  64:Core/Src/bsp/bsp_uart.c ****     }
- 287              		.loc 1 64 9 is_stmt 1 view .LVU70
- 288 0054 2A46     		mov	r2, r5
- 289 0056 3146     		mov	r1, r6
- 290 0058 2046     		mov	r0, r4
- 291 005a FFF7FEFF 		bl	HAL_UARTEx_ReceiveToIdle_DMA
- 292              	.LVL20:
- 293              		.loc 1 66 1 is_stmt 0 view .LVU71
- 294 005e E2E7     		b	.L18
- 295              	.L29:
- 296              		.align	2
- 297              	.L28:
- 298 0060 00100140 		.word	1073811456
- 299 0064 00380140 		.word	1073821696
- 300 0068 00440040 		.word	1073759232
- 301 006c 00000000 		.word	rxCallback1
- 302 0070 00000000 		.word	dmaBuf1
- 303 0074 00000000 		.word	dmaSize1
- 304 0078 00000000 		.word	rxCallback2
- 305 007c 00000000 		.word	dmaBuf2
- 306 0080 00000000 		.word	dmaSize2
- 307              		.cfi_endproc
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s 			page 8
+ 290              		.loc 1 55 21 is_stmt 0 view .LVU76
+ 291 0052 094A     		ldr	r2, .L31+32
+ 292 0054 E5E7     		b	.L30
+ 293              	.LVL15:
+ 294              	.L14:
+ 295              		.loc 1 66 1 view .LVU77
+ 296 0056 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 297              	.LVL16:
+ 298              	.L32:
+ 299              		.loc 1 66 1 view .LVU78
+ 300              		.align	2
+ 301              	.L31:
+ 302 0058 00100140 		.word	1073811456
+ 303 005c 00380140 		.word	1073821696
+ 304 0060 00000000 		.word	dmaBuf1
+ 305 0064 00000000 		.word	rxCallback1
+ 306 0068 00000000 		.word	dmaSize1
+ 307 006c 00440040 		.word	1073759232
+ 308 0070 00000000 		.word	dmaBuf2
+ 309 0074 00000000 		.word	rxCallback2
+ 310 0078 00000000 		.word	dmaSize2
+ 311              		.cfi_endproc
+ 312              	.LFE68:
+ 314              		.section	.bss.dmaSize2,"aw",%nobits
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s 			page 8
 
 
- 308              	.LFE68:
- 310              		.section	.bss.dmaSize2,"aw",%nobits
- 311              		.align	1
- 314              	dmaSize2:
- 315 0000 0000     		.space	2
- 316              		.section	.bss.dmaSize1,"aw",%nobits
- 317              		.align	1
- 320              	dmaSize1:
- 321 0000 0000     		.space	2
- 322              		.section	.bss.dmaBuf2,"aw",%nobits
- 323              		.align	2
- 326              	dmaBuf2:
- 327 0000 00000000 		.space	4
- 328              		.section	.bss.dmaBuf1,"aw",%nobits
- 329              		.align	2
- 332              	dmaBuf1:
- 333 0000 00000000 		.space	4
- 334              		.section	.bss.rxCallback2,"aw",%nobits
- 335              		.align	2
- 338              	rxCallback2:
- 339 0000 00000000 		.space	4
- 340              		.section	.bss.rxCallback1,"aw",%nobits
- 341              		.align	2
- 344              	rxCallback1:
- 345 0000 00000000 		.space	4
- 346              		.text
- 347              	.Letext0:
- 348              		.file 2 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_defa
- 349              		.file 3 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h
- 350              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h"
- 351              		.file 5 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h"
- 352              		.file 6 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h"
- 353              		.file 7 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h"
- 354              		.file 8 "Core/Inc/bsp/bsp_uart.h"
- 355              		.file 9 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio.h"
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s 			page 9
+ 315              		.align	1
+ 318              	dmaSize2:
+ 319 0000 0000     		.space	2
+ 320              		.section	.bss.dmaSize1,"aw",%nobits
+ 321              		.align	1
+ 324              	dmaSize1:
+ 325 0000 0000     		.space	2
+ 326              		.section	.bss.dmaBuf2,"aw",%nobits
+ 327              		.align	2
+ 330              	dmaBuf2:
+ 331 0000 00000000 		.space	4
+ 332              		.section	.bss.dmaBuf1,"aw",%nobits
+ 333              		.align	2
+ 336              	dmaBuf1:
+ 337 0000 00000000 		.space	4
+ 338              		.section	.bss.rxCallback2,"aw",%nobits
+ 339              		.align	2
+ 342              	rxCallback2:
+ 343 0000 00000000 		.space	4
+ 344              		.section	.bss.rxCallback1,"aw",%nobits
+ 345              		.align	2
+ 348              	rxCallback1:
+ 349 0000 00000000 		.space	4
+ 350              		.text
+ 351              	.Letext0:
+ 352              		.file 2 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_defa
+ 353              		.file 3 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h
+ 354              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h"
+ 355              		.file 5 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h"
+ 356              		.file 6 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h"
+ 357              		.file 7 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h"
+ 358              		.file 8 "Core/Inc/bsp/bsp_uart.h"
+ 359              		.file 9 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio.h"
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s 			page 9
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 bsp_uart.c
-C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s:19     .text.BSP_UART_Send:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s:25     .text.BSP_UART_Send:00000000 BSP_UART_Send
-C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s:48     .text.BSP_UART_RegisterRxCallback:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s:54     .text.BSP_UART_RegisterRxCallback:00000000 BSP_UART_RegisterRxCallback
-C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s:93     .text.BSP_UART_RegisterRxCallback:0000001c $d
-C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s:344    .bss.rxCallback1:00000000 rxCallback1
-C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s:338    .bss.rxCallback2:00000000 rxCallback2
-C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s:101    .text.BSP_UART_StartRx_DMA:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s:107    .text.BSP_UART_StartRx_DMA:00000000 BSP_UART_StartRx_DMA
-C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s:162    .text.BSP_UART_StartRx_DMA:0000002c $d
-C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s:332    .bss.dmaBuf1:00000000 dmaBuf1
-C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s:320    .bss.dmaSize1:00000000 dmaSize1
-C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s:326    .bss.dmaBuf2:00000000 dmaBuf2
-C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s:314    .bss.dmaSize2:00000000 dmaSize2
-C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s:172    .text.BSP_UART_HandleIdle:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s:178    .text.BSP_UART_HandleIdle:00000000 BSP_UART_HandleIdle
-C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s:298    .text.BSP_UART_HandleIdle:00000060 $d
-C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s:311    .bss.dmaSize2:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s:317    .bss.dmaSize1:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s:323    .bss.dmaBuf2:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s:329    .bss.dmaBuf1:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s:335    .bss.rxCallback2:00000000 $d
-C:\Users\airforce\AppData\Local\Temp\ccig9T4s.s:341    .bss.rxCallback1:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s:19     .text.BSP_UART_Send:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s:25     .text.BSP_UART_Send:00000000 BSP_UART_Send
+C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s:42     .text.BSP_UART_RegisterRxCallback:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s:48     .text.BSP_UART_RegisterRxCallback:00000000 BSP_UART_RegisterRxCallback
+C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s:85     .text.BSP_UART_RegisterRxCallback:00000018 $d
+C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s:348    .bss.rxCallback1:00000000 rxCallback1
+C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s:342    .bss.rxCallback2:00000000 rxCallback2
+C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s:93     .text.BSP_UART_StartRx_DMA:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s:99     .text.BSP_UART_StartRx_DMA:00000000 BSP_UART_StartRx_DMA
+C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s:159    .text.BSP_UART_StartRx_DMA:00000028 $d
+C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s:336    .bss.dmaBuf1:00000000 dmaBuf1
+C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s:324    .bss.dmaSize1:00000000 dmaSize1
+C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s:330    .bss.dmaBuf2:00000000 dmaBuf2
+C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s:318    .bss.dmaSize2:00000000 dmaSize2
+C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s:169    .text.BSP_UART_HandleIdle:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s:175    .text.BSP_UART_HandleIdle:00000000 BSP_UART_HandleIdle
+C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s:302    .text.BSP_UART_HandleIdle:00000058 $d
+C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s:315    .bss.dmaSize2:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s:321    .bss.dmaSize1:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s:327    .bss.dmaBuf2:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s:333    .bss.dmaBuf1:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s:339    .bss.rxCallback2:00000000 $d
+C:\Users\airforce\AppData\Local\Temp\ccoaPD68.s:345    .bss.rxCallback1:00000000 $d
 
 UNDEFINED SYMBOLS
 HAL_UART_Transmit

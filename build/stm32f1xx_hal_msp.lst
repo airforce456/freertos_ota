@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7chTlo.s 			page 1
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccSSUToC.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -10,7 +10,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7chTlo.s 			page 1
    7              		.eabi_attribute 24, 1
    8              		.eabi_attribute 25, 1
    9              		.eabi_attribute 26, 1
-  10              		.eabi_attribute 30, 1
+  10              		.eabi_attribute 30, 4
   11              		.eabi_attribute 34, 1
   12              		.eabi_attribute 18, 4
   13              		.file	"stm32f1xx_hal_msp.c"
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7chTlo.s 			page 1
   30:Core/Src/stm32f1xx_hal_msp.c **** /* USER CODE END TD */
   31:Core/Src/stm32f1xx_hal_msp.c **** 
   32:Core/Src/stm32f1xx_hal_msp.c **** /* Private define ------------------------------------------------------------*/
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7chTlo.s 			page 2
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccSSUToC.s 			page 2
 
 
   33:Core/Src/stm32f1xx_hal_msp.c **** /* USER CODE BEGIN Define */
@@ -98,104 +98,118 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7chTlo.s 			page 1
   29              		@ args = 0, pretend = 0, frame = 8
   30              		@ frame_needed = 0, uses_anonymous_args = 0
   31              		@ link register save eliminated.
-  32 0000 82B0     		sub	sp, sp, #8
-  33              	.LCFI0:
-  34              		.cfi_def_cfa_offset 8
   65:Core/Src/stm32f1xx_hal_msp.c ****   /* USER CODE BEGIN MspInit 0 */
   66:Core/Src/stm32f1xx_hal_msp.c **** 
   67:Core/Src/stm32f1xx_hal_msp.c ****   /* USER CODE END MspInit 0 */
   68:Core/Src/stm32f1xx_hal_msp.c **** 
   69:Core/Src/stm32f1xx_hal_msp.c ****   __HAL_RCC_AFIO_CLK_ENABLE();
-  35              		.loc 1 69 3 view .LVU1
-  36              	.LBB2:
-  37              		.loc 1 69 3 view .LVU2
-  38              		.loc 1 69 3 view .LVU3
-  39 0002 0E4B     		ldr	r3, .L3
-  40 0004 9A69     		ldr	r2, [r3, #24]
-  41 0006 42F00102 		orr	r2, r2, #1
-  42 000a 9A61     		str	r2, [r3, #24]
-  43              		.loc 1 69 3 view .LVU4
-  44 000c 9A69     		ldr	r2, [r3, #24]
-  45 000e 02F00102 		and	r2, r2, #1
-  46 0012 0092     		str	r2, [sp]
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7chTlo.s 			page 3
+  32              		.loc 1 69 3 view .LVU1
+  33              	.LBB2:
+  34              		.loc 1 69 3 view .LVU2
+  35              		.loc 1 69 3 view .LVU3
+  36 0000 0E4B     		ldr	r3, .L2
+  37              	.LBE2:
+  64:Core/Src/stm32f1xx_hal_msp.c ****   /* USER CODE BEGIN MspInit 0 */
+  38              		.loc 1 64 1 is_stmt 0 view .LVU4
+  39 0002 82B0     		sub	sp, sp, #8
+  40              	.LCFI0:
+  41              		.cfi_def_cfa_offset 8
+  42              	.LBB3:
+  43              		.loc 1 69 3 view .LVU5
+  44 0004 9A69     		ldr	r2, [r3, #24]
+  45 0006 42F00102 		orr	r2, r2, #1
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccSSUToC.s 			page 3
 
 
-  47              		.loc 1 69 3 view .LVU5
-  48 0014 009A     		ldr	r2, [sp]
-  49              	.LBE2:
-  50              		.loc 1 69 3 view .LVU6
+  46 000a 9A61     		str	r2, [r3, #24]
+  47              		.loc 1 69 3 is_stmt 1 view .LVU6
+  48 000c 9A69     		ldr	r2, [r3, #24]
+  49 000e 02F00102 		and	r2, r2, #1
+  50 0012 0092     		str	r2, [sp]
+  51              		.loc 1 69 3 view .LVU7
+  52 0014 009A     		ldr	r2, [sp]
+  53              	.LBE3:
+  54              		.loc 1 69 3 view .LVU8
   70:Core/Src/stm32f1xx_hal_msp.c ****   __HAL_RCC_PWR_CLK_ENABLE();
-  51              		.loc 1 70 3 view .LVU7
-  52              	.LBB3:
-  53              		.loc 1 70 3 view .LVU8
-  54              		.loc 1 70 3 view .LVU9
-  55 0016 DA69     		ldr	r2, [r3, #28]
-  56 0018 42F08052 		orr	r2, r2, #268435456
-  57 001c DA61     		str	r2, [r3, #28]
-  58              		.loc 1 70 3 view .LVU10
-  59 001e DB69     		ldr	r3, [r3, #28]
-  60 0020 03F08053 		and	r3, r3, #268435456
-  61 0024 0193     		str	r3, [sp, #4]
-  62              		.loc 1 70 3 view .LVU11
-  63 0026 019B     		ldr	r3, [sp, #4]
-  64              	.LBE3:
-  65              		.loc 1 70 3 view .LVU12
+  55              		.loc 1 70 3 view .LVU9
+  56              	.LBB4:
+  57              		.loc 1 70 3 view .LVU10
+  58              		.loc 1 70 3 view .LVU11
+  59 0016 DA69     		ldr	r2, [r3, #28]
+  60 0018 42F08052 		orr	r2, r2, #268435456
+  61 001c DA61     		str	r2, [r3, #28]
+  62              		.loc 1 70 3 view .LVU12
+  63 001e DB69     		ldr	r3, [r3, #28]
+  64              	.LBE4:
+  65              	.LBB5:
   71:Core/Src/stm32f1xx_hal_msp.c **** 
   72:Core/Src/stm32f1xx_hal_msp.c ****   /* System interrupt init*/
   73:Core/Src/stm32f1xx_hal_msp.c **** 
   74:Core/Src/stm32f1xx_hal_msp.c ****   /** NOJTAG: JTAG-DP Disabled and SW-DP Enabled
   75:Core/Src/stm32f1xx_hal_msp.c ****   */
   76:Core/Src/stm32f1xx_hal_msp.c ****   __HAL_AFIO_REMAP_SWJ_NOJTAG();
-  66              		.loc 1 76 3 view .LVU13
-  67              	.LBB4:
-  68              		.loc 1 76 3 view .LVU14
-  69 0028 054A     		ldr	r2, .L3+4
-  70 002a 5368     		ldr	r3, [r2, #4]
-  71              	.LVL0:
-  72              		.loc 1 76 3 view .LVU15
-  73 002c 23F0E063 		bic	r3, r3, #117440512
-  74              	.LVL1:
-  75              		.loc 1 76 3 view .LVU16
-  76 0030 43F00073 		orr	r3, r3, #33554432
-  77              	.LVL2:
-  78              		.loc 1 76 3 view .LVU17
-  79 0034 5360     		str	r3, [r2, #4]
-  80              	.LBE4:
-  81              		.loc 1 76 3 view .LVU18
+  66              		.loc 1 76 3 is_stmt 0 view .LVU13
+  67 0020 074A     		ldr	r2, .L2+4
+  68              	.LBE5:
+  69              	.LBB6:
+  70:Core/Src/stm32f1xx_hal_msp.c ****   __HAL_RCC_PWR_CLK_ENABLE();
+  70              		.loc 1 70 3 view .LVU14
+  71 0022 03F08053 		and	r3, r3, #268435456
+  72 0026 0193     		str	r3, [sp, #4]
+  70:Core/Src/stm32f1xx_hal_msp.c ****   __HAL_RCC_PWR_CLK_ENABLE();
+  73              		.loc 1 70 3 is_stmt 1 view .LVU15
+  74 0028 019B     		ldr	r3, [sp, #4]
+  75              	.LBE6:
+  70:Core/Src/stm32f1xx_hal_msp.c ****   __HAL_RCC_PWR_CLK_ENABLE();
+  76              		.loc 1 70 3 view .LVU16
+  77              		.loc 1 76 3 view .LVU17
+  78              	.LBB7:
+  79              		.loc 1 76 3 view .LVU18
+  80 002a 5368     		ldr	r3, [r2, #4]
+  81              	.LVL0:
+  82              		.loc 1 76 3 view .LVU19
+  83 002c 23F0E063 		bic	r3, r3, #117440512
+  84              	.LVL1:
+  85              		.loc 1 76 3 view .LVU20
+  86 0030 43F00073 		orr	r3, r3, #33554432
+  87              	.LVL2:
+  88              		.loc 1 76 3 view .LVU21
+  89 0034 5360     		str	r3, [r2, #4]
+  90              	.LBE7:
+  91              		.loc 1 76 3 view .LVU22
   77:Core/Src/stm32f1xx_hal_msp.c **** 
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccSSUToC.s 			page 4
+
+
   78:Core/Src/stm32f1xx_hal_msp.c ****   /* USER CODE BEGIN MspInit 1 */
   79:Core/Src/stm32f1xx_hal_msp.c **** 
   80:Core/Src/stm32f1xx_hal_msp.c ****   /* USER CODE END MspInit 1 */
   81:Core/Src/stm32f1xx_hal_msp.c **** }
-  82              		.loc 1 81 1 is_stmt 0 view .LVU19
-  83 0036 02B0     		add	sp, sp, #8
-  84              	.LCFI1:
-  85              		.cfi_def_cfa_offset 0
-  86              		@ sp needed
-  87 0038 7047     		bx	lr
-  88              	.L4:
-  89 003a 00BF     		.align	2
-  90              	.L3:
-  91 003c 00100240 		.word	1073876992
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7chTlo.s 			page 4
-
-
-  92 0040 00000140 		.word	1073807360
-  93              		.cfi_endproc
-  94              	.LFE65:
-  96              		.text
-  97              	.Letext0:
-  98              		.file 2 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_defa
-  99              		.file 3 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h
- 100              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h"
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc7chTlo.s 			page 5
+  92              		.loc 1 81 1 is_stmt 0 view .LVU23
+  93 0036 02B0     		add	sp, sp, #8
+  94              	.LCFI1:
+  95              		.cfi_def_cfa_offset 0
+  96              		@ sp needed
+  97 0038 7047     		bx	lr
+  98              	.L3:
+  99 003a 00BF     		.align	2
+ 100              	.L2:
+ 101 003c 00100240 		.word	1073876992
+ 102 0040 00000140 		.word	1073807360
+ 103              		.cfi_endproc
+ 104              	.LFE65:
+ 106              		.text
+ 107              	.Letext0:
+ 108              		.file 2 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_defa
+ 109              		.file 3 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h
+ 110              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h"
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccSSUToC.s 			page 5
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 stm32f1xx_hal_msp.c
-C:\Users\airforce\AppData\Local\Temp\cc7chTlo.s:19     .text.HAL_MspInit:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\cc7chTlo.s:25     .text.HAL_MspInit:00000000 HAL_MspInit
-C:\Users\airforce\AppData\Local\Temp\cc7chTlo.s:91     .text.HAL_MspInit:0000003c $d
+C:\Users\airforce\AppData\Local\Temp\ccSSUToC.s:19     .text.HAL_MspInit:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccSSUToC.s:25     .text.HAL_MspInit:00000000 HAL_MspInit
+C:\Users\airforce\AppData\Local\Temp\ccSSUToC.s:101    .text.HAL_MspInit:0000003c $d
 
 NO UNDEFINED SYMBOLS

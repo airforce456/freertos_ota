@@ -94,7 +94,9 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
   /* 向量表偏移：APP 从 0x08005000 启动，Bootloader 在 0x08000000 */
-//   SCB->VTOR = 0x08005000;
+  SCB->VTOR = 0x08005000;
+  /* Bootloader 跳转前关了全局中断，APP 需要重新打开 */
+  __enable_irq();
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/

@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s 			page 1
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -10,7 +10,7 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s 			page 1
    7              		.eabi_attribute 24, 1
    8              		.eabi_attribute 25, 1
    9              		.eabi_attribute 26, 1
-  10              		.eabi_attribute 30, 1
+  10              		.eabi_attribute 30, 4
   11              		.eabi_attribute 34, 1
   12              		.eabi_attribute 18, 4
   13              		.file	"bsp_i2c.c"
@@ -38,540 +38,559 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s 			page 1
    5:Core/Src/bsp/bsp_i2c.c ****     return (GPIOB->IDR & GPIO_PIN_7) ? 1 : 0;
   32              		.loc 1 5 5 view .LVU1
   33              		.loc 1 5 18 is_stmt 0 view .LVU2
-  34 0000 034B     		ldr	r3, .L2
+  34 0000 024B     		ldr	r3, .L2
   35 0002 9868     		ldr	r0, [r3, #8]
-  36              		.loc 1 5 24 view .LVU3
-  37 0004 00F08000 		and	r0, r0, #128
    6:Core/Src/bsp/bsp_i2c.c **** }
-  38              		.loc 1 6 1 view .LVU4
-  39 0008 0038     		subs	r0, r0, #0
-  40 000a 18BF     		it	ne
-  41 000c 0120     		movne	r0, #1
-  42 000e 7047     		bx	lr
-  43              	.L3:
-  44              		.align	2
-  45              	.L2:
-  46 0010 000C0140 		.word	1073810432
-  47              		.cfi_endproc
-  48              	.LFE70:
-  50              		.section	.text.MyI2C_Init,"ax",%progbits
-  51              		.align	1
-  52              		.global	MyI2C_Init
-  53              		.syntax unified
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s 			page 2
+  36              		.loc 1 6 1 view .LVU3
+  37 0004 C0F3C010 		ubfx	r0, r0, #7, #1
+  38 0008 7047     		bx	lr
+  39              	.L3:
+  40 000a 00BF     		.align	2
+  41              	.L2:
+  42 000c 000C0140 		.word	1073810432
+  43              		.cfi_endproc
+  44              	.LFE70:
+  46              		.section	.text.MyI2C_Init,"ax",%progbits
+  47              		.align	1
+  48              		.global	MyI2C_Init
+  49              		.syntax unified
+  50              		.thumb
+  51              		.thumb_func
+  53              	MyI2C_Init:
+  54              	.LFB71:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s 			page 2
 
 
-  54              		.thumb
-  55              		.thumb_func
-  57              	MyI2C_Init:
-  58              	.LFB71:
    7:Core/Src/bsp/bsp_i2c.c **** 
    8:Core/Src/bsp/bsp_i2c.c **** void MyI2C_Init(void)
    9:Core/Src/bsp/bsp_i2c.c **** {
-  59              		.loc 1 9 1 is_stmt 1 view -0
-  60              		.cfi_startproc
-  61              		@ args = 0, pretend = 0, frame = 16
-  62              		@ frame_needed = 0, uses_anonymous_args = 0
-  63 0000 10B5     		push	{r4, lr}
-  64              	.LCFI0:
-  65              		.cfi_def_cfa_offset 8
-  66              		.cfi_offset 4, -8
-  67              		.cfi_offset 14, -4
-  68 0002 84B0     		sub	sp, sp, #16
-  69              	.LCFI1:
-  70              		.cfi_def_cfa_offset 24
+  55              		.loc 1 9 1 is_stmt 1 view -0
+  56              		.cfi_startproc
+  57              		@ args = 0, pretend = 0, frame = 16
+  58              		@ frame_needed = 0, uses_anonymous_args = 0
   10:Core/Src/bsp/bsp_i2c.c ****     I2C1->CR1 &= ~I2C_CR1_PE;    // 关掉 I2C1 硬件外设，释放 PB6/PB7
-  71              		.loc 1 10 5 view .LVU6
-  72              		.loc 1 10 9 is_stmt 0 view .LVU7
-  73 0004 0F4B     		ldr	r3, .L6
-  74 0006 1A68     		ldr	r2, [r3]
-  75              		.loc 1 10 15 view .LVU8
-  76 0008 22F00102 		bic	r2, r2, #1
-  77 000c 1A60     		str	r2, [r3]
+  59              		.loc 1 10 5 view .LVU5
+   9:Core/Src/bsp/bsp_i2c.c ****     I2C1->CR1 &= ~I2C_CR1_PE;    // 关掉 I2C1 硬件外设，释放 PB6/PB7
+  60              		.loc 1 9 1 is_stmt 0 view .LVU6
+  61 0000 1FB5     		push	{r0, r1, r2, r3, r4, lr}
+  62              	.LCFI0:
+  63              		.cfi_def_cfa_offset 24
+  64              		.cfi_offset 14, -4
+  65              		.loc 1 10 9 view .LVU7
+  66 0002 0E4B     		ldr	r3, .L5
   11:Core/Src/bsp/bsp_i2c.c ****     I2C1->CR1 &= ~I2C_CR1_PE;
-  78              		.loc 1 11 5 is_stmt 1 view .LVU9
-  79              		.loc 1 11 9 is_stmt 0 view .LVU10
-  80 000e 1A68     		ldr	r2, [r3]
-  81              		.loc 1 11 15 view .LVU11
-  82 0010 22F00102 		bic	r2, r2, #1
-  83 0014 1A60     		str	r2, [r3]
   12:Core/Src/bsp/bsp_i2c.c **** 
   13:Core/Src/bsp/bsp_i2c.c ****     GPIO_InitTypeDef cfg = {0};
-  84              		.loc 1 13 5 is_stmt 1 view .LVU12
-  85              		.loc 1 13 22 is_stmt 0 view .LVU13
-  86 0016 6946     		mov	r1, sp
-  87 0018 0023     		movs	r3, #0
-  88 001a 0093     		str	r3, [sp]
-  89 001c 0193     		str	r3, [sp, #4]
-  90 001e 0293     		str	r3, [sp, #8]
-  91 0020 0393     		str	r3, [sp, #12]
   14:Core/Src/bsp/bsp_i2c.c ****     cfg.Pin   = SOFT_I2C_SCL_PIN | SOFT_I2C_SDA_PIN;
-  92              		.loc 1 14 5 is_stmt 1 view .LVU14
-  93              		.loc 1 14 15 is_stmt 0 view .LVU15
-  94 0022 C023     		movs	r3, #192
-  95 0024 0093     		str	r3, [sp]
   15:Core/Src/bsp/bsp_i2c.c ****     cfg.Mode  = GPIO_MODE_OUTPUT_OD;    // 普通 GPIO 开漏，不是复用
-  96              		.loc 1 15 5 is_stmt 1 view .LVU16
-  97              		.loc 1 15 15 is_stmt 0 view .LVU17
-  98 0026 1123     		movs	r3, #17
-  99 0028 0193     		str	r3, [sp, #4]
   16:Core/Src/bsp/bsp_i2c.c ****     cfg.Speed = GPIO_SPEED_FREQ_HIGH;
- 100              		.loc 1 16 5 is_stmt 1 view .LVU18
- 101              		.loc 1 16 15 is_stmt 0 view .LVU19
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s 			page 3
-
-
- 102 002a 0323     		movs	r3, #3
- 103 002c 0393     		str	r3, [sp, #12]
+  67              		.loc 1 16 15 view .LVU8
+  68 0004 4FF0030C 		mov	ip, #3
+  10:Core/Src/bsp/bsp_i2c.c ****     I2C1->CR1 &= ~I2C_CR1_PE;
+  69              		.loc 1 10 9 view .LVU9
+  70 0008 1A68     		ldr	r2, [r3]
+  71              		.loc 1 16 15 view .LVU10
+  72 000a C020     		movs	r0, #192
+  10:Core/Src/bsp/bsp_i2c.c ****     I2C1->CR1 &= ~I2C_CR1_PE;
+  73              		.loc 1 10 15 view .LVU11
+  74 000c 22F00102 		bic	r2, r2, #1
+  75 0010 1A60     		str	r2, [r3]
+  11:Core/Src/bsp/bsp_i2c.c ****     I2C1->CR1 &= ~I2C_CR1_PE;
+  76              		.loc 1 11 5 is_stmt 1 view .LVU12
+  11:Core/Src/bsp/bsp_i2c.c ****     I2C1->CR1 &= ~I2C_CR1_PE;
+  77              		.loc 1 11 9 is_stmt 0 view .LVU13
+  78 0012 1A68     		ldr	r2, [r3]
+  79              		.loc 1 16 15 view .LVU14
+  80 0014 1121     		movs	r1, #17
+  11:Core/Src/bsp/bsp_i2c.c ****     I2C1->CR1 &= ~I2C_CR1_PE;
+  81              		.loc 1 11 15 view .LVU15
+  82 0016 22F00102 		bic	r2, r2, #1
+  83 001a 1A60     		str	r2, [r3]
+  13:Core/Src/bsp/bsp_i2c.c ****     cfg.Pin   = SOFT_I2C_SCL_PIN | SOFT_I2C_SDA_PIN;
+  84              		.loc 1 13 5 is_stmt 1 view .LVU16
+  85              		.loc 1 16 15 is_stmt 0 view .LVU17
+  86 001c 0023     		movs	r3, #0
+  87 001e 8DE80B10 		stm	sp, {r0, r1, r3, ip}
   17:Core/Src/bsp/bsp_i2c.c ****     HAL_GPIO_Init(SOFT_I2C_SCL_PORT, &cfg);
- 104              		.loc 1 17 5 is_stmt 1 view .LVU20
- 105 002e 064C     		ldr	r4, .L6+4
- 106 0030 2046     		mov	r0, r4
- 107 0032 FFF7FEFF 		bl	HAL_GPIO_Init
- 108              	.LVL0:
+  88              		.loc 1 17 5 is_stmt 1 view .LVU18
+  89 0022 6946     		mov	r1, sp
+  90 0024 0648     		ldr	r0, .L5+4
+  91 0026 FFF7FEFF 		bl	HAL_GPIO_Init
+  92              	.LVL0:
   18:Core/Src/bsp/bsp_i2c.c ****     SCL_High();
- 109              		.loc 1 18 5 view .LVU21
- 110 0036 4023     		movs	r3, #64
- 111 0038 2361     		str	r3, [r4, #16]
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s 			page 3
+
+
+  93              		.loc 1 18 5 view .LVU19
+  94 002a 4023     		movs	r3, #64
+  95 002c 044A     		ldr	r2, .L5+4
+  96 002e 1361     		str	r3, [r2, #16]
   19:Core/Src/bsp/bsp_i2c.c ****     SDA_High();
- 112              		.loc 1 19 5 view .LVU22
- 113 003a 8023     		movs	r3, #128
- 114 003c 2361     		str	r3, [r4, #16]
+  97              		.loc 1 19 5 view .LVU20
+  98 0030 8023     		movs	r3, #128
+  99 0032 1361     		str	r3, [r2, #16]
   20:Core/Src/bsp/bsp_i2c.c **** }
- 115              		.loc 1 20 1 is_stmt 0 view .LVU23
- 116 003e 04B0     		add	sp, sp, #16
- 117              	.LCFI2:
- 118              		.cfi_def_cfa_offset 8
- 119              		@ sp needed
- 120 0040 10BD     		pop	{r4, pc}
- 121              	.L7:
- 122 0042 00BF     		.align	2
- 123              	.L6:
- 124 0044 00540040 		.word	1073763328
- 125 0048 000C0140 		.word	1073810432
- 126              		.cfi_endproc
- 127              	.LFE71:
- 129              		.section	.text.MyI2C_Start,"ax",%progbits
- 130              		.align	1
- 131              		.global	MyI2C_Start
- 132              		.syntax unified
- 133              		.thumb
- 134              		.thumb_func
- 136              	MyI2C_Start:
- 137              	.LFB72:
+ 100              		.loc 1 20 1 is_stmt 0 view .LVU21
+ 101 0034 05B0     		add	sp, sp, #20
+ 102              	.LCFI1:
+ 103              		.cfi_def_cfa_offset 4
+ 104              		@ sp needed
+ 105 0036 5DF804FB 		ldr	pc, [sp], #4
+ 106              	.L6:
+ 107 003a 00BF     		.align	2
+ 108              	.L5:
+ 109 003c 00540040 		.word	1073763328
+ 110 0040 000C0140 		.word	1073810432
+ 111              		.cfi_endproc
+ 112              	.LFE71:
+ 114              		.section	.text.MyI2C_Start,"ax",%progbits
+ 115              		.align	1
+ 116              		.global	MyI2C_Start
+ 117              		.syntax unified
+ 118              		.thumb
+ 119              		.thumb_func
+ 121              	MyI2C_Start:
+ 122              	.LFB72:
   21:Core/Src/bsp/bsp_i2c.c **** 
   22:Core/Src/bsp/bsp_i2c.c **** void MyI2C_Start(void)
   23:Core/Src/bsp/bsp_i2c.c **** {
- 138              		.loc 1 23 1 is_stmt 1 view -0
- 139              		.cfi_startproc
- 140              		@ args = 0, pretend = 0, frame = 16
- 141              		@ frame_needed = 0, uses_anonymous_args = 0
- 142              		@ link register save eliminated.
- 143 0000 84B0     		sub	sp, sp, #16
- 144              	.LCFI3:
- 145              		.cfi_def_cfa_offset 16
+ 123              		.loc 1 23 1 is_stmt 1 view -0
+ 124              		.cfi_startproc
+ 125              		@ args = 0, pretend = 0, frame = 16
+ 126              		@ frame_needed = 0, uses_anonymous_args = 0
+ 127              		@ link register save eliminated.
   24:Core/Src/bsp/bsp_i2c.c ****     /* 确保总线空闲 */
   25:Core/Src/bsp/bsp_i2c.c ****     SDA_High();
- 146              		.loc 1 25 5 view .LVU25
- 147 0002 144B     		ldr	r3, .L16
- 148 0004 8022     		movs	r2, #128
- 149 0006 1A61     		str	r2, [r3, #16]
+ 128              		.loc 1 25 5 view .LVU23
+ 129 0000 8023     		movs	r3, #128
+ 130 0002 124A     		ldr	r2, .L17
+  23:Core/Src/bsp/bsp_i2c.c ****     /* 确保总线空闲 */
+ 131              		.loc 1 23 1 is_stmt 0 view .LVU24
+ 132 0004 84B0     		sub	sp, sp, #16
+ 133              	.LCFI2:
+ 134              		.cfi_def_cfa_offset 16
+ 135              		.loc 1 25 5 view .LVU25
+ 136 0006 1361     		str	r3, [r2, #16]
   26:Core/Src/bsp/bsp_i2c.c ****     I2C_Delay_US();
- 150              		.loc 1 26 5 view .LVU26
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s 			page 4
+ 137              		.loc 1 26 5 is_stmt 1 view .LVU26
+ 138              	.LBB2:
+ 139              		.loc 1 26 5 view .LVU27
+ 140 0008 0023     		movs	r3, #0
+ 141              	.L14:
+ 142              		.loc 1 26 5 is_stmt 0 discriminator 3 view .LVU28
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s 			page 4
 
 
- 151              	.LBB2:
- 152              		.loc 1 26 5 view .LVU27
- 153 0008 0023     		movs	r3, #0
- 154 000a 0193     		str	r3, [sp, #4]
- 155 000c 02E0     		b	.L9
- 156              	.L10:
- 157              		.loc 1 26 5 discriminator 3 view .LVU28
- 158 000e 019B     		ldr	r3, [sp, #4]
- 159 0010 0133     		adds	r3, r3, #1
- 160 0012 0193     		str	r3, [sp, #4]
- 161              	.L9:
- 162              		.loc 1 26 5 discriminator 1 view .LVU29
- 163 0014 019B     		ldr	r3, [sp, #4]
- 164 0016 0E2B     		cmp	r3, #14
- 165 0018 F9DD     		ble	.L10
- 166              	.LBE2:
- 167              		.loc 1 26 19 discriminator 4 view .LVU30
+ 143 000a 0193     		str	r3, [sp, #4]
+ 144              		.loc 1 26 5 is_stmt 1 discriminator 1 view .LVU29
+ 145 000c 019B     		ldr	r3, [sp, #4]
+ 146 000e 0E2B     		cmp	r3, #14
+ 147 0010 12DD     		ble	.L9
+ 148              	.LBE2:
+ 149              		.loc 1 26 19 discriminator 4 view .LVU30
   27:Core/Src/bsp/bsp_i2c.c ****     SCL_High();
- 168              		.loc 1 27 5 view .LVU31
- 169 001a 0E4B     		ldr	r3, .L16
- 170 001c 4022     		movs	r2, #64
- 171 001e 1A61     		str	r2, [r3, #16]
+ 150              		.loc 1 27 5 view .LVU31
+ 151 0012 4023     		movs	r3, #64
+ 152 0014 1361     		str	r3, [r2, #16]
   28:Core/Src/bsp/bsp_i2c.c ****     I2C_Delay_US();
- 172              		.loc 1 28 5 view .LVU32
- 173              	.LBB3:
- 174              		.loc 1 28 5 view .LVU33
- 175 0020 0023     		movs	r3, #0
- 176 0022 0293     		str	r3, [sp, #8]
- 177 0024 02E0     		b	.L11
- 178              	.L12:
- 179              		.loc 1 28 5 discriminator 3 view .LVU34
- 180 0026 029B     		ldr	r3, [sp, #8]
- 181 0028 0133     		adds	r3, r3, #1
- 182 002a 0293     		str	r3, [sp, #8]
- 183              	.L11:
- 184              		.loc 1 28 5 discriminator 1 view .LVU35
- 185 002c 029B     		ldr	r3, [sp, #8]
- 186 002e 0E2B     		cmp	r3, #14
- 187 0030 F9DD     		ble	.L12
- 188              	.LBE3:
- 189              		.loc 1 28 19 discriminator 4 view .LVU36
+ 153              		.loc 1 28 5 view .LVU32
+ 154              	.LBB3:
+ 155              		.loc 1 28 5 view .LVU33
+ 156 0016 0023     		movs	r3, #0
+ 157              	.L15:
+ 158              		.loc 1 28 5 is_stmt 0 discriminator 3 view .LVU34
+ 159 0018 0293     		str	r3, [sp, #8]
+ 160              		.loc 1 28 5 is_stmt 1 discriminator 1 view .LVU35
+ 161 001a 029B     		ldr	r3, [sp, #8]
+ 162 001c 0E2B     		cmp	r3, #14
+ 163 001e 0EDD     		ble	.L11
+ 164              	.LBE3:
+ 165              		.loc 1 28 19 discriminator 4 view .LVU36
   29:Core/Src/bsp/bsp_i2c.c ****     /* SCL 为高时 SDA 从高拉低 = Start */
   30:Core/Src/bsp/bsp_i2c.c ****     SDA_Low();
- 190              		.loc 1 30 5 view .LVU37
- 191 0032 084B     		ldr	r3, .L16
- 192 0034 8022     		movs	r2, #128
- 193 0036 5A61     		str	r2, [r3, #20]
+ 166              		.loc 1 30 5 view .LVU37
+ 167 0020 8023     		movs	r3, #128
+ 168 0022 0A4A     		ldr	r2, .L17
+ 169 0024 5361     		str	r3, [r2, #20]
   31:Core/Src/bsp/bsp_i2c.c ****     I2C_Delay_US();
- 194              		.loc 1 31 5 view .LVU38
- 195              	.LBB4:
- 196              		.loc 1 31 5 view .LVU39
- 197 0038 0023     		movs	r3, #0
- 198 003a 0393     		str	r3, [sp, #12]
- 199 003c 02E0     		b	.L13
- 200              	.L14:
- 201              		.loc 1 31 5 discriminator 3 view .LVU40
- 202 003e 039B     		ldr	r3, [sp, #12]
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s 			page 5
-
-
- 203 0040 0133     		adds	r3, r3, #1
- 204 0042 0393     		str	r3, [sp, #12]
- 205              	.L13:
- 206              		.loc 1 31 5 discriminator 1 view .LVU41
- 207 0044 039B     		ldr	r3, [sp, #12]
- 208 0046 0E2B     		cmp	r3, #14
- 209 0048 F9DD     		ble	.L14
- 210              	.LBE4:
- 211              		.loc 1 31 19 discriminator 4 view .LVU42
+ 170              		.loc 1 31 5 view .LVU38
+ 171              	.LBB4:
+ 172              		.loc 1 31 5 view .LVU39
+ 173 0026 0023     		movs	r3, #0
+ 174              	.L16:
+ 175              		.loc 1 31 5 is_stmt 0 discriminator 3 view .LVU40
+ 176 0028 0393     		str	r3, [sp, #12]
+ 177              		.loc 1 31 5 is_stmt 1 discriminator 1 view .LVU41
+ 178 002a 039B     		ldr	r3, [sp, #12]
+ 179 002c 0E2B     		cmp	r3, #14
+ 180 002e 09DD     		ble	.L13
+ 181              	.LBE4:
+ 182              		.loc 1 31 19 discriminator 4 view .LVU42
   32:Core/Src/bsp/bsp_i2c.c ****     SCL_Low();
- 212              		.loc 1 32 5 view .LVU43
- 213 004a 024B     		ldr	r3, .L16
- 214 004c 4022     		movs	r2, #64
- 215 004e 5A61     		str	r2, [r3, #20]
+ 183              		.loc 1 32 5 view .LVU43
+ 184 0030 4023     		movs	r3, #64
+ 185 0032 5361     		str	r3, [r2, #20]
   33:Core/Src/bsp/bsp_i2c.c **** }
- 216              		.loc 1 33 1 is_stmt 0 view .LVU44
- 217 0050 04B0     		add	sp, sp, #16
- 218              	.LCFI4:
- 219              		.cfi_def_cfa_offset 0
- 220              		@ sp needed
- 221 0052 7047     		bx	lr
- 222              	.L17:
- 223              		.align	2
- 224              	.L16:
- 225 0054 000C0140 		.word	1073810432
- 226              		.cfi_endproc
- 227              	.LFE72:
- 229              		.section	.text.MyI2C_Stop,"ax",%progbits
- 230              		.align	1
- 231              		.global	MyI2C_Stop
- 232              		.syntax unified
- 233              		.thumb
- 234              		.thumb_func
- 236              	MyI2C_Stop:
- 237              	.LFB73:
+ 186              		.loc 1 33 1 is_stmt 0 view .LVU44
+ 187 0034 04B0     		add	sp, sp, #16
+ 188              	.LCFI3:
+ 189              		.cfi_remember_state
+ 190              		.cfi_def_cfa_offset 0
+ 191              		@ sp needed
+ 192 0036 7047     		bx	lr
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s 			page 5
+
+
+ 193              	.L9:
+ 194              	.LCFI4:
+ 195              		.cfi_restore_state
+ 196              	.LBB5:
+  26:Core/Src/bsp/bsp_i2c.c ****     SCL_High();
+ 197              		.loc 1 26 5 is_stmt 1 discriminator 3 view .LVU45
+ 198 0038 019B     		ldr	r3, [sp, #4]
+ 199 003a 0133     		adds	r3, r3, #1
+ 200 003c E5E7     		b	.L14
+ 201              	.L11:
+ 202              	.LBE5:
+ 203              	.LBB6:
+  28:Core/Src/bsp/bsp_i2c.c ****     /* SCL 为高时 SDA 从高拉低 = Start */
+ 204              		.loc 1 28 5 discriminator 3 view .LVU46
+ 205 003e 029B     		ldr	r3, [sp, #8]
+ 206 0040 0133     		adds	r3, r3, #1
+ 207 0042 E9E7     		b	.L15
+ 208              	.L13:
+ 209              	.LBE6:
+ 210              	.LBB7:
+  31:Core/Src/bsp/bsp_i2c.c ****     SCL_Low();
+ 211              		.loc 1 31 5 discriminator 3 view .LVU47
+ 212 0044 039B     		ldr	r3, [sp, #12]
+ 213 0046 0133     		adds	r3, r3, #1
+ 214 0048 EEE7     		b	.L16
+ 215              	.L18:
+ 216 004a 00BF     		.align	2
+ 217              	.L17:
+ 218 004c 000C0140 		.word	1073810432
+ 219              	.LBE7:
+ 220              		.cfi_endproc
+ 221              	.LFE72:
+ 223              		.section	.text.MyI2C_Stop,"ax",%progbits
+ 224              		.align	1
+ 225              		.global	MyI2C_Stop
+ 226              		.syntax unified
+ 227              		.thumb
+ 228              		.thumb_func
+ 230              	MyI2C_Stop:
+ 231              	.LFB73:
   34:Core/Src/bsp/bsp_i2c.c **** 
   35:Core/Src/bsp/bsp_i2c.c **** 
   36:Core/Src/bsp/bsp_i2c.c **** 
   37:Core/Src/bsp/bsp_i2c.c **** void MyI2C_Stop(void)
   38:Core/Src/bsp/bsp_i2c.c **** {
- 238              		.loc 1 38 1 is_stmt 1 view -0
- 239              		.cfi_startproc
- 240              		@ args = 0, pretend = 0, frame = 16
- 241              		@ frame_needed = 0, uses_anonymous_args = 0
- 242              		@ link register save eliminated.
- 243 0000 84B0     		sub	sp, sp, #16
- 244              	.LCFI5:
- 245              		.cfi_def_cfa_offset 16
+ 232              		.loc 1 38 1 view -0
+ 233              		.cfi_startproc
+ 234              		@ args = 0, pretend = 0, frame = 16
+ 235              		@ frame_needed = 0, uses_anonymous_args = 0
+ 236              		@ link register save eliminated.
   39:Core/Src/bsp/bsp_i2c.c ****     SDA_Low();
- 246              		.loc 1 39 5 view .LVU46
- 247 0002 134B     		ldr	r3, .L26
- 248 0004 8022     		movs	r2, #128
- 249 0006 5A61     		str	r2, [r3, #20]
+ 237              		.loc 1 39 5 view .LVU49
+ 238 0000 8023     		movs	r3, #128
+ 239 0002 114A     		ldr	r2, .L29
+  38:Core/Src/bsp/bsp_i2c.c ****     SDA_Low();
+ 240              		.loc 1 38 1 is_stmt 0 view .LVU50
+ 241 0004 84B0     		sub	sp, sp, #16
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s 			page 6
+
+
+ 242              	.LCFI5:
+ 243              		.cfi_def_cfa_offset 16
+ 244              		.loc 1 39 5 view .LVU51
+ 245 0006 5361     		str	r3, [r2, #20]
   40:Core/Src/bsp/bsp_i2c.c ****     I2C_Delay_US();
- 250              		.loc 1 40 5 view .LVU47
- 251              	.LBB5:
- 252              		.loc 1 40 5 view .LVU48
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s 			page 6
-
-
- 253 0008 0023     		movs	r3, #0
- 254 000a 0193     		str	r3, [sp, #4]
- 255 000c 02E0     		b	.L19
- 256              	.L20:
- 257              		.loc 1 40 5 discriminator 3 view .LVU49
- 258 000e 019B     		ldr	r3, [sp, #4]
- 259 0010 0133     		adds	r3, r3, #1
- 260 0012 0193     		str	r3, [sp, #4]
- 261              	.L19:
- 262              		.loc 1 40 5 discriminator 1 view .LVU50
- 263 0014 019B     		ldr	r3, [sp, #4]
- 264 0016 0E2B     		cmp	r3, #14
- 265 0018 F9DD     		ble	.L20
- 266              	.LBE5:
- 267              		.loc 1 40 19 discriminator 4 view .LVU51
+ 246              		.loc 1 40 5 is_stmt 1 view .LVU52
+ 247              	.LBB8:
+ 248              		.loc 1 40 5 view .LVU53
+ 249 0008 0023     		movs	r3, #0
+ 250              	.L26:
+ 251              		.loc 1 40 5 is_stmt 0 discriminator 3 view .LVU54
+ 252 000a 0193     		str	r3, [sp, #4]
+ 253              		.loc 1 40 5 is_stmt 1 discriminator 1 view .LVU55
+ 254 000c 019B     		ldr	r3, [sp, #4]
+ 255 000e 0E2B     		cmp	r3, #14
+ 256 0010 10DD     		ble	.L21
+ 257              	.LBE8:
+ 258              		.loc 1 40 19 discriminator 4 view .LVU56
   41:Core/Src/bsp/bsp_i2c.c ****     SCL_High();
- 268              		.loc 1 41 5 view .LVU52
- 269 001a 0D4B     		ldr	r3, .L26
- 270 001c 4022     		movs	r2, #64
- 271 001e 1A61     		str	r2, [r3, #16]
+ 259              		.loc 1 41 5 view .LVU57
+ 260 0012 4023     		movs	r3, #64
+ 261 0014 1361     		str	r3, [r2, #16]
   42:Core/Src/bsp/bsp_i2c.c ****     I2C_Delay_US();
- 272              		.loc 1 42 5 view .LVU53
- 273              	.LBB6:
- 274              		.loc 1 42 5 view .LVU54
- 275 0020 0023     		movs	r3, #0
- 276 0022 0293     		str	r3, [sp, #8]
- 277 0024 02E0     		b	.L21
- 278              	.L22:
- 279              		.loc 1 42 5 discriminator 3 view .LVU55
- 280 0026 029B     		ldr	r3, [sp, #8]
- 281 0028 0133     		adds	r3, r3, #1
- 282 002a 0293     		str	r3, [sp, #8]
- 283              	.L21:
- 284              		.loc 1 42 5 discriminator 1 view .LVU56
- 285 002c 029B     		ldr	r3, [sp, #8]
- 286 002e 0E2B     		cmp	r3, #14
- 287 0030 F9DD     		ble	.L22
- 288              	.LBE6:
- 289              		.loc 1 42 19 discriminator 4 view .LVU57
+ 262              		.loc 1 42 5 view .LVU58
+ 263              	.LBB9:
+ 264              		.loc 1 42 5 view .LVU59
+ 265 0016 0023     		movs	r3, #0
+ 266              	.L27:
+ 267              		.loc 1 42 5 is_stmt 0 discriminator 3 view .LVU60
+ 268 0018 0293     		str	r3, [sp, #8]
+ 269              		.loc 1 42 5 is_stmt 1 discriminator 1 view .LVU61
+ 270 001a 029B     		ldr	r3, [sp, #8]
+ 271 001c 0E2B     		cmp	r3, #14
+ 272 001e 0CDD     		ble	.L23
+ 273              	.LBE9:
+ 274              		.loc 1 42 19 discriminator 4 view .LVU62
   43:Core/Src/bsp/bsp_i2c.c ****     /* SCL 为高时 SDA 从低拉高 = Stop */
   44:Core/Src/bsp/bsp_i2c.c ****     SDA_High();
- 290              		.loc 1 44 5 view .LVU58
- 291 0032 074B     		ldr	r3, .L26
- 292 0034 8022     		movs	r2, #128
- 293 0036 1A61     		str	r2, [r3, #16]
+ 275              		.loc 1 44 5 view .LVU63
+ 276 0020 8022     		movs	r2, #128
+ 277 0022 094B     		ldr	r3, .L29
+ 278 0024 1A61     		str	r2, [r3, #16]
   45:Core/Src/bsp/bsp_i2c.c ****     I2C_Delay_US();
- 294              		.loc 1 45 5 view .LVU59
- 295              	.LBB7:
- 296              		.loc 1 45 5 view .LVU60
- 297 0038 0023     		movs	r3, #0
- 298 003a 0393     		str	r3, [sp, #12]
- 299 003c 02E0     		b	.L23
- 300              	.L24:
- 301              		.loc 1 45 5 discriminator 3 view .LVU61
- 302 003e 039B     		ldr	r3, [sp, #12]
- 303 0040 0133     		adds	r3, r3, #1
- 304 0042 0393     		str	r3, [sp, #12]
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s 			page 7
-
-
- 305              	.L23:
- 306              		.loc 1 45 5 discriminator 1 view .LVU62
- 307 0044 039B     		ldr	r3, [sp, #12]
- 308 0046 0E2B     		cmp	r3, #14
- 309 0048 F9DD     		ble	.L24
- 310              	.LBE7:
+ 279              		.loc 1 45 5 view .LVU64
+ 280              	.LBB10:
+ 281              		.loc 1 45 5 view .LVU65
+ 282 0026 0023     		movs	r3, #0
+ 283              	.L28:
+ 284              		.loc 1 45 5 is_stmt 0 discriminator 3 view .LVU66
+ 285 0028 0393     		str	r3, [sp, #12]
+ 286              		.loc 1 45 5 is_stmt 1 discriminator 1 view .LVU67
+ 287 002a 039B     		ldr	r3, [sp, #12]
+ 288 002c 0E2B     		cmp	r3, #14
+ 289 002e 07DD     		ble	.L25
+ 290              	.LBE10:
   46:Core/Src/bsp/bsp_i2c.c **** }
- 311              		.loc 1 46 1 is_stmt 0 view .LVU63
- 312 004a 04B0     		add	sp, sp, #16
- 313              	.LCFI6:
- 314              		.cfi_def_cfa_offset 0
- 315              		@ sp needed
- 316 004c 7047     		bx	lr
- 317              	.L27:
- 318 004e 00BF     		.align	2
- 319              	.L26:
- 320 0050 000C0140 		.word	1073810432
- 321              		.cfi_endproc
- 322              	.LFE73:
- 324              		.section	.text.MyI2C_SendByte,"ax",%progbits
- 325              		.align	1
- 326              		.global	MyI2C_SendByte
- 327              		.syntax unified
- 328              		.thumb
- 329              		.thumb_func
- 331              	MyI2C_SendByte:
- 332              	.LVL1:
- 333              	.LFB74:
+ 291              		.loc 1 46 1 is_stmt 0 view .LVU68
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s 			page 7
+
+
+ 292 0030 04B0     		add	sp, sp, #16
+ 293              	.LCFI6:
+ 294              		.cfi_remember_state
+ 295              		.cfi_def_cfa_offset 0
+ 296              		@ sp needed
+ 297 0032 7047     		bx	lr
+ 298              	.L21:
+ 299              	.LCFI7:
+ 300              		.cfi_restore_state
+ 301              	.LBB11:
+  40:Core/Src/bsp/bsp_i2c.c ****     SCL_High();
+ 302              		.loc 1 40 5 is_stmt 1 discriminator 3 view .LVU69
+ 303 0034 019B     		ldr	r3, [sp, #4]
+ 304 0036 0133     		adds	r3, r3, #1
+ 305 0038 E7E7     		b	.L26
+ 306              	.L23:
+ 307              	.LBE11:
+ 308              	.LBB12:
+  42:Core/Src/bsp/bsp_i2c.c ****     /* SCL 为高时 SDA 从低拉高 = Stop */
+ 309              		.loc 1 42 5 discriminator 3 view .LVU70
+ 310 003a 029B     		ldr	r3, [sp, #8]
+ 311 003c 0133     		adds	r3, r3, #1
+ 312 003e EBE7     		b	.L27
+ 313              	.L25:
+ 314              	.LBE12:
+ 315              	.LBB13:
+  45:Core/Src/bsp/bsp_i2c.c **** }
+ 316              		.loc 1 45 5 discriminator 3 view .LVU71
+ 317 0040 039B     		ldr	r3, [sp, #12]
+ 318 0042 0133     		adds	r3, r3, #1
+ 319 0044 F0E7     		b	.L28
+ 320              	.L30:
+ 321 0046 00BF     		.align	2
+ 322              	.L29:
+ 323 0048 000C0140 		.word	1073810432
+ 324              	.LBE13:
+ 325              		.cfi_endproc
+ 326              	.LFE73:
+ 328              		.section	.text.MyI2C_SendByte,"ax",%progbits
+ 329              		.align	1
+ 330              		.global	MyI2C_SendByte
+ 331              		.syntax unified
+ 332              		.thumb
+ 333              		.thumb_func
+ 335              	MyI2C_SendByte:
+ 336              	.LVL1:
+ 337              	.LFB74:
   47:Core/Src/bsp/bsp_i2c.c **** 
   48:Core/Src/bsp/bsp_i2c.c **** void MyI2C_SendByte(uint8_t Byte)
   49:Core/Src/bsp/bsp_i2c.c **** {
- 334              		.loc 1 49 1 is_stmt 1 view -0
- 335              		.cfi_startproc
- 336              		@ args = 0, pretend = 0, frame = 16
- 337              		@ frame_needed = 0, uses_anonymous_args = 0
- 338              		@ link register save eliminated.
+ 338              		.loc 1 49 1 view -0
+ 339              		.cfi_startproc
+ 340              		@ args = 0, pretend = 0, frame = 16
+ 341              		@ frame_needed = 0, uses_anonymous_args = 0
   50:Core/Src/bsp/bsp_i2c.c ****     for(uint8_t i=0;i<8;i++)
- 339              		.loc 1 50 5 view .LVU65
- 340              	.LBB8:
- 341              		.loc 1 50 9 view .LVU66
- 342              		.loc 1 50 17 is_stmt 0 view .LVU67
- 343 0000 0022     		movs	r2, #0
- 344              	.LVL2:
- 345              		.loc 1 50 22 is_stmt 1 discriminator 1 view .LVU68
- 346 0002 072A     		cmp	r2, #7
- 347 0004 36D8     		bhi	.L42
- 348              	.LBE8:
+ 342              		.loc 1 50 5 view .LVU73
+ 343              	.LBB14:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s 			page 8
+
+
+ 344              		.loc 1 50 9 view .LVU74
+ 345              		.loc 1 50 22 discriminator 1 view .LVU75
+ 346              	.LBE14:
   49:Core/Src/bsp/bsp_i2c.c ****     for(uint8_t i=0;i<8;i++)
- 349              		.loc 1 49 1 is_stmt 0 view .LVU69
- 350 0006 84B0     		sub	sp, sp, #16
- 351              	.LCFI7:
- 352              		.cfi_def_cfa_offset 16
- 353 0008 25E0     		b	.L38
- 354              	.L30:
- 355              	.LBB13:
+ 347              		.loc 1 49 1 is_stmt 0 view .LVU76
+ 348 0000 7FB5     		push	{r0, r1, r2, r3, r4, r5, r6, lr}
+ 349              	.LCFI8:
+ 350              		.cfi_def_cfa_offset 32
+ 351              		.cfi_offset 4, -16
+ 352              		.cfi_offset 5, -12
+ 353              		.cfi_offset 6, -8
+ 354              		.cfi_offset 14, -4
+  49:Core/Src/bsp/bsp_i2c.c ****     for(uint8_t i=0;i<8;i++)
+ 355              		.loc 1 49 1 view .LVU77
+ 356 0002 0723     		movs	r3, #7
+ 357 0004 8026     		movs	r6, #128
+ 358              	.LBB22:
+ 359              	.LBB15:
   51:Core/Src/bsp/bsp_i2c.c ****     {
   52:Core/Src/bsp/bsp_i2c.c ****         if ((Byte >> (7 - i)) & 0x01)
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s 			page 8
-
-
   53:Core/Src/bsp/bsp_i2c.c ****         {
   54:Core/Src/bsp/bsp_i2c.c ****             SDA_High();
   55:Core/Src/bsp/bsp_i2c.c ****         }
   56:Core/Src/bsp/bsp_i2c.c ****         else
   57:Core/Src/bsp/bsp_i2c.c ****         {
   58:Core/Src/bsp/bsp_i2c.c ****             SDA_Low();
- 356              		.loc 1 58 13 is_stmt 1 view .LVU70
- 357 000a 1B4B     		ldr	r3, .L44
- 358 000c 8021     		movs	r1, #128
- 359 000e 5961     		str	r1, [r3, #20]
- 360 0010 2BE0     		b	.L31
- 361              	.L33:
- 362              	.LBB9:
   59:Core/Src/bsp/bsp_i2c.c ****         }
   60:Core/Src/bsp/bsp_i2c.c ****         I2C_Delay_US();
- 363              		.loc 1 60 9 discriminator 3 view .LVU71
- 364 0012 019B     		ldr	r3, [sp, #4]
- 365 0014 0133     		adds	r3, r3, #1
- 366 0016 0193     		str	r3, [sp, #4]
- 367              	.L32:
- 368              		.loc 1 60 9 discriminator 1 view .LVU72
- 369 0018 019B     		ldr	r3, [sp, #4]
- 370 001a 0E2B     		cmp	r3, #14
- 371 001c F9DD     		ble	.L33
- 372              	.LBE9:
- 373              		.loc 1 60 23 discriminator 4 view .LVU73
+ 360              		.loc 1 60 9 view .LVU78
+ 361 0006 0021     		movs	r1, #0
+ 362              	.LBE15:
   61:Core/Src/bsp/bsp_i2c.c ****         SCL_High();
- 374              		.loc 1 61 9 view .LVU74
- 375 001e 164B     		ldr	r3, .L44
- 376 0020 4021     		movs	r1, #64
- 377 0022 1961     		str	r1, [r3, #16]
-  62:Core/Src/bsp/bsp_i2c.c ****         I2C_Delay_US();
- 378              		.loc 1 62 9 view .LVU75
- 379              	.LBB10:
- 380              		.loc 1 62 9 view .LVU76
- 381 0024 0023     		movs	r3, #0
- 382 0026 0293     		str	r3, [sp, #8]
- 383 0028 02E0     		b	.L34
- 384              	.L35:
- 385              		.loc 1 62 9 discriminator 3 view .LVU77
- 386 002a 029B     		ldr	r3, [sp, #8]
- 387 002c 0133     		adds	r3, r3, #1
- 388 002e 0293     		str	r3, [sp, #8]
- 389              	.L34:
- 390              		.loc 1 62 9 discriminator 1 view .LVU78
- 391 0030 029B     		ldr	r3, [sp, #8]
- 392 0032 0E2B     		cmp	r3, #14
- 393 0034 F9DD     		ble	.L35
- 394              	.LBE10:
- 395              		.loc 1 62 23 discriminator 4 view .LVU79
-  63:Core/Src/bsp/bsp_i2c.c ****         SCL_Low();
- 396              		.loc 1 63 9 view .LVU80
- 397 0036 104B     		ldr	r3, .L44
- 398 0038 4021     		movs	r1, #64
- 399 003a 5961     		str	r1, [r3, #20]
-  64:Core/Src/bsp/bsp_i2c.c ****         I2C_Delay_US();
- 400              		.loc 1 64 9 view .LVU81
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s 			page 9
-
-
- 401              	.LBB11:
- 402              		.loc 1 64 9 view .LVU82
- 403 003c 0023     		movs	r3, #0
- 404 003e 0393     		str	r3, [sp, #12]
- 405 0040 02E0     		b	.L36
- 406              	.L37:
- 407              		.loc 1 64 9 discriminator 3 view .LVU83
- 408 0042 039B     		ldr	r3, [sp, #12]
- 409 0044 0133     		adds	r3, r3, #1
- 410 0046 0393     		str	r3, [sp, #12]
- 411              	.L36:
- 412              		.loc 1 64 9 discriminator 1 view .LVU84
- 413 0048 039B     		ldr	r3, [sp, #12]
- 414 004a 0E2B     		cmp	r3, #14
- 415 004c F9DD     		ble	.L37
- 416              	.LBE11:
- 417              		.loc 1 64 23 discriminator 4 view .LVU85
-  50:Core/Src/bsp/bsp_i2c.c ****     {
- 418              		.loc 1 50 26 discriminator 2 view .LVU86
- 419 004e 0132     		adds	r2, r2, #1
- 420              	.LVL3:
-  50:Core/Src/bsp/bsp_i2c.c ****     {
- 421              		.loc 1 50 26 is_stmt 0 discriminator 2 view .LVU87
- 422 0050 D2B2     		uxtb	r2, r2
- 423              	.LVL4:
-  50:Core/Src/bsp/bsp_i2c.c ****     {
- 424              		.loc 1 50 22 is_stmt 1 discriminator 1 view .LVU88
- 425 0052 072A     		cmp	r2, #7
- 426 0054 0CD8     		bhi	.L43
- 427              	.L38:
+ 363              		.loc 1 61 9 view .LVU79
+ 364 0008 4025     		movs	r5, #64
+ 365 000a 124A     		ldr	r2, .L42
+ 366              	.LVL2:
+ 367              	.L40:
   52:Core/Src/bsp/bsp_i2c.c ****         {
- 428              		.loc 1 52 9 view .LVU89
+ 368              		.loc 1 52 9 is_stmt 1 view .LVU80
   52:Core/Src/bsp/bsp_i2c.c ****         {
- 429              		.loc 1 52 25 is_stmt 0 view .LVU90
- 430 0056 C2F10703 		rsb	r3, r2, #7
+ 369              		.loc 1 52 19 is_stmt 0 view .LVU81
+ 370 000c 40FA03F4 		asr	r4, r0, r3
   52:Core/Src/bsp/bsp_i2c.c ****         {
- 431              		.loc 1 52 19 view .LVU91
- 432 005a 40FA03F3 		asr	r3, r0, r3
-  52:Core/Src/bsp/bsp_i2c.c ****         {
- 433              		.loc 1 52 12 view .LVU92
- 434 005e 13F0010F 		tst	r3, #1
- 435 0062 D2D0     		beq	.L30
+ 371              		.loc 1 52 12 view .LVU82
+ 372 0010 E407     		lsls	r4, r4, #31
   54:Core/Src/bsp/bsp_i2c.c ****         }
- 436              		.loc 1 54 13 is_stmt 1 view .LVU93
- 437 0064 044B     		ldr	r3, .L44
- 438 0066 8021     		movs	r1, #128
- 439 0068 1961     		str	r1, [r3, #16]
- 440              	.L31:
+ 373              		.loc 1 54 13 is_stmt 1 view .LVU83
+ 374 0012 4CBF     		ite	mi
+ 375 0014 1661     		strmi	r6, [r2, #16]
+  58:Core/Src/bsp/bsp_i2c.c ****         }
+ 376              		.loc 1 58 13 view .LVU84
+ 377 0016 5661     		strpl	r6, [r2, #20]
   60:Core/Src/bsp/bsp_i2c.c ****         SCL_High();
- 441              		.loc 1 60 9 view .LVU94
- 442              	.LBB12:
+ 378              		.loc 1 60 9 view .LVU85
+ 379              	.LBB16:
   60:Core/Src/bsp/bsp_i2c.c ****         SCL_High();
- 443              		.loc 1 60 9 view .LVU95
- 444 006a 0023     		movs	r3, #0
- 445 006c 0193     		str	r3, [sp, #4]
- 446 006e D3E7     		b	.L32
- 447              	.L43:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s 			page 10
+ 380              		.loc 1 60 9 view .LVU86
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s 			page 9
 
 
+ 381 0018 0191     		str	r1, [sp, #4]
+ 382              	.L34:
   60:Core/Src/bsp/bsp_i2c.c ****         SCL_High();
- 448              		.loc 1 60 9 is_stmt 0 view .LVU96
- 449              	.LBE12:
- 450              	.LBE13:
+ 383              		.loc 1 60 9 discriminator 1 view .LVU87
+ 384 001a 019C     		ldr	r4, [sp, #4]
+ 385 001c 0E2C     		cmp	r4, #14
+ 386 001e 0DDD     		ble	.L35
+ 387              	.LBE16:
+  60:Core/Src/bsp/bsp_i2c.c ****         SCL_High();
+ 388              		.loc 1 60 23 discriminator 4 view .LVU88
+ 389              		.loc 1 61 9 view .LVU89
+ 390 0020 1561     		str	r5, [r2, #16]
+  62:Core/Src/bsp/bsp_i2c.c ****         I2C_Delay_US();
+ 391              		.loc 1 62 9 view .LVU90
+ 392              	.LBB17:
+ 393              		.loc 1 62 9 view .LVU91
+ 394 0022 0291     		str	r1, [sp, #8]
+ 395              	.L36:
+ 396              		.loc 1 62 9 discriminator 1 view .LVU92
+ 397 0024 029C     		ldr	r4, [sp, #8]
+ 398 0026 0E2C     		cmp	r4, #14
+ 399 0028 0CDD     		ble	.L37
+ 400              	.LBE17:
+ 401              		.loc 1 62 23 discriminator 4 view .LVU93
+  63:Core/Src/bsp/bsp_i2c.c ****         SCL_Low();
+ 402              		.loc 1 63 9 view .LVU94
+ 403 002a 5561     		str	r5, [r2, #20]
+  64:Core/Src/bsp/bsp_i2c.c ****         I2C_Delay_US();
+ 404              		.loc 1 64 9 view .LVU95
+ 405              	.LBB18:
+ 406              		.loc 1 64 9 view .LVU96
+ 407 002c 0391     		str	r1, [sp, #12]
+ 408              	.L38:
+ 409              		.loc 1 64 9 discriminator 1 view .LVU97
+ 410 002e 039C     		ldr	r4, [sp, #12]
+ 411 0030 0E2C     		cmp	r4, #14
+ 412 0032 0BDD     		ble	.L39
+ 413              	.LBE18:
+ 414              		.loc 1 64 23 discriminator 4 view .LVU98
+  50:Core/Src/bsp/bsp_i2c.c ****     {
+ 415              		.loc 1 50 26 discriminator 2 view .LVU99
+ 416              	.LVL3:
+  50:Core/Src/bsp/bsp_i2c.c ****     {
+ 417              		.loc 1 50 22 discriminator 1 view .LVU100
+ 418 0034 013B     		subs	r3, r3, #1
+ 419              	.LVL4:
+  50:Core/Src/bsp/bsp_i2c.c ****     {
+ 420              		.loc 1 50 22 is_stmt 0 discriminator 1 view .LVU101
+ 421 0036 E9D2     		bcs	.L40
+ 422              	.LBE22:
   65:Core/Src/bsp/bsp_i2c.c ****     }
   66:Core/Src/bsp/bsp_i2c.c ****     // MyI2C_ReciveAck(); 
   67:Core/Src/bsp/bsp_i2c.c ****     /* 注意：SendByte 不内部读 ACK，由调用者自行处理 */
   68:Core/Src/bsp/bsp_i2c.c **** }
- 451              		.loc 1 68 1 view .LVU97
- 452 0070 04B0     		add	sp, sp, #16
- 453              	.LCFI8:
- 454              		.cfi_def_cfa_offset 0
- 455              		@ sp needed
- 456 0072 7047     		bx	lr
- 457              	.L42:
- 458              		.loc 1 68 1 view .LVU98
- 459 0074 7047     		bx	lr
- 460              	.L45:
- 461 0076 00BF     		.align	2
- 462              	.L44:
- 463 0078 000C0140 		.word	1073810432
- 464              		.cfi_endproc
- 465              	.LFE74:
- 467              		.section	.text.MyI2C_ReciveAck,"ax",%progbits
- 468              		.align	1
- 469              		.global	MyI2C_ReciveAck
- 470              		.syntax unified
- 471              		.thumb
- 472              		.thumb_func
- 474              	MyI2C_ReciveAck:
- 475              	.LFB76:
+ 423              		.loc 1 68 1 view .LVU102
+ 424 0038 04B0     		add	sp, sp, #16
+ 425              	.LCFI9:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s 			page 10
+
+
+ 426              		.cfi_remember_state
+ 427              		.cfi_def_cfa_offset 16
+ 428              		@ sp needed
+ 429 003a 70BD     		pop	{r4, r5, r6, pc}
+ 430              	.LVL5:
+ 431              	.L35:
+ 432              	.LCFI10:
+ 433              		.cfi_restore_state
+ 434              	.LBB23:
+ 435              	.LBB19:
+  60:Core/Src/bsp/bsp_i2c.c ****         SCL_High();
+ 436              		.loc 1 60 9 is_stmt 1 discriminator 3 view .LVU103
+ 437 003c 019C     		ldr	r4, [sp, #4]
+ 438 003e 0134     		adds	r4, r4, #1
+ 439 0040 0194     		str	r4, [sp, #4]
+ 440 0042 EAE7     		b	.L34
+ 441              	.L37:
+ 442              	.LBE19:
+ 443              	.LBB20:
+  62:Core/Src/bsp/bsp_i2c.c ****         SCL_Low();
+ 444              		.loc 1 62 9 discriminator 3 view .LVU104
+ 445 0044 029C     		ldr	r4, [sp, #8]
+ 446 0046 0134     		adds	r4, r4, #1
+ 447 0048 0294     		str	r4, [sp, #8]
+ 448 004a EBE7     		b	.L36
+ 449              	.L39:
+ 450              	.LBE20:
+ 451              	.LBB21:
+  64:Core/Src/bsp/bsp_i2c.c ****     }
+ 452              		.loc 1 64 9 discriminator 3 view .LVU105
+ 453 004c 039C     		ldr	r4, [sp, #12]
+ 454 004e 0134     		adds	r4, r4, #1
+ 455 0050 0394     		str	r4, [sp, #12]
+ 456 0052 ECE7     		b	.L38
+ 457              	.L43:
+ 458              		.align	2
+ 459              	.L42:
+ 460 0054 000C0140 		.word	1073810432
+ 461              	.LBE21:
+ 462              	.LBE23:
+ 463              		.cfi_endproc
+ 464              	.LFE74:
+ 466              		.section	.text.MyI2C_ReciveAck,"ax",%progbits
+ 467              		.align	1
+ 468              		.global	MyI2C_ReciveAck
+ 469              		.syntax unified
+ 470              		.thumb
+ 471              		.thumb_func
+ 473              	MyI2C_ReciveAck:
+ 474              	.LFB76:
   69:Core/Src/bsp/bsp_i2c.c **** uint8_t MyI2C_RecvByte(uint8_t ack)
   70:Core/Src/bsp/bsp_i2c.c **** {
   71:Core/Src/bsp/bsp_i2c.c ****     uint8_t ReceiveByte=0;
@@ -579,6 +598,9 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s 			page 1
   73:Core/Src/bsp/bsp_i2c.c **** 
   74:Core/Src/bsp/bsp_i2c.c ****     for(uint8_t i=0;i<8;i++)
   75:Core/Src/bsp/bsp_i2c.c ****     {
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s 			page 11
+
+
   76:Core/Src/bsp/bsp_i2c.c ****         SCL_High();
   77:Core/Src/bsp/bsp_i2c.c ****         I2C_Delay_US();
   78:Core/Src/bsp/bsp_i2c.c ****         if(MyI2C_R_SDA())
@@ -594,533 +616,541 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s 			page 1
   88:Core/Src/bsp/bsp_i2c.c **** 
   89:Core/Src/bsp/bsp_i2c.c **** uint8_t MyI2C_ReciveAck(void)
   90:Core/Src/bsp/bsp_i2c.c **** {
- 476              		.loc 1 90 1 is_stmt 1 view -0
- 477              		.cfi_startproc
- 478              		@ args = 0, pretend = 0, frame = 8
- 479              		@ frame_needed = 0, uses_anonymous_args = 0
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s 			page 11
-
-
- 480 0000 00B5     		push	{lr}
- 481              	.LCFI9:
- 482              		.cfi_def_cfa_offset 4
- 483              		.cfi_offset 14, -4
- 484 0002 83B0     		sub	sp, sp, #12
- 485              	.LCFI10:
- 486              		.cfi_def_cfa_offset 16
+ 475              		.loc 1 90 1 view -0
+ 476              		.cfi_startproc
+ 477              		@ args = 0, pretend = 0, frame = 8
+ 478              		@ frame_needed = 0, uses_anonymous_args = 0
   91:Core/Src/bsp/bsp_i2c.c ****     uint8_t Ack;
- 487              		.loc 1 91 5 view .LVU100
+ 479              		.loc 1 91 5 view .LVU107
   92:Core/Src/bsp/bsp_i2c.c **** 
   93:Core/Src/bsp/bsp_i2c.c ****     SDA_High();
- 488              		.loc 1 93 5 view .LVU101
- 489 0004 0A4B     		ldr	r3, .L50
- 490 0006 8022     		movs	r2, #128
- 491 0008 1A61     		str	r2, [r3, #16]
+ 480              		.loc 1 93 5 view .LVU108
+ 481 0000 8023     		movs	r3, #128
+  90:Core/Src/bsp/bsp_i2c.c ****     uint8_t Ack;
+ 482              		.loc 1 90 1 is_stmt 0 view .LVU109
+ 483 0002 07B5     		push	{r0, r1, r2, lr}
+ 484              	.LCFI11:
+ 485              		.cfi_def_cfa_offset 16
+ 486              		.cfi_offset 14, -4
+ 487              		.loc 1 93 5 view .LVU110
+ 488 0004 094A     		ldr	r2, .L48
+ 489 0006 1361     		str	r3, [r2, #16]
   94:Core/Src/bsp/bsp_i2c.c ****     SCL_High();
- 492              		.loc 1 94 5 view .LVU102
- 493 000a 4022     		movs	r2, #64
- 494 000c 1A61     		str	r2, [r3, #16]
+ 490              		.loc 1 94 5 is_stmt 1 view .LVU111
+ 491 0008 4023     		movs	r3, #64
+ 492 000a 1361     		str	r3, [r2, #16]
   95:Core/Src/bsp/bsp_i2c.c ****     I2C_Delay_US();
- 495              		.loc 1 95 5 view .LVU103
- 496              	.LBB14:
- 497              		.loc 1 95 5 view .LVU104
- 498 000e 0023     		movs	r3, #0
- 499 0010 0193     		str	r3, [sp, #4]
- 500 0012 02E0     		b	.L47
- 501              	.L48:
- 502              		.loc 1 95 5 discriminator 3 view .LVU105
- 503 0014 019B     		ldr	r3, [sp, #4]
- 504 0016 0133     		adds	r3, r3, #1
- 505 0018 0193     		str	r3, [sp, #4]
- 506              	.L47:
- 507              		.loc 1 95 5 discriminator 1 view .LVU106
- 508 001a 019B     		ldr	r3, [sp, #4]
- 509 001c 0E2B     		cmp	r3, #14
- 510 001e F9DD     		ble	.L48
- 511              	.LBE14:
- 512              		.loc 1 95 19 discriminator 4 view .LVU107
+ 493              		.loc 1 95 5 view .LVU112
+ 494              	.LBB24:
+ 495              		.loc 1 95 5 view .LVU113
+ 496 000c 0023     		movs	r3, #0
+ 497              	.L47:
+ 498              		.loc 1 95 5 is_stmt 0 discriminator 3 view .LVU114
+ 499 000e 0193     		str	r3, [sp, #4]
+ 500              		.loc 1 95 5 is_stmt 1 discriminator 1 view .LVU115
+ 501 0010 019B     		ldr	r3, [sp, #4]
+ 502 0012 0E2B     		cmp	r3, #14
+ 503 0014 06DD     		ble	.L46
+ 504              	.LBE24:
+ 505              		.loc 1 95 19 discriminator 4 view .LVU116
   96:Core/Src/bsp/bsp_i2c.c ****     Ack = MyI2C_R_SDA();
- 513              		.loc 1 96 5 view .LVU108
- 514              		.loc 1 96 11 is_stmt 0 view .LVU109
- 515 0020 FFF7FEFF 		bl	MyI2C_R_SDA
- 516              	.LVL5:
+ 506              		.loc 1 96 5 view .LVU117
+ 507              		.loc 1 96 11 is_stmt 0 view .LVU118
+ 508 0016 FFF7FEFF 		bl	MyI2C_R_SDA
+ 509              	.LVL6:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s 			page 12
+
+
   97:Core/Src/bsp/bsp_i2c.c ****     
   98:Core/Src/bsp/bsp_i2c.c ****     SCL_Low();
- 517              		.loc 1 98 5 is_stmt 1 view .LVU110
- 518 0024 024B     		ldr	r3, .L50
- 519 0026 4022     		movs	r2, #64
- 520 0028 5A61     		str	r2, [r3, #20]
+ 510              		.loc 1 98 5 is_stmt 1 view .LVU119
+ 511 001a 4023     		movs	r3, #64
+ 512 001c 5361     		str	r3, [r2, #20]
   99:Core/Src/bsp/bsp_i2c.c ****     return Ack;
- 521              		.loc 1 99 5 view .LVU111
+ 513              		.loc 1 99 5 view .LVU120
  100:Core/Src/bsp/bsp_i2c.c **** }
- 522              		.loc 1 100 1 is_stmt 0 view .LVU112
- 523 002a 03B0     		add	sp, sp, #12
- 524              	.LCFI11:
- 525              		.cfi_def_cfa_offset 4
- 526              		@ sp needed
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s 			page 12
-
-
- 527 002c 5DF804FB 		ldr	pc, [sp], #4
- 528              	.L51:
- 529              		.align	2
- 530              	.L50:
- 531 0030 000C0140 		.word	1073810432
- 532              		.cfi_endproc
- 533              	.LFE76:
- 535              		.section	.text.MyI2C_SendAck,"ax",%progbits
- 536              		.align	1
- 537              		.global	MyI2C_SendAck
- 538              		.syntax unified
- 539              		.thumb
- 540              		.thumb_func
- 542              	MyI2C_SendAck:
- 543              	.LVL6:
- 544              	.LFB77:
+ 514              		.loc 1 100 1 is_stmt 0 view .LVU121
+ 515 001e 03B0     		add	sp, sp, #12
+ 516              	.LCFI12:
+ 517              		.cfi_remember_state
+ 518              		.cfi_def_cfa_offset 4
+ 519              		@ sp needed
+ 520 0020 5DF804FB 		ldr	pc, [sp], #4
+ 521              	.LVL7:
+ 522              	.L46:
+ 523              	.LCFI13:
+ 524              		.cfi_restore_state
+ 525              	.LBB25:
+  95:Core/Src/bsp/bsp_i2c.c ****     Ack = MyI2C_R_SDA();
+ 526              		.loc 1 95 5 is_stmt 1 discriminator 3 view .LVU122
+ 527 0024 019B     		ldr	r3, [sp, #4]
+ 528 0026 0133     		adds	r3, r3, #1
+ 529 0028 F1E7     		b	.L47
+ 530              	.L49:
+ 531 002a 00BF     		.align	2
+ 532              	.L48:
+ 533 002c 000C0140 		.word	1073810432
+ 534              	.LBE25:
+ 535              		.cfi_endproc
+ 536              	.LFE76:
+ 538              		.section	.text.MyI2C_SendAck,"ax",%progbits
+ 539              		.align	1
+ 540              		.global	MyI2C_SendAck
+ 541              		.syntax unified
+ 542              		.thumb
+ 543              		.thumb_func
+ 545              	MyI2C_SendAck:
+ 546              	.LVL8:
+ 547              	.LFB77:
  101:Core/Src/bsp/bsp_i2c.c **** 
  102:Core/Src/bsp/bsp_i2c.c **** void MyI2C_SendAck(uint8_t byte)
  103:Core/Src/bsp/bsp_i2c.c **** {
- 545              		.loc 1 103 1 is_stmt 1 view -0
- 546              		.cfi_startproc
- 547              		@ args = 0, pretend = 0, frame = 8
- 548              		@ frame_needed = 0, uses_anonymous_args = 0
- 549              		@ link register save eliminated.
- 550              		.loc 1 103 1 is_stmt 0 view .LVU114
- 551 0000 82B0     		sub	sp, sp, #8
- 552              	.LCFI12:
- 553              		.cfi_def_cfa_offset 8
+ 548              		.loc 1 103 1 view -0
+ 549              		.cfi_startproc
+ 550              		@ args = 0, pretend = 0, frame = 8
+ 551              		@ frame_needed = 0, uses_anonymous_args = 0
+ 552              		@ link register save eliminated.
  104:Core/Src/bsp/bsp_i2c.c ****     if(byte)
- 554              		.loc 1 104 5 is_stmt 1 view .LVU115
- 555              		.loc 1 104 7 is_stmt 0 view .LVU116
- 556 0002 40B1     		cbz	r0, .L53
+ 553              		.loc 1 104 5 view .LVU124
+ 554 0000 8022     		movs	r2, #128
+ 555 0002 0A4B     		ldr	r3, .L56
+ 103:Core/Src/bsp/bsp_i2c.c ****     if(byte)
+ 556              		.loc 1 103 1 is_stmt 0 view .LVU125
+ 557 0004 82B0     		sub	sp, sp, #8
+ 558              	.LCFI14:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s 			page 13
+
+
+ 559              		.cfi_def_cfa_offset 8
+ 560              		.loc 1 104 7 view .LVU126
+ 561 0006 60B1     		cbz	r0, .L51
  105:Core/Src/bsp/bsp_i2c.c ****     {
  106:Core/Src/bsp/bsp_i2c.c ****         SDA_High();
- 557              		.loc 1 106 9 is_stmt 1 view .LVU117
- 558 0004 0B4B     		ldr	r3, .L58
- 559 0006 8022     		movs	r2, #128
- 560 0008 1A61     		str	r2, [r3, #16]
- 561              	.L54:
+ 562              		.loc 1 106 9 is_stmt 1 view .LVU127
+ 563 0008 1A61     		str	r2, [r3, #16]
+ 564              	.L52:
  107:Core/Src/bsp/bsp_i2c.c ****     }
  108:Core/Src/bsp/bsp_i2c.c ****     else
  109:Core/Src/bsp/bsp_i2c.c ****     {
  110:Core/Src/bsp/bsp_i2c.c ****         SDA_Low();
  111:Core/Src/bsp/bsp_i2c.c ****     }
  112:Core/Src/bsp/bsp_i2c.c ****     SCL_High();
- 562              		.loc 1 112 5 view .LVU118
- 563 000a 0A4B     		ldr	r3, .L58
- 564 000c 4022     		movs	r2, #64
- 565 000e 1A61     		str	r2, [r3, #16]
+ 565              		.loc 1 112 5 view .LVU128
+ 566 000a 4022     		movs	r2, #64
+ 567 000c 1A61     		str	r2, [r3, #16]
  113:Core/Src/bsp/bsp_i2c.c ****     I2C_Delay_US();
- 566              		.loc 1 113 5 view .LVU119
- 567              	.LBB15:
- 568              		.loc 1 113 5 view .LVU120
- 569 0010 0023     		movs	r3, #0
- 570 0012 0193     		str	r3, [sp, #4]
- 571 0014 06E0     		b	.L55
- 572              	.L53:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s 			page 13
-
-
- 573              	.LBE15:
- 110:Core/Src/bsp/bsp_i2c.c ****     }
- 574              		.loc 1 110 9 view .LVU121
- 575 0016 074B     		ldr	r3, .L58
- 576 0018 8022     		movs	r2, #128
- 577 001a 5A61     		str	r2, [r3, #20]
- 578 001c F5E7     		b	.L54
- 579              	.L56:
- 580              	.LBB16:
- 581              		.loc 1 113 5 discriminator 3 view .LVU122
- 582 001e 019B     		ldr	r3, [sp, #4]
- 583 0020 0133     		adds	r3, r3, #1
- 584 0022 0193     		str	r3, [sp, #4]
- 585              	.L55:
- 586              		.loc 1 113 5 discriminator 1 view .LVU123
- 587 0024 019B     		ldr	r3, [sp, #4]
- 588 0026 0E2B     		cmp	r3, #14
- 589 0028 F9DD     		ble	.L56
- 590              	.LBE16:
- 591              		.loc 1 113 19 discriminator 4 view .LVU124
+ 568              		.loc 1 113 5 view .LVU129
+ 569              	.LBB26:
+ 570              		.loc 1 113 5 view .LVU130
+ 571 000e 0023     		movs	r3, #0
+ 572              	.L55:
+ 573              		.loc 1 113 5 is_stmt 0 discriminator 3 view .LVU131
+ 574 0010 0193     		str	r3, [sp, #4]
+ 575              		.loc 1 113 5 is_stmt 1 discriminator 1 view .LVU132
+ 576 0012 019B     		ldr	r3, [sp, #4]
+ 577 0014 0E2B     		cmp	r3, #14
+ 578 0016 06DD     		ble	.L54
+ 579              	.LBE26:
+ 580              		.loc 1 113 19 discriminator 4 view .LVU133
  114:Core/Src/bsp/bsp_i2c.c ****     SCL_Low();
- 592              		.loc 1 114 5 view .LVU125
- 593 002a 024B     		ldr	r3, .L58
- 594 002c 4022     		movs	r2, #64
- 595 002e 5A61     		str	r2, [r3, #20]
+ 581              		.loc 1 114 5 view .LVU134
+ 582 0018 4022     		movs	r2, #64
+ 583 001a 044B     		ldr	r3, .L56
+ 584 001c 5A61     		str	r2, [r3, #20]
  115:Core/Src/bsp/bsp_i2c.c **** 
  116:Core/Src/bsp/bsp_i2c.c **** }
- 596              		.loc 1 116 1 is_stmt 0 view .LVU126
- 597 0030 02B0     		add	sp, sp, #8
- 598              	.LCFI13:
- 599              		.cfi_def_cfa_offset 0
- 600              		@ sp needed
- 601 0032 7047     		bx	lr
- 602              	.L59:
- 603              		.align	2
- 604              	.L58:
- 605 0034 000C0140 		.word	1073810432
- 606              		.cfi_endproc
- 607              	.LFE77:
- 609              		.section	.text.MyI2C_RecvByte,"ax",%progbits
- 610              		.align	1
- 611              		.global	MyI2C_RecvByte
- 612              		.syntax unified
- 613              		.thumb
- 614              		.thumb_func
- 616              	MyI2C_RecvByte:
- 617              	.LVL7:
- 618              	.LFB75:
-  70:Core/Src/bsp/bsp_i2c.c ****     uint8_t ReceiveByte=0;
- 619              		.loc 1 70 1 is_stmt 1 view -0
- 620              		.cfi_startproc
- 621              		@ args = 0, pretend = 0, frame = 8
- 622              		@ frame_needed = 0, uses_anonymous_args = 0
-  70:Core/Src/bsp/bsp_i2c.c ****     uint8_t ReceiveByte=0;
- 623              		.loc 1 70 1 is_stmt 0 view .LVU128
- 624 0000 70B5     		push	{r4, r5, r6, lr}
- 625              	.LCFI14:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s 			page 14
+ 585              		.loc 1 116 1 is_stmt 0 view .LVU135
+ 586 001e 02B0     		add	sp, sp, #8
+ 587              	.LCFI15:
+ 588              		.cfi_remember_state
+ 589              		.cfi_def_cfa_offset 0
+ 590              		@ sp needed
+ 591 0020 7047     		bx	lr
+ 592              	.L51:
+ 593              	.LCFI16:
+ 594              		.cfi_restore_state
+ 110:Core/Src/bsp/bsp_i2c.c ****     }
+ 595              		.loc 1 110 9 is_stmt 1 view .LVU136
+ 596 0022 5A61     		str	r2, [r3, #20]
+ 597 0024 F1E7     		b	.L52
+ 598              	.L54:
+ 599              	.LBB27:
+ 113:Core/Src/bsp/bsp_i2c.c ****     SCL_Low();
+ 600              		.loc 1 113 5 discriminator 3 view .LVU137
+ 601 0026 019B     		ldr	r3, [sp, #4]
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s 			page 14
 
 
- 626              		.cfi_def_cfa_offset 16
- 627              		.cfi_offset 4, -16
- 628              		.cfi_offset 5, -12
- 629              		.cfi_offset 6, -8
- 630              		.cfi_offset 14, -4
- 631 0002 82B0     		sub	sp, sp, #8
- 632              	.LCFI15:
- 633              		.cfi_def_cfa_offset 24
- 634 0004 0646     		mov	r6, r0
+ 602 0028 0133     		adds	r3, r3, #1
+ 603 002a F1E7     		b	.L55
+ 604              	.L57:
+ 605              		.align	2
+ 606              	.L56:
+ 607 002c 000C0140 		.word	1073810432
+ 608              	.LBE27:
+ 609              		.cfi_endproc
+ 610              	.LFE77:
+ 612              		.section	.text.MyI2C_RecvByte,"ax",%progbits
+ 613              		.align	1
+ 614              		.global	MyI2C_RecvByte
+ 615              		.syntax unified
+ 616              		.thumb
+ 617              		.thumb_func
+ 619              	MyI2C_RecvByte:
+ 620              	.LVL9:
+ 621              	.LFB75:
+  70:Core/Src/bsp/bsp_i2c.c ****     uint8_t ReceiveByte=0;
+ 622              		.loc 1 70 1 view -0
+ 623              		.cfi_startproc
+ 624              		@ args = 0, pretend = 0, frame = 8
+ 625              		@ frame_needed = 0, uses_anonymous_args = 0
   71:Core/Src/bsp/bsp_i2c.c ****     SDA_High();
- 635              		.loc 1 71 5 is_stmt 1 view .LVU129
- 636              	.LVL8:
+ 626              		.loc 1 71 5 view .LVU139
   72:Core/Src/bsp/bsp_i2c.c **** 
- 637              		.loc 1 72 5 view .LVU130
- 638 0006 174B     		ldr	r3, .L70
- 639 0008 8022     		movs	r2, #128
- 640 000a 1A61     		str	r2, [r3, #16]
-  74:Core/Src/bsp/bsp_i2c.c ****     {
- 641              		.loc 1 74 5 view .LVU131
- 642              	.LBB17:
-  74:Core/Src/bsp/bsp_i2c.c ****     {
- 643              		.loc 1 74 9 view .LVU132
- 644              	.LVL9:
-  74:Core/Src/bsp/bsp_i2c.c ****     {
- 645              		.loc 1 74 17 is_stmt 0 view .LVU133
- 646 000c 0024     		movs	r4, #0
- 647              	.LBE17:
+ 627              		.loc 1 72 5 view .LVU140
+ 628 0000 0022     		movs	r2, #0
+  70:Core/Src/bsp/bsp_i2c.c ****     uint8_t ReceiveByte=0;
+ 629              		.loc 1 70 1 is_stmt 0 view .LVU141
+ 630 0002 2DE9F341 		push	{r0, r1, r4, r5, r6, r7, r8, lr}
+ 631              	.LCFI17:
+ 632              		.cfi_def_cfa_offset 32
+ 633              		.cfi_offset 4, -24
+ 634              		.cfi_offset 5, -20
+ 635              		.cfi_offset 6, -16
+ 636              		.cfi_offset 7, -12
+ 637              		.cfi_offset 8, -8
+ 638              		.cfi_offset 14, -4
+  72:Core/Src/bsp/bsp_i2c.c **** 
+ 639              		.loc 1 72 5 view .LVU142
+ 640 0006 8026     		movs	r6, #128
+  70:Core/Src/bsp/bsp_i2c.c ****     uint8_t ReceiveByte=0;
+ 641              		.loc 1 70 1 view .LVU143
+ 642 0008 0446     		mov	r4, r0
   71:Core/Src/bsp/bsp_i2c.c ****     SDA_High();
- 648              		.loc 1 71 13 view .LVU134
- 649 000e 2546     		mov	r5, r4
- 650              	.LBB21:
-  74:Core/Src/bsp/bsp_i2c.c ****     {
- 651              		.loc 1 74 5 view .LVU135
- 652 0010 1AE0     		b	.L61
- 653              	.LVL10:
- 654              	.L63:
- 655              	.LBB18:
-  77:Core/Src/bsp/bsp_i2c.c ****         if(MyI2C_R_SDA())
- 656              		.loc 1 77 9 is_stmt 1 discriminator 3 view .LVU136
- 657 0012 009B     		ldr	r3, [sp]
- 658 0014 0133     		adds	r3, r3, #1
- 659 0016 0093     		str	r3, [sp]
- 660              	.L62:
-  77:Core/Src/bsp/bsp_i2c.c ****         if(MyI2C_R_SDA())
- 661              		.loc 1 77 9 discriminator 1 view .LVU137
- 662 0018 009B     		ldr	r3, [sp]
- 663 001a 0E2B     		cmp	r3, #14
- 664 001c F9DD     		ble	.L63
- 665              	.LBE18:
-  77:Core/Src/bsp/bsp_i2c.c ****         if(MyI2C_R_SDA())
- 666              		.loc 1 77 23 discriminator 4 view .LVU138
-  78:Core/Src/bsp/bsp_i2c.c ****         {
- 667              		.loc 1 78 9 view .LVU139
-  78:Core/Src/bsp/bsp_i2c.c ****         {
- 668              		.loc 1 78 12 is_stmt 0 view .LVU140
- 669 001e FFF7FEFF 		bl	MyI2C_R_SDA
- 670              	.LVL11:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s 			page 15
-
-
-  78:Core/Src/bsp/bsp_i2c.c ****         {
- 671              		.loc 1 78 11 discriminator 1 view .LVU141
- 672 0022 18B1     		cbz	r0, .L64
-  80:Core/Src/bsp/bsp_i2c.c ****         }
- 673              		.loc 1 80 13 is_stmt 1 view .LVU142
-  80:Core/Src/bsp/bsp_i2c.c ****         }
- 674              		.loc 1 80 33 is_stmt 0 view .LVU143
- 675 0024 8023     		movs	r3, #128
- 676 0026 2341     		asrs	r3, r3, r4
-  80:Core/Src/bsp/bsp_i2c.c ****         }
- 677              		.loc 1 80 25 view .LVU144
- 678 0028 2B43     		orrs	r3, r3, r5
- 679 002a DDB2     		uxtb	r5, r3
- 680              	.LVL12:
- 681              	.L64:
-  82:Core/Src/bsp/bsp_i2c.c ****         I2C_Delay_US();
- 682              		.loc 1 82 9 is_stmt 1 view .LVU145
- 683 002c 0D4B     		ldr	r3, .L70
- 684 002e 4022     		movs	r2, #64
- 685 0030 5A61     		str	r2, [r3, #20]
-  83:Core/Src/bsp/bsp_i2c.c ****     }
- 686              		.loc 1 83 9 view .LVU146
- 687              	.LBB19:
-  83:Core/Src/bsp/bsp_i2c.c ****     }
- 688              		.loc 1 83 9 view .LVU147
- 689 0032 0023     		movs	r3, #0
- 690 0034 0193     		str	r3, [sp, #4]
- 691 0036 02E0     		b	.L65
- 692              	.L66:
-  83:Core/Src/bsp/bsp_i2c.c ****     }
- 693              		.loc 1 83 9 discriminator 3 view .LVU148
- 694 0038 019B     		ldr	r3, [sp, #4]
- 695 003a 0133     		adds	r3, r3, #1
- 696 003c 0193     		str	r3, [sp, #4]
- 697              	.L65:
-  83:Core/Src/bsp/bsp_i2c.c ****     }
- 698              		.loc 1 83 9 discriminator 1 view .LVU149
- 699 003e 019B     		ldr	r3, [sp, #4]
- 700 0040 0E2B     		cmp	r3, #14
- 701 0042 F9DD     		ble	.L66
- 702              	.LBE19:
-  83:Core/Src/bsp/bsp_i2c.c ****     }
- 703              		.loc 1 83 23 discriminator 4 view .LVU150
-  74:Core/Src/bsp/bsp_i2c.c ****     {
- 704              		.loc 1 74 26 discriminator 2 view .LVU151
- 705 0044 0134     		adds	r4, r4, #1
- 706              	.LVL13:
-  74:Core/Src/bsp/bsp_i2c.c ****     {
- 707              		.loc 1 74 26 is_stmt 0 discriminator 2 view .LVU152
- 708 0046 E4B2     		uxtb	r4, r4
- 709              	.LVL14:
- 710              	.L61:
-  74:Core/Src/bsp/bsp_i2c.c ****     {
- 711              		.loc 1 74 22 is_stmt 1 discriminator 1 view .LVU153
- 712 0048 072C     		cmp	r4, #7
- 713 004a 05D8     		bhi	.L69
+ 643              		.loc 1 71 13 view .LVU144
+ 644 000a 1146     		mov	r1, r2
+ 645              	.LBB28:
   76:Core/Src/bsp/bsp_i2c.c ****         I2C_Delay_US();
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s 			page 16
+ 646              		.loc 1 76 9 view .LVU145
+ 647 000c 4027     		movs	r7, #64
+ 648              	.LBB29:
+  77:Core/Src/bsp/bsp_i2c.c ****         if(MyI2C_R_SDA())
+ 649              		.loc 1 77 9 view .LVU146
+ 650 000e 9046     		mov	r8, r2
+ 651              	.LBE29:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s 			page 15
 
 
- 714              		.loc 1 76 9 view .LVU154
- 715 004c 054B     		ldr	r3, .L70
- 716 004e 4022     		movs	r2, #64
- 717 0050 1A61     		str	r2, [r3, #16]
+ 652              	.LBE28:
+  72:Core/Src/bsp/bsp_i2c.c **** 
+ 653              		.loc 1 72 5 view .LVU147
+ 654 0010 134D     		ldr	r5, .L69
+ 655 0012 2E61     		str	r6, [r5, #16]
+  74:Core/Src/bsp/bsp_i2c.c ****     {
+ 656              		.loc 1 74 5 is_stmt 1 view .LVU148
+ 657              	.LBB34:
+  74:Core/Src/bsp/bsp_i2c.c ****     {
+ 658              		.loc 1 74 9 view .LVU149
+ 659              	.LVL10:
+  74:Core/Src/bsp/bsp_i2c.c ****     {
+ 660              		.loc 1 74 22 discriminator 1 view .LVU150
+ 661              	.L64:
+  76:Core/Src/bsp/bsp_i2c.c ****         I2C_Delay_US();
+ 662              		.loc 1 76 9 view .LVU151
+ 663 0014 2F61     		str	r7, [r5, #16]
   77:Core/Src/bsp/bsp_i2c.c ****         if(MyI2C_R_SDA())
- 718              		.loc 1 77 9 view .LVU155
- 719              	.LBB20:
+ 664              		.loc 1 77 9 view .LVU152
+ 665              	.LBB30:
   77:Core/Src/bsp/bsp_i2c.c ****         if(MyI2C_R_SDA())
- 720              		.loc 1 77 9 view .LVU156
- 721 0052 0023     		movs	r3, #0
- 722 0054 0093     		str	r3, [sp]
- 723 0056 DFE7     		b	.L62
- 724              	.L69:
- 725              	.LBE20:
- 726              	.LBE21:
+ 666              		.loc 1 77 9 view .LVU153
+ 667 0016 CDF80080 		str	r8, [sp]
+ 668              	.L59:
+  77:Core/Src/bsp/bsp_i2c.c ****         if(MyI2C_R_SDA())
+ 669              		.loc 1 77 9 discriminator 1 view .LVU154
+ 670 001a 009B     		ldr	r3, [sp]
+ 671 001c 0E2B     		cmp	r3, #14
+ 672 001e 16DD     		ble	.L60
+ 673              	.LBE30:
+  77:Core/Src/bsp/bsp_i2c.c ****         if(MyI2C_R_SDA())
+ 674              		.loc 1 77 23 discriminator 4 view .LVU155
+  78:Core/Src/bsp/bsp_i2c.c ****         {
+ 675              		.loc 1 78 9 view .LVU156
+  78:Core/Src/bsp/bsp_i2c.c ****         {
+ 676              		.loc 1 78 12 is_stmt 0 view .LVU157
+ 677 0020 FFF7FEFF 		bl	MyI2C_R_SDA
+ 678              	.LVL11:
+  78:Core/Src/bsp/bsp_i2c.c ****         {
+ 679              		.loc 1 78 11 discriminator 1 view .LVU158
+ 680 0024 18B1     		cbz	r0, .L61
+  80:Core/Src/bsp/bsp_i2c.c ****         }
+ 681              		.loc 1 80 13 is_stmt 1 view .LVU159
+  80:Core/Src/bsp/bsp_i2c.c ****         }
+ 682              		.loc 1 80 33 is_stmt 0 view .LVU160
+ 683 0026 46FA02F3 		asr	r3, r6, r2
+  80:Core/Src/bsp/bsp_i2c.c ****         }
+ 684              		.loc 1 80 25 view .LVU161
+ 685 002a 0B43     		orrs	r3, r3, r1
+ 686 002c D9B2     		uxtb	r1, r3
+ 687              	.LVL12:
+ 688              	.L61:
+  82:Core/Src/bsp/bsp_i2c.c ****         I2C_Delay_US();
+ 689              		.loc 1 82 9 is_stmt 1 view .LVU162
+ 690 002e 6F61     		str	r7, [r5, #20]
+  83:Core/Src/bsp/bsp_i2c.c ****     }
+ 691              		.loc 1 83 9 view .LVU163
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s 			page 16
+
+
+ 692              	.LBB31:
+  83:Core/Src/bsp/bsp_i2c.c ****     }
+ 693              		.loc 1 83 9 view .LVU164
+ 694 0030 CDF80480 		str	r8, [sp, #4]
+ 695              	.L62:
+  83:Core/Src/bsp/bsp_i2c.c ****     }
+ 696              		.loc 1 83 9 discriminator 1 view .LVU165
+ 697 0034 019B     		ldr	r3, [sp, #4]
+ 698 0036 0E2B     		cmp	r3, #14
+ 699 0038 0DDD     		ble	.L63
+ 700              	.LBE31:
+  83:Core/Src/bsp/bsp_i2c.c ****     }
+ 701              		.loc 1 83 23 discriminator 4 view .LVU166
+  74:Core/Src/bsp/bsp_i2c.c ****     {
+ 702              		.loc 1 74 26 discriminator 2 view .LVU167
+ 703              	.LVL13:
+  74:Core/Src/bsp/bsp_i2c.c ****     {
+ 704              		.loc 1 74 22 discriminator 1 view .LVU168
+ 705 003a 0132     		adds	r2, r2, #1
+ 706              	.LVL14:
+  74:Core/Src/bsp/bsp_i2c.c ****     {
+ 707              		.loc 1 74 22 is_stmt 0 discriminator 1 view .LVU169
+ 708 003c 082A     		cmp	r2, #8
+ 709 003e E9D1     		bne	.L64
+ 710              	.LBE34:
   85:Core/Src/bsp/bsp_i2c.c ****     return ReceiveByte;
- 727              		.loc 1 85 5 view .LVU157
- 728 0058 3046     		mov	r0, r6
- 729 005a FFF7FEFF 		bl	MyI2C_SendAck
- 730              	.LVL15:
+ 711              		.loc 1 85 5 is_stmt 1 view .LVU170
+ 712 0040 2046     		mov	r0, r4
+ 713 0042 FFF7FEFF 		bl	MyI2C_SendAck
+ 714              	.LVL15:
   86:Core/Src/bsp/bsp_i2c.c **** }
- 731              		.loc 1 86 5 view .LVU158
+ 715              		.loc 1 86 5 view .LVU171
   87:Core/Src/bsp/bsp_i2c.c **** 
- 732              		.loc 1 87 1 is_stmt 0 view .LVU159
- 733 005e 2846     		mov	r0, r5
- 734 0060 02B0     		add	sp, sp, #8
- 735              	.LCFI16:
- 736              		.cfi_def_cfa_offset 16
- 737              		@ sp needed
- 738 0062 70BD     		pop	{r4, r5, r6, pc}
- 739              	.LVL16:
- 740              	.L71:
-  87:Core/Src/bsp/bsp_i2c.c **** 
- 741              		.loc 1 87 1 view .LVU160
- 742              		.align	2
- 743              	.L70:
- 744 0064 000C0140 		.word	1073810432
- 745              		.cfi_endproc
- 746              	.LFE75:
- 748              		.section	.text.MyI2C_ReadWhoAmI,"ax",%progbits
- 749              		.align	1
- 750              		.global	MyI2C_ReadWhoAmI
- 751              		.syntax unified
- 752              		.thumb
- 753              		.thumb_func
- 755              	MyI2C_ReadWhoAmI:
- 756              	.LFB78:
+ 716              		.loc 1 87 1 is_stmt 0 view .LVU172
+ 717 0046 0846     		mov	r0, r1
+ 718 0048 02B0     		add	sp, sp, #8
+ 719              	.LCFI18:
+ 720              		.cfi_remember_state
+ 721              		.cfi_def_cfa_offset 24
+ 722              		@ sp needed
+ 723 004a BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 724              	.LVL16:
+ 725              	.L60:
+ 726              	.LCFI19:
+ 727              		.cfi_restore_state
+ 728              	.LBB35:
+ 729              	.LBB32:
+  77:Core/Src/bsp/bsp_i2c.c ****         if(MyI2C_R_SDA())
+ 730              		.loc 1 77 9 is_stmt 1 discriminator 3 view .LVU173
+ 731 004e 009B     		ldr	r3, [sp]
+ 732 0050 0133     		adds	r3, r3, #1
+ 733 0052 0093     		str	r3, [sp]
+ 734 0054 E1E7     		b	.L59
+ 735              	.L63:
+  77:Core/Src/bsp/bsp_i2c.c ****         if(MyI2C_R_SDA())
+ 736              		.loc 1 77 9 is_stmt 0 discriminator 3 view .LVU174
+ 737              	.LBE32:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s 			page 17
+
+
+ 738              	.LBB33:
+  83:Core/Src/bsp/bsp_i2c.c ****     }
+ 739              		.loc 1 83 9 is_stmt 1 discriminator 3 view .LVU175
+ 740 0056 019B     		ldr	r3, [sp, #4]
+ 741 0058 0133     		adds	r3, r3, #1
+ 742 005a 0193     		str	r3, [sp, #4]
+ 743 005c EAE7     		b	.L62
+ 744              	.L70:
+ 745 005e 00BF     		.align	2
+ 746              	.L69:
+ 747 0060 000C0140 		.word	1073810432
+ 748              	.LBE33:
+ 749              	.LBE35:
+ 750              		.cfi_endproc
+ 751              	.LFE75:
+ 753              		.section	.text.MyI2C_ReadWhoAmI,"ax",%progbits
+ 754              		.align	1
+ 755              		.global	MyI2C_ReadWhoAmI
+ 756              		.syntax unified
+ 757              		.thumb
+ 758              		.thumb_func
+ 760              	MyI2C_ReadWhoAmI:
+ 761              	.LFB78:
  117:Core/Src/bsp/bsp_i2c.c **** 
  118:Core/Src/bsp/bsp_i2c.c **** uint8_t MyI2C_ReadWhoAmI(void)
  119:Core/Src/bsp/bsp_i2c.c **** {
- 757              		.loc 1 119 1 is_stmt 1 view -0
- 758              		.cfi_startproc
- 759              		@ args = 0, pretend = 0, frame = 0
- 760              		@ frame_needed = 0, uses_anonymous_args = 0
- 761 0000 10B5     		push	{r4, lr}
- 762              	.LCFI17:
- 763              		.cfi_def_cfa_offset 8
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s 			page 17
-
-
- 764              		.cfi_offset 4, -8
- 765              		.cfi_offset 14, -4
+ 762              		.loc 1 119 1 view -0
+ 763              		.cfi_startproc
+ 764              		@ args = 0, pretend = 0, frame = 0
+ 765              		@ frame_needed = 0, uses_anonymous_args = 0
  120:Core/Src/bsp/bsp_i2c.c ****     uint8_t ID = 0;
- 766              		.loc 1 120 5 view .LVU162
+ 766              		.loc 1 120 5 view .LVU177
  767              	.LVL17:
  121:Core/Src/bsp/bsp_i2c.c ****     
  122:Core/Src/bsp/bsp_i2c.c ****     MyI2C_Init();
- 768              		.loc 1 122 5 view .LVU163
- 769 0002 FFF7FEFF 		bl	MyI2C_Init
- 770              	.LVL18:
+ 768              		.loc 1 122 5 view .LVU178
+ 119:Core/Src/bsp/bsp_i2c.c ****     uint8_t ID = 0;
+ 769              		.loc 1 119 1 is_stmt 0 view .LVU179
+ 770 0000 08B5     		push	{r3, lr}
+ 771              	.LCFI20:
+ 772              		.cfi_def_cfa_offset 8
+ 773              		.cfi_offset 3, -8
+ 774              		.cfi_offset 14, -4
+ 775              		.loc 1 122 5 view .LVU180
+ 776 0002 FFF7FEFF 		bl	MyI2C_Init
+ 777              	.LVL18:
  123:Core/Src/bsp/bsp_i2c.c ****     
  124:Core/Src/bsp/bsp_i2c.c ****     /* ---- 写操作：设备地址(写) + 寄存器地址 ---- */
  125:Core/Src/bsp/bsp_i2c.c ****     MyI2C_Start();
- 771              		.loc 1 125 5 view .LVU164
- 772 0006 FFF7FEFF 		bl	MyI2C_Start
- 773              	.LVL19:
+ 778              		.loc 1 125 5 is_stmt 1 view .LVU181
  126:Core/Src/bsp/bsp_i2c.c ****     MyI2C_SendByte(0xD0);           /* 设备地址 + W */
- 774              		.loc 1 126 5 view .LVU165
- 775 000a D020     		movs	r0, #208
- 776 000c FFF7FEFF 		bl	MyI2C_SendByte
- 777              	.LVL20:
+ 779              		.loc 1 126 5 is_stmt 0 view .LVU182
+ 780 0006 D020     		movs	r0, #208
+ 125:Core/Src/bsp/bsp_i2c.c ****     MyI2C_SendByte(0xD0);           /* 设备地址 + W */
+ 781              		.loc 1 125 5 view .LVU183
+ 782 0008 FFF7FEFF 		bl	MyI2C_Start
+ 783              	.LVL19:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s 			page 18
+
+
+ 784              		.loc 1 126 5 is_stmt 1 view .LVU184
+ 785 000c FFF7FEFF 		bl	MyI2C_SendByte
+ 786              	.LVL20:
  127:Core/Src/bsp/bsp_i2c.c ****     if(MyI2C_ReciveAck())           /* ACK=0 成功，非0则NACK */
- 778              		.loc 1 127 5 view .LVU166
- 779              		.loc 1 127 8 is_stmt 0 view .LVU167
- 780 0010 FFF7FEFF 		bl	MyI2C_ReciveAck
- 781              	.LVL21:
- 782              		.loc 1 127 7 discriminator 1 view .LVU168
- 783 0014 B8B9     		cbnz	r0, .L77
- 784              	.L73:
+ 787              		.loc 1 127 5 view .LVU185
+ 788              		.loc 1 127 8 is_stmt 0 view .LVU186
+ 789 0010 FFF7FEFF 		bl	MyI2C_ReciveAck
+ 790              	.LVL21:
+ 791              		.loc 1 127 7 discriminator 1 view .LVU187
+ 792 0014 08B1     		cbz	r0, .L72
  128:Core/Src/bsp/bsp_i2c.c ****     {
  129:Core/Src/bsp/bsp_i2c.c ****         MyI2C_Stop();
+ 793              		.loc 1 129 9 is_stmt 1 view .LVU188
+ 794 0016 FFF7FEFF 		bl	MyI2C_Stop
+ 795              	.LVL22:
+ 796              	.L72:
  130:Core/Src/bsp/bsp_i2c.c ****         // return 0;                   /* 设备无应答 */
  131:Core/Src/bsp/bsp_i2c.c ****     }
  132:Core/Src/bsp/bsp_i2c.c ****     MyI2C_SendByte(0x75);           /* WHO_AM_I 寄存器 */
- 785              		.loc 1 132 5 is_stmt 1 view .LVU169
- 786 0016 7520     		movs	r0, #117
- 787 0018 FFF7FEFF 		bl	MyI2C_SendByte
- 788              	.LVL22:
+ 797              		.loc 1 132 5 view .LVU189
+ 798 001a 7520     		movs	r0, #117
+ 799 001c FFF7FEFF 		bl	MyI2C_SendByte
+ 800              	.LVL23:
  133:Core/Src/bsp/bsp_i2c.c ****     if(MyI2C_ReciveAck())
- 789              		.loc 1 133 5 view .LVU170
- 790              		.loc 1 133 8 is_stmt 0 view .LVU171
- 791 001c FFF7FEFF 		bl	MyI2C_ReciveAck
- 792              	.LVL23:
- 793              		.loc 1 133 7 discriminator 1 view .LVU172
- 794 0020 A0B9     		cbnz	r0, .L78
- 795              	.L74:
+ 801              		.loc 1 133 5 view .LVU190
+ 802              		.loc 1 133 8 is_stmt 0 view .LVU191
+ 803 0020 FFF7FEFF 		bl	MyI2C_ReciveAck
+ 804              	.LVL24:
+ 805              		.loc 1 133 7 discriminator 1 view .LVU192
+ 806 0024 08B1     		cbz	r0, .L73
  134:Core/Src/bsp/bsp_i2c.c ****     {
  135:Core/Src/bsp/bsp_i2c.c ****         MyI2C_Stop();
+ 807              		.loc 1 135 9 is_stmt 1 view .LVU193
+ 808 0026 FFF7FEFF 		bl	MyI2C_Stop
+ 809              	.LVL25:
+ 810              	.L73:
  136:Core/Src/bsp/bsp_i2c.c ****         // return 0;
  137:Core/Src/bsp/bsp_i2c.c ****     }
  138:Core/Src/bsp/bsp_i2c.c ****     MyI2C_Stop();
- 796              		.loc 1 138 5 is_stmt 1 view .LVU173
- 797 0022 FFF7FEFF 		bl	MyI2C_Stop
- 798              	.LVL24:
+ 811              		.loc 1 138 5 view .LVU194
  139:Core/Src/bsp/bsp_i2c.c ****     
  140:Core/Src/bsp/bsp_i2c.c ****     /* ---- 读操作：设备地址(读) + 读取数据 ---- */
  141:Core/Src/bsp/bsp_i2c.c ****     MyI2C_Start();
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s 			page 18
-
-
- 799              		.loc 1 141 5 view .LVU174
- 800 0026 FFF7FEFF 		bl	MyI2C_Start
- 801              	.LVL25:
  142:Core/Src/bsp/bsp_i2c.c ****     MyI2C_SendByte(0xD1);           /* 设备地址 + R */
- 802              		.loc 1 142 5 view .LVU175
- 803 002a D120     		movs	r0, #209
- 804 002c FFF7FEFF 		bl	MyI2C_SendByte
- 805              	.LVL26:
+ 812              		.loc 1 142 5 is_stmt 0 view .LVU195
+ 813 002a D120     		movs	r0, #209
+ 138:Core/Src/bsp/bsp_i2c.c ****     
+ 814              		.loc 1 138 5 view .LVU196
+ 815 002c FFF7FEFF 		bl	MyI2C_Stop
+ 816              	.LVL26:
+ 141:Core/Src/bsp/bsp_i2c.c ****     MyI2C_SendByte(0xD1);           /* 设备地址 + R */
+ 817              		.loc 1 141 5 is_stmt 1 view .LVU197
+ 818 0030 FFF7FEFF 		bl	MyI2C_Start
+ 819              	.LVL27:
+ 820              		.loc 1 142 5 view .LVU198
+ 821 0034 FFF7FEFF 		bl	MyI2C_SendByte
+ 822              	.LVL28:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s 			page 19
+
+
  143:Core/Src/bsp/bsp_i2c.c ****     if(MyI2C_ReciveAck())
- 806              		.loc 1 143 5 view .LVU176
- 807              		.loc 1 143 8 is_stmt 0 view .LVU177
- 808 0030 FFF7FEFF 		bl	MyI2C_ReciveAck
- 809              	.LVL27:
- 810              		.loc 1 143 7 discriminator 1 view .LVU178
- 811 0034 68B9     		cbnz	r0, .L79
- 812              	.L75:
+ 823              		.loc 1 143 5 view .LVU199
+ 824              		.loc 1 143 8 is_stmt 0 view .LVU200
+ 825 0038 FFF7FEFF 		bl	MyI2C_ReciveAck
+ 826              	.LVL29:
+ 827              		.loc 1 143 7 discriminator 1 view .LVU201
+ 828 003c 08B1     		cbz	r0, .L74
  144:Core/Src/bsp/bsp_i2c.c ****     {
  145:Core/Src/bsp/bsp_i2c.c ****         MyI2C_Stop();
+ 829              		.loc 1 145 9 is_stmt 1 view .LVU202
+ 830 003e FFF7FEFF 		bl	MyI2C_Stop
+ 831              	.LVL30:
+ 832              	.L74:
  146:Core/Src/bsp/bsp_i2c.c ****         // return 0;
  147:Core/Src/bsp/bsp_i2c.c ****     }
  148:Core/Src/bsp/bsp_i2c.c ****     ID = MyI2C_RecvByte(1);         /* 最后一个字节发 NACK */
- 813              		.loc 1 148 5 is_stmt 1 view .LVU179
- 814              		.loc 1 148 10 is_stmt 0 view .LVU180
- 815 0036 0120     		movs	r0, #1
- 816 0038 FFF7FEFF 		bl	MyI2C_RecvByte
- 817              	.LVL28:
- 818 003c 0446     		mov	r4, r0
- 819              	.LVL29:
+ 833              		.loc 1 148 5 view .LVU203
+ 834              		.loc 1 148 10 is_stmt 0 view .LVU204
+ 835 0042 0120     		movs	r0, #1
+ 836 0044 FFF7FEFF 		bl	MyI2C_RecvByte
+ 837              	.LVL31:
  149:Core/Src/bsp/bsp_i2c.c ****     MyI2C_Stop();
- 820              		.loc 1 149 5 is_stmt 1 view .LVU181
- 821 003e FFF7FEFF 		bl	MyI2C_Stop
- 822              	.LVL30:
+ 838              		.loc 1 149 5 is_stmt 1 view .LVU205
+ 839 0048 FFF7FEFF 		bl	MyI2C_Stop
+ 840              	.LVL32:
  150:Core/Src/bsp/bsp_i2c.c ****     
  151:Core/Src/bsp/bsp_i2c.c ****     return ID;
- 823              		.loc 1 151 5 view .LVU182
+ 841              		.loc 1 151 5 view .LVU206
  152:Core/Src/bsp/bsp_i2c.c **** }
- 824              		.loc 1 152 1 is_stmt 0 view .LVU183
- 825 0042 2046     		mov	r0, r4
- 826 0044 10BD     		pop	{r4, pc}
- 827              	.LVL31:
- 828              	.L77:
- 129:Core/Src/bsp/bsp_i2c.c ****         // return 0;                   /* 设备无应答 */
- 829              		.loc 1 129 9 is_stmt 1 view .LVU184
- 830 0046 FFF7FEFF 		bl	MyI2C_Stop
- 831              	.LVL32:
- 832 004a E4E7     		b	.L73
- 833              	.L78:
- 135:Core/Src/bsp/bsp_i2c.c ****         // return 0;
- 834              		.loc 1 135 9 view .LVU185
- 835 004c FFF7FEFF 		bl	MyI2C_Stop
- 836              	.LVL33:
- 837 0050 E7E7     		b	.L74
- 838              	.L79:
- 145:Core/Src/bsp/bsp_i2c.c ****         // return 0;
- 839              		.loc 1 145 9 view .LVU186
- 840 0052 FFF7FEFF 		bl	MyI2C_Stop
- 841              	.LVL34:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s 			page 19
-
-
- 842 0056 EEE7     		b	.L75
- 843              		.cfi_endproc
- 844              	.LFE78:
- 846              		.text
- 847              	.Letext0:
- 848              		.file 2 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_defa
- 849              		.file 3 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h
- 850              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h"
- 851              		.file 5 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio.h"
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s 			page 20
+ 842              		.loc 1 152 1 is_stmt 0 view .LVU207
+ 843 004c 08BD     		pop	{r3, pc}
+ 844              		.cfi_endproc
+ 845              	.LFE78:
+ 847              		.text
+ 848              	.Letext0:
+ 849              		.file 2 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_defa
+ 850              		.file 3 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h
+ 851              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h"
+ 852              		.file 5 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio.h"
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s 			page 20
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 bsp_i2c.c
-C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s:19     .text.MyI2C_R_SDA:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s:25     .text.MyI2C_R_SDA:00000000 MyI2C_R_SDA
-C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s:46     .text.MyI2C_R_SDA:00000010 $d
-C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s:51     .text.MyI2C_Init:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s:57     .text.MyI2C_Init:00000000 MyI2C_Init
-C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s:124    .text.MyI2C_Init:00000044 $d
-C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s:130    .text.MyI2C_Start:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s:136    .text.MyI2C_Start:00000000 MyI2C_Start
-C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s:225    .text.MyI2C_Start:00000054 $d
-C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s:230    .text.MyI2C_Stop:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s:236    .text.MyI2C_Stop:00000000 MyI2C_Stop
-C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s:320    .text.MyI2C_Stop:00000050 $d
-C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s:325    .text.MyI2C_SendByte:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s:331    .text.MyI2C_SendByte:00000000 MyI2C_SendByte
-C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s:463    .text.MyI2C_SendByte:00000078 $d
-C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s:468    .text.MyI2C_ReciveAck:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s:474    .text.MyI2C_ReciveAck:00000000 MyI2C_ReciveAck
-C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s:531    .text.MyI2C_ReciveAck:00000030 $d
-C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s:536    .text.MyI2C_SendAck:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s:542    .text.MyI2C_SendAck:00000000 MyI2C_SendAck
-C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s:605    .text.MyI2C_SendAck:00000034 $d
-C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s:610    .text.MyI2C_RecvByte:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s:616    .text.MyI2C_RecvByte:00000000 MyI2C_RecvByte
-C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s:744    .text.MyI2C_RecvByte:00000064 $d
-C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s:749    .text.MyI2C_ReadWhoAmI:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\ccWQuGKu.s:755    .text.MyI2C_ReadWhoAmI:00000000 MyI2C_ReadWhoAmI
+C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s:19     .text.MyI2C_R_SDA:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s:25     .text.MyI2C_R_SDA:00000000 MyI2C_R_SDA
+C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s:42     .text.MyI2C_R_SDA:0000000c $d
+C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s:47     .text.MyI2C_Init:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s:53     .text.MyI2C_Init:00000000 MyI2C_Init
+C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s:109    .text.MyI2C_Init:0000003c $d
+C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s:115    .text.MyI2C_Start:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s:121    .text.MyI2C_Start:00000000 MyI2C_Start
+C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s:218    .text.MyI2C_Start:0000004c $d
+C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s:224    .text.MyI2C_Stop:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s:230    .text.MyI2C_Stop:00000000 MyI2C_Stop
+C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s:323    .text.MyI2C_Stop:00000048 $d
+C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s:329    .text.MyI2C_SendByte:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s:335    .text.MyI2C_SendByte:00000000 MyI2C_SendByte
+C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s:460    .text.MyI2C_SendByte:00000054 $d
+C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s:467    .text.MyI2C_ReciveAck:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s:473    .text.MyI2C_ReciveAck:00000000 MyI2C_ReciveAck
+C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s:533    .text.MyI2C_ReciveAck:0000002c $d
+C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s:539    .text.MyI2C_SendAck:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s:545    .text.MyI2C_SendAck:00000000 MyI2C_SendAck
+C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s:607    .text.MyI2C_SendAck:0000002c $d
+C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s:613    .text.MyI2C_RecvByte:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s:619    .text.MyI2C_RecvByte:00000000 MyI2C_RecvByte
+C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s:747    .text.MyI2C_RecvByte:00000060 $d
+C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s:754    .text.MyI2C_ReadWhoAmI:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\cc81iw0L.s:760    .text.MyI2C_ReadWhoAmI:00000000 MyI2C_ReadWhoAmI
 
 UNDEFINED SYMBOLS
 HAL_GPIO_Init

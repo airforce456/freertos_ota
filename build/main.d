@@ -38,7 +38,7 @@ build/main.o: Core/Src/main.c Core/Inc/main.h \
  Core/Inc/device/mpu6050.h Core/Inc/bsp/bsp_i2c.h \
  Middlewares/FreeRTOS/Source/include/semphr.h \
  Middlewares/FreeRTOS/Source/include/queue.h Core/Inc/bsp/bsp_init.h \
- Core/Inc/device/oled.h \
+ Core/Inc/oled.h Core/Inc/soft_i2c.h \
  Middlewares/FreeRTOS/Source/include/event_groups.h \
  Middlewares/FreeRTOS/Source/include/timers.h Core/Inc/device/esp8266.h \
  Core/Inc/device/onenet.h Core/Inc/device/at24c02.h \
@@ -94,7 +94,8 @@ Core/Inc/bsp/bsp_i2c.h:
 Middlewares/FreeRTOS/Source/include/semphr.h:
 Middlewares/FreeRTOS/Source/include/queue.h:
 Core/Inc/bsp/bsp_init.h:
-Core/Inc/device/oled.h:
+Core/Inc/oled.h:
+Core/Inc/soft_i2c.h:
 Middlewares/FreeRTOS/Source/include/event_groups.h:
 Middlewares/FreeRTOS/Source/include/timers.h:
 Core/Inc/device/esp8266.h:

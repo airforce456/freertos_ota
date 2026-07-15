@@ -33,7 +33,7 @@ build/onenet.o: Core/Src/device/onenet.c Core/Inc/main.h \
  Core/Inc/main.h Core/Inc/device/esp8266.h Core/Inc/device/onenet.h \
  Core/Inc/device/mqttkit.h Core/Inc/device/Common.h \
  Core/Inc/device/base64.h Core/Inc/device/hmac_sha1.h \
- Core/Inc/device/cJSON.h
+ Core/Inc/device/cJSON.h Core/Inc/device/ota_download.h
 Core/Inc/main.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 Core/Inc/stm32f1xx_hal_conf.h:
@@ -78,3 +78,4 @@ Core/Inc/device/Common.h:
 Core/Inc/device/base64.h:
 Core/Inc/device/hmac_sha1.h:
 Core/Inc/device/cJSON.h:
+Core/Inc/device/ota_download.h:
