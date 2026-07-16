@@ -17,5 +17,7 @@ bool OneNet_DevLink(void);
 void OneNet_SendData(void);
 void OneNET_Subscribe(void);
 void OneNet_RevPro(unsigned char *cmd);
+unsigned char OneNET_Authorization(char *ver, char *res, unsigned int et,
+    char *access_key, char *dev_name, char *auth_buf, unsigned short auth_len, bool flag);
 
 #endif

@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s 			page 1
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -18,15 +18,13 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s 			page 1
   15              	.Ltext0:
   16              		.cfi_sections	.debug_frame
   17              		.file 1 "Core/Src/device/at24c02.c"
-  18              		.section	.text.AT24C02_WriteByte,"ax",%progbits
+  18              		.section	.text.EE_AppDelayMs.constprop.0,"ax",%progbits
   19              		.align	1
-  20              		.global	AT24C02_WriteByte
-  21              		.syntax unified
-  22              		.thumb
-  23              		.thumb_func
-  25              	AT24C02_WriteByte:
-  26              	.LVL0:
-  27              	.LFB70:
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	EE_AppDelayMs.constprop.0:
+  25              	.LFB78:
    1:Core/Src/device/at24c02.c **** /**
    2:Core/Src/device/at24c02.c ****  * @file    at24c02.c
    3:Core/Src/device/at24c02.c ****  * @brief   AT24C02 256-byte I2C EEPROM driver implementation
@@ -53,1170 +51,1334 @@ ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s 			page 1
   24:Core/Src/device/at24c02.c **** #else
   25:Core/Src/device/at24c02.c ****   /* APP: FreeRTOS mutex protection */
   26:Core/Src/device/at24c02.c ****   #include "FreeRTOS.h"
-  27:Core/Src/device/at24c02.c ****   #include "semphr.h"
-  28:Core/Src/device/at24c02.c ****   extern SemaphoreHandle_t xI2CMutex;
-  29:Core/Src/device/at24c02.c ****   #define EE_LOCK()       (xSemaphoreTake(xI2CMutex, pdMS_TO_TICKS(100)) == pdPASS)
-  30:Core/Src/device/at24c02.c ****   #define EE_UNLOCK()     xSemaphoreGive(xI2CMutex)
-  31:Core/Src/device/at24c02.c ****   #define EE_DELAY_MS(ms) vTaskDelay(pdMS_TO_TICKS(ms))
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s 			page 2
+  27:Core/Src/device/at24c02.c ****     #include "task.h"
+  28:Core/Src/device/at24c02.c ****   #include "semphr.h"
+  29:Core/Src/device/at24c02.c ****   extern SemaphoreHandle_t xI2CMutex;
+  30:Core/Src/device/at24c02.c **** 
+  31:Core/Src/device/at24c02.c ****     static void EE_AppDelayMs(uint32_t ms)
+  26              		.loc 1 31 17 view -0
+  27              		.cfi_startproc
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s 			page 2
 
 
-  32:Core/Src/device/at24c02.c **** #endif
-  33:Core/Src/device/at24c02.c **** 
-  34:Core/Src/device/at24c02.c **** /* ==================================================================
-  35:Core/Src/device/at24c02.c ****  *  Low-level: write one byte
-  36:Core/Src/device/at24c02.c ****  * ================================================================== */
-  37:Core/Src/device/at24c02.c **** bool AT24C02_WriteByte(uint8_t addr, uint8_t data)
-  38:Core/Src/device/at24c02.c **** {
-  28              		.loc 1 38 1 view -0
-  29              		.cfi_startproc
-  30              		@ args = 0, pretend = 0, frame = 0
-  31              		@ frame_needed = 0, uses_anonymous_args = 0
-  39:Core/Src/device/at24c02.c ****     bool ok = false;
-  32              		.loc 1 39 5 view .LVU1
-  40:Core/Src/device/at24c02.c **** 
-  41:Core/Src/device/at24c02.c ****     if (!EE_LOCK()) return false;
-  33              		.loc 1 41 5 view .LVU2
-  38:Core/Src/device/at24c02.c ****     bool ok = false;
-  34              		.loc 1 38 1 is_stmt 0 view .LVU3
-  35 0000 70B5     		push	{r4, r5, r6, lr}
-  36              	.LCFI0:
-  37              		.cfi_def_cfa_offset 16
-  38              		.cfi_offset 4, -16
-  39              		.cfi_offset 5, -12
-  40              		.cfi_offset 6, -8
-  41              		.cfi_offset 14, -4
-  42              		.loc 1 41 10 view .LVU4
-  43 0002 184E     		ldr	r6, .L7
-  38:Core/Src/device/at24c02.c ****     bool ok = false;
-  44              		.loc 1 38 1 view .LVU5
-  45 0004 0546     		mov	r5, r0
-  46 0006 0C46     		mov	r4, r1
-  47              		.loc 1 41 10 view .LVU6
-  48 0008 3068     		ldr	r0, [r6]
-  49              	.LVL1:
-  50              		.loc 1 41 10 view .LVU7
-  51 000a 6421     		movs	r1, #100
-  52              	.LVL2:
-  53              		.loc 1 41 10 view .LVU8
-  54 000c FFF7FEFF 		bl	xQueueSemaphoreTake
-  55              	.LVL3:
-  56              		.loc 1 41 8 discriminator 1 view .LVU9
-  57 0010 0128     		cmp	r0, #1
-  58 0012 25D1     		bne	.L6
-  59              	.LVL4:
-  60              	.LBB4:
-  61              	.LBI4:
-  37:Core/Src/device/at24c02.c **** {
-  62              		.loc 1 37 6 is_stmt 1 view .LVU10
-  63              	.LBB5:
-  42:Core/Src/device/at24c02.c **** 
-  43:Core/Src/device/at24c02.c ****     MyI2C_Start();
-  64              		.loc 1 43 5 view .LVU11
-  65 0014 FFF7FEFF 		bl	MyI2C_Start
-  66              	.LVL5:
-  44:Core/Src/device/at24c02.c ****     MyI2C_SendByte(AT24C02_ADDR << 1);
-  67              		.loc 1 44 5 view .LVU12
-  68 0018 A020     		movs	r0, #160
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s 			page 3
+  28              		@ args = 0, pretend = 0, frame = 8
+  29              		@ frame_needed = 0, uses_anonymous_args = 0
+  30              	.LVL0:
+  32:Core/Src/device/at24c02.c ****     {
+  33:Core/Src/device/at24c02.c ****             if (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) {
+  31              		.loc 1 33 13 view .LVU1
+  31:Core/Src/device/at24c02.c ****     {
+  32              		.loc 1 31 17 is_stmt 0 view .LVU2
+  33 0000 07B5     		push	{r0, r1, r2, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 16
+  36              		.cfi_offset 14, -4
+  37              		.loc 1 33 17 view .LVU3
+  38 0002 FFF7FEFF 		bl	xTaskGetSchedulerState
+  39              	.LVL1:
+  40              		.loc 1 33 16 discriminator 1 view .LVU4
+  41 0006 0228     		cmp	r0, #2
+  42 0008 05D1     		bne	.L5
+  43              	.LBB14:
+  44              	.LBI14:
+  31:Core/Src/device/at24c02.c ****     {
+  45              		.loc 1 31 17 is_stmt 1 view .LVU5
+  46              	.LVL2:
+  47              	.LBB15:
+  34:Core/Src/device/at24c02.c ****                     vTaskDelay(pdMS_TO_TICKS(ms));
+  48              		.loc 1 34 21 view .LVU6
+  49 000a 0620     		movs	r0, #6
+  50              	.LBE15:
+  51              	.LBE14:
+  35:Core/Src/device/at24c02.c ****             } else {
+  36:Core/Src/device/at24c02.c ****                     for (uint32_t i = 0; i < ms; i++) {
+  37:Core/Src/device/at24c02.c ****                             for (volatile uint32_t j = 0; j < 2000; j++);
+  38:Core/Src/device/at24c02.c ****                     }
+  39:Core/Src/device/at24c02.c ****             }
+  40:Core/Src/device/at24c02.c ****     }
+  52              		.loc 1 40 5 is_stmt 0 view .LVU7
+  53 000c 03B0     		add	sp, sp, #12
+  54              	.LCFI1:
+  55              		.cfi_remember_state
+  56              		.cfi_def_cfa_offset 4
+  57              		@ sp needed
+  58 000e 5DF804EB 		ldr	lr, [sp], #4
+  59              	.LCFI2:
+  60              		.cfi_restore 14
+  61              		.cfi_def_cfa_offset 0
+  62              	.LBB17:
+  63              	.LBB16:
+  34:Core/Src/device/at24c02.c ****                     vTaskDelay(pdMS_TO_TICKS(ms));
+  64              		.loc 1 34 21 view .LVU8
+  65 0012 FFF7FEBF 		b	vTaskDelay
+  66              	.LVL3:
+  67              	.L5:
+  68              	.LCFI3:
+  69              		.cfi_restore_state
+  34:Core/Src/device/at24c02.c ****                     vTaskDelay(pdMS_TO_TICKS(ms));
+  70              		.loc 1 34 21 view .LVU9
+  71              	.LBE16:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s 			page 3
 
 
-  69 001a FFF7FEFF 		bl	MyI2C_SendByte
-  70              	.LVL6:
-  45:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) goto exit;
-  71              		.loc 1 45 5 view .LVU13
-  72              		.loc 1 45 9 is_stmt 0 view .LVU14
-  73 001e FFF7FEFF 		bl	MyI2C_ReciveAck
-  74              	.LVL7:
-  75              		.loc 1 45 8 discriminator 1 view .LVU15
-  76 0022 68B1     		cbz	r0, .L3
-  77              	.L5:
-  39:Core/Src/device/at24c02.c **** 
-  78              		.loc 1 39 10 view .LVU16
-  79 0024 0024     		movs	r4, #0
-  80              	.LVL8:
-  81              	.L4:
-  46:Core/Src/device/at24c02.c ****     MyI2C_SendByte(addr);
-  47:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) goto exit;
-  48:Core/Src/device/at24c02.c ****     MyI2C_SendByte(data);
-  49:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) goto exit;
-  50:Core/Src/device/at24c02.c ****     ok = true;
-  51:Core/Src/device/at24c02.c **** 
-  52:Core/Src/device/at24c02.c **** exit:
-  53:Core/Src/device/at24c02.c ****     MyI2C_Stop();
-  82              		.loc 1 53 5 is_stmt 1 view .LVU17
-  83 0026 FFF7FEFF 		bl	MyI2C_Stop
-  84              	.LVL9:
-  54:Core/Src/device/at24c02.c ****     EE_UNLOCK();
-  85              		.loc 1 54 5 view .LVU18
-  86 002a 0023     		movs	r3, #0
-  87 002c 3068     		ldr	r0, [r6]
-  88 002e 1A46     		mov	r2, r3
-  89 0030 1946     		mov	r1, r3
-  90 0032 FFF7FEFF 		bl	xQueueGenericSend
-  91              	.LVL10:
-  55:Core/Src/device/at24c02.c ****     EE_DELAY_MS(6);  /* internal write cycle max 5ms */
-  92              		.loc 1 55 5 view .LVU19
-  93 0036 0620     		movs	r0, #6
-  94 0038 FFF7FEFF 		bl	vTaskDelay
-  95              	.LVL11:
-  56:Core/Src/device/at24c02.c ****     return ok;
-  96              		.loc 1 56 5 view .LVU20
-  97              	.L2:
-  98              		.loc 1 56 5 is_stmt 0 view .LVU21
-  99              	.LBE5:
- 100              	.LBE4:
-  57:Core/Src/device/at24c02.c **** }
- 101              		.loc 1 57 1 view .LVU22
- 102 003c 2046     		mov	r0, r4
- 103 003e 70BD     		pop	{r4, r5, r6, pc}
- 104              	.LVL12:
- 105              	.L3:
- 106              	.LBB7:
- 107              	.LBB6:
-  46:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) goto exit;
- 108              		.loc 1 46 5 is_stmt 1 view .LVU23
- 109 0040 2846     		mov	r0, r5
- 110 0042 FFF7FEFF 		bl	MyI2C_SendByte
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s 			page 4
+  72              	.LBE17:
+  73 0016 0623     		movs	r3, #6
+  74              	.LBB18:
+  75              	.LBB19:
+  37:Core/Src/device/at24c02.c ****                     }
+  76              		.loc 1 37 52 view .LVU10
+  77 0018 0021     		movs	r1, #0
+  78              	.L2:
+  79              	.LVL4:
+  37:Core/Src/device/at24c02.c ****                     }
+  80              		.loc 1 37 52 view .LVU11
+  81              	.LBE19:
+  37:Core/Src/device/at24c02.c ****                     }
+  82              		.loc 1 37 29 is_stmt 1 view .LVU12
+  83              	.LBB20:
+  37:Core/Src/device/at24c02.c ****                     }
+  84              		.loc 1 37 34 view .LVU13
+  37:Core/Src/device/at24c02.c ****                     }
+  85              		.loc 1 37 52 is_stmt 0 view .LVU14
+  86 001a 0191     		str	r1, [sp, #4]
+  87              	.L3:
+  37:Core/Src/device/at24c02.c ****                     }
+  88              		.loc 1 37 61 is_stmt 1 discriminator 1 view .LVU15
+  89 001c 019A     		ldr	r2, [sp, #4]
+  90 001e B2F5FA6F 		cmp	r2, #2000
+  91 0022 04D3     		bcc	.L4
+  92              	.LBE20:
+  36:Core/Src/device/at24c02.c ****                             for (volatile uint32_t j = 0; j < 2000; j++);
+  93              		.loc 1 36 51 discriminator 2 view .LVU16
+  94              	.LVL5:
+  36:Core/Src/device/at24c02.c ****                             for (volatile uint32_t j = 0; j < 2000; j++);
+  95              		.loc 1 36 44 discriminator 1 view .LVU17
+  96 0024 013B     		subs	r3, r3, #1
+  97              	.LVL6:
+  36:Core/Src/device/at24c02.c ****                             for (volatile uint32_t j = 0; j < 2000; j++);
+  98              		.loc 1 36 44 is_stmt 0 discriminator 1 view .LVU18
+  99 0026 F8D1     		bne	.L2
+ 100              	.LBE18:
+ 101              		.loc 1 40 5 view .LVU19
+ 102 0028 03B0     		add	sp, sp, #12
+ 103              	.LCFI4:
+ 104              		.cfi_remember_state
+ 105              		.cfi_def_cfa_offset 4
+ 106              		@ sp needed
+ 107 002a 5DF804FB 		ldr	pc, [sp], #4
+ 108              	.L4:
+ 109              	.LCFI5:
+ 110              		.cfi_restore_state
+ 111              	.LBB22:
+ 112              	.LBB21:
+  37:Core/Src/device/at24c02.c ****                     }
+ 113              		.loc 1 37 70 is_stmt 1 discriminator 3 view .LVU20
+ 114 002e 019A     		ldr	r2, [sp, #4]
+ 115 0030 0132     		adds	r2, r2, #1
+ 116 0032 0192     		str	r2, [sp, #4]
+ 117 0034 F2E7     		b	.L3
+ 118              	.LBE21:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s 			page 4
 
 
- 111              	.LVL13:
-  47:Core/Src/device/at24c02.c ****     MyI2C_SendByte(data);
- 112              		.loc 1 47 5 view .LVU24
-  47:Core/Src/device/at24c02.c ****     MyI2C_SendByte(data);
- 113              		.loc 1 47 9 is_stmt 0 view .LVU25
- 114 0046 FFF7FEFF 		bl	MyI2C_ReciveAck
- 115              	.LVL14:
-  47:Core/Src/device/at24c02.c ****     MyI2C_SendByte(data);
- 116              		.loc 1 47 8 discriminator 1 view .LVU26
- 117 004a 0028     		cmp	r0, #0
- 118 004c EAD1     		bne	.L5
-  48:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) goto exit;
- 119              		.loc 1 48 5 is_stmt 1 view .LVU27
- 120 004e 2046     		mov	r0, r4
- 121 0050 FFF7FEFF 		bl	MyI2C_SendByte
- 122              	.LVL15:
-  49:Core/Src/device/at24c02.c ****     ok = true;
- 123              		.loc 1 49 5 view .LVU28
-  49:Core/Src/device/at24c02.c ****     ok = true;
- 124              		.loc 1 49 9 is_stmt 0 view .LVU29
- 125 0054 FFF7FEFF 		bl	MyI2C_ReciveAck
- 126              	.LVL16:
-  49:Core/Src/device/at24c02.c ****     ok = true;
- 127              		.loc 1 49 8 discriminator 1 view .LVU30
- 128 0058 B0FA80F4 		clz	r4, r0
- 129              	.LVL17:
-  49:Core/Src/device/at24c02.c ****     ok = true;
- 130              		.loc 1 49 8 discriminator 1 view .LVU31
- 131 005c 6409     		lsrs	r4, r4, #5
- 132 005e E2E7     		b	.L4
- 133              	.LVL18:
- 134              	.L6:
-  49:Core/Src/device/at24c02.c ****     ok = true;
- 135              		.loc 1 49 8 discriminator 1 view .LVU32
- 136              	.LBE6:
- 137              	.LBE7:
+ 119              	.LBE22:
+ 120              		.cfi_endproc
+ 121              	.LFE78:
+ 123              		.section	.text.AT24C02_WriteByte,"ax",%progbits
+ 124              		.align	1
+ 125              		.global	AT24C02_WriteByte
+ 126              		.syntax unified
+ 127              		.thumb
+ 128              		.thumb_func
+ 130              	AT24C02_WriteByte:
+ 131              	.LVL7:
+ 132              	.LFB71:
   41:Core/Src/device/at24c02.c **** 
- 138              		.loc 1 41 28 discriminator 1 view .LVU33
- 139 0060 0024     		movs	r4, #0
- 140 0062 EBE7     		b	.L2
- 141              	.L8:
- 142              		.align	2
- 143              	.L7:
- 144 0064 00000000 		.word	xI2CMutex
- 145              		.cfi_endproc
- 146              	.LFE70:
- 148              		.section	.text.AT24C02_ReadByte,"ax",%progbits
- 149              		.align	1
- 150              		.global	AT24C02_ReadByte
- 151              		.syntax unified
- 152              		.thumb
- 153              		.thumb_func
- 155              	AT24C02_ReadByte:
- 156              	.LVL19:
- 157              	.LFB71:
-  58:Core/Src/device/at24c02.c **** 
-  59:Core/Src/device/at24c02.c **** /* ==================================================================
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s 			page 5
+  42:Core/Src/device/at24c02.c ****   #define EE_LOCK()       (xSemaphoreTake(xI2CMutex, pdMS_TO_TICKS(100)) == pdPASS)
+  43:Core/Src/device/at24c02.c ****   #define EE_UNLOCK()     xSemaphoreGive(xI2CMutex)
+  44:Core/Src/device/at24c02.c ****     #define EE_DELAY_MS(ms) EE_AppDelayMs(ms)
+  45:Core/Src/device/at24c02.c **** #endif
+  46:Core/Src/device/at24c02.c **** 
+  47:Core/Src/device/at24c02.c **** /* ==================================================================
+  48:Core/Src/device/at24c02.c ****  *  Low-level: write one byte
+  49:Core/Src/device/at24c02.c ****  * ================================================================== */
+  50:Core/Src/device/at24c02.c **** bool AT24C02_WriteByte(uint8_t addr, uint8_t data)
+  51:Core/Src/device/at24c02.c **** {
+ 133              		.loc 1 51 1 view -0
+ 134              		.cfi_startproc
+ 135              		@ args = 0, pretend = 0, frame = 0
+ 136              		@ frame_needed = 0, uses_anonymous_args = 0
+  52:Core/Src/device/at24c02.c ****     bool ok = false;
+ 137              		.loc 1 52 5 view .LVU22
+  53:Core/Src/device/at24c02.c **** 
+  54:Core/Src/device/at24c02.c ****     if (!EE_LOCK()) return false;
+ 138              		.loc 1 54 5 view .LVU23
+  51:Core/Src/device/at24c02.c ****     bool ok = false;
+ 139              		.loc 1 51 1 is_stmt 0 view .LVU24
+ 140 0000 70B5     		push	{r4, r5, r6, lr}
+ 141              	.LCFI6:
+ 142              		.cfi_def_cfa_offset 16
+ 143              		.cfi_offset 4, -16
+ 144              		.cfi_offset 5, -12
+ 145              		.cfi_offset 6, -8
+ 146              		.cfi_offset 14, -4
+ 147              		.loc 1 54 10 view .LVU25
+ 148 0002 184E     		ldr	r6, .L13
+  51:Core/Src/device/at24c02.c ****     bool ok = false;
+ 149              		.loc 1 51 1 view .LVU26
+ 150 0004 0546     		mov	r5, r0
+ 151 0006 0C46     		mov	r4, r1
+ 152              		.loc 1 54 10 view .LVU27
+ 153 0008 3068     		ldr	r0, [r6]
+ 154              	.LVL8:
+ 155              		.loc 1 54 10 view .LVU28
+ 156 000a 6421     		movs	r1, #100
+ 157              	.LVL9:
+ 158              		.loc 1 54 10 view .LVU29
+ 159 000c FFF7FEFF 		bl	xQueueSemaphoreTake
+ 160              	.LVL10:
+ 161              		.loc 1 54 8 discriminator 1 view .LVU30
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s 			page 5
 
 
-  60:Core/Src/device/at24c02.c ****  *  Read one byte
-  61:Core/Src/device/at24c02.c ****  * ================================================================== */
-  62:Core/Src/device/at24c02.c **** bool AT24C02_ReadByte(uint8_t addr, uint8_t *pData)
-  63:Core/Src/device/at24c02.c **** {
- 158              		.loc 1 63 1 is_stmt 1 view -0
- 159              		.cfi_startproc
- 160              		@ args = 0, pretend = 0, frame = 0
- 161              		@ frame_needed = 0, uses_anonymous_args = 0
-  64:Core/Src/device/at24c02.c ****     bool ok = false;
- 162              		.loc 1 64 5 view .LVU35
-  65:Core/Src/device/at24c02.c **** 
-  66:Core/Src/device/at24c02.c ****     if (pData == NULL) return false;
- 163              		.loc 1 66 5 view .LVU36
-  63:Core/Src/device/at24c02.c ****     bool ok = false;
- 164              		.loc 1 63 1 is_stmt 0 view .LVU37
- 165 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
- 166              	.LCFI1:
- 167              		.cfi_def_cfa_offset 24
- 168              		.cfi_offset 3, -24
- 169              		.cfi_offset 4, -20
- 170              		.cfi_offset 5, -16
- 171              		.cfi_offset 6, -12
- 172              		.cfi_offset 7, -8
- 173              		.cfi_offset 14, -4
-  63:Core/Src/device/at24c02.c ****     bool ok = false;
- 174              		.loc 1 63 1 view .LVU38
- 175 0002 0646     		mov	r6, r0
- 176              		.loc 1 66 8 view .LVU39
- 177 0004 0D46     		mov	r5, r1
- 178 0006 11B9     		cbnz	r1, .L10
- 179              	.LVL20:
- 180              	.L12:
- 181              		.loc 1 66 31 discriminator 1 view .LVU40
- 182 0008 0024     		movs	r4, #0
- 183              	.LVL21:
- 184              	.L11:
-  67:Core/Src/device/at24c02.c ****     if (!EE_LOCK()) return false;
-  68:Core/Src/device/at24c02.c **** 
-  69:Core/Src/device/at24c02.c ****     MyI2C_Start();
-  70:Core/Src/device/at24c02.c ****     MyI2C_SendByte(AT24C02_ADDR << 1);
-  71:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) goto exit;
-  72:Core/Src/device/at24c02.c ****     MyI2C_SendByte(addr);
-  73:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) goto exit;
-  74:Core/Src/device/at24c02.c **** 
-  75:Core/Src/device/at24c02.c ****     MyI2C_Start();
-  76:Core/Src/device/at24c02.c ****     MyI2C_SendByte((AT24C02_ADDR << 1) | 0x01);
-  77:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) goto exit;
-  78:Core/Src/device/at24c02.c ****     *pData = MyI2C_RecvByte(1);
-  79:Core/Src/device/at24c02.c ****     ok = true;
-  80:Core/Src/device/at24c02.c **** 
-  81:Core/Src/device/at24c02.c **** exit:
-  82:Core/Src/device/at24c02.c ****     MyI2C_Stop();
-  83:Core/Src/device/at24c02.c ****     EE_UNLOCK();
-  84:Core/Src/device/at24c02.c ****     return ok;
-  85:Core/Src/device/at24c02.c **** }
- 185              		.loc 1 85 1 view .LVU41
- 186 000a 2046     		mov	r0, r4
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s 			page 6
-
-
- 187 000c F8BD     		pop	{r3, r4, r5, r6, r7, pc}
- 188              	.LVL22:
- 189              	.L10:
-  67:Core/Src/device/at24c02.c ****     if (!EE_LOCK()) return false;
- 190              		.loc 1 67 5 is_stmt 1 view .LVU42
-  67:Core/Src/device/at24c02.c ****     if (!EE_LOCK()) return false;
- 191              		.loc 1 67 10 is_stmt 0 view .LVU43
- 192 000e 174F     		ldr	r7, .L16
- 193 0010 6421     		movs	r1, #100
- 194              	.LVL23:
-  67:Core/Src/device/at24c02.c ****     if (!EE_LOCK()) return false;
- 195              		.loc 1 67 10 view .LVU44
- 196 0012 3868     		ldr	r0, [r7]
- 197              	.LVL24:
-  67:Core/Src/device/at24c02.c ****     if (!EE_LOCK()) return false;
- 198              		.loc 1 67 10 view .LVU45
- 199 0014 FFF7FEFF 		bl	xQueueSemaphoreTake
- 200              	.LVL25:
-  67:Core/Src/device/at24c02.c ****     if (!EE_LOCK()) return false;
- 201              		.loc 1 67 8 discriminator 1 view .LVU46
- 202 0018 0128     		cmp	r0, #1
-  67:Core/Src/device/at24c02.c ****     if (!EE_LOCK()) return false;
- 203              		.loc 1 67 10 view .LVU47
- 204 001a 0446     		mov	r4, r0
-  67:Core/Src/device/at24c02.c ****     if (!EE_LOCK()) return false;
- 205              		.loc 1 67 8 discriminator 1 view .LVU48
- 206 001c F4D1     		bne	.L12
-  69:Core/Src/device/at24c02.c ****     MyI2C_SendByte(AT24C02_ADDR << 1);
- 207              		.loc 1 69 5 is_stmt 1 view .LVU49
- 208 001e FFF7FEFF 		bl	MyI2C_Start
- 209              	.LVL26:
-  70:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) goto exit;
- 210              		.loc 1 70 5 view .LVU50
- 211 0022 A020     		movs	r0, #160
- 212 0024 FFF7FEFF 		bl	MyI2C_SendByte
- 213              	.LVL27:
-  71:Core/Src/device/at24c02.c ****     MyI2C_SendByte(addr);
- 214              		.loc 1 71 5 view .LVU51
-  71:Core/Src/device/at24c02.c ****     MyI2C_SendByte(addr);
- 215              		.loc 1 71 9 is_stmt 0 view .LVU52
- 216 0028 FFF7FEFF 		bl	MyI2C_ReciveAck
- 217              	.LVL28:
-  71:Core/Src/device/at24c02.c ****     MyI2C_SendByte(addr);
- 218              		.loc 1 71 8 discriminator 1 view .LVU53
- 219 002c 48B1     		cbz	r0, .L13
- 220              	.L15:
+ 162 0010 0128     		cmp	r0, #1
+ 163 0012 24D1     		bne	.L12
+ 164              	.LVL11:
+ 165              	.LBB25:
+ 166              	.LBI25:
+  50:Core/Src/device/at24c02.c **** {
+ 167              		.loc 1 50 6 is_stmt 1 view .LVU31
+ 168              	.LBB26:
+  55:Core/Src/device/at24c02.c **** 
+  56:Core/Src/device/at24c02.c ****     MyI2C_Start();
+ 169              		.loc 1 56 5 view .LVU32
+ 170 0014 FFF7FEFF 		bl	MyI2C_Start
+ 171              	.LVL12:
+  57:Core/Src/device/at24c02.c ****     MyI2C_SendByte(AT24C02_ADDR << 1);
+ 172              		.loc 1 57 5 view .LVU33
+ 173 0018 A020     		movs	r0, #160
+ 174 001a FFF7FEFF 		bl	MyI2C_SendByte
+ 175              	.LVL13:
+  58:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) goto exit;
+ 176              		.loc 1 58 5 view .LVU34
+ 177              		.loc 1 58 9 is_stmt 0 view .LVU35
+ 178 001e FFF7FEFF 		bl	MyI2C_ReciveAck
+ 179              	.LVL14:
+ 180              		.loc 1 58 8 discriminator 1 view .LVU36
+ 181 0022 60B1     		cbz	r0, .L9
+ 182              	.L11:
+  52:Core/Src/device/at24c02.c **** 
+ 183              		.loc 1 52 10 view .LVU37
+ 184 0024 0024     		movs	r4, #0
+ 185              	.LVL15:
+ 186              	.L10:
+  59:Core/Src/device/at24c02.c ****     MyI2C_SendByte(addr);
+  60:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) goto exit;
+  61:Core/Src/device/at24c02.c ****     MyI2C_SendByte(data);
+  62:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) goto exit;
+  63:Core/Src/device/at24c02.c ****     ok = true;
   64:Core/Src/device/at24c02.c **** 
- 221              		.loc 1 64 10 view .LVU54
- 222 002e 0024     		movs	r4, #0
- 223              	.LVL29:
- 224              	.L14:
-  82:Core/Src/device/at24c02.c ****     EE_UNLOCK();
- 225              		.loc 1 82 5 is_stmt 1 view .LVU55
- 226 0030 FFF7FEFF 		bl	MyI2C_Stop
- 227              	.LVL30:
-  83:Core/Src/device/at24c02.c ****     return ok;
- 228              		.loc 1 83 5 view .LVU56
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s 			page 7
+  65:Core/Src/device/at24c02.c **** exit:
+  66:Core/Src/device/at24c02.c ****     MyI2C_Stop();
+ 187              		.loc 1 66 5 is_stmt 1 view .LVU38
+ 188 0026 FFF7FEFF 		bl	MyI2C_Stop
+ 189              	.LVL16:
+  67:Core/Src/device/at24c02.c ****     EE_UNLOCK();
+ 190              		.loc 1 67 5 view .LVU39
+ 191 002a 0023     		movs	r3, #0
+ 192 002c 3068     		ldr	r0, [r6]
+ 193 002e 1A46     		mov	r2, r3
+ 194 0030 1946     		mov	r1, r3
+ 195 0032 FFF7FEFF 		bl	xQueueGenericSend
+ 196              	.LVL17:
+  68:Core/Src/device/at24c02.c ****     EE_DELAY_MS(6);  /* internal write cycle max 5ms */
+ 197              		.loc 1 68 5 view .LVU40
+ 198 0036 FFF7FEFF 		bl	EE_AppDelayMs.constprop.0
+ 199              	.LVL18:
+  69:Core/Src/device/at24c02.c ****     return ok;
+ 200              		.loc 1 69 5 view .LVU41
+ 201              	.L8:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s 			page 6
 
 
- 229 0034 0023     		movs	r3, #0
- 230 0036 3868     		ldr	r0, [r7]
- 231 0038 1A46     		mov	r2, r3
- 232 003a 1946     		mov	r1, r3
- 233 003c FFF7FEFF 		bl	xQueueGenericSend
- 234              	.LVL31:
-  84:Core/Src/device/at24c02.c **** }
- 235              		.loc 1 84 5 view .LVU57
-  84:Core/Src/device/at24c02.c **** }
- 236              		.loc 1 84 12 is_stmt 0 view .LVU58
- 237 0040 E3E7     		b	.L11
- 238              	.LVL32:
- 239              	.L13:
-  72:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) goto exit;
- 240              		.loc 1 72 5 is_stmt 1 view .LVU59
- 241 0042 3046     		mov	r0, r6
- 242 0044 FFF7FEFF 		bl	MyI2C_SendByte
- 243              	.LVL33:
-  73:Core/Src/device/at24c02.c **** 
- 244              		.loc 1 73 5 view .LVU60
-  73:Core/Src/device/at24c02.c **** 
- 245              		.loc 1 73 9 is_stmt 0 view .LVU61
- 246 0048 FFF7FEFF 		bl	MyI2C_ReciveAck
- 247              	.LVL34:
-  73:Core/Src/device/at24c02.c **** 
- 248              		.loc 1 73 8 discriminator 1 view .LVU62
- 249 004c 0028     		cmp	r0, #0
- 250 004e EED1     		bne	.L15
-  75:Core/Src/device/at24c02.c ****     MyI2C_SendByte((AT24C02_ADDR << 1) | 0x01);
- 251              		.loc 1 75 5 is_stmt 1 view .LVU63
- 252 0050 FFF7FEFF 		bl	MyI2C_Start
- 253              	.LVL35:
-  76:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) goto exit;
- 254              		.loc 1 76 5 view .LVU64
- 255 0054 A120     		movs	r0, #161
- 256 0056 FFF7FEFF 		bl	MyI2C_SendByte
- 257              	.LVL36:
-  77:Core/Src/device/at24c02.c ****     *pData = MyI2C_RecvByte(1);
- 258              		.loc 1 77 5 view .LVU65
-  77:Core/Src/device/at24c02.c ****     *pData = MyI2C_RecvByte(1);
- 259              		.loc 1 77 9 is_stmt 0 view .LVU66
- 260 005a FFF7FEFF 		bl	MyI2C_ReciveAck
- 261              	.LVL37:
-  77:Core/Src/device/at24c02.c ****     *pData = MyI2C_RecvByte(1);
- 262              		.loc 1 77 8 discriminator 1 view .LVU67
- 263 005e 0028     		cmp	r0, #0
- 264 0060 E5D1     		bne	.L15
-  78:Core/Src/device/at24c02.c ****     ok = true;
- 265              		.loc 1 78 5 is_stmt 1 view .LVU68
-  78:Core/Src/device/at24c02.c ****     ok = true;
- 266              		.loc 1 78 14 is_stmt 0 view .LVU69
- 267 0062 2046     		mov	r0, r4
- 268 0064 FFF7FEFF 		bl	MyI2C_RecvByte
- 269              	.LVL38:
-  78:Core/Src/device/at24c02.c ****     ok = true;
- 270              		.loc 1 78 12 discriminator 1 view .LVU70
- 271 0068 2870     		strb	r0, [r5]
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s 			page 8
+ 202              		.loc 1 69 5 is_stmt 0 view .LVU42
+ 203              	.LBE26:
+ 204              	.LBE25:
+  70:Core/Src/device/at24c02.c **** }
+ 205              		.loc 1 70 1 view .LVU43
+ 206 003a 2046     		mov	r0, r4
+ 207 003c 70BD     		pop	{r4, r5, r6, pc}
+ 208              	.LVL19:
+ 209              	.L9:
+ 210              	.LBB28:
+ 211              	.LBB27:
+  59:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) goto exit;
+ 212              		.loc 1 59 5 is_stmt 1 view .LVU44
+ 213 003e 2846     		mov	r0, r5
+ 214 0040 FFF7FEFF 		bl	MyI2C_SendByte
+ 215              	.LVL20:
+  60:Core/Src/device/at24c02.c ****     MyI2C_SendByte(data);
+ 216              		.loc 1 60 5 view .LVU45
+  60:Core/Src/device/at24c02.c ****     MyI2C_SendByte(data);
+ 217              		.loc 1 60 9 is_stmt 0 view .LVU46
+ 218 0044 FFF7FEFF 		bl	MyI2C_ReciveAck
+ 219              	.LVL21:
+  60:Core/Src/device/at24c02.c ****     MyI2C_SendByte(data);
+ 220              		.loc 1 60 8 discriminator 1 view .LVU47
+ 221 0048 0028     		cmp	r0, #0
+ 222 004a EBD1     		bne	.L11
+  61:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) goto exit;
+ 223              		.loc 1 61 5 is_stmt 1 view .LVU48
+ 224 004c 2046     		mov	r0, r4
+ 225 004e FFF7FEFF 		bl	MyI2C_SendByte
+ 226              	.LVL22:
+  62:Core/Src/device/at24c02.c ****     ok = true;
+ 227              		.loc 1 62 5 view .LVU49
+  62:Core/Src/device/at24c02.c ****     ok = true;
+ 228              		.loc 1 62 9 is_stmt 0 view .LVU50
+ 229 0052 FFF7FEFF 		bl	MyI2C_ReciveAck
+ 230              	.LVL23:
+  62:Core/Src/device/at24c02.c ****     ok = true;
+ 231              		.loc 1 62 8 discriminator 1 view .LVU51
+ 232 0056 B0FA80F4 		clz	r4, r0
+ 233              	.LVL24:
+  62:Core/Src/device/at24c02.c ****     ok = true;
+ 234              		.loc 1 62 8 discriminator 1 view .LVU52
+ 235 005a 6409     		lsrs	r4, r4, #5
+ 236 005c E3E7     		b	.L10
+ 237              	.LVL25:
+ 238              	.L12:
+  62:Core/Src/device/at24c02.c ****     ok = true;
+ 239              		.loc 1 62 8 discriminator 1 view .LVU53
+ 240              	.LBE27:
+ 241              	.LBE28:
+  54:Core/Src/device/at24c02.c **** 
+ 242              		.loc 1 54 28 discriminator 1 view .LVU54
+ 243 005e 0024     		movs	r4, #0
+ 244 0060 EBE7     		b	.L8
+ 245              	.L14:
+ 246 0062 00BF     		.align	2
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s 			page 7
 
 
-  79:Core/Src/device/at24c02.c **** 
- 272              		.loc 1 79 5 is_stmt 1 view .LVU71
- 273              	.LVL39:
-  79:Core/Src/device/at24c02.c **** 
- 274              		.loc 1 79 5 is_stmt 0 view .LVU72
- 275 006a E1E7     		b	.L14
- 276              	.L17:
- 277              		.align	2
- 278              	.L16:
- 279 006c 00000000 		.word	xI2CMutex
- 280              		.cfi_endproc
- 281              	.LFE71:
- 283              		.section	.text.AT24C02_WriteBuf,"ax",%progbits
- 284              		.align	1
- 285              		.global	AT24C02_WriteBuf
- 286              		.syntax unified
- 287              		.thumb
- 288              		.thumb_func
- 290              	AT24C02_WriteBuf:
- 291              	.LVL40:
- 292              	.LFB72:
+ 247              	.L13:
+ 248 0064 00000000 		.word	xI2CMutex
+ 249              		.cfi_endproc
+ 250              	.LFE71:
+ 252              		.section	.text.AT24C02_ReadByte,"ax",%progbits
+ 253              		.align	1
+ 254              		.global	AT24C02_ReadByte
+ 255              		.syntax unified
+ 256              		.thumb
+ 257              		.thumb_func
+ 259              	AT24C02_ReadByte:
+ 260              	.LVL26:
+ 261              	.LFB72:
+  71:Core/Src/device/at24c02.c **** 
+  72:Core/Src/device/at24c02.c **** /* ==================================================================
+  73:Core/Src/device/at24c02.c ****  *  Read one byte
+  74:Core/Src/device/at24c02.c ****  * ================================================================== */
+  75:Core/Src/device/at24c02.c **** bool AT24C02_ReadByte(uint8_t addr, uint8_t *pData)
+  76:Core/Src/device/at24c02.c **** {
+ 262              		.loc 1 76 1 is_stmt 1 view -0
+ 263              		.cfi_startproc
+ 264              		@ args = 0, pretend = 0, frame = 0
+ 265              		@ frame_needed = 0, uses_anonymous_args = 0
+  77:Core/Src/device/at24c02.c ****     bool ok = false;
+ 266              		.loc 1 77 5 view .LVU56
+  78:Core/Src/device/at24c02.c **** 
+  79:Core/Src/device/at24c02.c ****     if (pData == NULL) return false;
+ 267              		.loc 1 79 5 view .LVU57
+  76:Core/Src/device/at24c02.c ****     bool ok = false;
+ 268              		.loc 1 76 1 is_stmt 0 view .LVU58
+ 269 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 270              	.LCFI7:
+ 271              		.cfi_def_cfa_offset 24
+ 272              		.cfi_offset 3, -24
+ 273              		.cfi_offset 4, -20
+ 274              		.cfi_offset 5, -16
+ 275              		.cfi_offset 6, -12
+ 276              		.cfi_offset 7, -8
+ 277              		.cfi_offset 14, -4
+  76:Core/Src/device/at24c02.c ****     bool ok = false;
+ 278              		.loc 1 76 1 view .LVU59
+ 279 0002 0646     		mov	r6, r0
+ 280              		.loc 1 79 8 view .LVU60
+ 281 0004 0D46     		mov	r5, r1
+ 282 0006 11B9     		cbnz	r1, .L16
+ 283              	.LVL27:
+ 284              	.L18:
+ 285              		.loc 1 79 31 discriminator 1 view .LVU61
+ 286 0008 0024     		movs	r4, #0
+ 287              	.LVL28:
+ 288              	.L17:
+  80:Core/Src/device/at24c02.c ****     if (!EE_LOCK()) return false;
+  81:Core/Src/device/at24c02.c **** 
+  82:Core/Src/device/at24c02.c ****     MyI2C_Start();
+  83:Core/Src/device/at24c02.c ****     MyI2C_SendByte(AT24C02_ADDR << 1);
+  84:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) goto exit;
+  85:Core/Src/device/at24c02.c ****     MyI2C_SendByte(addr);
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s 			page 8
+
+
+  86:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) goto exit;
+  87:Core/Src/device/at24c02.c **** 
+  88:Core/Src/device/at24c02.c ****     MyI2C_Start();
+  89:Core/Src/device/at24c02.c ****     MyI2C_SendByte((AT24C02_ADDR << 1) | 0x01);
+  90:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) goto exit;
+  91:Core/Src/device/at24c02.c ****     *pData = MyI2C_RecvByte(1);
+  92:Core/Src/device/at24c02.c ****     ok = true;
+  93:Core/Src/device/at24c02.c **** 
+  94:Core/Src/device/at24c02.c **** exit:
+  95:Core/Src/device/at24c02.c ****     MyI2C_Stop();
+  96:Core/Src/device/at24c02.c ****     EE_UNLOCK();
+  97:Core/Src/device/at24c02.c ****     return ok;
+  98:Core/Src/device/at24c02.c **** }
+ 289              		.loc 1 98 1 view .LVU62
+ 290 000a 2046     		mov	r0, r4
+ 291 000c F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 292              	.LVL29:
+ 293              	.L16:
+  80:Core/Src/device/at24c02.c ****     if (!EE_LOCK()) return false;
+ 294              		.loc 1 80 5 is_stmt 1 view .LVU63
+  80:Core/Src/device/at24c02.c ****     if (!EE_LOCK()) return false;
+ 295              		.loc 1 80 10 is_stmt 0 view .LVU64
+ 296 000e 174F     		ldr	r7, .L22
+ 297 0010 6421     		movs	r1, #100
+ 298              	.LVL30:
+  80:Core/Src/device/at24c02.c ****     if (!EE_LOCK()) return false;
+ 299              		.loc 1 80 10 view .LVU65
+ 300 0012 3868     		ldr	r0, [r7]
+ 301              	.LVL31:
+  80:Core/Src/device/at24c02.c ****     if (!EE_LOCK()) return false;
+ 302              		.loc 1 80 10 view .LVU66
+ 303 0014 FFF7FEFF 		bl	xQueueSemaphoreTake
+ 304              	.LVL32:
+  80:Core/Src/device/at24c02.c ****     if (!EE_LOCK()) return false;
+ 305              		.loc 1 80 8 discriminator 1 view .LVU67
+ 306 0018 0128     		cmp	r0, #1
+  80:Core/Src/device/at24c02.c ****     if (!EE_LOCK()) return false;
+ 307              		.loc 1 80 10 view .LVU68
+ 308 001a 0446     		mov	r4, r0
+  80:Core/Src/device/at24c02.c ****     if (!EE_LOCK()) return false;
+ 309              		.loc 1 80 8 discriminator 1 view .LVU69
+ 310 001c F4D1     		bne	.L18
+  82:Core/Src/device/at24c02.c ****     MyI2C_SendByte(AT24C02_ADDR << 1);
+ 311              		.loc 1 82 5 is_stmt 1 view .LVU70
+ 312 001e FFF7FEFF 		bl	MyI2C_Start
+ 313              	.LVL33:
+  83:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) goto exit;
+ 314              		.loc 1 83 5 view .LVU71
+ 315 0022 A020     		movs	r0, #160
+ 316 0024 FFF7FEFF 		bl	MyI2C_SendByte
+ 317              	.LVL34:
+  84:Core/Src/device/at24c02.c ****     MyI2C_SendByte(addr);
+ 318              		.loc 1 84 5 view .LVU72
+  84:Core/Src/device/at24c02.c ****     MyI2C_SendByte(addr);
+ 319              		.loc 1 84 9 is_stmt 0 view .LVU73
+ 320 0028 FFF7FEFF 		bl	MyI2C_ReciveAck
+ 321              	.LVL35:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s 			page 9
+
+
+  84:Core/Src/device/at24c02.c ****     MyI2C_SendByte(addr);
+ 322              		.loc 1 84 8 discriminator 1 view .LVU74
+ 323 002c 48B1     		cbz	r0, .L19
+ 324              	.L21:
+  77:Core/Src/device/at24c02.c **** 
+ 325              		.loc 1 77 10 view .LVU75
+ 326 002e 0024     		movs	r4, #0
+ 327              	.LVL36:
+ 328              	.L20:
+  95:Core/Src/device/at24c02.c ****     EE_UNLOCK();
+ 329              		.loc 1 95 5 is_stmt 1 view .LVU76
+ 330 0030 FFF7FEFF 		bl	MyI2C_Stop
+ 331              	.LVL37:
+  96:Core/Src/device/at24c02.c ****     return ok;
+ 332              		.loc 1 96 5 view .LVU77
+ 333 0034 0023     		movs	r3, #0
+ 334 0036 3868     		ldr	r0, [r7]
+ 335 0038 1A46     		mov	r2, r3
+ 336 003a 1946     		mov	r1, r3
+ 337 003c FFF7FEFF 		bl	xQueueGenericSend
+ 338              	.LVL38:
+  97:Core/Src/device/at24c02.c **** }
+ 339              		.loc 1 97 5 view .LVU78
+  97:Core/Src/device/at24c02.c **** }
+ 340              		.loc 1 97 12 is_stmt 0 view .LVU79
+ 341 0040 E3E7     		b	.L17
+ 342              	.LVL39:
+ 343              	.L19:
+  85:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) goto exit;
+ 344              		.loc 1 85 5 is_stmt 1 view .LVU80
+ 345 0042 3046     		mov	r0, r6
+ 346 0044 FFF7FEFF 		bl	MyI2C_SendByte
+ 347              	.LVL40:
   86:Core/Src/device/at24c02.c **** 
-  87:Core/Src/device/at24c02.c **** /* ==================================================================
-  88:Core/Src/device/at24c02.c ****  *  Write buffer (handles page boundary)
-  89:Core/Src/device/at24c02.c ****  * ================================================================== */
-  90:Core/Src/device/at24c02.c **** bool AT24C02_WriteBuf(uint8_t addr, const uint8_t *pBuf, uint16_t len)
-  91:Core/Src/device/at24c02.c **** {
- 293              		.loc 1 91 1 is_stmt 1 view -0
- 294              		.cfi_startproc
- 295              		@ args = 0, pretend = 0, frame = 8
- 296              		@ frame_needed = 0, uses_anonymous_args = 0
-  92:Core/Src/device/at24c02.c ****     uint16_t remain = len;
- 297              		.loc 1 92 5 view .LVU74
-  93:Core/Src/device/at24c02.c ****     uint8_t offset = 0;
- 298              		.loc 1 93 5 view .LVU75
-  94:Core/Src/device/at24c02.c **** 
-  95:Core/Src/device/at24c02.c ****     if (pBuf == NULL || addr + len > AT24C02_TOTAL_SIZE)
- 299              		.loc 1 95 5 view .LVU76
-  91:Core/Src/device/at24c02.c ****     uint16_t remain = len;
- 300              		.loc 1 91 1 is_stmt 0 view .LVU77
- 301 0000 2DE9F74F 		push	{r0, r1, r2, r4, r5, r6, r7, r8, r9, r10, fp, lr}
- 302              	.LCFI2:
- 303              		.cfi_def_cfa_offset 48
- 304              		.cfi_offset 4, -36
- 305              		.cfi_offset 5, -32
- 306              		.cfi_offset 6, -28
- 307              		.cfi_offset 7, -24
- 308              		.cfi_offset 8, -20
- 309              		.cfi_offset 9, -16
- 310              		.cfi_offset 10, -12
- 311              		.cfi_offset 11, -8
- 312              		.cfi_offset 14, -4
-  91:Core/Src/device/at24c02.c ****     uint16_t remain = len;
- 313              		.loc 1 91 1 view .LVU78
- 314 0004 0546     		mov	r5, r0
- 315 0006 1646     		mov	r6, r2
- 316              		.loc 1 95 8 view .LVU79
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s 			page 9
+ 348              		.loc 1 86 5 view .LVU81
+  86:Core/Src/device/at24c02.c **** 
+ 349              		.loc 1 86 9 is_stmt 0 view .LVU82
+ 350 0048 FFF7FEFF 		bl	MyI2C_ReciveAck
+ 351              	.LVL41:
+  86:Core/Src/device/at24c02.c **** 
+ 352              		.loc 1 86 8 discriminator 1 view .LVU83
+ 353 004c 0028     		cmp	r0, #0
+ 354 004e EED1     		bne	.L21
+  88:Core/Src/device/at24c02.c ****     MyI2C_SendByte((AT24C02_ADDR << 1) | 0x01);
+ 355              		.loc 1 88 5 is_stmt 1 view .LVU84
+ 356 0050 FFF7FEFF 		bl	MyI2C_Start
+ 357              	.LVL42:
+  89:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) goto exit;
+ 358              		.loc 1 89 5 view .LVU85
+ 359 0054 A120     		movs	r0, #161
+ 360 0056 FFF7FEFF 		bl	MyI2C_SendByte
+ 361              	.LVL43:
+  90:Core/Src/device/at24c02.c ****     *pData = MyI2C_RecvByte(1);
+ 362              		.loc 1 90 5 view .LVU86
+  90:Core/Src/device/at24c02.c ****     *pData = MyI2C_RecvByte(1);
+ 363              		.loc 1 90 9 is_stmt 0 view .LVU87
+ 364 005a FFF7FEFF 		bl	MyI2C_ReciveAck
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s 			page 10
 
 
- 317 0008 8A46     		mov	r10, r1
- 318 000a B9B3     		cbz	r1, .L20
- 319              		.loc 1 95 30 discriminator 1 view .LVU80
- 320 000c 8318     		adds	r3, r0, r2
- 321              		.loc 1 95 22 discriminator 1 view .LVU81
- 322 000e B3F5807F 		cmp	r3, #256
- 323 0012 33DC     		bgt	.L20
-  93:Core/Src/device/at24c02.c ****     uint8_t offset = 0;
- 324              		.loc 1 93 13 view .LVU82
- 325 0014 4FF00008 		mov	r8, #0
- 326              	.LBB8:
-  96:Core/Src/device/at24c02.c ****         return false;
-  97:Core/Src/device/at24c02.c **** 
-  98:Core/Src/device/at24c02.c ****     while (remain > 0) {
-  99:Core/Src/device/at24c02.c ****         uint8_t page_remain = AT24C02_PAGE_SIZE - (addr % AT24C02_PAGE_SIZE);
- 100:Core/Src/device/at24c02.c ****         uint8_t chunk = (remain < page_remain) ? (uint8_t)remain : page_remain;
- 101:Core/Src/device/at24c02.c **** 
- 102:Core/Src/device/at24c02.c ****         if (!EE_LOCK()) return false;
- 327              		.loc 1 102 14 view .LVU83
- 328 0018 DFF8B490 		ldr	r9, .L33
- 329              	.LVL41:
- 330              	.L22:
- 331              		.loc 1 102 14 view .LVU84
- 332              	.LBE8:
-  98:Core/Src/device/at24c02.c ****         uint8_t page_remain = AT24C02_PAGE_SIZE - (addr % AT24C02_PAGE_SIZE);
- 333              		.loc 1 98 19 is_stmt 1 view .LVU85
- 334 001c 0EB9     		cbnz	r6, .L29
- 103:Core/Src/device/at24c02.c **** 
- 104:Core/Src/device/at24c02.c ****         MyI2C_Start();
- 105:Core/Src/device/at24c02.c ****         MyI2C_SendByte(AT24C02_ADDR << 1);
- 106:Core/Src/device/at24c02.c ****         if (MyI2C_ReciveAck()) { MyI2C_Stop(); EE_UNLOCK(); return false; }
- 107:Core/Src/device/at24c02.c ****         MyI2C_SendByte(addr);
- 108:Core/Src/device/at24c02.c ****         if (MyI2C_ReciveAck()) { MyI2C_Stop(); EE_UNLOCK(); return false; }
- 109:Core/Src/device/at24c02.c **** 
- 110:Core/Src/device/at24c02.c ****         for (uint8_t i = 0; i < chunk; i++) {
- 111:Core/Src/device/at24c02.c ****             MyI2C_SendByte(pBuf[offset + i]);
- 112:Core/Src/device/at24c02.c ****             if (MyI2C_ReciveAck()) { MyI2C_Stop(); EE_UNLOCK(); return false; }
- 113:Core/Src/device/at24c02.c ****         }
+ 365              	.LVL44:
+  90:Core/Src/device/at24c02.c ****     *pData = MyI2C_RecvByte(1);
+ 366              		.loc 1 90 8 discriminator 1 view .LVU88
+ 367 005e 0028     		cmp	r0, #0
+ 368 0060 E5D1     		bne	.L21
+  91:Core/Src/device/at24c02.c ****     ok = true;
+ 369              		.loc 1 91 5 is_stmt 1 view .LVU89
+  91:Core/Src/device/at24c02.c ****     ok = true;
+ 370              		.loc 1 91 14 is_stmt 0 view .LVU90
+ 371 0062 2046     		mov	r0, r4
+ 372 0064 FFF7FEFF 		bl	MyI2C_RecvByte
+ 373              	.LVL45:
+  91:Core/Src/device/at24c02.c ****     ok = true;
+ 374              		.loc 1 91 12 discriminator 1 view .LVU91
+ 375 0068 2870     		strb	r0, [r5]
+  92:Core/Src/device/at24c02.c **** 
+ 376              		.loc 1 92 5 is_stmt 1 view .LVU92
+ 377              	.LVL46:
+  92:Core/Src/device/at24c02.c **** 
+ 378              		.loc 1 92 5 is_stmt 0 view .LVU93
+ 379 006a E1E7     		b	.L20
+ 380              	.L23:
+ 381              		.align	2
+ 382              	.L22:
+ 383 006c 00000000 		.word	xI2CMutex
+ 384              		.cfi_endproc
+ 385              	.LFE72:
+ 387              		.section	.text.AT24C02_WriteBuf,"ax",%progbits
+ 388              		.align	1
+ 389              		.global	AT24C02_WriteBuf
+ 390              		.syntax unified
+ 391              		.thumb
+ 392              		.thumb_func
+ 394              	AT24C02_WriteBuf:
+ 395              	.LVL47:
+ 396              	.LFB73:
+  99:Core/Src/device/at24c02.c **** 
+ 100:Core/Src/device/at24c02.c **** /* ==================================================================
+ 101:Core/Src/device/at24c02.c ****  *  Write buffer (handles page boundary)
+ 102:Core/Src/device/at24c02.c ****  * ================================================================== */
+ 103:Core/Src/device/at24c02.c **** bool AT24C02_WriteBuf(uint8_t addr, const uint8_t *pBuf, uint16_t len)
+ 104:Core/Src/device/at24c02.c **** {
+ 397              		.loc 1 104 1 is_stmt 1 view -0
+ 398              		.cfi_startproc
+ 399              		@ args = 0, pretend = 0, frame = 8
+ 400              		@ frame_needed = 0, uses_anonymous_args = 0
+ 105:Core/Src/device/at24c02.c ****     uint16_t remain = len;
+ 401              		.loc 1 105 5 view .LVU95
+ 106:Core/Src/device/at24c02.c ****     uint8_t offset = 0;
+ 402              		.loc 1 106 5 view .LVU96
+ 107:Core/Src/device/at24c02.c **** 
+ 108:Core/Src/device/at24c02.c ****     if (pBuf == NULL || addr + len > AT24C02_TOTAL_SIZE)
+ 403              		.loc 1 108 5 view .LVU97
+ 104:Core/Src/device/at24c02.c ****     uint16_t remain = len;
+ 404              		.loc 1 104 1 is_stmt 0 view .LVU98
+ 405 0000 2DE9F74F 		push	{r0, r1, r2, r4, r5, r6, r7, r8, r9, r10, fp, lr}
+ 406              	.LCFI8:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s 			page 11
+
+
+ 407              		.cfi_def_cfa_offset 48
+ 408              		.cfi_offset 4, -36
+ 409              		.cfi_offset 5, -32
+ 410              		.cfi_offset 6, -28
+ 411              		.cfi_offset 7, -24
+ 412              		.cfi_offset 8, -20
+ 413              		.cfi_offset 9, -16
+ 414              		.cfi_offset 10, -12
+ 415              		.cfi_offset 11, -8
+ 416              		.cfi_offset 14, -4
+ 104:Core/Src/device/at24c02.c ****     uint16_t remain = len;
+ 417              		.loc 1 104 1 view .LVU99
+ 418 0004 0546     		mov	r5, r0
+ 419 0006 1646     		mov	r6, r2
+ 420              		.loc 1 108 8 view .LVU100
+ 421 0008 8A46     		mov	r10, r1
+ 422 000a B9B3     		cbz	r1, .L26
+ 423              		.loc 1 108 30 discriminator 1 view .LVU101
+ 424 000c 8318     		adds	r3, r0, r2
+ 425              		.loc 1 108 22 discriminator 1 view .LVU102
+ 426 000e B3F5807F 		cmp	r3, #256
+ 427 0012 33DC     		bgt	.L26
+ 106:Core/Src/device/at24c02.c ****     uint8_t offset = 0;
+ 428              		.loc 1 106 13 view .LVU103
+ 429 0014 4FF00008 		mov	r8, #0
+ 430              	.LBB29:
+ 109:Core/Src/device/at24c02.c ****         return false;
+ 110:Core/Src/device/at24c02.c **** 
+ 111:Core/Src/device/at24c02.c ****     while (remain > 0) {
+ 112:Core/Src/device/at24c02.c ****         uint8_t page_remain = AT24C02_PAGE_SIZE - (addr % AT24C02_PAGE_SIZE);
+ 113:Core/Src/device/at24c02.c ****         uint8_t chunk = (remain < page_remain) ? (uint8_t)remain : page_remain;
  114:Core/Src/device/at24c02.c **** 
- 115:Core/Src/device/at24c02.c ****         MyI2C_Stop();
- 116:Core/Src/device/at24c02.c ****         EE_UNLOCK();
- 117:Core/Src/device/at24c02.c ****         EE_DELAY_MS(6);
- 118:Core/Src/device/at24c02.c **** 
- 119:Core/Src/device/at24c02.c ****         offset += chunk;
- 120:Core/Src/device/at24c02.c ****         addr   += chunk;
- 121:Core/Src/device/at24c02.c ****         remain -= chunk;
- 122:Core/Src/device/at24c02.c ****     }
- 123:Core/Src/device/at24c02.c ****     return true;
- 335              		.loc 1 123 12 is_stmt 0 view .LVU86
- 336 001e 0120     		movs	r0, #1
- 337 0020 2DE0     		b	.L26
- 338              	.L29:
- 339              	.LBB11:
-  99:Core/Src/device/at24c02.c ****         uint8_t chunk = (remain < page_remain) ? (uint8_t)remain : page_remain;
- 340              		.loc 1 99 9 is_stmt 1 view .LVU87
-  99:Core/Src/device/at24c02.c ****         uint8_t chunk = (remain < page_remain) ? (uint8_t)remain : page_remain;
- 341              		.loc 1 99 57 is_stmt 0 view .LVU88
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s 			page 10
+ 115:Core/Src/device/at24c02.c ****         if (!EE_LOCK()) return false;
+ 431              		.loc 1 115 14 view .LVU104
+ 432 0018 DFF8B090 		ldr	r9, .L39
+ 433              	.LVL48:
+ 434              	.L28:
+ 435              		.loc 1 115 14 view .LVU105
+ 436              	.LBE29:
+ 111:Core/Src/device/at24c02.c ****         uint8_t page_remain = AT24C02_PAGE_SIZE - (addr % AT24C02_PAGE_SIZE);
+ 437              		.loc 1 111 19 is_stmt 1 view .LVU106
+ 438 001c 0EB9     		cbnz	r6, .L35
+ 116:Core/Src/device/at24c02.c **** 
+ 117:Core/Src/device/at24c02.c ****         MyI2C_Start();
+ 118:Core/Src/device/at24c02.c ****         MyI2C_SendByte(AT24C02_ADDR << 1);
+ 119:Core/Src/device/at24c02.c ****         if (MyI2C_ReciveAck()) { MyI2C_Stop(); EE_UNLOCK(); return false; }
+ 120:Core/Src/device/at24c02.c ****         MyI2C_SendByte(addr);
+ 121:Core/Src/device/at24c02.c ****         if (MyI2C_ReciveAck()) { MyI2C_Stop(); EE_UNLOCK(); return false; }
+ 122:Core/Src/device/at24c02.c **** 
+ 123:Core/Src/device/at24c02.c ****         for (uint8_t i = 0; i < chunk; i++) {
+ 124:Core/Src/device/at24c02.c ****             MyI2C_SendByte(pBuf[offset + i]);
+ 125:Core/Src/device/at24c02.c ****             if (MyI2C_ReciveAck()) { MyI2C_Stop(); EE_UNLOCK(); return false; }
+ 126:Core/Src/device/at24c02.c ****         }
+ 127:Core/Src/device/at24c02.c **** 
+ 128:Core/Src/device/at24c02.c ****         MyI2C_Stop();
+ 129:Core/Src/device/at24c02.c ****         EE_UNLOCK();
+ 130:Core/Src/device/at24c02.c ****         EE_DELAY_MS(6);
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s 			page 12
 
 
- 342 0022 05F00704 		and	r4, r5, #7
-  99:Core/Src/device/at24c02.c ****         uint8_t chunk = (remain < page_remain) ? (uint8_t)remain : page_remain;
- 343              		.loc 1 99 17 view .LVU89
- 344 0026 C4F10804 		rsb	r4, r4, #8
- 345 002a E4B2     		uxtb	r4, r4
- 346              	.LVL42:
- 100:Core/Src/device/at24c02.c **** 
- 347              		.loc 1 100 9 is_stmt 1 view .LVU90
- 100:Core/Src/device/at24c02.c **** 
- 348              		.loc 1 100 17 is_stmt 0 view .LVU91
- 349 002c B442     		cmp	r4, r6
- 102:Core/Src/device/at24c02.c **** 
- 350              		.loc 1 102 14 view .LVU92
- 351 002e 4FF06401 		mov	r1, #100
- 352 0032 D9F80000 		ldr	r0, [r9]
- 100:Core/Src/device/at24c02.c **** 
- 353              		.loc 1 100 17 discriminator 1 view .LVU93
- 354 0036 88BF     		it	hi
- 355 0038 F4B2     		uxtbhi	r4, r6
- 356              	.LVL43:
- 102:Core/Src/device/at24c02.c **** 
- 357              		.loc 1 102 9 is_stmt 1 view .LVU94
- 102:Core/Src/device/at24c02.c **** 
- 358              		.loc 1 102 14 is_stmt 0 view .LVU95
- 359 003a FFF7FEFF 		bl	xQueueSemaphoreTake
- 360              	.LVL44:
- 102:Core/Src/device/at24c02.c **** 
- 361              		.loc 1 102 12 discriminator 1 view .LVU96
- 362 003e 0128     		cmp	r0, #1
- 363 0040 1CD1     		bne	.L20
- 104:Core/Src/device/at24c02.c ****         MyI2C_SendByte(AT24C02_ADDR << 1);
- 364              		.loc 1 104 9 is_stmt 1 view .LVU97
- 365 0042 FFF7FEFF 		bl	MyI2C_Start
- 366              	.LVL45:
- 105:Core/Src/device/at24c02.c ****         if (MyI2C_ReciveAck()) { MyI2C_Stop(); EE_UNLOCK(); return false; }
- 367              		.loc 1 105 9 view .LVU98
- 368 0046 A020     		movs	r0, #160
- 369 0048 FFF7FEFF 		bl	MyI2C_SendByte
- 370              	.LVL46:
- 106:Core/Src/device/at24c02.c ****         MyI2C_SendByte(addr);
- 371              		.loc 1 106 9 view .LVU99
- 106:Core/Src/device/at24c02.c ****         MyI2C_SendByte(addr);
- 372              		.loc 1 106 13 is_stmt 0 view .LVU100
- 373 004c FFF7FEFF 		bl	MyI2C_ReciveAck
- 374              	.LVL47:
- 106:Core/Src/device/at24c02.c ****         MyI2C_SendByte(addr);
- 375              		.loc 1 106 12 discriminator 1 view .LVU101
- 376 0050 8346     		mov	fp, r0
- 377 0052 18B1     		cbz	r0, .L24
- 378              	.L32:
- 379              	.LBB9:
- 112:Core/Src/device/at24c02.c ****         }
- 380              		.loc 1 112 38 is_stmt 1 discriminator 1 view .LVU102
- 381 0054 FFF7FEFF 		bl	MyI2C_Stop
- 382              	.LVL48:
- 112:Core/Src/device/at24c02.c ****         }
- 383              		.loc 1 112 52 discriminator 1 view .LVU103
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s 			page 11
+ 131:Core/Src/device/at24c02.c **** 
+ 132:Core/Src/device/at24c02.c ****         offset += chunk;
+ 133:Core/Src/device/at24c02.c ****         addr   += chunk;
+ 134:Core/Src/device/at24c02.c ****         remain -= chunk;
+ 135:Core/Src/device/at24c02.c ****     }
+ 136:Core/Src/device/at24c02.c ****     return true;
+ 439              		.loc 1 136 12 is_stmt 0 view .LVU107
+ 440 001e 0120     		movs	r0, #1
+ 441 0020 2DE0     		b	.L32
+ 442              	.L35:
+ 443              	.LBB32:
+ 112:Core/Src/device/at24c02.c ****         uint8_t chunk = (remain < page_remain) ? (uint8_t)remain : page_remain;
+ 444              		.loc 1 112 9 is_stmt 1 view .LVU108
+ 112:Core/Src/device/at24c02.c ****         uint8_t chunk = (remain < page_remain) ? (uint8_t)remain : page_remain;
+ 445              		.loc 1 112 57 is_stmt 0 view .LVU109
+ 446 0022 05F00704 		and	r4, r5, #7
+ 112:Core/Src/device/at24c02.c ****         uint8_t chunk = (remain < page_remain) ? (uint8_t)remain : page_remain;
+ 447              		.loc 1 112 17 view .LVU110
+ 448 0026 C4F10804 		rsb	r4, r4, #8
+ 449 002a E4B2     		uxtb	r4, r4
+ 450              	.LVL49:
+ 113:Core/Src/device/at24c02.c **** 
+ 451              		.loc 1 113 9 is_stmt 1 view .LVU111
+ 113:Core/Src/device/at24c02.c **** 
+ 452              		.loc 1 113 17 is_stmt 0 view .LVU112
+ 453 002c B442     		cmp	r4, r6
+ 115:Core/Src/device/at24c02.c **** 
+ 454              		.loc 1 115 14 view .LVU113
+ 455 002e 4FF06401 		mov	r1, #100
+ 456 0032 D9F80000 		ldr	r0, [r9]
+ 113:Core/Src/device/at24c02.c **** 
+ 457              		.loc 1 113 17 discriminator 1 view .LVU114
+ 458 0036 88BF     		it	hi
+ 459 0038 F4B2     		uxtbhi	r4, r6
+ 460              	.LVL50:
+ 115:Core/Src/device/at24c02.c **** 
+ 461              		.loc 1 115 9 is_stmt 1 view .LVU115
+ 115:Core/Src/device/at24c02.c **** 
+ 462              		.loc 1 115 14 is_stmt 0 view .LVU116
+ 463 003a FFF7FEFF 		bl	xQueueSemaphoreTake
+ 464              	.LVL51:
+ 115:Core/Src/device/at24c02.c **** 
+ 465              		.loc 1 115 12 discriminator 1 view .LVU117
+ 466 003e 0128     		cmp	r0, #1
+ 467 0040 1CD1     		bne	.L26
+ 117:Core/Src/device/at24c02.c ****         MyI2C_SendByte(AT24C02_ADDR << 1);
+ 468              		.loc 1 117 9 is_stmt 1 view .LVU118
+ 469 0042 FFF7FEFF 		bl	MyI2C_Start
+ 470              	.LVL52:
+ 118:Core/Src/device/at24c02.c ****         if (MyI2C_ReciveAck()) { MyI2C_Stop(); EE_UNLOCK(); return false; }
+ 471              		.loc 1 118 9 view .LVU119
+ 472 0046 A020     		movs	r0, #160
+ 473 0048 FFF7FEFF 		bl	MyI2C_SendByte
+ 474              	.LVL53:
+ 119:Core/Src/device/at24c02.c ****         MyI2C_SendByte(addr);
+ 475              		.loc 1 119 9 view .LVU120
+ 119:Core/Src/device/at24c02.c ****         MyI2C_SendByte(addr);
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s 			page 13
 
 
- 384 0058 0023     		movs	r3, #0
- 385 005a 09E0     		b	.L31
- 386              	.L24:
- 387              	.LBE9:
- 107:Core/Src/device/at24c02.c ****         if (MyI2C_ReciveAck()) { MyI2C_Stop(); EE_UNLOCK(); return false; }
- 388              		.loc 1 107 9 view .LVU104
- 389 005c 2846     		mov	r0, r5
- 390 005e FFF7FEFF 		bl	MyI2C_SendByte
- 391              	.LVL49:
- 108:Core/Src/device/at24c02.c **** 
- 392              		.loc 1 108 9 view .LVU105
- 108:Core/Src/device/at24c02.c **** 
- 393              		.loc 1 108 13 is_stmt 0 view .LVU106
- 394 0062 FFF7FEFF 		bl	MyI2C_ReciveAck
- 395              	.LVL50:
- 108:Core/Src/device/at24c02.c **** 
- 396              		.loc 1 108 12 discriminator 1 view .LVU107
- 397 0066 0746     		mov	r7, r0
- 398 0068 60B1     		cbz	r0, .L25
- 108:Core/Src/device/at24c02.c **** 
- 399              		.loc 1 108 34 is_stmt 1 discriminator 1 view .LVU108
- 400 006a FFF7FEFF 		bl	MyI2C_Stop
- 401              	.LVL51:
- 108:Core/Src/device/at24c02.c **** 
- 402              		.loc 1 108 48 discriminator 1 view .LVU109
- 403 006e 5B46     		mov	r3, fp
- 404              	.L31:
- 108:Core/Src/device/at24c02.c **** 
- 405              		.loc 1 108 48 is_stmt 0 discriminator 1 view .LVU110
- 406 0070 1A46     		mov	r2, r3
- 407 0072 1946     		mov	r1, r3
- 408 0074 D9F80000 		ldr	r0, [r9]
- 409 0078 FFF7FEFF 		bl	xQueueGenericSend
- 410              	.LVL52:
- 108:Core/Src/device/at24c02.c **** 
- 411              		.loc 1 108 61 is_stmt 1 discriminator 2 view .LVU111
- 412              	.L20:
- 108:Core/Src/device/at24c02.c **** 
- 413              		.loc 1 108 61 is_stmt 0 discriminator 2 view .LVU112
- 414              	.LBE11:
-  96:Core/Src/device/at24c02.c **** 
- 415              		.loc 1 96 16 view .LVU113
- 416 007c 0020     		movs	r0, #0
- 417              	.L26:
- 124:Core/Src/device/at24c02.c **** }
- 418              		.loc 1 124 1 view .LVU114
- 419 007e 03B0     		add	sp, sp, #12
- 420              	.LCFI3:
- 421              		.cfi_remember_state
- 422              		.cfi_def_cfa_offset 36
- 423              		@ sp needed
- 424 0080 BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
- 425              	.LVL53:
- 426              	.L25:
- 427              	.LCFI4:
- 428              		.cfi_restore_state
- 429              		.loc 1 124 1 view .LVU115
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s 			page 12
+ 476              		.loc 1 119 13 is_stmt 0 view .LVU121
+ 477 004c FFF7FEFF 		bl	MyI2C_ReciveAck
+ 478              	.LVL54:
+ 119:Core/Src/device/at24c02.c ****         MyI2C_SendByte(addr);
+ 479              		.loc 1 119 12 discriminator 1 view .LVU122
+ 480 0050 8346     		mov	fp, r0
+ 481 0052 18B1     		cbz	r0, .L30
+ 482              	.L38:
+ 483              	.LBB30:
+ 125:Core/Src/device/at24c02.c ****         }
+ 484              		.loc 1 125 38 is_stmt 1 discriminator 1 view .LVU123
+ 485 0054 FFF7FEFF 		bl	MyI2C_Stop
+ 486              	.LVL55:
+ 125:Core/Src/device/at24c02.c ****         }
+ 487              		.loc 1 125 52 discriminator 1 view .LVU124
+ 488 0058 0023     		movs	r3, #0
+ 489 005a 09E0     		b	.L37
+ 490              	.L30:
+ 491              	.LBE30:
+ 120:Core/Src/device/at24c02.c ****         if (MyI2C_ReciveAck()) { MyI2C_Stop(); EE_UNLOCK(); return false; }
+ 492              		.loc 1 120 9 view .LVU125
+ 493 005c 2846     		mov	r0, r5
+ 494 005e FFF7FEFF 		bl	MyI2C_SendByte
+ 495              	.LVL56:
+ 121:Core/Src/device/at24c02.c **** 
+ 496              		.loc 1 121 9 view .LVU126
+ 121:Core/Src/device/at24c02.c **** 
+ 497              		.loc 1 121 13 is_stmt 0 view .LVU127
+ 498 0062 FFF7FEFF 		bl	MyI2C_ReciveAck
+ 499              	.LVL57:
+ 121:Core/Src/device/at24c02.c **** 
+ 500              		.loc 1 121 12 discriminator 1 view .LVU128
+ 501 0066 0746     		mov	r7, r0
+ 502 0068 60B1     		cbz	r0, .L31
+ 121:Core/Src/device/at24c02.c **** 
+ 503              		.loc 1 121 34 is_stmt 1 discriminator 1 view .LVU129
+ 504 006a FFF7FEFF 		bl	MyI2C_Stop
+ 505              	.LVL58:
+ 121:Core/Src/device/at24c02.c **** 
+ 506              		.loc 1 121 48 discriminator 1 view .LVU130
+ 507 006e 5B46     		mov	r3, fp
+ 508              	.L37:
+ 121:Core/Src/device/at24c02.c **** 
+ 509              		.loc 1 121 48 is_stmt 0 discriminator 1 view .LVU131
+ 510 0070 1A46     		mov	r2, r3
+ 511 0072 1946     		mov	r1, r3
+ 512 0074 D9F80000 		ldr	r0, [r9]
+ 513 0078 FFF7FEFF 		bl	xQueueGenericSend
+ 514              	.LVL59:
+ 121:Core/Src/device/at24c02.c **** 
+ 515              		.loc 1 121 61 is_stmt 1 discriminator 2 view .LVU132
+ 516              	.L26:
+ 121:Core/Src/device/at24c02.c **** 
+ 517              		.loc 1 121 61 is_stmt 0 discriminator 2 view .LVU133
+ 518              	.LBE32:
+ 109:Core/Src/device/at24c02.c **** 
+ 519              		.loc 1 109 16 view .LVU134
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s 			page 14
 
 
- 430 0084 0AEB0803 		add	r3, r10, r8
- 431              	.L28:
- 432              	.LVL54:
- 433              	.LBB12:
- 434              	.LBB10:
- 111:Core/Src/device/at24c02.c ****             if (MyI2C_ReciveAck()) { MyI2C_Stop(); EE_UNLOCK(); return false; }
- 435              		.loc 1 111 13 is_stmt 1 view .LVU116
- 436 0088 13F8010B 		ldrb	r0, [r3], #1	@ zero_extendqisi2
- 437 008c 0193     		str	r3, [sp, #4]
- 438 008e FFF7FEFF 		bl	MyI2C_SendByte
- 439              	.LVL55:
- 112:Core/Src/device/at24c02.c ****         }
- 440              		.loc 1 112 13 view .LVU117
- 112:Core/Src/device/at24c02.c ****         }
- 441              		.loc 1 112 17 is_stmt 0 view .LVU118
- 442 0092 FFF7FEFF 		bl	MyI2C_ReciveAck
- 443              	.LVL56:
- 112:Core/Src/device/at24c02.c ****         }
- 444              		.loc 1 112 16 discriminator 1 view .LVU119
- 445 0096 019B     		ldr	r3, [sp, #4]
- 446 0098 8346     		mov	fp, r0
- 447 009a 0028     		cmp	r0, #0
- 448 009c DAD1     		bne	.L32
- 110:Core/Src/device/at24c02.c ****             MyI2C_SendByte(pBuf[offset + i]);
- 449              		.loc 1 110 41 is_stmt 1 discriminator 2 view .LVU120
- 450 009e 0137     		adds	r7, r7, #1
- 451              	.LVL57:
- 110:Core/Src/device/at24c02.c ****             MyI2C_SendByte(pBuf[offset + i]);
- 452              		.loc 1 110 41 is_stmt 0 discriminator 2 view .LVU121
- 453 00a0 FFB2     		uxtb	r7, r7
- 454              	.LVL58:
- 110:Core/Src/device/at24c02.c ****             MyI2C_SendByte(pBuf[offset + i]);
- 455              		.loc 1 110 31 is_stmt 1 discriminator 1 view .LVU122
- 456 00a2 BC42     		cmp	r4, r7
- 457 00a4 F0D1     		bne	.L28
- 458              	.LBE10:
- 115:Core/Src/device/at24c02.c ****         EE_UNLOCK();
- 459              		.loc 1 115 9 view .LVU123
- 460 00a6 FFF7FEFF 		bl	MyI2C_Stop
- 461              	.LVL59:
- 116:Core/Src/device/at24c02.c ****         EE_DELAY_MS(6);
- 462              		.loc 1 116 9 view .LVU124
- 463 00aa 5B46     		mov	r3, fp
- 464 00ac 5A46     		mov	r2, fp
- 465 00ae 5946     		mov	r1, fp
- 466 00b0 D9F80000 		ldr	r0, [r9]
- 467 00b4 FFF7FEFF 		bl	xQueueGenericSend
- 468              	.LVL60:
- 117:Core/Src/device/at24c02.c **** 
- 469              		.loc 1 117 9 view .LVU125
- 119:Core/Src/device/at24c02.c ****         addr   += chunk;
- 470              		.loc 1 119 16 is_stmt 0 view .LVU126
- 471 00b8 A044     		add	r8, r8, r4
- 472              	.LVL61:
- 120:Core/Src/device/at24c02.c ****         remain -= chunk;
- 473              		.loc 1 120 16 view .LVU127
- 474 00ba 2544     		add	r5, r5, r4
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s 			page 13
+ 520 007c 0020     		movs	r0, #0
+ 521              	.L32:
+ 137:Core/Src/device/at24c02.c **** }
+ 522              		.loc 1 137 1 view .LVU135
+ 523 007e 03B0     		add	sp, sp, #12
+ 524              	.LCFI9:
+ 525              		.cfi_remember_state
+ 526              		.cfi_def_cfa_offset 36
+ 527              		@ sp needed
+ 528 0080 BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 529              	.LVL60:
+ 530              	.L31:
+ 531              	.LCFI10:
+ 532              		.cfi_restore_state
+ 533              		.loc 1 137 1 view .LVU136
+ 534 0084 0AEB0803 		add	r3, r10, r8
+ 535              	.L34:
+ 536              	.LVL61:
+ 537              	.LBB33:
+ 538              	.LBB31:
+ 124:Core/Src/device/at24c02.c ****             if (MyI2C_ReciveAck()) { MyI2C_Stop(); EE_UNLOCK(); return false; }
+ 539              		.loc 1 124 13 is_stmt 1 view .LVU137
+ 540 0088 13F8010B 		ldrb	r0, [r3], #1	@ zero_extendqisi2
+ 541 008c 0193     		str	r3, [sp, #4]
+ 542 008e FFF7FEFF 		bl	MyI2C_SendByte
+ 543              	.LVL62:
+ 125:Core/Src/device/at24c02.c ****         }
+ 544              		.loc 1 125 13 view .LVU138
+ 125:Core/Src/device/at24c02.c ****         }
+ 545              		.loc 1 125 17 is_stmt 0 view .LVU139
+ 546 0092 FFF7FEFF 		bl	MyI2C_ReciveAck
+ 547              	.LVL63:
+ 125:Core/Src/device/at24c02.c ****         }
+ 548              		.loc 1 125 16 discriminator 1 view .LVU140
+ 549 0096 019B     		ldr	r3, [sp, #4]
+ 550 0098 8346     		mov	fp, r0
+ 551 009a 0028     		cmp	r0, #0
+ 552 009c DAD1     		bne	.L38
+ 123:Core/Src/device/at24c02.c ****             MyI2C_SendByte(pBuf[offset + i]);
+ 553              		.loc 1 123 41 is_stmt 1 discriminator 2 view .LVU141
+ 554 009e 0137     		adds	r7, r7, #1
+ 555              	.LVL64:
+ 123:Core/Src/device/at24c02.c ****             MyI2C_SendByte(pBuf[offset + i]);
+ 556              		.loc 1 123 41 is_stmt 0 discriminator 2 view .LVU142
+ 557 00a0 FFB2     		uxtb	r7, r7
+ 558              	.LVL65:
+ 123:Core/Src/device/at24c02.c ****             MyI2C_SendByte(pBuf[offset + i]);
+ 559              		.loc 1 123 31 is_stmt 1 discriminator 1 view .LVU143
+ 560 00a2 BC42     		cmp	r4, r7
+ 561 00a4 F0D1     		bne	.L34
+ 562              	.LBE31:
+ 128:Core/Src/device/at24c02.c ****         EE_UNLOCK();
+ 563              		.loc 1 128 9 view .LVU144
+ 564 00a6 FFF7FEFF 		bl	MyI2C_Stop
+ 565              	.LVL66:
+ 129:Core/Src/device/at24c02.c ****         EE_DELAY_MS(6);
+ 566              		.loc 1 129 9 view .LVU145
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s 			page 15
 
 
- 475              	.LVL62:
- 117:Core/Src/device/at24c02.c **** 
- 476              		.loc 1 117 9 view .LVU128
- 477 00bc 0620     		movs	r0, #6
- 121:Core/Src/device/at24c02.c ****     }
- 478              		.loc 1 121 16 view .LVU129
- 479 00be 341B     		subs	r4, r6, r4
- 480              	.LVL63:
- 117:Core/Src/device/at24c02.c **** 
- 481              		.loc 1 117 9 view .LVU130
- 482 00c0 FFF7FEFF 		bl	vTaskDelay
- 483              	.LVL64:
- 119:Core/Src/device/at24c02.c ****         addr   += chunk;
- 484              		.loc 1 119 9 is_stmt 1 view .LVU131
- 119:Core/Src/device/at24c02.c ****         addr   += chunk;
- 485              		.loc 1 119 16 is_stmt 0 view .LVU132
- 486 00c4 5FFA88F8 		uxtb	r8, r8
- 487              	.LVL65:
- 120:Core/Src/device/at24c02.c ****         remain -= chunk;
- 488              		.loc 1 120 9 is_stmt 1 view .LVU133
- 120:Core/Src/device/at24c02.c ****         remain -= chunk;
- 489              		.loc 1 120 16 is_stmt 0 view .LVU134
- 490 00c8 EDB2     		uxtb	r5, r5
- 491              	.LVL66:
- 121:Core/Src/device/at24c02.c ****     }
- 492              		.loc 1 121 9 is_stmt 1 view .LVU135
- 121:Core/Src/device/at24c02.c ****     }
- 493              		.loc 1 121 16 is_stmt 0 view .LVU136
- 494 00ca A6B2     		uxth	r6, r4
- 495              	.LVL67:
- 121:Core/Src/device/at24c02.c ****     }
- 496              		.loc 1 121 16 view .LVU137
- 497 00cc A6E7     		b	.L22
- 498              	.L34:
- 499 00ce 00BF     		.align	2
- 500              	.L33:
- 501 00d0 00000000 		.word	xI2CMutex
- 502              	.LBE12:
- 503              		.cfi_endproc
- 504              	.LFE72:
- 506              		.section	.text.AT24C02_ReadBuf,"ax",%progbits
- 507              		.align	1
- 508              		.global	AT24C02_ReadBuf
- 509              		.syntax unified
- 510              		.thumb
- 511              		.thumb_func
- 513              	AT24C02_ReadBuf:
- 514              	.LVL68:
- 515              	.LFB73:
- 125:Core/Src/device/at24c02.c **** 
- 126:Core/Src/device/at24c02.c **** /* ==================================================================
- 127:Core/Src/device/at24c02.c ****  *  Read buffer (sequential read with auto-increment)
- 128:Core/Src/device/at24c02.c ****  * ================================================================== */
- 129:Core/Src/device/at24c02.c **** bool AT24C02_ReadBuf(uint8_t addr, uint8_t *pBuf, uint16_t len)
- 130:Core/Src/device/at24c02.c **** {
- 516              		.loc 1 130 1 is_stmt 1 view -0
- 517              		.cfi_startproc
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s 			page 14
+ 132:Core/Src/device/at24c02.c ****         addr   += chunk;
+ 567              		.loc 1 132 16 is_stmt 0 view .LVU146
+ 568 00aa A044     		add	r8, r8, r4
+ 569              	.LVL67:
+ 129:Core/Src/device/at24c02.c ****         EE_DELAY_MS(6);
+ 570              		.loc 1 129 9 view .LVU147
+ 571 00ac 5B46     		mov	r3, fp
+ 572 00ae 5A46     		mov	r2, fp
+ 573 00b0 5946     		mov	r1, fp
+ 133:Core/Src/device/at24c02.c ****         remain -= chunk;
+ 574              		.loc 1 133 16 view .LVU148
+ 575 00b2 2544     		add	r5, r5, r4
+ 576              	.LVL68:
+ 129:Core/Src/device/at24c02.c ****         EE_DELAY_MS(6);
+ 577              		.loc 1 129 9 view .LVU149
+ 578 00b4 D9F80000 		ldr	r0, [r9]
+ 134:Core/Src/device/at24c02.c ****     }
+ 579              		.loc 1 134 16 view .LVU150
+ 580 00b8 341B     		subs	r4, r6, r4
+ 581              	.LVL69:
+ 129:Core/Src/device/at24c02.c ****         EE_DELAY_MS(6);
+ 582              		.loc 1 129 9 view .LVU151
+ 583 00ba FFF7FEFF 		bl	xQueueGenericSend
+ 584              	.LVL70:
+ 130:Core/Src/device/at24c02.c **** 
+ 585              		.loc 1 130 9 is_stmt 1 view .LVU152
+ 132:Core/Src/device/at24c02.c ****         addr   += chunk;
+ 586              		.loc 1 132 16 is_stmt 0 view .LVU153
+ 587 00be 5FFA88F8 		uxtb	r8, r8
+ 130:Core/Src/device/at24c02.c **** 
+ 588              		.loc 1 130 9 view .LVU154
+ 589 00c2 FFF7FEFF 		bl	EE_AppDelayMs.constprop.0
+ 590              	.LVL71:
+ 132:Core/Src/device/at24c02.c ****         addr   += chunk;
+ 591              		.loc 1 132 9 is_stmt 1 view .LVU155
+ 133:Core/Src/device/at24c02.c ****         remain -= chunk;
+ 592              		.loc 1 133 9 view .LVU156
+ 133:Core/Src/device/at24c02.c ****         remain -= chunk;
+ 593              		.loc 1 133 16 is_stmt 0 view .LVU157
+ 594 00c6 EDB2     		uxtb	r5, r5
+ 595              	.LVL72:
+ 134:Core/Src/device/at24c02.c ****     }
+ 596              		.loc 1 134 9 is_stmt 1 view .LVU158
+ 134:Core/Src/device/at24c02.c ****     }
+ 597              		.loc 1 134 16 is_stmt 0 view .LVU159
+ 598 00c8 A6B2     		uxth	r6, r4
+ 599              	.LVL73:
+ 134:Core/Src/device/at24c02.c ****     }
+ 600              		.loc 1 134 16 view .LVU160
+ 601 00ca A7E7     		b	.L28
+ 602              	.L40:
+ 603              		.align	2
+ 604              	.L39:
+ 605 00cc 00000000 		.word	xI2CMutex
+ 606              	.LBE33:
+ 607              		.cfi_endproc
+ 608              	.LFE73:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s 			page 16
 
 
- 518              		@ args = 0, pretend = 0, frame = 0
- 519              		@ frame_needed = 0, uses_anonymous_args = 0
- 131:Core/Src/device/at24c02.c ****     uint16_t i;
- 520              		.loc 1 131 5 view .LVU139
- 132:Core/Src/device/at24c02.c **** 
- 133:Core/Src/device/at24c02.c ****     if (pBuf == NULL || addr + len > AT24C02_TOTAL_SIZE)
- 521              		.loc 1 133 5 view .LVU140
- 130:Core/Src/device/at24c02.c ****     uint16_t i;
- 522              		.loc 1 130 1 is_stmt 0 view .LVU141
- 523 0000 2DE9F843 		push	{r3, r4, r5, r6, r7, r8, r9, lr}
- 524              	.LCFI5:
- 525              		.cfi_def_cfa_offset 32
- 526              		.cfi_offset 3, -32
- 527              		.cfi_offset 4, -28
- 528              		.cfi_offset 5, -24
- 529              		.cfi_offset 6, -20
- 530              		.cfi_offset 7, -16
- 531              		.cfi_offset 8, -12
- 532              		.cfi_offset 9, -8
- 533              		.cfi_offset 14, -4
- 130:Core/Src/device/at24c02.c ****     uint16_t i;
- 534              		.loc 1 130 1 view .LVU142
- 535 0004 0746     		mov	r7, r0
- 536 0006 1646     		mov	r6, r2
- 537              		.loc 1 133 8 view .LVU143
- 538 0008 0C46     		mov	r4, r1
- 539 000a D9B1     		cbz	r1, .L37
- 540              		.loc 1 133 30 discriminator 1 view .LVU144
- 541 000c 8318     		adds	r3, r0, r2
- 542              		.loc 1 133 22 discriminator 1 view .LVU145
- 543 000e B3F5807F 		cmp	r3, #256
- 544 0012 17DC     		bgt	.L37
- 134:Core/Src/device/at24c02.c ****         return false;
- 135:Core/Src/device/at24c02.c **** 
- 136:Core/Src/device/at24c02.c ****     if (!EE_LOCK()) return false;
- 545              		.loc 1 136 5 is_stmt 1 view .LVU146
- 546              		.loc 1 136 10 is_stmt 0 view .LVU147
- 547 0014 264D     		ldr	r5, .L47
- 548 0016 6421     		movs	r1, #100
- 549              	.LVL69:
- 550              		.loc 1 136 10 view .LVU148
- 551 0018 2868     		ldr	r0, [r5]
- 552              	.LVL70:
- 553              		.loc 1 136 10 view .LVU149
- 554 001a FFF7FEFF 		bl	xQueueSemaphoreTake
- 555              	.LVL71:
- 556              		.loc 1 136 8 discriminator 1 view .LVU150
- 557 001e 0128     		cmp	r0, #1
- 558 0020 10D1     		bne	.L37
- 137:Core/Src/device/at24c02.c **** 
- 138:Core/Src/device/at24c02.c ****     MyI2C_Start();
- 559              		.loc 1 138 5 is_stmt 1 view .LVU151
- 560 0022 FFF7FEFF 		bl	MyI2C_Start
- 561              	.LVL72:
- 139:Core/Src/device/at24c02.c ****     MyI2C_SendByte(AT24C02_ADDR << 1);
- 562              		.loc 1 139 5 view .LVU152
- 563 0026 A020     		movs	r0, #160
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s 			page 15
+ 610              		.section	.text.AT24C02_ReadBuf,"ax",%progbits
+ 611              		.align	1
+ 612              		.global	AT24C02_ReadBuf
+ 613              		.syntax unified
+ 614              		.thumb
+ 615              		.thumb_func
+ 617              	AT24C02_ReadBuf:
+ 618              	.LVL74:
+ 619              	.LFB74:
+ 138:Core/Src/device/at24c02.c **** 
+ 139:Core/Src/device/at24c02.c **** /* ==================================================================
+ 140:Core/Src/device/at24c02.c ****  *  Read buffer (sequential read with auto-increment)
+ 141:Core/Src/device/at24c02.c ****  * ================================================================== */
+ 142:Core/Src/device/at24c02.c **** bool AT24C02_ReadBuf(uint8_t addr, uint8_t *pBuf, uint16_t len)
+ 143:Core/Src/device/at24c02.c **** {
+ 620              		.loc 1 143 1 is_stmt 1 view -0
+ 621              		.cfi_startproc
+ 622              		@ args = 0, pretend = 0, frame = 0
+ 623              		@ frame_needed = 0, uses_anonymous_args = 0
+ 144:Core/Src/device/at24c02.c ****     uint16_t i;
+ 624              		.loc 1 144 5 view .LVU162
+ 145:Core/Src/device/at24c02.c **** 
+ 146:Core/Src/device/at24c02.c ****     if (pBuf == NULL || addr + len > AT24C02_TOTAL_SIZE)
+ 625              		.loc 1 146 5 view .LVU163
+ 143:Core/Src/device/at24c02.c ****     uint16_t i;
+ 626              		.loc 1 143 1 is_stmt 0 view .LVU164
+ 627 0000 2DE9F843 		push	{r3, r4, r5, r6, r7, r8, r9, lr}
+ 628              	.LCFI11:
+ 629              		.cfi_def_cfa_offset 32
+ 630              		.cfi_offset 3, -32
+ 631              		.cfi_offset 4, -28
+ 632              		.cfi_offset 5, -24
+ 633              		.cfi_offset 6, -20
+ 634              		.cfi_offset 7, -16
+ 635              		.cfi_offset 8, -12
+ 636              		.cfi_offset 9, -8
+ 637              		.cfi_offset 14, -4
+ 143:Core/Src/device/at24c02.c ****     uint16_t i;
+ 638              		.loc 1 143 1 view .LVU165
+ 639 0004 0746     		mov	r7, r0
+ 640 0006 1646     		mov	r6, r2
+ 641              		.loc 1 146 8 view .LVU166
+ 642 0008 0C46     		mov	r4, r1
+ 643 000a D9B1     		cbz	r1, .L43
+ 644              		.loc 1 146 30 discriminator 1 view .LVU167
+ 645 000c 8318     		adds	r3, r0, r2
+ 646              		.loc 1 146 22 discriminator 1 view .LVU168
+ 647 000e B3F5807F 		cmp	r3, #256
+ 648 0012 17DC     		bgt	.L43
+ 147:Core/Src/device/at24c02.c ****         return false;
+ 148:Core/Src/device/at24c02.c **** 
+ 149:Core/Src/device/at24c02.c ****     if (!EE_LOCK()) return false;
+ 649              		.loc 1 149 5 is_stmt 1 view .LVU169
+ 650              		.loc 1 149 10 is_stmt 0 view .LVU170
+ 651 0014 264D     		ldr	r5, .L53
+ 652 0016 6421     		movs	r1, #100
+ 653              	.LVL75:
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s 			page 17
 
 
- 564 0028 FFF7FEFF 		bl	MyI2C_SendByte
- 565              	.LVL73:
- 140:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) { MyI2C_Stop(); EE_UNLOCK(); return false; }
- 566              		.loc 1 140 5 view .LVU153
- 567              		.loc 1 140 9 is_stmt 0 view .LVU154
- 568 002c FFF7FEFF 		bl	MyI2C_ReciveAck
- 569              	.LVL74:
- 570              		.loc 1 140 8 discriminator 1 view .LVU155
- 571 0030 8046     		mov	r8, r0
- 572 0032 50B1     		cbz	r0, .L39
- 573              	.L46:
- 574              		.loc 1 140 30 is_stmt 1 discriminator 1 view .LVU156
- 575 0034 FFF7FEFF 		bl	MyI2C_Stop
- 576              	.LVL75:
- 577              		.loc 1 140 44 discriminator 1 view .LVU157
- 578 0038 0023     		movs	r3, #0
- 579              	.L45:
- 141:Core/Src/device/at24c02.c ****     MyI2C_SendByte(addr);
- 142:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) { MyI2C_Stop(); EE_UNLOCK(); return false; }
- 580              		.loc 1 142 44 is_stmt 0 discriminator 1 view .LVU158
- 581 003a 1A46     		mov	r2, r3
- 582 003c 1946     		mov	r1, r3
- 583 003e 2868     		ldr	r0, [r5]
- 584 0040 FFF7FEFF 		bl	xQueueGenericSend
- 585              	.LVL76:
- 586              		.loc 1 142 57 is_stmt 1 discriminator 2 view .LVU159
- 587              	.L37:
- 134:Core/Src/device/at24c02.c **** 
- 588              		.loc 1 134 16 is_stmt 0 view .LVU160
- 589 0044 0020     		movs	r0, #0
- 590              	.LVL77:
- 591              	.L41:
- 143:Core/Src/device/at24c02.c **** 
- 144:Core/Src/device/at24c02.c ****     MyI2C_Start();
- 145:Core/Src/device/at24c02.c ****     MyI2C_SendByte((AT24C02_ADDR << 1) | 0x01);
- 146:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) { MyI2C_Stop(); EE_UNLOCK(); return false; }
+ 654              		.loc 1 149 10 view .LVU171
+ 655 0018 2868     		ldr	r0, [r5]
+ 656              	.LVL76:
+ 657              		.loc 1 149 10 view .LVU172
+ 658 001a FFF7FEFF 		bl	xQueueSemaphoreTake
+ 659              	.LVL77:
+ 660              		.loc 1 149 8 discriminator 1 view .LVU173
+ 661 001e 0128     		cmp	r0, #1
+ 662 0020 10D1     		bne	.L43
+ 150:Core/Src/device/at24c02.c **** 
+ 151:Core/Src/device/at24c02.c ****     MyI2C_Start();
+ 663              		.loc 1 151 5 is_stmt 1 view .LVU174
+ 664 0022 FFF7FEFF 		bl	MyI2C_Start
+ 665              	.LVL78:
+ 152:Core/Src/device/at24c02.c ****     MyI2C_SendByte(AT24C02_ADDR << 1);
+ 666              		.loc 1 152 5 view .LVU175
+ 667 0026 A020     		movs	r0, #160
+ 668 0028 FFF7FEFF 		bl	MyI2C_SendByte
+ 669              	.LVL79:
+ 153:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) { MyI2C_Stop(); EE_UNLOCK(); return false; }
+ 670              		.loc 1 153 5 view .LVU176
+ 671              		.loc 1 153 9 is_stmt 0 view .LVU177
+ 672 002c FFF7FEFF 		bl	MyI2C_ReciveAck
+ 673              	.LVL80:
+ 674              		.loc 1 153 8 discriminator 1 view .LVU178
+ 675 0030 8046     		mov	r8, r0
+ 676 0032 50B1     		cbz	r0, .L45
+ 677              	.L52:
+ 678              		.loc 1 153 30 is_stmt 1 discriminator 1 view .LVU179
+ 679 0034 FFF7FEFF 		bl	MyI2C_Stop
+ 680              	.LVL81:
+ 681              		.loc 1 153 44 discriminator 1 view .LVU180
+ 682 0038 0023     		movs	r3, #0
+ 683              	.L51:
+ 154:Core/Src/device/at24c02.c ****     MyI2C_SendByte(addr);
+ 155:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) { MyI2C_Stop(); EE_UNLOCK(); return false; }
+ 684              		.loc 1 155 44 is_stmt 0 discriminator 1 view .LVU181
+ 685 003a 1A46     		mov	r2, r3
+ 686 003c 1946     		mov	r1, r3
+ 687 003e 2868     		ldr	r0, [r5]
+ 688 0040 FFF7FEFF 		bl	xQueueGenericSend
+ 689              	.LVL82:
+ 690              		.loc 1 155 57 is_stmt 1 discriminator 2 view .LVU182
+ 691              	.L43:
  147:Core/Src/device/at24c02.c **** 
- 148:Core/Src/device/at24c02.c ****     for (i = 0; i < len - 1; i++) {
- 149:Core/Src/device/at24c02.c ****         pBuf[i] = MyI2C_RecvByte(0);
- 150:Core/Src/device/at24c02.c ****     }
- 151:Core/Src/device/at24c02.c ****     pBuf[i] = MyI2C_RecvByte(1);
- 152:Core/Src/device/at24c02.c **** 
- 153:Core/Src/device/at24c02.c ****     MyI2C_Stop();
- 154:Core/Src/device/at24c02.c ****     EE_UNLOCK();
- 155:Core/Src/device/at24c02.c ****     return true;
- 156:Core/Src/device/at24c02.c **** }
- 592              		.loc 1 156 1 view .LVU161
- 593 0046 BDE8F883 		pop	{r3, r4, r5, r6, r7, r8, r9, pc}
- 594              	.LVL78:
- 595              	.L39:
- 141:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) { MyI2C_Stop(); EE_UNLOCK(); return false; }
- 596              		.loc 1 141 5 is_stmt 1 view .LVU162
- 597 004a 3846     		mov	r0, r7
- 598 004c FFF7FEFF 		bl	MyI2C_SendByte
- 599              	.LVL79:
- 142:Core/Src/device/at24c02.c **** 
- 600              		.loc 1 142 5 view .LVU163
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s 			page 16
+ 692              		.loc 1 147 16 is_stmt 0 view .LVU183
+ 693 0044 0020     		movs	r0, #0
+ 694              	.LVL83:
+ 695              	.L47:
+ 156:Core/Src/device/at24c02.c **** 
+ 157:Core/Src/device/at24c02.c ****     MyI2C_Start();
+ 158:Core/Src/device/at24c02.c ****     MyI2C_SendByte((AT24C02_ADDR << 1) | 0x01);
+ 159:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) { MyI2C_Stop(); EE_UNLOCK(); return false; }
+ 160:Core/Src/device/at24c02.c **** 
+ 161:Core/Src/device/at24c02.c ****     for (i = 0; i < len - 1; i++) {
+ 162:Core/Src/device/at24c02.c ****         pBuf[i] = MyI2C_RecvByte(0);
+ 163:Core/Src/device/at24c02.c ****     }
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s 			page 18
 
 
- 142:Core/Src/device/at24c02.c **** 
- 601              		.loc 1 142 9 is_stmt 0 view .LVU164
- 602 0050 FFF7FEFF 		bl	MyI2C_ReciveAck
- 603              	.LVL80:
- 142:Core/Src/device/at24c02.c **** 
- 604              		.loc 1 142 8 discriminator 1 view .LVU165
- 605 0054 18B1     		cbz	r0, .L40
- 142:Core/Src/device/at24c02.c **** 
- 606              		.loc 1 142 30 is_stmt 1 discriminator 1 view .LVU166
- 607 0056 FFF7FEFF 		bl	MyI2C_Stop
- 608              	.LVL81:
- 142:Core/Src/device/at24c02.c **** 
- 609              		.loc 1 142 44 discriminator 1 view .LVU167
- 610 005a 4346     		mov	r3, r8
- 611 005c EDE7     		b	.L45
- 612              	.L40:
- 144:Core/Src/device/at24c02.c ****     MyI2C_SendByte((AT24C02_ADDR << 1) | 0x01);
- 613              		.loc 1 144 5 view .LVU168
- 614 005e FFF7FEFF 		bl	MyI2C_Start
- 615              	.LVL82:
- 145:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) { MyI2C_Stop(); EE_UNLOCK(); return false; }
- 616              		.loc 1 145 5 view .LVU169
- 617 0062 A120     		movs	r0, #161
- 618 0064 FFF7FEFF 		bl	MyI2C_SendByte
- 619              	.LVL83:
- 146:Core/Src/device/at24c02.c **** 
- 620              		.loc 1 146 5 view .LVU170
- 146:Core/Src/device/at24c02.c **** 
- 621              		.loc 1 146 9 is_stmt 0 view .LVU171
- 622 0068 FFF7FEFF 		bl	MyI2C_ReciveAck
- 623              	.LVL84:
- 146:Core/Src/device/at24c02.c **** 
- 624              		.loc 1 146 8 discriminator 1 view .LVU172
- 625 006c 0028     		cmp	r0, #0
- 626 006e E1D1     		bne	.L46
- 627 0070 04F1FF38 		add	r8, r4, #-1
- 148:Core/Src/device/at24c02.c ****         pBuf[i] = MyI2C_RecvByte(0);
- 628              		.loc 1 148 25 discriminator 1 view .LVU173
- 629 0074 771E     		subs	r7, r6, #1
- 148:Core/Src/device/at24c02.c ****         pBuf[i] = MyI2C_RecvByte(0);
- 630              		.loc 1 148 19 discriminator 1 view .LVU174
- 631 0076 C4F10109 		rsb	r9, r4, #1
- 632              	.L43:
- 148:Core/Src/device/at24c02.c ****         pBuf[i] = MyI2C_RecvByte(0);
- 633              		.loc 1 148 19 is_stmt 1 discriminator 1 view .LVU175
- 634 007a 09EB0803 		add	r3, r9, r8
- 635 007e 9F42     		cmp	r7, r3
- 636 0080 10DC     		bgt	.L44
- 151:Core/Src/device/at24c02.c **** 
- 637              		.loc 1 151 5 view .LVU176
- 151:Core/Src/device/at24c02.c **** 
- 638              		.loc 1 151 15 is_stmt 0 view .LVU177
- 639 0082 0120     		movs	r0, #1
- 640 0084 FFF7FEFF 		bl	MyI2C_RecvByte
- 641              	.LVL85:
- 151:Core/Src/device/at24c02.c **** 
- 642              		.loc 1 151 13 discriminator 1 view .LVU178
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s 			page 17
-
-
- 643 0088 002E     		cmp	r6, #0
- 644 008a 08BF     		it	eq
- 645 008c 0027     		moveq	r7, #0
- 646 008e E055     		strb	r0, [r4, r7]
- 153:Core/Src/device/at24c02.c ****     EE_UNLOCK();
- 647              		.loc 1 153 5 is_stmt 1 view .LVU179
- 648 0090 FFF7FEFF 		bl	MyI2C_Stop
- 649              	.LVL86:
- 154:Core/Src/device/at24c02.c ****     return true;
- 650              		.loc 1 154 5 view .LVU180
- 651 0094 0023     		movs	r3, #0
- 652 0096 2868     		ldr	r0, [r5]
- 653 0098 1A46     		mov	r2, r3
- 654 009a 1946     		mov	r1, r3
- 655 009c FFF7FEFF 		bl	xQueueGenericSend
- 656              	.LVL87:
- 155:Core/Src/device/at24c02.c **** }
- 657              		.loc 1 155 5 view .LVU181
- 155:Core/Src/device/at24c02.c **** }
- 658              		.loc 1 155 12 is_stmt 0 view .LVU182
- 659 00a0 0120     		movs	r0, #1
- 660 00a2 D0E7     		b	.L41
- 661              	.L44:
- 149:Core/Src/device/at24c02.c ****     }
- 662              		.loc 1 149 9 is_stmt 1 view .LVU183
- 149:Core/Src/device/at24c02.c ****     }
- 663              		.loc 1 149 19 is_stmt 0 view .LVU184
- 664 00a4 0020     		movs	r0, #0
- 665 00a6 FFF7FEFF 		bl	MyI2C_RecvByte
- 666              	.LVL88:
- 149:Core/Src/device/at24c02.c ****     }
- 667              		.loc 1 149 17 discriminator 1 view .LVU185
- 668 00aa 08F8010F 		strb	r0, [r8, #1]!
- 148:Core/Src/device/at24c02.c ****         pBuf[i] = MyI2C_RecvByte(0);
- 669              		.loc 1 148 31 is_stmt 1 discriminator 3 view .LVU186
- 670 00ae E4E7     		b	.L43
- 671              	.L48:
- 672              		.align	2
- 673              	.L47:
- 674 00b0 00000000 		.word	xI2CMutex
- 675              		.cfi_endproc
- 676              	.LFE73:
- 678              		.section	.rodata.AT24C02_Init.str1.1,"aMS",%progbits,1
- 679              	.LC0:
- 680 0000 76312E30 		.ascii	"v1.0.0\000"
- 680      2E3000
- 681              		.section	.text.AT24C02_Init,"ax",%progbits
- 682              		.align	1
- 683              		.global	AT24C02_Init
- 684              		.syntax unified
- 685              		.thumb
- 686              		.thumb_func
- 688              	AT24C02_Init:
- 689              	.LFB74:
- 157:Core/Src/device/at24c02.c **** 
- 158:Core/Src/device/at24c02.c **** /* ==================================================================
- 159:Core/Src/device/at24c02.c ****  *  Initialize OTA metadata area
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s 			page 18
-
-
- 160:Core/Src/device/at24c02.c ****  * ================================================================== */
- 161:Core/Src/device/at24c02.c **** bool AT24C02_Init(void)
- 162:Core/Src/device/at24c02.c **** {
- 690              		.loc 1 162 1 view -0
- 691              		.cfi_startproc
- 692              		@ args = 0, pretend = 0, frame = 8
- 693              		@ frame_needed = 0, uses_anonymous_args = 0
- 163:Core/Src/device/at24c02.c ****     uint32_t magic = 0;
- 694              		.loc 1 163 5 view .LVU188
- 695              	.LVL89:
- 164:Core/Src/device/at24c02.c ****     uint8_t buf[4];
- 696              		.loc 1 164 5 view .LVU189
+ 164:Core/Src/device/at24c02.c ****     pBuf[i] = MyI2C_RecvByte(1);
  165:Core/Src/device/at24c02.c **** 
- 166:Core/Src/device/at24c02.c ****     if (!AT24C02_ReadBuf(EE_MAGIC, buf, 4))
- 697              		.loc 1 166 5 view .LVU190
- 162:Core/Src/device/at24c02.c ****     uint32_t magic = 0;
- 698              		.loc 1 162 1 is_stmt 0 view .LVU191
- 699 0000 07B5     		push	{r0, r1, r2, lr}
- 700              	.LCFI6:
- 701              		.cfi_def_cfa_offset 16
- 702              		.cfi_offset 14, -4
- 703              		.loc 1 166 10 view .LVU192
- 704 0002 0422     		movs	r2, #4
- 705 0004 6946     		mov	r1, sp
- 706 0006 0020     		movs	r0, #0
- 707 0008 FFF7FEFF 		bl	AT24C02_ReadBuf
- 708              	.LVL90:
- 709              		.loc 1 166 8 discriminator 1 view .LVU193
- 710 000c 18B9     		cbnz	r0, .L50
- 711              	.LVL91:
- 712              	.L52:
- 167:Core/Src/device/at24c02.c ****         return false;
- 713              		.loc 1 167 16 view .LVU194
- 714 000e 0020     		movs	r0, #0
- 715              	.L51:
- 168:Core/Src/device/at24c02.c ****     magic = ((uint32_t)buf[0] << 24) | ((uint32_t)buf[1] << 16) |
- 169:Core/Src/device/at24c02.c ****             ((uint32_t)buf[2] << 8)  |  (uint32_t)buf[3];
+ 166:Core/Src/device/at24c02.c ****     MyI2C_Stop();
+ 167:Core/Src/device/at24c02.c ****     EE_UNLOCK();
+ 168:Core/Src/device/at24c02.c ****     return true;
+ 169:Core/Src/device/at24c02.c **** }
+ 696              		.loc 1 169 1 view .LVU184
+ 697 0046 BDE8F883 		pop	{r3, r4, r5, r6, r7, r8, r9, pc}
+ 698              	.LVL84:
+ 699              	.L45:
+ 154:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) { MyI2C_Stop(); EE_UNLOCK(); return false; }
+ 700              		.loc 1 154 5 is_stmt 1 view .LVU185
+ 701 004a 3846     		mov	r0, r7
+ 702 004c FFF7FEFF 		bl	MyI2C_SendByte
+ 703              	.LVL85:
+ 155:Core/Src/device/at24c02.c **** 
+ 704              		.loc 1 155 5 view .LVU186
+ 155:Core/Src/device/at24c02.c **** 
+ 705              		.loc 1 155 9 is_stmt 0 view .LVU187
+ 706 0050 FFF7FEFF 		bl	MyI2C_ReciveAck
+ 707              	.LVL86:
+ 155:Core/Src/device/at24c02.c **** 
+ 708              		.loc 1 155 8 discriminator 1 view .LVU188
+ 709 0054 18B1     		cbz	r0, .L46
+ 155:Core/Src/device/at24c02.c **** 
+ 710              		.loc 1 155 30 is_stmt 1 discriminator 1 view .LVU189
+ 711 0056 FFF7FEFF 		bl	MyI2C_Stop
+ 712              	.LVL87:
+ 155:Core/Src/device/at24c02.c **** 
+ 713              		.loc 1 155 44 discriminator 1 view .LVU190
+ 714 005a 4346     		mov	r3, r8
+ 715 005c EDE7     		b	.L51
+ 716              	.L46:
+ 157:Core/Src/device/at24c02.c ****     MyI2C_SendByte((AT24C02_ADDR << 1) | 0x01);
+ 717              		.loc 1 157 5 view .LVU191
+ 718 005e FFF7FEFF 		bl	MyI2C_Start
+ 719              	.LVL88:
+ 158:Core/Src/device/at24c02.c ****     if (MyI2C_ReciveAck()) { MyI2C_Stop(); EE_UNLOCK(); return false; }
+ 720              		.loc 1 158 5 view .LVU192
+ 721 0062 A120     		movs	r0, #161
+ 722 0064 FFF7FEFF 		bl	MyI2C_SendByte
+ 723              	.LVL89:
+ 159:Core/Src/device/at24c02.c **** 
+ 724              		.loc 1 159 5 view .LVU193
+ 159:Core/Src/device/at24c02.c **** 
+ 725              		.loc 1 159 9 is_stmt 0 view .LVU194
+ 726 0068 FFF7FEFF 		bl	MyI2C_ReciveAck
+ 727              	.LVL90:
+ 159:Core/Src/device/at24c02.c **** 
+ 728              		.loc 1 159 8 discriminator 1 view .LVU195
+ 729 006c 0028     		cmp	r0, #0
+ 730 006e E1D1     		bne	.L52
+ 731 0070 04F1FF38 		add	r8, r4, #-1
+ 161:Core/Src/device/at24c02.c ****         pBuf[i] = MyI2C_RecvByte(0);
+ 732              		.loc 1 161 25 discriminator 1 view .LVU196
+ 733 0074 771E     		subs	r7, r6, #1
+ 161:Core/Src/device/at24c02.c ****         pBuf[i] = MyI2C_RecvByte(0);
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s 			page 19
+
+
+ 734              		.loc 1 161 19 discriminator 1 view .LVU197
+ 735 0076 C4F10109 		rsb	r9, r4, #1
+ 736              	.L49:
+ 161:Core/Src/device/at24c02.c ****         pBuf[i] = MyI2C_RecvByte(0);
+ 737              		.loc 1 161 19 is_stmt 1 discriminator 1 view .LVU198
+ 738 007a 09EB0803 		add	r3, r9, r8
+ 739 007e 9F42     		cmp	r7, r3
+ 740 0080 10DC     		bgt	.L50
+ 164:Core/Src/device/at24c02.c **** 
+ 741              		.loc 1 164 5 view .LVU199
+ 164:Core/Src/device/at24c02.c **** 
+ 742              		.loc 1 164 15 is_stmt 0 view .LVU200
+ 743 0082 0120     		movs	r0, #1
+ 744 0084 FFF7FEFF 		bl	MyI2C_RecvByte
+ 745              	.LVL91:
+ 164:Core/Src/device/at24c02.c **** 
+ 746              		.loc 1 164 13 discriminator 1 view .LVU201
+ 747 0088 002E     		cmp	r6, #0
+ 748 008a 08BF     		it	eq
+ 749 008c 0027     		moveq	r7, #0
+ 750 008e E055     		strb	r0, [r4, r7]
+ 166:Core/Src/device/at24c02.c ****     EE_UNLOCK();
+ 751              		.loc 1 166 5 is_stmt 1 view .LVU202
+ 752 0090 FFF7FEFF 		bl	MyI2C_Stop
+ 753              	.LVL92:
+ 167:Core/Src/device/at24c02.c ****     return true;
+ 754              		.loc 1 167 5 view .LVU203
+ 755 0094 0023     		movs	r3, #0
+ 756 0096 2868     		ldr	r0, [r5]
+ 757 0098 1A46     		mov	r2, r3
+ 758 009a 1946     		mov	r1, r3
+ 759 009c FFF7FEFF 		bl	xQueueGenericSend
+ 760              	.LVL93:
+ 168:Core/Src/device/at24c02.c **** }
+ 761              		.loc 1 168 5 view .LVU204
+ 168:Core/Src/device/at24c02.c **** }
+ 762              		.loc 1 168 12 is_stmt 0 view .LVU205
+ 763 00a0 0120     		movs	r0, #1
+ 764 00a2 D0E7     		b	.L47
+ 765              	.L50:
+ 162:Core/Src/device/at24c02.c ****     }
+ 766              		.loc 1 162 9 is_stmt 1 view .LVU206
+ 162:Core/Src/device/at24c02.c ****     }
+ 767              		.loc 1 162 19 is_stmt 0 view .LVU207
+ 768 00a4 0020     		movs	r0, #0
+ 769 00a6 FFF7FEFF 		bl	MyI2C_RecvByte
+ 770              	.LVL94:
+ 162:Core/Src/device/at24c02.c ****     }
+ 771              		.loc 1 162 17 discriminator 1 view .LVU208
+ 772 00aa 08F8010F 		strb	r0, [r8, #1]!
+ 161:Core/Src/device/at24c02.c ****         pBuf[i] = MyI2C_RecvByte(0);
+ 773              		.loc 1 161 31 is_stmt 1 discriminator 3 view .LVU209
+ 774 00ae E4E7     		b	.L49
+ 775              	.L54:
+ 776              		.align	2
+ 777              	.L53:
+ 778 00b0 00000000 		.word	xI2CMutex
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s 			page 20
+
+
+ 779              		.cfi_endproc
+ 780              	.LFE74:
+ 782              		.section	.rodata.AT24C02_Init.str1.1,"aMS",%progbits,1
+ 783              	.LC0:
+ 784 0000 56312E30 		.ascii	"V1.0.3\000"
+ 784      2E3300
+ 785              		.section	.text.AT24C02_Init,"ax",%progbits
+ 786              		.align	1
+ 787              		.global	AT24C02_Init
+ 788              		.syntax unified
+ 789              		.thumb
+ 790              		.thumb_func
+ 792              	AT24C02_Init:
+ 793              	.LFB75:
  170:Core/Src/device/at24c02.c **** 
- 171:Core/Src/device/at24c02.c ****     if (magic == 0xA5A5A5A5)
- 172:Core/Src/device/at24c02.c ****         return true;
- 173:Core/Src/device/at24c02.c **** 
- 174:Core/Src/device/at24c02.c ****     uint8_t init_buf[4];
- 175:Core/Src/device/at24c02.c ****     init_buf[0] = 0xA5; init_buf[1] = 0xA5;
- 176:Core/Src/device/at24c02.c ****     init_buf[2] = 0xA5; init_buf[3] = 0xA5;
- 177:Core/Src/device/at24c02.c ****     if (!AT24C02_WriteBuf(EE_MAGIC, init_buf, 4))
- 178:Core/Src/device/at24c02.c ****         return false;
- 179:Core/Src/device/at24c02.c **** 
- 180:Core/Src/device/at24c02.c ****     uint8_t zero = 0;
- 181:Core/Src/device/at24c02.c ****     if (!AT24C02_WriteByte(EE_BOOT_CMD, zero))
- 182:Core/Src/device/at24c02.c ****         return false;
+ 171:Core/Src/device/at24c02.c **** /* ==================================================================
+ 172:Core/Src/device/at24c02.c ****  *  Initialize OTA metadata area
+ 173:Core/Src/device/at24c02.c ****  * ================================================================== */
+ 174:Core/Src/device/at24c02.c **** bool AT24C02_Init(void)
+ 175:Core/Src/device/at24c02.c **** {
+ 794              		.loc 1 175 1 view -0
+ 795              		.cfi_startproc
+ 796              		@ args = 0, pretend = 0, frame = 24
+ 797              		@ frame_needed = 0, uses_anonymous_args = 0
+ 176:Core/Src/device/at24c02.c ****     uint32_t magic = 0;
+ 798              		.loc 1 176 5 view .LVU211
+ 799              	.LVL95:
+ 177:Core/Src/device/at24c02.c ****     uint8_t buf[4];
+ 800              		.loc 1 177 5 view .LVU212
+ 178:Core/Src/device/at24c02.c **** 
+ 179:Core/Src/device/at24c02.c ****     if (!AT24C02_ReadBuf(EE_MAGIC, buf, 4))
+ 801              		.loc 1 179 5 view .LVU213
+ 175:Core/Src/device/at24c02.c ****     uint32_t magic = 0;
+ 802              		.loc 1 175 1 is_stmt 0 view .LVU214
+ 803 0000 7FB5     		push	{r0, r1, r2, r3, r4, r5, r6, lr}
+ 804              	.LCFI12:
+ 805              		.cfi_def_cfa_offset 32
+ 806              		.cfi_offset 14, -4
+ 807              		.loc 1 179 10 view .LVU215
+ 808 0002 0422     		movs	r2, #4
+ 809 0004 6946     		mov	r1, sp
+ 810 0006 0020     		movs	r0, #0
+ 811 0008 FFF7FEFF 		bl	AT24C02_ReadBuf
+ 812              	.LVL96:
+ 813              		.loc 1 179 8 discriminator 1 view .LVU216
+ 814 000c 18B9     		cbnz	r0, .L56
+ 815              	.LVL97:
+ 816              	.L58:
+ 180:Core/Src/device/at24c02.c ****         return false;
+ 817              		.loc 1 180 16 view .LVU217
+ 818 000e 0020     		movs	r0, #0
+ 819              	.L57:
+ 181:Core/Src/device/at24c02.c ****     magic = ((uint32_t)buf[0] << 24) | ((uint32_t)buf[1] << 16) |
+ 182:Core/Src/device/at24c02.c ****             ((uint32_t)buf[2] << 8)  |  (uint32_t)buf[3];
  183:Core/Src/device/at24c02.c **** 
- 184:Core/Src/device/at24c02.c ****     const char *ver = "v1.0.0";
- 185:Core/Src/device/at24c02.c ****     return AT24C02_WriteBuf(EE_VERSION_STR, (const uint8_t *)ver, strlen(ver));
- 186:Core/Src/device/at24c02.c **** }
- 716              		.loc 1 186 1 view .LVU195
- 717 0010 03B0     		add	sp, sp, #12
- 718              	.LCFI7:
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s 			page 19
+ 184:Core/Src/device/at24c02.c ****     if (magic == 0xA5A5A5A5)
+ 185:Core/Src/device/at24c02.c ****         return true;
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s 			page 21
 
 
- 719              		.cfi_remember_state
- 720              		.cfi_def_cfa_offset 4
- 721              		@ sp needed
- 722 0012 5DF804FB 		ldr	pc, [sp], #4
- 723              	.LVL92:
- 724              	.L50:
- 725              	.LCFI8:
- 726              		.cfi_restore_state
- 168:Core/Src/device/at24c02.c ****     magic = ((uint32_t)buf[0] << 24) | ((uint32_t)buf[1] << 16) |
- 727              		.loc 1 168 5 is_stmt 1 view .LVU196
- 171:Core/Src/device/at24c02.c ****         return true;
- 728              		.loc 1 171 5 view .LVU197
- 171:Core/Src/device/at24c02.c ****         return true;
- 729              		.loc 1 171 8 is_stmt 0 view .LVU198
- 730 0016 009B     		ldr	r3, [sp]
- 731 0018 B3F1A53F 		cmp	r3, #-1515870811
- 732 001c F8D0     		beq	.L51
- 174:Core/Src/device/at24c02.c ****     init_buf[0] = 0xA5; init_buf[1] = 0xA5;
- 733              		.loc 1 174 5 is_stmt 1 view .LVU199
- 175:Core/Src/device/at24c02.c ****     init_buf[2] = 0xA5; init_buf[3] = 0xA5;
- 734              		.loc 1 175 5 view .LVU200
- 175:Core/Src/device/at24c02.c ****     init_buf[2] = 0xA5; init_buf[3] = 0xA5;
- 735              		.loc 1 175 25 view .LVU201
- 176:Core/Src/device/at24c02.c ****     if (!AT24C02_WriteBuf(EE_MAGIC, init_buf, 4))
- 736              		.loc 1 176 5 view .LVU202
- 176:Core/Src/device/at24c02.c ****     if (!AT24C02_WriteBuf(EE_MAGIC, init_buf, 4))
- 737              		.loc 1 176 25 view .LVU203
- 177:Core/Src/device/at24c02.c ****         return false;
- 738              		.loc 1 177 10 is_stmt 0 view .LVU204
- 739 001e 0422     		movs	r2, #4
- 175:Core/Src/device/at24c02.c ****     init_buf[2] = 0xA5; init_buf[3] = 0xA5;
- 740              		.loc 1 175 17 view .LVU205
- 741 0020 4FF0A533 		mov	r3, #-1515870811
- 177:Core/Src/device/at24c02.c ****         return false;
- 742              		.loc 1 177 10 view .LVU206
- 743 0024 0020     		movs	r0, #0
- 744 0026 0DEB0201 		add	r1, sp, r2
- 175:Core/Src/device/at24c02.c ****     init_buf[2] = 0xA5; init_buf[3] = 0xA5;
- 745              		.loc 1 175 17 view .LVU207
- 746 002a 0193     		str	r3, [sp, #4]
- 177:Core/Src/device/at24c02.c ****         return false;
- 747              		.loc 1 177 5 is_stmt 1 view .LVU208
- 177:Core/Src/device/at24c02.c ****         return false;
- 748              		.loc 1 177 10 is_stmt 0 view .LVU209
- 749 002c FFF7FEFF 		bl	AT24C02_WriteBuf
- 750              	.LVL93:
- 177:Core/Src/device/at24c02.c ****         return false;
- 751              		.loc 1 177 8 discriminator 1 view .LVU210
- 752 0030 0028     		cmp	r0, #0
- 753 0032 ECD0     		beq	.L52
- 180:Core/Src/device/at24c02.c ****     if (!AT24C02_WriteByte(EE_BOOT_CMD, zero))
- 754              		.loc 1 180 5 is_stmt 1 view .LVU211
- 755              	.LVL94:
- 181:Core/Src/device/at24c02.c ****         return false;
- 756              		.loc 1 181 5 view .LVU212
- 181:Core/Src/device/at24c02.c ****         return false;
- 757              		.loc 1 181 10 is_stmt 0 view .LVU213
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s 			page 20
+ 186:Core/Src/device/at24c02.c **** 
+ 187:Core/Src/device/at24c02.c ****     uint8_t init_buf[4];
+ 188:Core/Src/device/at24c02.c ****     init_buf[0] = 0xA5; init_buf[1] = 0xA5;
+ 189:Core/Src/device/at24c02.c ****     init_buf[2] = 0xA5; init_buf[3] = 0xA5;
+ 190:Core/Src/device/at24c02.c ****     if (!AT24C02_WriteBuf(EE_MAGIC, init_buf, 4))
+ 191:Core/Src/device/at24c02.c ****         return false;
+ 192:Core/Src/device/at24c02.c **** 
+ 193:Core/Src/device/at24c02.c ****     uint8_t zero = 0;
+ 194:Core/Src/device/at24c02.c ****     if (!AT24C02_WriteByte(EE_BOOT_CMD, zero))
+ 195:Core/Src/device/at24c02.c ****         return false;
+ 196:Core/Src/device/at24c02.c **** 
+ 197:Core/Src/device/at24c02.c ****     /* 版本号 V1.0.3（OTA 测试用） */
+ 198:Core/Src/device/at24c02.c ****     const char *ver = "V1.0.3";
+ 199:Core/Src/device/at24c02.c ****     uint8_t ver_buf[16];
+ 200:Core/Src/device/at24c02.c ****     memset(ver_buf, 0, sizeof(ver_buf));
+ 201:Core/Src/device/at24c02.c ****     memcpy(ver_buf, ver, strlen(ver));
+ 202:Core/Src/device/at24c02.c ****     return AT24C02_WriteBuf(EE_VERSION_STR, ver_buf, sizeof(ver_buf));
+ 203:Core/Src/device/at24c02.c **** }
+ 820              		.loc 1 203 1 view .LVU218
+ 821 0010 07B0     		add	sp, sp, #28
+ 822              	.LCFI13:
+ 823              		.cfi_remember_state
+ 824              		.cfi_def_cfa_offset 4
+ 825              		@ sp needed
+ 826 0012 5DF804FB 		ldr	pc, [sp], #4
+ 827              	.LVL98:
+ 828              	.L56:
+ 829              	.LCFI14:
+ 830              		.cfi_restore_state
+ 181:Core/Src/device/at24c02.c ****     magic = ((uint32_t)buf[0] << 24) | ((uint32_t)buf[1] << 16) |
+ 831              		.loc 1 181 5 is_stmt 1 view .LVU219
+ 184:Core/Src/device/at24c02.c ****         return true;
+ 832              		.loc 1 184 5 view .LVU220
+ 184:Core/Src/device/at24c02.c ****         return true;
+ 833              		.loc 1 184 8 is_stmt 0 view .LVU221
+ 834 0016 009B     		ldr	r3, [sp]
+ 835 0018 B3F1A53F 		cmp	r3, #-1515870811
+ 836 001c F8D0     		beq	.L57
+ 187:Core/Src/device/at24c02.c ****     init_buf[0] = 0xA5; init_buf[1] = 0xA5;
+ 837              		.loc 1 187 5 is_stmt 1 view .LVU222
+ 188:Core/Src/device/at24c02.c ****     init_buf[2] = 0xA5; init_buf[3] = 0xA5;
+ 838              		.loc 1 188 5 view .LVU223
+ 188:Core/Src/device/at24c02.c ****     init_buf[2] = 0xA5; init_buf[3] = 0xA5;
+ 839              		.loc 1 188 25 view .LVU224
+ 189:Core/Src/device/at24c02.c ****     if (!AT24C02_WriteBuf(EE_MAGIC, init_buf, 4))
+ 840              		.loc 1 189 5 view .LVU225
+ 189:Core/Src/device/at24c02.c ****     if (!AT24C02_WriteBuf(EE_MAGIC, init_buf, 4))
+ 841              		.loc 1 189 25 view .LVU226
+ 190:Core/Src/device/at24c02.c ****         return false;
+ 842              		.loc 1 190 10 is_stmt 0 view .LVU227
+ 843 001e 0422     		movs	r2, #4
+ 188:Core/Src/device/at24c02.c ****     init_buf[2] = 0xA5; init_buf[3] = 0xA5;
+ 844              		.loc 1 188 17 view .LVU228
+ 845 0020 4FF0A533 		mov	r3, #-1515870811
+ 190:Core/Src/device/at24c02.c ****         return false;
+ 846              		.loc 1 190 10 view .LVU229
+ 847 0024 0020     		movs	r0, #0
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s 			page 22
 
 
- 758 0034 0021     		movs	r1, #0
- 759 0036 0420     		movs	r0, #4
- 760 0038 FFF7FEFF 		bl	AT24C02_WriteByte
- 761              	.LVL95:
- 181:Core/Src/device/at24c02.c ****         return false;
- 762              		.loc 1 181 8 discriminator 1 view .LVU214
- 763 003c 0028     		cmp	r0, #0
- 764 003e E6D0     		beq	.L52
- 184:Core/Src/device/at24c02.c ****     return AT24C02_WriteBuf(EE_VERSION_STR, (const uint8_t *)ver, strlen(ver));
- 765              		.loc 1 184 5 is_stmt 1 view .LVU215
- 766              	.LVL96:
- 185:Core/Src/device/at24c02.c **** }
- 767              		.loc 1 185 5 view .LVU216
- 185:Core/Src/device/at24c02.c **** }
- 768              		.loc 1 185 12 is_stmt 0 discriminator 1 view .LVU217
- 769 0040 0622     		movs	r2, #6
- 770 0042 2020     		movs	r0, #32
- 771 0044 0249     		ldr	r1, .L62
- 772              		.loc 1 186 1 view .LVU218
- 773 0046 03B0     		add	sp, sp, #12
- 774              	.LCFI9:
- 775              		.cfi_def_cfa_offset 4
- 776              		@ sp needed
- 777 0048 5DF804EB 		ldr	lr, [sp], #4
- 778              	.LCFI10:
- 779              		.cfi_restore 14
- 780              		.cfi_def_cfa_offset 0
- 185:Core/Src/device/at24c02.c **** }
- 781              		.loc 1 185 12 discriminator 1 view .LVU219
- 782 004c FFF7FEBF 		b	AT24C02_WriteBuf
- 783              	.LVL97:
- 784              	.L63:
- 785              		.align	2
- 786              	.L62:
- 787 0050 00000000 		.word	.LC0
- 788              		.cfi_endproc
- 789              	.LFE74:
- 791              		.text
- 792              	.Letext0:
- 793              		.file 2 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_defa
- 794              		.file 3 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h
- 795              		.file 4 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/lib/gcc/arm-none-eabi/14.2.1/includ
- 796              		.file 5 "Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h"
- 797              		.file 6 "Middlewares/FreeRTOS/Source/include/queue.h"
- 798              		.file 7 "Middlewares/FreeRTOS/Source/include/semphr.h"
- 799              		.file 8 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/string.h"
- 800              		.file 9 "Core/Inc/bsp/bsp_i2c.h"
- 801              		.file 10 "Middlewares/FreeRTOS/Source/include/task.h"
-ARM GAS  C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s 			page 21
+ 848 0026 0DEB0201 		add	r1, sp, r2
+ 188:Core/Src/device/at24c02.c ****     init_buf[2] = 0xA5; init_buf[3] = 0xA5;
+ 849              		.loc 1 188 17 view .LVU230
+ 850 002a 0193     		str	r3, [sp, #4]
+ 190:Core/Src/device/at24c02.c ****         return false;
+ 851              		.loc 1 190 5 is_stmt 1 view .LVU231
+ 190:Core/Src/device/at24c02.c ****         return false;
+ 852              		.loc 1 190 10 is_stmt 0 view .LVU232
+ 853 002c FFF7FEFF 		bl	AT24C02_WriteBuf
+ 854              	.LVL99:
+ 190:Core/Src/device/at24c02.c ****         return false;
+ 855              		.loc 1 190 8 discriminator 1 view .LVU233
+ 856 0030 0028     		cmp	r0, #0
+ 857 0032 ECD0     		beq	.L58
+ 193:Core/Src/device/at24c02.c ****     if (!AT24C02_WriteByte(EE_BOOT_CMD, zero))
+ 858              		.loc 1 193 5 is_stmt 1 view .LVU234
+ 859              	.LVL100:
+ 194:Core/Src/device/at24c02.c ****         return false;
+ 860              		.loc 1 194 5 view .LVU235
+ 194:Core/Src/device/at24c02.c ****         return false;
+ 861              		.loc 1 194 10 is_stmt 0 view .LVU236
+ 862 0034 0021     		movs	r1, #0
+ 863 0036 0420     		movs	r0, #4
+ 864 0038 FFF7FEFF 		bl	AT24C02_WriteByte
+ 865              	.LVL101:
+ 194:Core/Src/device/at24c02.c ****         return false;
+ 866              		.loc 1 194 8 discriminator 1 view .LVU237
+ 867 003c 0028     		cmp	r0, #0
+ 868 003e E6D0     		beq	.L58
+ 198:Core/Src/device/at24c02.c ****     uint8_t ver_buf[16];
+ 869              		.loc 1 198 5 is_stmt 1 view .LVU238
+ 870              	.LVL102:
+ 199:Core/Src/device/at24c02.c ****     memset(ver_buf, 0, sizeof(ver_buf));
+ 871              		.loc 1 199 5 view .LVU239
+ 200:Core/Src/device/at24c02.c ****     memcpy(ver_buf, ver, strlen(ver));
+ 872              		.loc 1 200 5 view .LVU240
+ 873 0040 0023     		movs	r3, #0
+ 874 0042 CDF80E30 		str	r3, [sp, #14]	@ unaligned
+ 875 0046 CDF81230 		str	r3, [sp, #18]	@ unaligned
+ 876 004a ADF81630 		strh	r3, [sp, #22]	@ movhi
+ 201:Core/Src/device/at24c02.c ****     return AT24C02_WriteBuf(EE_VERSION_STR, ver_buf, sizeof(ver_buf));
+ 877              		.loc 1 201 5 view .LVU241
+ 201:Core/Src/device/at24c02.c ****     return AT24C02_WriteBuf(EE_VERSION_STR, ver_buf, sizeof(ver_buf));
+ 878              		.loc 1 201 5 is_stmt 0 discriminator 1 view .LVU242
+ 879 004e 064B     		ldr	r3, .L68
+ 202:Core/Src/device/at24c02.c **** }
+ 880              		.loc 1 202 12 view .LVU243
+ 881 0050 1022     		movs	r2, #16
+ 201:Core/Src/device/at24c02.c ****     return AT24C02_WriteBuf(EE_VERSION_STR, ver_buf, sizeof(ver_buf));
+ 882              		.loc 1 201 5 discriminator 1 view .LVU244
+ 883 0052 1868     		ldr	r0, [r3]	@ unaligned
+ 884 0054 9B88     		ldrh	r3, [r3, #4]	@ unaligned
+ 885 0056 0290     		str	r0, [sp, #8]
+ 202:Core/Src/device/at24c02.c **** }
+ 886              		.loc 1 202 12 view .LVU245
+ 887 0058 02A9     		add	r1, sp, #8
+ 888 005a 2020     		movs	r0, #32
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s 			page 23
+
+
+ 201:Core/Src/device/at24c02.c ****     return AT24C02_WriteBuf(EE_VERSION_STR, ver_buf, sizeof(ver_buf));
+ 889              		.loc 1 201 5 discriminator 1 view .LVU246
+ 890 005c ADF80C30 		strh	r3, [sp, #12]	@ unaligned
+ 202:Core/Src/device/at24c02.c **** }
+ 891              		.loc 1 202 5 is_stmt 1 view .LVU247
+ 202:Core/Src/device/at24c02.c **** }
+ 892              		.loc 1 202 12 is_stmt 0 view .LVU248
+ 893 0060 FFF7FEFF 		bl	AT24C02_WriteBuf
+ 894              	.LVL103:
+ 895 0064 D4E7     		b	.L57
+ 896              	.L69:
+ 897 0066 00BF     		.align	2
+ 898              	.L68:
+ 899 0068 00000000 		.word	.LC0
+ 900              		.cfi_endproc
+ 901              	.LFE75:
+ 903              		.text
+ 904              	.Letext0:
+ 905              		.file 2 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_defa
+ 906              		.file 3 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h
+ 907              		.file 4 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/lib/gcc/arm-none-eabi/14.2.1/includ
+ 908              		.file 5 "Middlewares/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h"
+ 909              		.file 6 "Middlewares/FreeRTOS/Source/include/queue.h"
+ 910              		.file 7 "Middlewares/FreeRTOS/Source/include/semphr.h"
+ 911              		.file 8 "D:/stm32tools/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/string.h"
+ 912              		.file 9 "Core/Inc/bsp/bsp_i2c.h"
+ 913              		.file 10 "Middlewares/FreeRTOS/Source/include/task.h"
+ARM GAS  C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s 			page 24
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 at24c02.c
-C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s:19     .text.AT24C02_WriteByte:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s:25     .text.AT24C02_WriteByte:00000000 AT24C02_WriteByte
-C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s:144    .text.AT24C02_WriteByte:00000064 $d
-C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s:149    .text.AT24C02_ReadByte:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s:155    .text.AT24C02_ReadByte:00000000 AT24C02_ReadByte
-C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s:279    .text.AT24C02_ReadByte:0000006c $d
-C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s:284    .text.AT24C02_WriteBuf:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s:290    .text.AT24C02_WriteBuf:00000000 AT24C02_WriteBuf
-C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s:501    .text.AT24C02_WriteBuf:000000d0 $d
-C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s:507    .text.AT24C02_ReadBuf:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s:513    .text.AT24C02_ReadBuf:00000000 AT24C02_ReadBuf
-C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s:674    .text.AT24C02_ReadBuf:000000b0 $d
-C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s:682    .text.AT24C02_Init:00000000 $t
-C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s:688    .text.AT24C02_Init:00000000 AT24C02_Init
-C:\Users\airforce\AppData\Local\Temp\cc8X5gz2.s:787    .text.AT24C02_Init:00000050 $d
+C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s:19     .text.EE_AppDelayMs.constprop.0:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s:24     .text.EE_AppDelayMs.constprop.0:00000000 EE_AppDelayMs.constprop.0
+C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s:124    .text.AT24C02_WriteByte:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s:130    .text.AT24C02_WriteByte:00000000 AT24C02_WriteByte
+C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s:248    .text.AT24C02_WriteByte:00000064 $d
+C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s:253    .text.AT24C02_ReadByte:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s:259    .text.AT24C02_ReadByte:00000000 AT24C02_ReadByte
+C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s:383    .text.AT24C02_ReadByte:0000006c $d
+C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s:388    .text.AT24C02_WriteBuf:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s:394    .text.AT24C02_WriteBuf:00000000 AT24C02_WriteBuf
+C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s:605    .text.AT24C02_WriteBuf:000000cc $d
+C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s:611    .text.AT24C02_ReadBuf:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s:617    .text.AT24C02_ReadBuf:00000000 AT24C02_ReadBuf
+C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s:778    .text.AT24C02_ReadBuf:000000b0 $d
+C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s:786    .text.AT24C02_Init:00000000 $t
+C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s:792    .text.AT24C02_Init:00000000 AT24C02_Init
+C:\Users\airforce\AppData\Local\Temp\ccpMhjzw.s:899    .text.AT24C02_Init:00000068 $d
 
 UNDEFINED SYMBOLS
+xTaskGetSchedulerState
+vTaskDelay
 xQueueSemaphoreTake
 MyI2C_Start
 MyI2C_SendByte
 MyI2C_ReciveAck
 MyI2C_Stop
 xQueueGenericSend
-vTaskDelay
 xI2CMutex
 MyI2C_RecvByte

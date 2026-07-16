@@ -24,11 +24,24 @@
 #else
   /* APP: FreeRTOS mutex protection */
   #include "FreeRTOS.h"
+    #include "task.h"
   #include "semphr.h"
   extern SemaphoreHandle_t xI2CMutex;
+
+    static void EE_AppDelayMs(uint32_t ms)
+    {
+            if (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) {
+                    vTaskDelay(pdMS_TO_TICKS(ms));
+            } else {
+                    for (uint32_t i = 0; i < ms; i++) {
+                            for (volatile uint32_t j = 0; j < 2000; j++);
+                    }
+            }
+    }
+
   #define EE_LOCK()       (xSemaphoreTake(xI2CMutex, pdMS_TO_TICKS(100)) == pdPASS)
   #define EE_UNLOCK()     xSemaphoreGive(xI2CMutex)
-  #define EE_DELAY_MS(ms) vTaskDelay(pdMS_TO_TICKS(ms))
+    #define EE_DELAY_MS(ms) EE_AppDelayMs(ms)
 #endif
 
 /* ==================================================================
@@ -181,6 +194,10 @@ bool AT24C02_Init(void)
     if (!AT24C02_WriteByte(EE_BOOT_CMD, zero))
         return false;
 
-    const char *ver = "v1.0.0";
-    return AT24C02_WriteBuf(EE_VERSION_STR, (const uint8_t *)ver, strlen(ver));
+    /* 版本号 V1.0.3（OTA 测试用） */
+    const char *ver = "V1.0.3";
+    uint8_t ver_buf[16];
+    memset(ver_buf, 0, sizeof(ver_buf));
+    memcpy(ver_buf, ver, strlen(ver));
+    return AT24C02_WriteBuf(EE_VERSION_STR, ver_buf, sizeof(ver_buf));
 }

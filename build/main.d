@@ -42,7 +42,7 @@ build/main.o: Core/Src/main.c Core/Inc/main.h \
  Middlewares/FreeRTOS/Source/include/event_groups.h \
  Middlewares/FreeRTOS/Source/include/timers.h Core/Inc/device/esp8266.h \
  Core/Inc/device/onenet.h Core/Inc/device/at24c02.h \
- Core/Inc/device/w25q64.h
+ Core/Inc/device/w25q64.h Core/Inc/device/ota_download.h
 Core/Inc/main.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 Core/Inc/stm32f1xx_hal_conf.h:
@@ -102,3 +102,4 @@ Core/Inc/device/esp8266.h:
 Core/Inc/device/onenet.h:
 Core/Inc/device/at24c02.h:
 Core/Inc/device/w25q64.h:
+Core/Inc/device/ota_download.h:

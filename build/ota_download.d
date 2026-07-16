@@ -26,9 +26,7 @@ build/ota_download.o: Core/Src/device/ota_download.c \
  Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h \
  Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h \
  Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h \
- Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h \
- Core/Inc/device/mqttkit.h Core/Inc/device/Common.h \
- Core/Inc/device/cJSON.h
+ Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h
 Core/Inc/device/ota_download.h:
 Core/Inc/device/onenet.h:
 Core/Inc/device/w25q64.h:
@@ -62,6 +60,3 @@ Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h:
-Core/Inc/device/mqttkit.h:
-Core/Inc/device/Common.h:
-Core/Inc/device/cJSON.h:

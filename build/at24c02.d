@@ -34,7 +34,8 @@ build/at24c02.o: Core/Src/device/at24c02.c Core/Inc/device/at24c02.h \
  Middlewares/FreeRTOS/Source/include/semphr.h \
  Middlewares/FreeRTOS/Source/include/queue.h \
  Middlewares/FreeRTOS/Source/include/task.h \
- Middlewares/FreeRTOS/Source/include/list.h
+ Middlewares/FreeRTOS/Source/include/list.h \
+ Middlewares/FreeRTOS/Source/include/task.h
 Core/Inc/device/at24c02.h:
 Core/Inc/bsp/bsp_i2c.h:
 Core/Inc/main.h:
@@ -76,3 +77,4 @@ Middlewares/FreeRTOS/Source/include/semphr.h:
 Middlewares/FreeRTOS/Source/include/queue.h:
 Middlewares/FreeRTOS/Source/include/task.h:
 Middlewares/FreeRTOS/Source/include/list.h:
+Middlewares/FreeRTOS/Source/include/task.h:

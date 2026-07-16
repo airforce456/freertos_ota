@@ -4,7 +4,7 @@
 #include "main.h"
 
 /* 全局接收缓冲区（ISR 逐字节填充） */
-extern unsigned char esp8266_buf[512];
+extern unsigned char esp8266_buf[1024];
 
 /* WiFi 配置 */
 #ifndef ESP8266_WIFI_SSID

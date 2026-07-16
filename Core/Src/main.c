@@ -31,6 +31,7 @@
 #include "onenet.h"
 #include "at24c02.h"
 #include "w25q64.h"
+#include "ota_download.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -203,6 +204,8 @@ int main(void)
 
 
   printf("\r\n========== FreeRTOS + MPU6050 + OLED Data Pipeline ==========\r\n");
+  printf("=== FIRMWARE V1.0.3 (OTA TEST) ===\r\n");
+  printf("=== 如果看到这行，说明 V1.0.3 升级成功！ ===\r\n");
   printf("Tasks: MPU_Read(2) -> Queue[8] -> DataProc(2) -> Queue[4] -> OLED_Disp(1)\r\n\r\n");
 
   /* ---- ESP8266 初始化（NET 包 API：中断逐字节接收 + 轮询等待） ---- */
@@ -214,6 +217,10 @@ int main(void)
 
   /* 阻塞初始化：AT 检测 → 关回显 → STA 模式 → 连 WiFi */
   ESP8266_Init();
+
+  /* ---- OTA 升级检查（在 MQTT 之前，有升级会自动重启） ---- */
+  printf("[OTA] Checking for firmware upgrade...\r\n");
+  OTA_CheckAndDownload();
 
   /* ---- OneNET 云平台接入 ---- */
   printf("[ONENET] Registering device...\r\n");

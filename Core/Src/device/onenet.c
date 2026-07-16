@@ -12,7 +12,6 @@
 #include "base64.h"
 #include "hmac_sha1.h"
 #include "cJSON.h"
-#include "ota_download.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -63,7 +62,7 @@ static unsigned char OTA_UrlEncode(char *sign)
  * ================================================================== */
 #define METHOD "sha1"
 
-static unsigned char OneNET_Authorization(char *ver, char *res, unsigned int et,
+unsigned char OneNET_Authorization(char *ver, char *res, unsigned int et,
     char *access_key, char *dev_name, char *auth_buf, unsigned short auth_len, bool flag)
 {
     size_t olen = 0;
@@ -329,11 +328,6 @@ void OneNet_RevPro(unsigned char *cmd)
         if (MQTT_UnPacketPublish(cmd, &cmdid_topic, &topic_len,
                                  &req_payload, &req_len, &qos, &pkt_id) == 0) {
             printf("[ONENET] Publish: topic=%s, payload=%s\r\n", cmdid_topic, req_payload);
-
-            /* 先检查是否为 OTA 升级消息 */
-            if (OTA_ProcessMessage(cmdid_topic, req_payload, req_len)) {
-                break;  /* OTA 已处理，跳过其他解析 */
-            }
 
             cJSON *raw = cJSON_Parse(req_payload);
             if (raw) {

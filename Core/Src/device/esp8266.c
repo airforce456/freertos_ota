@@ -9,7 +9,7 @@
 #include <stdio.h>
 
 /* ---- 全局接收缓冲（ISR 填充） ---- */
-unsigned char esp8266_buf[512];
+unsigned char esp8266_buf[1024];
 volatile unsigned short esp8266_cnt    = 0;
 volatile unsigned short esp8266_cntPre = 0;
 static uint8_t esp8266_rxByte;    /* HAL_UART_Receive_IT 单字节接收缓冲 */
