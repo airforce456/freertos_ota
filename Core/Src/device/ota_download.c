@@ -32,6 +32,7 @@ static char     ota_tid[16]     = {0};   /* 下载任务 ID */
 static char     ota_new_ver[16] = {0};   /* 新版本号 */
 static uint32_t ota_file_size   = 0;      /* 文件总大小 */
 static uint32_t ota_offset      = 0;      /* 已下载字节数 */
+static char     ota_server_md5[33] = {0}; /* 服务器下发的 MD5 */
 
 /* ---- 当前版本号（从 EEPROM 读取）---- */
 static char current_version[16] = "V1.0";
@@ -325,8 +326,19 @@ static bool OTA_CheckTask(void)
             ota_file_size = (uint32_t)strtoul(p, NULL, 10);
         }
 
-        printf("[OTA] Parsed: target=%s, tid=%s, size=%lu\r\n",
-               ota_new_ver, ota_tid, ota_file_size);
+        /* 提取 md5（JSON 中 "md5":"xxx"，长度 32 字符） */
+        char *md5 = strstr(resp, "\"md5\":\"");
+        if (md5) {
+            p = md5 + 7;  /* 跳过 "md5":" */
+            i = 0;
+            while (*p && *p != '"' && i < (int)sizeof(ota_server_md5) - 1) {
+                ota_server_md5[i++] = *p++;
+            }
+            ota_server_md5[i] = '\0';
+        }
+
+        printf("[OTA] Parsed: target=%s, tid=%s, size=%lu, md5=%s\r\n",
+               ota_new_ver, ota_tid, (unsigned long)ota_file_size, ota_server_md5);
         return true;
     }
 
@@ -434,18 +446,39 @@ static bool OTA_DownloadFirmware(void)
  * ================================================================== */
 static void OTA_Finish(void)
 {
-    printf("[OTA] Download complete, writing EEPROM...\r\n");
+    printf("[OTA] Download complete, verifying...\r\n");
+
+    /* 计算 W25Q64 上固件的 CRC32 */
+    uint32_t crc = W25Q64_CRC32(W25Q64_OTA_SLOT_A, ota_file_size);
+    printf("[OTA] CRC32 = 0x%08lX\r\n", crc);
+
+    /* 和服务器下发的 MD5 做简单比对（CRC32 ≠ MD5，但可作为快速检查）。
+     * 服务器返回的 md5 是固件的 MD5，而 CRC32 是另一个校验值。
+     * 这里主要依靠 CRC32 → Bootloader 搬移前校验。 */
+    if (ota_server_md5[0] != '\0') {
+        printf("[OTA] Server MD5: %s\r\n", ota_server_md5);
+    }
 
     /* 存新版本号 */
-    AT24C02_WriteBuf(EE_VERSION_STR, (uint8_t *)ota_new_ver, strlen(ota_new_ver));
+    uint8_t ver_buf[16];
+    memset(ver_buf, 0, sizeof(ver_buf));
+    snprintf((char *)ver_buf, sizeof(ver_buf), "%s", ota_new_ver);
+    AT24C02_WriteBuf(EE_VERSION_STR, ver_buf, sizeof(ver_buf));
 
-    /* 存文件大小 */
+    /* 存文件大小（大端序） */
     uint8_t buf4[4];
     buf4[0] = (ota_file_size >> 24) & 0xFF;
     buf4[1] = (ota_file_size >> 16) & 0xFF;
     buf4[2] = (ota_file_size >> 8)  & 0xFF;
     buf4[3] = (ota_file_size)       & 0xFF;
     AT24C02_WriteBuf(EE_FW_SIZE, buf4, 4);
+
+    /* 存 CRC32（大端序） */
+    buf4[0] = (crc >> 24) & 0xFF;
+    buf4[1] = (crc >> 16) & 0xFF;
+    buf4[2] = (crc >> 8)  & 0xFF;
+    buf4[3] = (crc)       & 0xFF;
+    AT24C02_WriteBuf(EE_FW_CRC32, buf4, 4);
 
     /* 升级标志 */
     AT24C02_WriteByte(EE_DOWNLOAD_STATUS, 2);

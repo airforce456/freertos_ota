@@ -102,38 +102,44 @@ exit:
  * ================================================================== */
 bool AT24C02_WriteBuf(uint8_t addr, const uint8_t *pBuf, uint16_t len)
 {
+    //希望实现一个函数用于一块pBuf，用于告诉数据在哪，的数据写入，并且给出了需要写入的长度为len
     uint16_t remain = len;
-    uint8_t offset = 0;
-
-    if (pBuf == NULL || addr + len > AT24C02_TOTAL_SIZE)
+    uint16_t offset =0;
+    //判断是否合法
+    if(pBuf ==NULL ||addr+len>AT24C02_TOTAL_SIZE)
         return false;
-
-    while (remain > 0) {
+    //判断是否还有剩余没有写入
+    
+    while(remain>0)
+    {
         uint8_t page_remain = AT24C02_PAGE_SIZE - (addr % AT24C02_PAGE_SIZE);
-        uint8_t chunk = (remain < page_remain) ? (uint8_t)remain : page_remain;
-
-        if (!EE_LOCK()) return false;
+        //判断当前页能否写入完毕传入的若不能则分页写入,chunk为了表示当前页需要写入多少
+        uint8_t chunk = (remain>page_remain)? page_remain : remain;
+        //如果当前页写不满就使用remain 如果当前页写满了就使用pageremain   后面一次进行循环
+        //拿I2c锁开始写入
+       if (!EE_LOCK()) return false;
 
         MyI2C_Start();
+        //设备名寄存器
         MyI2C_SendByte(AT24C02_ADDR << 1);
-        if (MyI2C_ReciveAck()) { MyI2C_Stop(); EE_UNLOCK(); return false; }
+        if (MyI2C_ReciveAck())  { MyI2C_Stop(); EE_UNLOCK(); return false; }
+        //设备写寄存器
         MyI2C_SendByte(addr);
-        if (MyI2C_ReciveAck()) { MyI2C_Stop(); EE_UNLOCK(); return false; }
-
-        for (uint8_t i = 0; i < chunk; i++) {
-            MyI2C_SendByte(pBuf[offset + i]);
-            if (MyI2C_ReciveAck()) { MyI2C_Stop(); EE_UNLOCK(); return false; }
+        if (MyI2C_ReciveAck())  { MyI2C_Stop(); EE_UNLOCK(); return false; }
+        //设备写的数据值
+        for(uint8_t i=0;i<chunk;i++)
+        {
+            MyI2C_SendByte(pBuf[offset+i]);
+            if (MyI2C_ReciveAck())  { MyI2C_Stop(); EE_UNLOCK(); return false; }
         }
-
         MyI2C_Stop();
         EE_UNLOCK();
         EE_DELAY_MS(6);
-
-        offset += chunk;
-        addr   += chunk;
-        remain -= chunk;
+        addr=addr+chunk;
+        offset+=chunk;
+        remain=remain-chunk;
     }
-    return true;
+return true;
 }
 
 /* ==================================================================
